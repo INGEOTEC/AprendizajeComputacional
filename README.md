@@ -5,7 +5,7 @@
 ## [https://github.com/mgraffg](https://github.com/mgraffg)
 ## CONACYT - INFOTEC
 
-# Objetivo
+# Objetivo 
 
 Conocer las características de problemas de aprendizaje
 supervisado. Conocer las fortalezas y debilidades de diferentes tipos
