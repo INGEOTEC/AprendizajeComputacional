@@ -1,37 +1,35 @@
-## Welcome to GitHub Pages
+---
+layout: default
+title: Aprendizaje Computacional
+nav_order: 1
+permalink: /
+---
 
-You can use the [editor on GitHub](https://github.com/INGEOTEC/AprendizajeComputacional/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+# Aprendizaje Computacional
+{: .fs-10 }
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+El **objetivo** es conocer las características de problemas de aprendizaje supervisado y no supervisado,
+y ser capaz de identificar las fortalezas y debilidades de diferentes tipos de algoritmos de aprendizaje de tal manera de que se pueda seleccionar el algoritmo mas adecuado al problema planteado.
 
-### Markdown
+---
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+# Introducción
 
-```markdown
-Syntax highlighted code block
+El area de Inteligencia Artificial (IA) investiga la manera en que se puede crear/emular la inteligencia de manera artificial. Actualmente muchas de las formas de inteligencia artificial se prueban en una computadora, se puede llegar a pensar que la finalidad de IA es crear un programa inteligente, pero el área no se limita solamente a programas de computadora. Por otro lado, esta asignatura se encuentra dentro de la IA y tiene como objetivo el crear programas capaces de aprender. 
 
-# Header 1
-## Header 2
-### Header 3
+Una manera de entender qué es aprendizaje computacional es describiendo lo opuesto, de manera general un algoritmo (programa) es una secuencia de pasos que se siguen para resolver un problema, aunque esta secuencia no es evidente en algunos casos, podemos asumir que está ahí, por ejemplo, una hoja de cálculo o un procesador de texto son programas donde se sabe exactamente que se requiere y se puede generar un algoritmo para resolverlo. También cabría en esta descripción el algoritmo para encontrar la ruta mas corta entre dos nodos en un grafo, dicho algoritmo lo encontramos en cualquier navegador gps. 
 
-- Bulleted
-- List
+Por otro lado, existen problemas para los cuales escribir una secuencia de pasos para su solución es prácticamente imposible. Por ejemplo, identificar el correo no deseado, traducciones automáticas, o simplemente identificar el código postal en una carta ([ver](http://yann.lecun.com/exdb/mnist/)). Es en estos problemas donde recae el aprendizaje automático. 
 
-1. Numbered
-2. List
+# Bibliografía
 
-**Bold** and _Italic_ and `Code` text
+El curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. 
 
-[Link](url) and ![Image](src)
-```
+De cualquier manera es importante comentar que el curso está basado principalmente en el siguiente libro de texto:
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+- Introduction to machine learning, Third Edition. Ethem Alpaydin. MIT Press
 
-### Jekyll Themes
+y los textos complementarios. 
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/INGEOTEC/AprendizajeComputacional/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+- All of Statistics. A Concise Course in Statistical Inference. Larry Wasserman. MIT Press.
+- Understanding Machine Learning: From Theory to Algorithms. Shai Shalev-Shwartz and Shai Ben-David. Cambridge University Press.
