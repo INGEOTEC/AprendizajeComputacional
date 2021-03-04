@@ -52,7 +52,7 @@ Regresando a la representación vectorial con una explicación abstracta, se pue
 son los puntos que se muestran en la siguiente figura, claramente esto solo es posible si $x_i \in \mathbb R^2$ o si
 se hace algún tipo de transformación $f: \mathbb R^d \rightarrow \mathbb R^2$.
 
-![Puntos](/images/points.png) 
+![Puntos](/assets/images/points.png) 
 
 En la figura anterior se pueden observar dos o tres grupos de puntos, entonces el objetivo sería crear el algoritmo que dado 
 $\mathcal X$ no regrese un identificador por cada elemento, que represente al grupo al que pertenece el elemento en cuestión. 
@@ -60,7 +60,7 @@ Esta tarea se le conoce como agrupamiento (Clustering). Vamos asumir que aplicam
 anteriores; entonces, dado que podemos visualizar los datos, es factible representar el resultado del algoritmo si a
 cada punto le asignamos un color dependiendo de la clase a la que pertenece. La siguiente figura muestra el resultado de este procedimiento. 
 
-![Grupos](/images/cluster.png)
+![Grupos](/assets/images/cluster.png)
     
 Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados 
 por los colores azul, naranja y verde. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar 
