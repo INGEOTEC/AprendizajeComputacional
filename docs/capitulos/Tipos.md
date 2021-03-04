@@ -38,7 +38,7 @@ En el ámbito científico también se han generado este tipo de plataformas aunq
 
 Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**;
 el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar a un conjunto de vectores en, i.e.
-$\mathcal X = \{ x_1, \ldots, x_N \}$, donde $x_i \in \mathbb R^d $.
+$$\mathcal X = \{ x_1, \ldots, x_N \}$$, donde $x_i \in \mathbb R^d $.
 Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
 
 El **objetivo** en este tipo de aprendizaje es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, 
