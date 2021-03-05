@@ -38,24 +38,24 @@ En el ámbito científico también se han generado este tipo de plataformas aunq
 
 Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**;
 el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar a un conjunto de vectores en, i.e.
-\(\mathcal X = \{ x_1, \ldots, x_N \}\), donde $x_i \in \mathbb R^d $.
+$$\mathcal X = \{ x_1, \ldots, x_N \}$$, donde $$x_i \in \mathbb R^d$$.
 Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
 
 El **objetivo** en este tipo de aprendizaje es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, 
-en $\mathcal X $. Existen diferentes tareas que se pueden considerar dentro de aprendizaje no supervisado. Por ejemplo
+en  $$\mathcal X  $$. Existen diferentes tareas que se pueden considerar dentro de aprendizaje no supervisado. Por ejemplo
 el agrupamiento que puede servir para segmentar clientes o productos, en otra linea también cabría el análisis del carrito de 
 compras (Market Basket Analysis); donde el objetivo es encontrar la co-ocurrencias de productos, es decir, se quiere estimar 
 la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se 
 podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
 
-Regresando a la representación vectorial con una explicación abstracta, se puede visualizar que el conjunto de datos $\mathcal X$ 
-son los puntos que se muestran en la siguiente figura, claramente esto solo es posible si $x_i \in \mathbb R^2$ o si
-se hace algún tipo de transformación $f: \mathbb R^d \rightarrow \mathbb R^2$.
+Regresando a la representación vectorial con una explicación abstracta, se puede visualizar que el conjunto de datos  $$\mathcal X $$ 
+son los puntos que se muestran en la siguiente figura, claramente esto solo es posible si  $$x_i \in \mathbb R^2 $$ o si
+se hace algún tipo de transformación  $$f: \mathbb R^d \rightarrow \mathbb R^2 $$.
 
 ![Puntos](/AprendizajeComputacional/assets/images/points.png) 
 
 En la figura anterior se pueden observar dos o tres grupos de puntos, entonces el objetivo sería crear el algoritmo que dado 
-$\mathcal X$ no regrese un identificador por cada elemento, que represente al grupo al que pertenece el elemento en cuestión. 
+ $$\mathcal X $$ no regrese un identificador por cada elemento, que represente al grupo al que pertenece el elemento en cuestión. 
 Esta tarea se le conoce como agrupamiento (Clustering). Vamos asumir que aplicamos un algoritmo de agrupamiento a los datos 
 anteriores; entonces, dado que podemos visualizar los datos, es factible representar el resultado del algoritmo si a
 cada punto le asignamos un color dependiendo de la clase a la que pertenece. La siguiente figura muestra el resultado de este procedimiento. 
