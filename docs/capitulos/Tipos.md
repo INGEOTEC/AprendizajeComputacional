@@ -69,9 +69,7 @@ azules y naranjas. Es importante recalcar que no es necesario visualizar los dat
 En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores 
 tiene el objetivo de generarles una intuición de lo que está haciendo un algoritmo de agrupamiento. 
 
-
 # Aprendizaje Supervisado
-
 
 Aprendizaje supervisado es un problema donde el componente inicial es un conjunto de pares, entrada y salida. Es decir se cuenta
 con  $$\mathcal X = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, donde  $$x_i$$ corresponde a la  $$i$$-ésima entrada y  $$y_i$$ es
@@ -132,3 +130,93 @@ parábola. La siguiente figura muestra una visualización del regresor, mostrado
 
 Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, 
 pero si permite ganar intuición sobre la forma en que trabajan estos algoritmos.
+
+## Definiciones de Aprendizaje Supervisado
+
+El primer paso es empezar a darle nombre al conjunto $$\mathcal X$$, este conjunto tradicionalmente se denomina 
+**conjunto de entrenamiento**, esto proviene de que se usa para estimar los parámetros o en general buscar un algoritmo que tenga 
+el comportamiento esperado.
+
+Se puede asumir que existe una función $$f$$ que genera la relación entrada y salida mostrada en $$\mathcal X$$, es decir, 
+que $$\forall_{(x, y) \in \mathcal X} f(x) = y$$. En este contexto, aprendizaje supervisado se entiende como el proceso de encontrar
+una función $$h^*$$ que se comporta similar a $$f$$.
+
+Para encontrar $$h^*$$, se utiliza $$\mathcal X$$; el conjunto de hipótesis (funciones), $$\mathcal H$$, que se considera 
+pueden aproximar $$f$$; una función de error, $$L$$; y el error empírico $$E(h \mid \mathcal X) = \sum_{(x, y) \in \mathcal X} L(y, h(x))$$. 
+Utilizando estos elementos la función buscada es: $$h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal X)$$.
+
+El encontrar la función $$h^*$$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de 
+generalizar es decir de predecir correctamente instancias no vistas. Asúmase que se tiene un conjunto de prueba, $$\mathcal T={(x_i, y_i)}$$ 
+para $$i=1 \ldots M$$, donde $$\mathcal X \cap \mathcal T = \emptyset$$.
+La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba.
+Es decir $$E(h^* \mid \mathcal X) \approx E(h^* \mid \mathcal T) $$.
+
+### Características de la hipótesis
+
+Continuando con algunas definiciones, en la búsqueda de encontrar $$h^*$$ uno puede elegir por aquella que captura todos los datos 
+de entrenamiento siendo muy específica. Para poder explicar mejor este concepto usemos la siguiente figura que representa un ejemplo sintético.
+
+![Hipótesis mas específica](/AprendizajeComputacional/assets/images/clases-sh.png)
+
+Los puntos naranja representan una clase y los puntos azules son la otra clase, el clasificador es mostrado en el rectángulo. 
+Para completar el funcionamiento de este clasificador falta mencionar que cualquier nuevo punto que esté dentro del rectángulo 
+será calificado como clase azul y naranja si se encuentra fuera del rectángulo. Como se puede observar, el rectángulo contiene 
+todos los elementos de una clase y en alguno de sus lados toca con uno de los puntos del conjunto de entrenamiento de la clase data.
+
+En este momento, es posible visualizar que el complemento de ser muy específico es ser lo mas general posible. La siguiente siguiente 
+figura muestra un clasificador que es lo mas general. Se observa que el rectángulo casi toca uno de los puntos del conjunto de entrenamiento 
+de la clase contrario, esto lo hace del lado exterior y el procedimiento para clasificar continua siendo el que se mencionó anteriormente.
+
+![Hipótesis más general](/AprendizajeComputacional/assets/images/clases-gh.png)
+
+Uno puede elegir una hipótesis que se encuentre entre la hipótesis mas general y la más específica, esto también se puede visualizar 
+en la siguiente figura. Donde todas las hipótesis se encuentran representadas en gris.
+
+![Clase de hipótesis](/AprendizajeComputacional/assets/images/clases-ch.png)
+
+Finalmente, para poder describir mejor el comportamiento de un clasificador se hace uso de la distancia que hay entre la 
+hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la siguiente figura, donde la hipótesis
+mas general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
+
+![Marger](/AprendizajeComputacional/assets/clases-margen.png)
+
+### Tipos de Aprendizaje
+
+Utilizando $$ \mathcal X $$ y $$ \mathcal T $$ podemos definir **inductive learning** como el proceso de aprendizaje en donde 
+solamente se utiliza $$ \mathcal X $$ y el algoritmo debe de ser capaz de predecir cualquier instancia. Por otro
+lado, **transductive learning** es el proceso de aprendizaje donde se utilizar $$ \mathcal X \cup \{ x \mid (x, y) \in \mathcal T \} $$ 
+para aprender y solamente es de interés el conocer la clase o variable dependiente del 
+conjunto $$ \mathcal T $$.
+
+### Sobre-aprendizaje
+
+
+Existen clases de algoritmos, $$\mathcal H$$, que tienen un mayor grado de libertad el cual se ve reflejado en una capacidad 
+superior para aprender, pero por otro lado, existen problemas donde no se requiere tanta libertad, esta combinación se traduce
+en que el algoritmo no es capaz de generalizar y cuantitativamente se ve como $$E(h^* | \mathcal X) \ll E(h^* | \mathcal T)$$.
+
+Para mostrar este caso supóngase que se tiene un algoritmo que guarda el conjunto de entrenamiento y responde lo siguiente:
+
+$$ h^*(x) = \begin{cases} y & \text{si} (x, y) \in \mathcal X\\ 0 & \end{cases} $$
+
+Es fácil observar que este algoritmo tiene $$E(h^* \mid \mathcal X) = 0$$ dado que se aprende todo el conjunto de entrenamiento.
+
+La siguiente figura muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la linea naranja, 
+la linea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento
+no se muestran; pero se pueden visualizar dado que son datos generados por una parábola mas un error gaussiano. 
+Entonces podemos ver que la linea naranja pasa de manera exacta por todos los datos de entrenamiento y da como resultado la linea naranja
+que claramente tiene un comportamiento mas complejo que el comportamiento de la parábola que generó los datos.
+
+![Sobre-entrenamiento](/AprendizajeComputacional/assets/overfitting-2.png)
+
+### Sub-aprendizaje
+
+Por otro lado existen problemas donde el conjunto de algoritmos $$ \mathcal H $$ no tienen los grados de libertad necesarios 
+para aprender, dependiendo de la medida de error esto se refleja como $$E(h^* \mid \mathcal X) \gg 0$$.
+
+La siguiente figura muestra un problema de clasificación donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. 
+El problema de clasificación es encontrar una función que logre separar las dos clases, las cuales están representadas
+por los puntos en color azul y verde, el algoritmo de aprendizaje intenta separar estás clases mediante una linea (dibujada en rojo) 
+y como se puede observar una linea no tiene los suficientes grados de libertad para separar las clases.
+
+![Sub-entrenamiento](/AprendizajeComputacional/assets/sub-aprendizaje.png)
