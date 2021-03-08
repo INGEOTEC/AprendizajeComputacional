@@ -178,7 +178,7 @@ Finalmente, para poder describir mejor el comportamiento de un clasificador se h
 hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la siguiente figura, donde la hipótesis
 mas general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
 
-![Marger](/AprendizajeComputacional/assets/clases-margen.png)
+![Marger](/AprendizajeComputacional/assets/images/clases-margen.png)
 
 ### Tipos de Aprendizaje
 
@@ -188,8 +188,7 @@ lado, **transductive learning** es el proceso de aprendizaje donde se utilizar $
 para aprender y solamente es de interés el conocer la clase o variable dependiente del 
 conjunto $$ \mathcal T $$.
 
-### Sobre-aprendizaje
-
+### Sobre-aprendizaje
 
 Existen clases de algoritmos, $$\mathcal H$$, que tienen un mayor grado de libertad el cual se ve reflejado en una capacidad 
 superior para aprender, pero por otro lado, existen problemas donde no se requiere tanta libertad, esta combinación se traduce
@@ -207,9 +206,9 @@ no se muestran; pero se pueden visualizar dado que son datos generados por una p
 Entonces podemos ver que la linea naranja pasa de manera exacta por todos los datos de entrenamiento y da como resultado la linea naranja
 que claramente tiene un comportamiento mas complejo que el comportamiento de la parábola que generó los datos.
 
-![Sobre-entrenamiento](/AprendizajeComputacional/assets/overfitting-2.png)
+![Sobre-entrenamiento](/AprendizajeComputacional/assets/images/overfitting-2.png)
 
-### Sub-aprendizaje
+### Sub-aprendizaje
 
 Por otro lado existen problemas donde el conjunto de algoritmos $$ \mathcal H $$ no tienen los grados de libertad necesarios 
 para aprender, dependiendo de la medida de error esto se refleja como $$E(h^* \mid \mathcal X) \gg 0$$.
@@ -219,4 +218,4 @@ El problema de clasificación es encontrar una función que logre separar las do
 por los puntos en color azul y verde, el algoritmo de aprendizaje intenta separar estás clases mediante una linea (dibujada en rojo) 
 y como se puede observar una linea no tiene los suficientes grados de libertad para separar las clases.
 
-![Sub-entrenamiento](/AprendizajeComputacional/assets/sub-aprendizaje.png)
+![Sub-entrenamiento](/AprendizajeComputacional/assets/images/sub-aprendizaje.png)
