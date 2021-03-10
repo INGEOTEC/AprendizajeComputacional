@@ -7,20 +7,7 @@
 
 # Objetivo 
 
-Conocer las características de problemas de aprendizaje
-supervisado. Conocer las fortalezas y debilidades de diferentes tipos
-de algoritmos de aprendizaje de tal manera de que se pueda seleccionar
-el algoritmo mas adecuado al problema planteado. Implementar y
-analizar el rendimiento de diferentes algoritmos de aprendizaje
-supervisado.
+Conocer las características de problemas de aprendizaje supervisado y no supervisado,
+y ser capaz de identificar las fortalezas y debilidades de diferentes tipos de algoritmos de aprendizaje de tal manera de que se pueda seleccionar el algoritmo mas adecuado al problema planteado.
 
-# Temas
-
-1. Introducción
-2. Aprendizaje supervisado
-3. Métodos paramétricos
-4. Métodos no-paramétricos
-5. Máquinas de kernel
-6. Métodos no convencionales de aprendizaje
-7. Diseño y análisis de experimentos de aprendizaje
-8. Aplicaciones
+ver en [ingeotec.github.io/AprendizajeComputacional](https://ingeotec.github.io/AprendizajeComputacional)
