@@ -24,3 +24,7 @@ supervisado.
 6. Métodos no convencionales de aprendizaje
 7. Diseño y análisis de experimentos de aprendizaje
 8. Aplicaciones
+
+---
+
+La nueva versión se puede ver en [ingeotec.github.io/AprendizajeComputacional](https://ingeotec.github.io/AprendizajeComputacional)
