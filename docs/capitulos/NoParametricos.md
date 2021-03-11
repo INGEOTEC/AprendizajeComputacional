@@ -52,20 +52,18 @@ El primer paso es importar las librerías necesarias para realizar el ejercicio.
 
 ```python
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
 from collections import Counter
 from matplotlib import pylab as plt
 ```
 
-Con las librerías en el entorno, se continua leyendo el conjunto de datos y normalizandolos
-para que se encuentren en el intervalo de $$[0, 1]$$. 
+Con las librerías en el entorno, se continua leyendo el conjunto de datos, dentro del ejemplo usado en [^Wasserman] se eliminaron todos los datos menores a $$0.2$$, esto se 
+refleja en la última línea. 
 
 ```python  
 D = [list(map(float, x.strip().split())) for x in open("a1882_25.dat").readlines()]
 D = np.array(D)
 D = D[:, 2]
 D = D[D <= 0.2]
-D = MinMaxScaler().fit_transform(np.atleast_2d(D).T)[:, 0]
 ```
 
 Haciendo un paréntesis en el ejemplo, para poder calcular $$\hat p_j$$ es necesario 
@@ -80,7 +78,7 @@ y $$4$$ se encargan de arreglar estas dos características.
 Finalmente se cuenta el número de elementos que pertenencen a cada bin.
 
 ```python
-limits = np.linspace(0, 1, m + 1)
+limits = np.linspace(D.min(), D.max(), m + 1)
 _ = np.searchsorted(limits, D, side='right')
 _[_ == 0] = 1
 _[_ == m + 1] = m
@@ -98,8 +96,8 @@ manera
 def riesgo(D, m=10):
     """Riesgo de validación cruzada de histograma"""
     N = D.shape[0]
-    h = 1 / m
-    limits = np.linspace(0, 1, m + 1)
+    limits = np.linspace(D.min(), D.max(), m + 1)
+    h = limits[1] - limits[0]
     _ = np.searchsorted(limits, D, side='right')
     _[_ == 0] = 1
     _[_ == m + 1] = m
@@ -110,7 +108,56 @@ def riesgo(D, m=10):
 
 donde las partes que no han sido descritas solamente implementan las ecuación $$\hat J(h)$$.
 
-![Histograma](/AprendizajeComputacional/assets/images/hist-riesgo.png)
+Finalemente se busca minimar el valor $$h$$ que minimiza la ecuación, iterando
+por diferentes valores de $$m$$ se obtiene la siguiente gráfica del riesgo con
+diferentes niveles de bin. 
+
+![Histograma Riesgo](/AprendizajeComputacional/assets/images/hist-riesgo.png)
+
+# Estimador de Densidad por Kernel
+
+Como se puede observar el histograma es un estimador discreto, otro estimador muy utilizado
+que cuenta con la característica de ser suave es el estimador de densidad por kernel, $$K$$,
+el cual está definido de la siguiente manera.
+
+$$ \hat f(x) = \frac{1}{hN} \sum_{w \in \mathcal X} K(\frac{x - w}{h}), $$
+
+donde el kernel $$K$$ podría ser $$K(x) = \frac{1}{\sqrt{2\pi}} \exp [-\frac{x^2}{2}]$$, con parámetros $$\mu = 0$$ y $$\sigma=1$$. 
+
+La siguiente figura muestra la estimación obtenida, con $$h=0.01$$, en los datos 
+utilizados en el ejemplo del histograma. 
+
+![Histograma Riesgo](/AprendizajeComputacional/assets/images/estimador_kerner.png)
+
+# Estimador de Densidad por Vecinos Cercanos
+
+Dado un conjunto $$\mathcal X$$ y una medida de distancia $$d$$, los $$k$$ vecinos cercanos
+a $$x \notin \mathcal X$$ se puede calcular ordenando $$\mathcal X$$ de la siguiente manera. Sea 
+$$(\pi_1, \pi_2, \ldots, \pi_N)$$ la permutación tal que 
+$$d(w_{\pi_1}, x)=\min_{w \in \mathcal X} d(w, x)$$, donde $$w_{\pi_j} \in \mathcal X$$, 
+$$\pi_2$$ corresponde al indice menor quitando de $$\mathcal X$$ el elemento $$x_{\pi_1}$$ y así 
+sucesivamente. Usando esta notación los $$k$$ vecinos corresponden a $$(\pi_1, \pi_2, \ldots, \pi_k)$$. 
+
+Una maneara intuitiva de definir $$h$$ sería en lugar de pensar en un valor constante para 
+toda la función, utilizar la distancia que existe con el $$k$$ vecino mas cercano, es decir, 
+$$h=d(x_{\pi_k}, x)=d_k(x)$$. Remplazando esto en el estimado de densidad por kernel se obtiene:
+
+$$ \hat f(x) = \frac{1}{d_k(x) N} \sum_{w \in \mathcal X} K(\frac{x - w}{d_k(x)}).$$
+
+Utilizando los datos anteriores el estimador por vecinos cercanos,
+con $$k=100$$, quedaría como:
+
+![Histograma Riesgo](/AprendizajeComputacional/assets/images/estimador_knn.png)
+
+# Caso multidimensional
+
+Para el caso multidimensional el estimador quedaría como 
+
+$$ \hat f(x) = \frac{1}{h^dN} \sum_{w \in \mathcal X} K(\frac{x - w}{h}), $$
+
+donde $$d$$ corresponde al número de dimensiones. Un kernel utilizado es:
+
+$$ K(x) = (\frac{1}{\sqrt{2\pi}})^d \exp [- \frac{\mid\mid x \mid\mid ^2}{2}].$$
 
 # Clasificador de vecinos cercanos
 

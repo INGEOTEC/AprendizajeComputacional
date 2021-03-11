@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from collections import Counter
 from matplotlib import pylab as plt
+from tqdm import tqdm
 
 ## El conjunto de datos se descargó de:
 ## http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat
@@ -10,14 +11,14 @@ D = [list(map(float, x.strip().split())) for x in open("a1882_25.dat").readlines
 D = np.array(D)
 D = D[:, 2]
 D = D[D <= 0.2]
-D = MinMaxScaler().fit_transform(np.atleast_2d(D).T)[:, 0]
+# D = MinMaxScaler().fit_transform(np.atleast_2d(D).T)[:, 0]
 
 
 def riesgo(D, m=10):
     """Riesgo de validación cruzada de histograma"""
     N = D.shape[0]
-    h = 1 / m
-    limits = np.linspace(0, 1, m + 1)
+    limits = np.linspace(D.min(), D.max(), m + 1)
+    h = limits[1] - limits[0]
     _ = np.searchsorted(limits, D, side='right')
     _[_ == 0] = 1
     _[_ == m + 1] = m
@@ -26,7 +27,7 @@ def riesgo(D, m=10):
     return (2 / ((N - 1) * h)) - ((N + 1) * cuadrado / ((N - 1) * h))
 
 
-m = np.arange(1, 1000)
+m = np.arange(2, 500)
 r = [riesgo(D, x) for x in m]
 print(np.argmin(r))
 plt.plot(m, r)
