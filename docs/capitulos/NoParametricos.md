@@ -19,7 +19,7 @@ de estimar el modelo se limita a encontrar los parámetros del mismo, por ejempl
 gausiana. Por otro lado en los métodos no paramétricos asumen que datos similares se comportan de manera similar, 
 estos algoritmos también se les conoces como algoitmos de memoría o basados en instancias.
 
-## Histogramas
+# Histogramas
 
 El primer problema que estudiaremos será la estimación no paramétrica de una función de densidad, $$f$$, recordando que se cuenta con una conjunto $$\mathcal X = \{x_i\}$$ que es tomado de $$f$$ y el objetivo es usar $$\mathcal X$$ para encontrar el estimado de la función de densidad $$\hat f$$. 
 
