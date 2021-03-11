@@ -35,3 +35,16 @@ plt.xlabel("Número de bins (m)")
 plt.ylabel("Riesgo")
 plt.grid()
 plt.savefig("hist-riesgo.png")
+
+
+# from sklearn import datasets
+# X, y = datasets.load_boston(return_X_y=True)
+# 
+# m = np.arange(2, 300)
+# r = [riesgo(y, x) for x in m]
+# print(np.argmin(r))
+# plt.plot(m, r)
+# plt.grid()
+# plt.xlabel("Número de bins")
+# plt.ylabel("Riesgo")
+# plt.savefig("riesgo-boston.png")
