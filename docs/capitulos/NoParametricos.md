@@ -5,10 +5,16 @@ nav_order: 8
 ---
 
 # Métodos No Paramétricos
-{: .fs-10 }
+{: .fs-10 .no_toc }
 
 El **objetivo** de la unidad es conocer las características de diferentes métodos no paramétricos y aplicarlos para 
 resolver problemas de regresión y clasificación.
+
+## Tabla de Contenido
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 ---
 
@@ -177,7 +183,7 @@ La idea de utilizar vecinos cercanos no es solamente para problemas de clasifica
 
 {%include vecinos_regresion.html %}
 
-## Referencias
+# Referencias
 
 [^Wasserman]: All of Statistics. A Concise Course in Statistical Inference. Larry Wasserman. MIT Press.
 

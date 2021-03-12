@@ -5,10 +5,15 @@ nav_order: 2
 ---
 
 # Tipos de Aprendizaje Computacional
-{: .fs-10 }
-
+{: .fs-10 .no_toc }
 
 El **objetivo** de la unidad es conocer los diferentes tipos de aprendizaje computacional y los conceptos globales propios a este campo de estudio.
+
+## Tabla de Contenido
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 ---
 
@@ -180,7 +185,7 @@ mas general es mostrada en verde, la más específica en morada y la hipótesis 
 
 ![Marger](/AprendizajeComputacional/assets/images/clases-margen.png)
 
-### Tipos de Aprendizaje
+### Estilos de Aprendizaje
 
 Utilizando $$ \mathcal X $$ y $$ \mathcal T $$ podemos definir **inductive learning** como el proceso de aprendizaje en donde 
 solamente se utiliza $$ \mathcal X $$ y el algoritmo debe de ser capaz de predecir cualquier instancia. Por otro

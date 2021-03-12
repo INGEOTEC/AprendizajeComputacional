@@ -5,9 +5,17 @@ nav_order: 3
 ---
 
 # Teoría de Decisión Bayesiana
-{: .fs-10 }
+{: .fs-10 .no_toc }
 
-El **objectivo** de la unidad es analizar el uso de la teoría de la probabilidad para la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas de clasificación y su uso para tomar la decisión que reduzca el riesgo. 
+El **objectivo** de la unidad es analizar el uso de la teoría de la probabilidad para 
+la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas 
+de clasificación y su uso para tomar la decisión que reduzca el riesgo. 
+
+## Tabla de Contenido
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 ---
 
