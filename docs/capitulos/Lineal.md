@@ -200,11 +200,9 @@ También en este caso, no existe una solución cerrada para encontrar los parám
 
 # Máquinas de Soporte Vectorial
 
-Las máquinas de soporte vectorial siguen la idea de encontrar una función discriminante lineal que separe las clase. 
+Las máquinas de soporte vectorial siguen la idea de encontrar una función discriminante lineal que separe las clase. En este clasificador se asume un problema binario y las clases están representadas por $$-1$$ y $$1$$, es decir, $$y \in \{-1, 1\}$$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
 
-Se ha mencionado anteriormente, el conjunto de entrenamiento es un conjunto de pares entrada salida, i.e., $$\mathcal X=\{ (x_i, y_i) \} $$, donde $$x$$ es la entrada y $$y$$ es la salida. Suponiendo que tenemos un problema binario y las clases están representadas por $$-1$$ y $$1$$, es decir, $$ y \in \{-1, 1\}$$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
-
-Sea $$x_i$$ un ejemplo que corresponde a la clase $$ 1 $$ entonces se busca $$w$$ tal que
+Sea $$x_i$$ un ejemplo que corresponde a la clase $$1$$ entonces se busca $$w$$ tal que
 
 $$w^T x_i + w_0 \geq +1.$$
 
@@ -237,10 +235,12 @@ se compara contra Regresión Logística
 
 Existen problemas donde no es posible encontrar una función lineal que discrimine entre las clases, para estos problemas es común utilizar una transformación de tal manera que en el nuevo espacio el problema sea linealmente separable. 
 
-Existen varias funciones que son utilizadas para este fin, en general cualquier función con la forma $$K(x, y) \rightarrow \Re$$ funcionaría.
+Existen varias funciones que son utilizadas para este fin, en general cualquier función con la forma $$K(x, y) \rightarrow \mathbb R$$ funcionaría.
 
-La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, para un ejemplo $$x_i$$, se busca lo siguiente
+La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, para un ejemplo $$x_i$$, se busca lo siguiente:
 
 $$(\sum_{(x, y) \in \mathcal X} w_x K(x, x_i) + w_0) y_i \geq  +1.$$
+
+El siguiente video se describe el uso kernel dentro de una Máquina de Soporte Vectorial.
 
 {%include svm.html %}
