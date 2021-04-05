@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Árboles de Decisión
-nav_order: 9
+nav_order: 8
 ---
 
 # Árboles de Decisión

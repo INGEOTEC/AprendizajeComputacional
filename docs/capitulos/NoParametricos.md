@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Métodos No Paramétricos
-nav_order: 8
+nav_order: 7
 ---
 
 # Métodos No Paramétricos

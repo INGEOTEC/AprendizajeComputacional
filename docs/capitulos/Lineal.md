@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Discriminantes Lineales
-nav_order: 10
+nav_order: 9
 ---
 
 # Discriminantes Lineales
