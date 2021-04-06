@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Reducción de Dimensión
-nav_order: 5
+nav_order: 6
 ---
 
 # Reducción de Dimensión
