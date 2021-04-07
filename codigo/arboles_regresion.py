@@ -10,4 +10,4 @@ with open("tree.dot", "w") as fpt:
     _ = tree.export_graphviz(arbol)
     fpt.write(_)
 
-!dot -Tpng tree.dot -o tree.png
+## !dot -Tpng tree.dot -o tree.png
