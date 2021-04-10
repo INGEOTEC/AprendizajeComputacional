@@ -7,7 +7,7 @@ nav_order: 12
 # Redes Neuronales
 {: .fs-10 .no_toc }
 
-El **objetivo** de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación
+El **objetivo** de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación.
 
 ## Tabla de Contenido
 {: .no_toc .text-delta }
