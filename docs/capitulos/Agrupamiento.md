@@ -20,17 +20,17 @@ El **objetivo** de la unidad es conocer y aplicar k-medias
 
 # Introducción
 
-En aprendizaje no supervisado se cuenta con un conjunto \(\mathcal X = \{ x_i \} \), en particular en agrupamiento lo que intersa es asociar a cada elemento \(x_i\) a un grupo en particular, es decir, \(x_i \in G_j \) donde \(\cup_j^K G_j = \mathcal X \) y \(G_j \cap G_i = \emptyset\) para todo \(i \neq j \).
+En aprendizaje no supervisado se cuenta con un conjunto $$\mathcal X = \{ x_i \} $$, en particular en agrupamiento lo que intersa es asociar a cada elemento $$x_i$$ a un grupo en particular, es decir, $$x_i \in G_j $$ donde $$\cup_j^K G_j = \mathcal X $$ y $$G_j \cap G_i = \emptyset$$ para todo $$i \neq j $$.
 
 Para encontrar está partición se ocupa algún criterio de optimización, en particular este criterio de optimización en K-medias es el reducir la distancia entre un la media del grupo y los elementos del mismo.
 
 # K-medias
 
-De manera formal lo que se K-medias es encontrar la partición \(G = \{G_1, G_2, \ldots, G_K \} \) tal que \(\textsf{arg min}_G \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid \), donde \(\mu_i\) corresponde a la media de todos los elementos que pertenecen a \(G\).
+De manera formal lo que se K-medias es encontrar la partición $$G = \{G_1, G_2, \ldots, G_K \} $$ tal que $$\textsf{arg min}_G \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid $$, donde $$\mu_i$$ corresponde a la media de todos los elementos que pertenecen a $$G$$.
 
-La forma en que este algoritmo inicia es generando aleatoriamente k-\(\mu\) y asociando a cada elemento \(x\) a la media con el mínimo error. De esta manera se tienen todos los elementos para calcular \(\sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid \) y utilizando está información podemos derivar con respecto a \(\mu_i\) la ecuación anterior para encontrar la regla para actualizar \(mu_i\).
+La forma en que este algoritmo inicia es generando aleatoriamente k-$$\mu$$ y asociando a cada elemento $$x$$ a la media con el mínimo error. De esta manera se tienen todos los elementos para calcular $$\sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid $$ y utilizando está información podemos derivar con respecto a $$\mu_i$$ la ecuación anterior para encontrar la regla para actualizar $$mu_i$$.
 
-Realizando lo anterior se obtiene que \(\mu_i = \frac{1}{\mid G_i \mid}\sum_{x \in G_i} x \) para el siguiente paso. El proceso continua hasta que los grupos no cambian o se llega al número máximo de iteraciones.
+Realizando lo anterior se obtiene que $$\mu_i = \frac{1}{\mid G_i \mid}\sum_{x \in G_i} x $$ para el siguiente paso. El proceso continua hasta que los grupos no cambian o se llega al número máximo de iteraciones.
 
 ## Ejemplo
 
@@ -46,7 +46,7 @@ from sklearn.cluster import KMeans
 X, y = datasets.load_iris(return_X_y=True)
 ``` 
 
-La clase se inicializa primero con 2 grupos (primera linea), se predice los grupos para todo el conjunto y la siguientes lineas solo son para visualizar los grupos generados en \(\mathbb R^2\).
+La clase se inicializa primero con 2 grupos (primera linea), se predice los grupos para todo el conjunto y la siguientes lineas solo son para visualizar los grupos generados en $$\mathbb R^2$$.
 
 ```python
 m = KMeans(n_clusters=2).fit(X)
@@ -64,7 +64,7 @@ El resultado se puede observar en la siguiente figura
 ![K-medias dos grupos](/AprendizajeComputacional/assets/images/kmeans-2grp.png)
 
 
-Recordando que K-medias se tiene k vectores pivotes, \(\mu_i\) lo cuales son el centroide del grupo, entonces uno podría preguntarse donde se encuentran esos elementos. El siguiente código representa estos pivotes con una estrella en el plano junto con los otros elementos del conjunto de entrenamiento que se visualizaron en la figura anterior.
+Recordando que K-medias se tiene k vectores pivotes, $$\mu_i$$ lo cuales son el centroide del grupo, entonces uno podría preguntarse donde se encuentran esos elementos. El siguiente código representa estos pivotes con una estrella en el plano junto con los otros elementos del conjunto de entrenamiento que se visualizaron en la figura anterior.
 
 ```python
 pca = decomposition.PCA(n_components=2).fit(X)
