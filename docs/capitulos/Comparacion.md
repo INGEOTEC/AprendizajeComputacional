@@ -115,7 +115,7 @@ model = GaussianNB().fit(Xtrain, ytrain)
 hy = model.predict(Xtest)
 ``` 
 
-Se califica la clasificación de cada ejemplo y con ese valor 
+Se califica la clasificación de cada ejemplo, con ese valor 
 se estima $$p$$ y se define el número de ejemplos. El resto del
 código es equivalente al visto en el ejemplo anterior. 
  
@@ -128,12 +128,11 @@ Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 
 $$C_N = (0.8953, 1.0158)$$.
 
-Cuando se cuenta con conjuntos de datos pequeños y que además no se ha 
-definido un conjunto de prueba, otra manera de obtener las predicciones
-del algoritmo de clasificación es mediante el uso de validación cruzada
-mediante K-fold. En el siguiente código muestra su uso, el cambio 
-solamente es en el procedimiento para obtener las predicciones el cual se 
-muestra a continuación. 
+Cuando se cuenta con conjuntos de datos pequeños y además no se ha 
+definido un conjunto de prueba, se puede obtener las predicciones
+del algoritmo de clasificación mediante el uso de validación cruzada
+usando K-fold. En el siguiente código se muestra su uso, el cambio 
+solamente es en el procedimiento para obtener las predicciones.
 
 ```python
 kf = StratifiedKFold(n_splits=10, shuffle=True)
@@ -192,6 +191,7 @@ from scipy.stats import norm
 import numpy as np
 
 alpha = 0.05
+N = 100
 z = norm().ppf( 1 - alpha / 2)
 X = np.zeros(N)
 X[:85] = 1
