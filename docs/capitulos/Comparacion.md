@@ -7,7 +7,7 @@ nav_order: 14
 # Comparación de Algoritmos
 {: .fs-10 .no_toc }
 
-El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y conocer el rendimiento de algoritmos. 
+El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y analizar el rendimiento de algoritmos. 
 
 ## Tabla de Contenido
 {: .no_toc .text-delta }
@@ -173,7 +173,7 @@ $$V_F(\bar T_N) = \frac{\sigma^2}{N}$$.
 En el caso general donde no se puede encontrar una solución analítica
 para $$V_F(T_N)$$ es donde viene a ser útil el método de Bootstrap. Este
 método simula un punto de la distribución $$T_N$$ mediante la selección
-con remplazo de $$N$$ elementos del conjunto $${X_1,X_2,\ldots,X_N}$$, 
+con remplazo de $$N$$ elementos del conjunto $$\{X_1,X_2,\ldots,X_N\}$$, 
 es decir, el primer elemento sería 
 $$T_{N,1}^* = g(X_1^*,X_2^*,\ldots,X_N^*)$$ donde
 $$X_i^*$$ es seleccionado con reemplazo. Suponiendo que este
