@@ -269,7 +269,7 @@ Cn = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
 
 $$C_N=(0.9263, 0.9800)$$. 
 
-## Ejemplo - Macro-Recall
+## Ejemplo - macro-Recall
 
 Hasta el momento se han usado una medida de rendimiento para la cual
 se puede conocer su varianza y esto es el accuracy. Existen problemas
@@ -324,6 +324,101 @@ Cn = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
 
 $$C_N=(0.9167, 0.9765)$$. 
 
+
+# Comparación de Algoritmos
+
+Se han descrito varios procedimientos para conocer los intervalos de
+confianza de un algoritmos de aprendizaje. Es momento para describir
+la metodología para conocer si dos algoritmos se comportan similar
+en un problema dado. 
+
+Suponiendo que se tienen las medidas de rendimiento de dos
+algoritmos mediante validación cruzada de K-fold, es decir,
+se tiene el rendimiento del primer algoritmo como $$p_i^1$$ y
+del segundo como $$p_i^2$$ en la $$i$$-ésima instancia. Suponiendo
+que el rendimiento es una normal, entonces la resta, i.e., 
+$$p_i = p_i^1 - p_i^2$$ también sería normal. Dado que se está comparando
+los algoritmos en los mismos folds, se puede utilizar la prueba $$t$$
+de muestras dependientes. La estadística de la prueba está dada por
+$$\frac{\sqrt{K} m}{S} \sim t_{K-1}$$, donde $$m$$ y $$S^2$$ es la media 
+varianza estimada.
+
+En el siguiente ejemplo comparamos el rendimiento de Árboles Aleatorios
+y Naive Bayes en el problema de Breast Cancer. El primer paso es 
+cargar las librerías así como obtener las predicciones de los algoritmos. 
+
+```python
+import numpy as np
+from scipy import stats
+from sklearn import datasets
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import recall_score
+from scipy.stats import wilcoxon
+
+K = 30
+kf = StratifiedKFold(n_splits=K, shuffle=True, random_state=0)
+X, y = datasets.load_breast_cancer(return_X_y=True)
+
+P = []
+for tr, ts in kf.split(X, y):
+    forest = RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])
+    naive = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
+    P.append([recall_score(y[ts], hy, average="macro") for hy in [forest, naive]])
+P = np.array(P)
+```
+
+Como se puede observar la medidad de rendimiento es macro-Recall. 
+Continuando con el procedimiento para obtener $$t_{K-1}$$
+
+```python
+p = P[:, 0] - P[:, 1]
+t = np.sqrt(K) * np.mean(p) / np.std(p)
+```
+
+$$t = 2.926$$, si el valor está fuera del siguiente intervalo 
+$$(-2.045, 2.045)$$ se rechaza la hipótesis nula de que los 
+dos algoritmos se comportan similar. 
+
+En caso de que la medida de rendimiento no esté normalmente distribuida, 
+la prueba no-parametrica equivalente corresponde a Wilcoxon. En el siguiente
+ejemplo se muestra como se calcularía. 
+
+```python
+wilcoxon(P[:, 0], P[:, 1]))
+```
+
+$$p_{value}=0.0138$$. En ambos casos podemos concluir que los algoritmos
+Árboles Aleatorios y Naive Bayes son estadisticamente diferentes con
+una confianza del 95% en el problema de Breast Cancer. 
+
+Complementando el ejercicio anterior, faltaría conocer los
+intervalos de confianza de los algoritmos anteriores. 
+
+```python
+forest = np.empty_like(y)
+naive = np.empty_like(y)
+for tr, ts in kf.split(X, y):
+    forest[ts] = RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])
+    naive[ts] = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
+
+
+B = []
+for _ in range(500):
+    s = np.random.randint(X.shape[0], size=X.shape[0])
+    f = recall_score(y[s], forest[s], average="macro")
+    n = recall_score(y[s], naive[s], average="macro")
+    B.append([f, n])
+
+Cn = (np.percentile(B, alpha * 100, axis=0), np.percentile(B, (1 - alpha) * 100, axis=0))
+```
+
+Organizando los valores que se obtienen en $$C_n$$, se puede ver que
+para Árboles Aleatorios y Naive Bayes, $$C_{Bosque} = (0.9485, 0.9756)$$ y
+$$C_{Bayes} = (0.9093, 0.9479)$$. Lo cual concuerda con nuestra con la prueba
+de que los algoritmos son diferentes, hay que recordad que ambas pruebas
+están haciendo diferentes supuestos. 
 
 
 
