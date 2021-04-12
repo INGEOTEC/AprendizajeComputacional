@@ -357,6 +357,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import recall_score
 from scipy.stats import wilcoxon
 
+alpha = 0.05
 K = 30
 kf = StratifiedKFold(n_splits=K, shuffle=True, random_state=0)
 X, y = datasets.load_breast_cancer(return_X_y=True)
@@ -386,7 +387,7 @@ la prueba no-parametrica equivalente corresponde a Wilcoxon. En el siguiente
 ejemplo se muestra como se calcularía. 
 
 ```python
-wilcoxon(P[:, 0], P[:, 1]))
+wilcoxon(P[:, 0], P[:, 1])
 ```
 
 $$p_{value}=0.0138$$. En ambos casos podemos concluir que los algoritmos
