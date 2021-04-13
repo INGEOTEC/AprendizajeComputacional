@@ -5,7 +5,7 @@ nav_order: 1
 permalink: /
 ---
 
-# Introducción a Aprendizaje Computacional
+# Aprendizaje Computacional
 {: .fs-10 }
 
 Mario Graff (mgraffg en ieee.org)
