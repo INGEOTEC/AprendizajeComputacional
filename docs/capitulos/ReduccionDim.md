@@ -105,7 +105,7 @@ Donde las primeras tres líneas, después de la instrucción del ciclo, calculan
 
 Los algoritmos de selección hacia atrás y adelante tiene la caracterísitca de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $$f: \mathbb R^d \rightarrow \mathbb R^m $$ donde $$m < d $$
 
-La idea de PCA es buscar una matriz de proyección $$W^T \in \mathbb R^{m \times d}$$ tal que los elementos de $$\mathcal X = \{x_i\} $$ sea transformados utilizando $$z = W^T x$$ donde $$z \in \mathbb R^m $$. El objetivo es que la muestra z_1 tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
+La idea de PCA es buscar una matriz de proyección $$W^T \in \mathbb R^{m \times d}$$ tal que los elementos de $$\mathcal X = \{x_i\} $$ sea transformados utilizando $$z = W^T x$$ donde $$z \in \mathbb R^m $$. El objetivo es que la muestra $$z_1$$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
 
 Si suponemos que $$x \sim \mathcal N_d(\mu, \Sigma)$$ y $$ w \in \mathbb R^d $$ entonces $$w^T x \sim \mathcal N(w^T \mu, w^T \Sigma w)$$ y por lo tanto $$\textsf{Var} (w^T x) = w^T \Sigma w $$.
 
