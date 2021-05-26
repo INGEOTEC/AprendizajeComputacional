@@ -125,7 +125,7 @@ conjunto $$\mathcal T$$.
 
 ### Sobre-aprendizaje
 
-Existen clases de algoritmos, $$\mathcal H$$, que tienen un mayor grado de libertad el cual se ve reflejado en una capacidad superior para aprender, pero por otro lado, existen problemas donde no se requiere tanta libertad, esta combinación se traduce en que el algoritmo no es capaz de generalizar y cuantitativamente se ve como $$E(h^* | \mathcal X) \ll E(h^* | \mathcal T)$$.
+Existen clases de algoritmos, $$\mathcal H$$, que tienen un mayor grado de libertad el cual se ve reflejado en una capacidad superior para aprender, pero por otro lado, existen problemas donde no se requiere tanta libertad, esta combinación se traduce en que el algoritmo no es capaz de generalizar y cuantitativamente se ve como $$E(h^* \mid \mathcal X) \ll E(h^* \mid \mathcal T)$$.
 
 Para mostrar este caso hay que imaginar que se tiene un algoritmo que guarda el conjunto de entrenamiento y responde lo siguiente:
 

@@ -1,4 +1,3 @@
-from itertools import Predicate
 from scipy.stats import norm
 import numpy as np
 
@@ -152,9 +151,11 @@ print(_)
 import numpy as np
 from sklearn import datasets
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import recall_score
+from sklearn.metrics import recall_score, f1_score
 from scipy.stats import wilcoxon
 
 K = 30
@@ -164,7 +165,9 @@ X, y = datasets.load_breast_cancer(return_X_y=True)
 P = []
 for tr, ts in kf.split(X, y):
     forest = RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])
+    # naive = ExtraTreesClassifier().fit(X[tr], y[tr]).predict(X[ts])
     naive = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
+
     P.append([recall_score(y[ts], hy, average="macro") for hy in [forest, naive]])
 P = np.array(P)
 print(wilcoxon(P[:, 0], P[:, 1]))
@@ -177,6 +180,7 @@ print("%0.4f" % _)
 
 forest = np.empty_like(y)
 naive = np.empty_like(y)
+alpha=0.05
 for tr, ts in kf.split(X, y):
     forest[ts] = RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])
     naive[ts] = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
@@ -194,3 +198,35 @@ _ = ["%0.4f" % x for x in Cn[0]]
 print(_)
 _ = ["%0.4f" % x for x in Cn[1]]    
 print(_)
+
+
+alpha = 0.0125
+z = norm().ppf( 1 - alpha / 2)
+p = 0.87
+N = 1000
+Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+_ = ["%0.4f" % x for x in Cn]
+print(_)
+
+import numpy as np
+from sklearn import datasets
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import KFold
+from sklearn.metrics import r2_score
+
+X, y = datasets.load_boston(return_X_y=True)
+K = 10
+kf = KFold(n_splits=K, shuffle=True, random_state=0)
+
+hy = np.empty_like(y)
+for tr, ts in kf.split(X, y):
+    hy[ts] = LinearRegression().fit(X[tr], y[tr]).predict(X[ts])
+
+B = []
+for _ in range(500):
+    s = np.random.randint(X.shape[0], size=X.shape[0])
+    f = r2_score(y[s], hy[s])
+    B.append(f)
+alpha = 0.05
+Cn = (np.percentile(B, alpha * 100, axis=0), np.percentile(B, (1 - alpha) * 100, axis=0))
+["%0.2f" % x for x in Cn]
