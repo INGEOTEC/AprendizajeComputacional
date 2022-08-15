@@ -126,7 +126,7 @@ de acciones, $$\alpha$$ de tal manera que la acción $$\alpha_{K+1}$$ correspond
 
 La extensión del costo $$0,1$$ para este caso estaría definida como:
 
-$$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ si } i = K + 1 \\ \lambda \text{ de lo contrario} \end{cases} $$,
+$$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases} $$,
 
 donde $$0 < \lambda < 1$$.
 

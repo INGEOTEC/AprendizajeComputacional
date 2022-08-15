@@ -23,6 +23,31 @@ Una manera de entender qué es aprendizaje computacional es describiendo lo opue
 
 Por otro lado, existen problemas para los cuales escribir una secuencia de pasos para su solución es prácticamente imposible. Por ejemplo, identificar el correo no deseado, traducciones automáticas, o simplemente identificar el código postal en una carta ([ver](http://yann.lecun.com/exdb/mnist/)). Es en estos problemas donde recae el aprendizaje automático. 
 
+# Notación
+
+|Símbolo           | Significado                                              |
+|------------------|----------------------------------------------------------|
+|$$x$$             | Variable usada comunmente como entrada                   |
+|$$y$$             | Variable usada comunmente como salida                    |
+|$$\mathbb R$$     | Números reales                                           |
+|$$\mathbf x$$     | Vector Columna $$\mathbf x \in \mathbb R^d$$             |
+|$$d$$             | Dimensión                                                |
+|$$\mathbf w^\intercal \cdot \mathbf x$$ | Producto punto donde $$\mathbf w$$ y $$\mathbf x \in \mathbb R^d$$ |
+|$$\mathcal D$$    | Conjunto de datos $$\{(x_i, y_i) \mid i=1, \dots N\}$$   |
+|$$\mathcal T$$    | Conjunto de entrenamiento                                | 
+|$$\mathcal V$$    | Conjunto de validación                                   |
+|$$\mathcal G$$    | Conjunto de prueba                                       |
+|$$N$$             | Número de ejemplos                                       | 
+|$$K$$             | Número de clases                                         |
+|$$\mathbb P(\cdot)$$  | Distribución de probabilidad                         |
+|$$\mathcal X, \mathcal Y$$    | Variables aleatorías                         |
+|$$\mathcal N(\mu, \sigma^2)$$    | Distribución Normal con parámetros $$\mu$$ y $$\sigma^2$$|
+|$$f_{\mathcal X}$$| Función de densidad de probabilidad de $$\mathcal X$$    |
+|$$\mathbb 1(e)$$     | Función para indicar; $$1$$ only if $$e$$ is true     |
+|$$\Omega$$        | Espacio de búsqueda                                      |
+|$$\mathbb V$$     | Varianza                                                 |
+|$$\mathbb E$$     | Esperanza                                                |
+
 # Desarrollo del Curso
 
 Este curso ha evolucionado de las clases de Aprendizaje Computacional impartidas en la Maestría en Ciencia de Datos e Información ([MCDI](https://infotec.mx/MCDI)) de [INFOTEC](https://infotec.mx) y de Aprendizaje Computacional en la Maestría en Métodos para el Análisis de Políticas Públicas del [CIDE](http://cide.edu). 
