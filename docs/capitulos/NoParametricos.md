@@ -48,7 +48,7 @@ $$\mathbb E(\hat f(x)) = \frac{\mathbb E(\hat p_j)}{h} = \frac{p_j}{h} = \frac{\
 
 Una parte crítica para usar un histograma es la selección de $$h$$ o equivalente el número de bins del estimador. Utilizando el método descrito en [^Wasserman], el cual se basa en minimizar el riesgo haciendo una validación cruzada, obteniendo la siguiente ecuación:
 
-$$ \hat J(h) = \frac{2}{(N-1) h} - \frac{N+1}{(N-1)h} \sum_{j=1}^N \hat p_j.$$
+$$ \hat J(h) = \frac{2}{(N-1) h} - \frac{N+1}{(N-1) h} \sum_{j=1}^N {\hat p}^2_j.$$
 
 ### Ejemplo
 
