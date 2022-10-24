@@ -237,9 +237,12 @@ Existen problemas donde no es posible encontrar una función lineal que discrimi
 
 Existen varias funciones que son utilizadas para este fin, en general cualquier función con la forma $$K(x, y) \rightarrow \mathbb R$$ funcionaría.
 
-La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, para un ejemplo $$x_i$$, se busca lo siguiente:
+La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, la clase de un ejemplo $$x$$, estaría dada por:
 
-$$(\sum_{(x, y) \in \mathcal X} w_x K(x, x_i) + w_0) y_i \geq  +1.$$
+$$g(x) = (\sum_{x_k \in \mathcal X} w_k K(x, x_k) + w_0),$$
+
+donde $$x$$ corresponde a la clase positiva si $$g(x)$$ es positivo, de lo 
+contrario sería clase negativa. 
 
 El siguiente video se describe el uso kernel dentro de una Máquina de Soporte Vectorial.
 
