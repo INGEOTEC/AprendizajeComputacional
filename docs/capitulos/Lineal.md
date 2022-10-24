@@ -239,7 +239,7 @@ Existen varias funciones que son utilizadas para este fin, en general cualquier 
 
 La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, la clase de un ejemplo $$x$$, estaría dada por:
 
-$$g(x) = (\sum_{x_k \in \mathcal X} w_k K(x, x_k) + w_0),$$
+$$g(x) = \sum_{x_i \in \mathcal X} w_i K(x, x_i) + w_0,$$
 
 donde $$x$$ corresponde a la clase positiva si $$g(x)$$ es positivo, de lo 
 contrario sería clase negativa. 
