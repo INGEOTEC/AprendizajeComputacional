@@ -31,9 +31,50 @@ Sin embargo, existen problemas cuyas características, como incertidumbre en la 
 datos, variables que no se pueden medir, entre otros factores hacen que lo mejor que se puede 
 esperar es un algoritmo exacto y preciso. Todos los problemas que
 trataremos en Aprendizaje Computacional caen dentro del segundo escenario.
-
 El lenguaje que nos permite describir de manera adecuada este tipo de ambiente, que se 
 caracteriza por variables aleatorios es el de la probabilidad.
+
+# Probabilidad
+
+En el [capítulo anterior](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) 
+se describió que el punto de inicio de aprendizaje supervisado
+es el conjunto $$\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, donde $$x_i \in \mathbb R^d$$ 
+corresponde a la  $$i$$-ésima entrada y $$y_i$$ es la salida asociada a esa entrada;
+este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar una
+método que capture de la relación entre $$x$$ y $$y$$.
+
+Se pueden tratar la variables $$x$$ y $$y$$ de $$\mathcal D$$ como dos variables aleatorías
+$$\mathcal X$$ y $$\mathcal Y$$, respectivamente; en este dominio el problema de 
+identificar la respuesta ($$\mathcal Y$$) dada la entrada ($$\mathcal X$$) se puede describir 
+como encontrar la probabilidad de observar $$\mathcal Y$$ habiendo visto 
+$$\mathcal X$$, es decir, $$\mathbb P(\mathcal Y \mid \mathcal X)$$.
+
+## Ejemplos
+
+Por ejemplo, en un problema de clasificación binaria se tiene que 
+la respuesta tiene dos posibles valores, e.g., $$\mathcal Y=\{0, 1\}$$. Entonces el problema
+es saber si dada una entrada $$x$$ el valor de la respuesta es $$1$$ o $$0$$. Utilizando
+probabilidad la pregunta quedaría como conocer la probabilidad de que $$\mathcal Y=1$$ 
+o $$\mathcal Y=0$$ cuando se observa $$\mathcal X=x$$, es decir, 
+encontrar $$\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$$ 
+y compararlo contra $$\mathbb P(\mathcal Y=0 \mid \mathcal X=x)$$. Tomando en cuenta
+estos valores de probabilidad se puede concluir el valor de la salida dado que $$\mathcal X=x$$.
+También está el caso que las probabilidades sean iguales, 
+e.g., si $$\mathbb P(\mathcal Y=1 \mid \mathcal X=x)=\mathbb P(\mathcal Y=0 \mid \mathcal X=x)=0.5$$
+o que su diferencia sea muy pequeña y entonces se toma la decisión de desconocer 
+el valor de la salida.
+
+Para el caso de regresión ($$y \in \mathbb R$$), el problema se puede plantear
+asumiento que $$\mathcal Y$$ proviene de una distribución particular cuyos
+parámetros están dados por la entrada $$\mathcal X$$. Por ejemplo, en regresión
+lineal se asume que $$\mathcal Y$$ proviene de una distribución Gausiana con 
+parámetros dados por $$\mathcal X$$, es decir, 
+$$\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$$
+donde los parámetros de la función $$g$$ son identificados mediante $$\mathcal X$$
+y $$\epsilon \sim \mathcal N(0, \sigma^2)$$ es el error con media cero y desviación
+estandar $$\sigma$$.
+
+<!--
 
 En particular podemos observar que el problema de regresión y de clasificación se puede 
 definir utilizando la definición de probabilidad condicional
@@ -53,6 +94,8 @@ $$ \begin{cases} 1, P(C=1 \mid x) > 0.5\\ 0, \text{de lo contrario} \end{cases} 
 Por otro lado en regresión se puede plantear como 
 $$p(y \mid x) = \mathcal N(g(x \mid \theta), \sigma^2)$$, donde la función $$g$$ y sus 
 parámetros $$\theta$$ son identificados mediante el conjunto $$\mathcal X$$.
+
+-->
 
 # Teorema de Bayes
 
