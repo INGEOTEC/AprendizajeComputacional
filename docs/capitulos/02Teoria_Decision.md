@@ -110,7 +110,7 @@ se puede utilizar la definición de **probabilidad condicional** que es
 $$\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$$
 Utilizando estas ecuaciones el **Teorema de Bayes** queda como
 
-$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathbb Y)}{\mathbb P(\mathcal X)}.$$
+$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}.$$
 
 <!--
 Se puede observar que calcular la probabilidad conjunta de los eventos $$A$$ y $$B$$, i.e., 
