@@ -72,7 +72,8 @@ parámetros dados por $$\mathcal X$$, es decir,
 $$\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$$
 donde los parámetros de la función $$g$$ son identificados mediante $$\mathcal X$$
 y $$\epsilon \sim \mathcal N(0, \sigma^2)$$ es el error con media cero y desviación
-estandar $$\sigma$$.
+estandar $$\sigma$$. Con estas condiciones la salida $$y$$ es 
+$$\mathbb E[\mathbb P(\mathcal Y \mid \mathcal X=x)].$$
 
 <!--
 
@@ -99,6 +100,19 @@ parámetros $$\theta$$ son identificados mediante el conjunto $$\mathcal X$$.
 
 # Teorema de Bayes
 
+El problema se convierte en cómo calcular $$\mathbb P(\mathcal Y \mid \mathcal X)$$, 
+lo cual se puede realizar mediante el Teorema de Bayes el cual se deriva a continuación.
+
+La probabilidad conjunta se puede expresar como $$\mathbb P(\mathcal X, \mathcal Y)$$,
+esta probabilidad es conmutativa por lo que 
+$$\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).$$ En este momento
+se puede utilizar la definición de **probabilidad condicional** que es 
+$$\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$$
+Utilizando estas ecuaciones el **Teorema de Bayes** queda como
+
+$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathbb Y)}{\mathbb P(\mathcal X)}.$$
+
+<!--
 Se puede observar que calcular la probabilidad conjunta de los eventos $$A$$ y $$B$$, i.e., 
 $$P(AB)$$, en otras palabras el calcular las probabilidad conjunta entre entrada y salida. 
 Para evitar este paso, se puede expresar la relación de probabilidad
@@ -128,6 +142,8 @@ $$P(x) = \sum_i P(x \mid C_i) P(C_i)$$.
 
 Finalmente, es importante mencionar que $$P(\cdot \mid x)$$ cumple con todos los axiomas de 
 probabilidad, para este caso, suponiendo $$K$$ clases entonces $$\sum_i^K P(C_i \mid x) = 1$$.
+-->
+
 
 # Riesgo
 
