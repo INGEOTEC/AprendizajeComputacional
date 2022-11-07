@@ -17,6 +17,17 @@ de clasificación y su uso para tomar la decisión que reduzca el riesgo.
 1. TOC
 {:toc}
 
+## Paquetes usados
+{: .no_toc .text-delta }
+```python
+from scipy.stats import multivariate_normal
+from matplotlib import pylab as plt
+import seaborn as sns
+import numpy as np
+import pandas as pd
+sns.set_theme()
+```
+
 ---
 
 # Introducción
@@ -143,6 +154,27 @@ $$P(x) = \sum_i P(x \mid C_i) P(C_i)$$.
 Finalmente, es importante mencionar que $$P(\cdot \mid x)$$ cumple con todos los axiomas de 
 probabilidad, para este caso, suponiendo $$K$$ clases entonces $$\sum_i^K P(C_i \mid x) = 1$$.
 -->
+
+## Ejemplo 
+
+```python
+p1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]])
+X_1 = p1.rvs(size=1000)
+p2 = multivariate_normal(mean=[1.5, -1.5], cov=[[2, 1], [1, 3]])
+X_2 = p2.rvs(size=1000)
+p3 = multivariate_normal(mean=[12.5, -3.5], cov=[[2, 3], [3, 7]])
+X_3 = p3.rvs(size=1000)
+
+df = pd.DataFrame([dict(x=x, y=y, label=0) for x, y in X_1] + \
+                  [dict(x=x, y=y, label=1) for x, y in X_2] + \
+                  [dict(x=x, y=y, label=2) for x, y in X_3])
+sns.relplot(data=df, kind='scatter',
+            x='x', y='y', hue='label')
+```
+
+<!--
+plt.savefig('gaussian_3classes.png', dpi=300)
+-->                           
 
 
 # Riesgo
