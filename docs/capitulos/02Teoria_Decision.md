@@ -22,9 +22,9 @@ de clasificación y su uso para tomar la decisión que reduzca el riesgo.
 ```python
 from scipy.stats import multivariate_normal
 from matplotlib import pylab as plt
-import seaborn as sns
 import numpy as np
 import pandas as pd
+import seaborn as sns
 sns.set_theme()
 ```
 
