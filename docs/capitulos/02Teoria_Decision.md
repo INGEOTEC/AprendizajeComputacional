@@ -121,7 +121,16 @@ se puede utilizar la definición de **probabilidad condicional** que es
 $$\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$$
 Utilizando estas ecuaciones el **Teorema de Bayes** queda como
 
-$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}.$$
+$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},$$
+
+donde al término $$\mathbb P(\mathcal X \mid \mathcal Y)$$ se le conoce como verosimilitud,
+$$\mathbb P(\mathcal Y)$$ es la probabilida a priori y $$\mathbb P(\mathcal X)$$ 
+es la evidencia. 
+
+Es importante mencionar que la evidencia se puede calcular mediante la probabilidad
+total, es decir:
+
+$$\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).$$
 
 <!--
 Se puede observar que calcular la probabilidad conjunta de los eventos $$A$$ y $$B$$, i.e., 
@@ -157,15 +166,46 @@ probabilidad, para este caso, suponiendo $$K$$ clases entonces $$\sum_i^K P(C_i 
 
 ## Ejemplo 
 
+Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección
+presenta un problema sintético. El procedimiento es el siguiente, primero se generarán
+los datos, los cuales van a ser tres nubes de puntos generadas mediantes 
+tres distribuciones gausianas multivariadas. Con estas tres nubes de puntos, se utilizará
+el Teorema de Bayes para clasificar todos los puntos generados. 
+
+El primer paso es definir las tres distribuciones gausianas multivariadas, para este 
+objetivo se usa la clase `multivariate_normal` como se muestra a continuación. 
+
+
 ```python
 p1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]])
 p2 = multivariate_normal(mean=[1.5, -1.5], cov=[[2, 1], [1, 3]])
 p3 = multivariate_normal(mean=[12.5, -3.5], cov=[[2, 3], [3, 7]])
+```
 
+Los parámetros de la distribución son el vector de medías y la matriz
+de covarianza, para la primera distribución estos corresponden a $$\mathbf \mu = [5, 5]^T$$
+y 
+
+$$
+\Sigma = \begin{pmatrix} 
+            4 & 0 \\
+            0 & 2 \\
+         \end{pmatrix}.
+$$
+
+Una vez definidas las distribuciones podemos generar números aleatoreos de las mismas,
+en el siguiente código se generar 1000 vectores aleatorios de las tres distribuciones. 
+
+```python
 X_1 = p1.rvs(size=1000)
 X_2 = p2.rvs(size=1000)
 X_3 = p3.rvs(size=1000)
+```
 
+Para graficar estas tres nubes de puntos se puede hacer uso del siguiente código, 
+donde se hace uso de la librería `pandas` y `seaborn` para la generar la gráfica.
+
+```python
 df = pd.DataFrame([dict(x=x, y=y, label=0) for x, y in X_1] + \
                   [dict(x=x, y=y, label=1) for x, y in X_2] + \
                   [dict(x=x, y=y, label=2) for x, y in X_3])
@@ -177,6 +217,10 @@ sns.relplot(data=df, kind='scatter',
 plt.savefig('gaussian_3classes.png', dpi=300)
 -->                           
 
+El resultado del código anterior se muestra en la siguiente figura, donde 
+se puede visualizar las tres nubes de puntos, donde el color indica la clase (*label*). 
+
+![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
 
 # Riesgo
 
