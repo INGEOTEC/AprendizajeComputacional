@@ -206,11 +206,11 @@ Para graficar estas tres nubes de puntos se puede hacer uso del siguiente códig
 donde se hace uso de la librería `pandas` y `seaborn` para la generar la gráfica.
 
 ```python
-df = pd.DataFrame([dict(x=x, y=y, label=0) for x, y in X_1] + \
-                  [dict(x=x, y=y, label=1) for x, y in X_2] + \
-                  [dict(x=x, y=y, label=2) for x, y in X_3])
+df = pd.DataFrame([dict(x=x, y=y, clase=1) for x, y in X_1] + \
+                  [dict(x=x, y=y, clase=2) for x, y in X_2] + \
+                  [dict(x=x, y=y, clase=3) for x, y in X_3])
 sns.relplot(data=df, kind='scatter',
-            x='x', y='y', hue='label')
+            x='x', y='y', hue='clase')
 ```
 
 <!--
@@ -218,10 +218,97 @@ plt.savefig('gaussian_3classes.png', dpi=300)
 -->                           
 
 El resultado del código anterior se muestra en la siguiente figura, donde 
-se puede visualizar las tres nubes de puntos, donde el color indica la clase (*label*). 
+se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
 
 ![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
 
+Quitando la evidencia del Teorema de Bayes se observa que 
+$$\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$.
+En el ejemplo creado se observa que $$\mathbb P(\mathcal X=1) = \frac{1000}{3000},$$ las otras probabilidades
+a priori tienen el mismo valor, es decir, $$\mathbb P(\mathcal X=2) = \mathbb P(\mathcal X=2) = \frac{1}{3}.$$ 
+
+La verosimilitud está definida en las variables `p1`, `p2` y `p3`; en particular en la función 
+`pdf`, es decir, $$\mathbb P(\mathcal X \mid \mathcal Y=1)$$ es `p1.pdf`, $$\mathbb P(\mathcal X \mid \mathcal Y=2)$$ corresponde a `p2.pdf` y equivalentemente `p3.pdf` es la verosimilitud cuando $$\mathcal Y=3.$$
+
+Utilizando esta información $$\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$ 
+se calcula de la siguiente manera.
+
+```python
+X = np.concatenate((X_1, X_2, X_3))
+posterior = (np.vstack([p1.pdf(X),
+                        p2.pdf(X), 
+                        p3.pdf(X)]) * 1 / 3).T
+```
+
+La evidencia es un factor normalizador que hace que las probabilidad sume a uno, 
+el siguiente código calcula la evidencia, $$\mathbb P(\mathcal X)$$ 
+
+```python
+evidencia = posterior.sum(axis=1)
+```
+
+Finalmente, $$\mathbb P(\mathcal Y \mid \mathcal X)$$ se obtiene normalizando 
+$$\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$ que se puede 
+realizar de la siguiente manera. 
+
+```python
+posterior = posterior / np.atleast_2d(evidencia).T
+```
+
+La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad
+de $$\mathbb P(\mathcal Y=1 \mid \mathcal X),$$ $$\mathbb P(\mathcal Y=2 \mid \mathcal X)$$
+y $$\mathbb P(\mathcal Y=3 \mid \mathcal X)$$; y la clase es aquella que tenga mayor 
+probabilidad. El siguiente código muestra este procedimiento, donde el primer paso
+es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad
+máxima y después transformar el índice de la probabilidad máxima a la clase. 
+
+```python
+clase = np.array([1, 2, 3])
+indice = posterior.argmax(axis=1)
+prediccion = clase[indice]
+```
+
+En la variable `prediccion` se tienen las predicciones de las clases, 
+ahora se analizará si estas predicciones corresponden con la clase original 
+que fue generada. Por la forma en que se generó `X` se sabe que los primero 
+1000 elementos pertenecen a la clase $$1$$, los siguientes 1000 a la clase
+$$2$$ y los restantes a la clase $$3$$. A continuación se muestra el arreglo
+`y` que tiene esta estructura. 
+
+```python
+y = np.concatenate([np.ones(1000), np.ones(1000) + 1, np.ones(1000) + 2])
+```
+
+La pregunta es conocer cuantos ejemplos no fueron clasificados de manera correcta,
+el siguiente código muestra el procedimiento para calcular el error. 
+
+```python
+error = (y != prediccion).sum()
+```
+
+Dado que los datos se encuentran en $$\mathbb R^2$$ se puede visualizar aquellos ejemplos
+donde el proceso de clasificación falló, el siguiente código muestra el procedimiento
+para visualizar los datos. 
+
+```python
+_ = [dict(x=x, y=y, error=error) 
+     for (x, y), error in zip(X, y != prediccion)]
+df_error = pd.DataFrame(_)
+sns.relplot(data=df_error, kind='scatter',
+            x='x', y='y', hue='error')
+```
+
+<!--
+plt.savefig('gaussian_3classes_hy.png', dpi=300)
+-->   
+
+La siguiente figura muestra todos los datos generados, en color azul 
+se muestran aquellos datos que fueron correctamente clasificados y 
+en color naranja (error igual a True) se muestran aquellos ejemplos
+donde el proceso de clasificación cometió un error. 
+
+
+![Predicción](/AprendizajeComputacional/assets/images/gaussian_3classes_hy.png)
 # Riesgo
 
 Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un 
@@ -232,10 +319,10 @@ grave que no dejar entrar a una persona con los privilegios adecuados.
 Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es 
 modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor 
 riesgo. Para realizar este procedimiento es necesario definir $$\alpha_i$$
-como la acción que se toma al seleccionar la clase $$C_i$$. Entonces el riesgo esperado por 
-tomar la acción $$\alpha_i$$ está definido por:
+como la acción que se toma al seleccionar la clase $$\mathcal Y=i$$. 
+Entonces el riesgo esperado por tomar la acción $$\alpha_i$$ está definido por:
 
-$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} P(C_k \mid x) $$,
+$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) $$,
 
 donde $$\lambda_{ik}$$ es el costo de tomar la acción $$i$$ en la clase $$k$$.
 
@@ -245,7 +332,7 @@ $$0$$ y el equivocarse en cualquier caso tiene un costo $$1$$ se define como:
 $$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ de lo contrario} \end{cases} $$.
 
 Usando la función de costo $$0/1$$ el riesgo se define de la siguiente manera: 
-$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} P(C_k \mid x) = \sum_{k\neq i} P(C_k \mid x) = 1 - P(C_i \mid x) $$. Recordando que $$\sum_k P(C_k \mid x) = 1$$.
+$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x) $$. Recordando que $$\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$$.
 
 Por lo tanto en el caso de costo $$0/1$$ se puede observar que mínimo riesgo corresponde a la clase más probable.
 
@@ -262,17 +349,19 @@ de acciones, $$\alpha$$ de tal manera que la acción $$\alpha_{K+1}$$ correspond
 
 La extensión del costo $$0,1$$ para este caso estaría definida como:
 
-$$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases} $$,
+$$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases},$$
 
 donde $$0 < \lambda < 1$$.
 
-Usando la definición de riesgo, el riesgo de tomar la acción $$\alpha_{K+1}$$ es $$R(\alpha_{K+1} \mid x) = \sum_k^K\lambda_{(K+1)k} P(C_k \mid x) = \sum_k^K \lambda P(C_k \mid x) = \lambda \sum_k^K P(C_k \mid x) = \lambda $$.
+Usando la definición de riesgo, el riesgo de tomar la acción $$\alpha_{K+1}$$ es $$R(\alpha_{K+1} \mid x) = \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.$$
 
 # Seleccionando la acción
 
 Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $$0,1$$ que 
 incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado 
-por $$R(\alpha_i \mid x) = 1 - P(C_i \mid x) $$ y el riesgo de la acción nula es $$R(\alpha_{K+1} \mid x) = \lambda $$.
+por $$R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x) $$ y el riesgo de la acción nula es $$R(\alpha_{K+1} \mid x) = \lambda $$.
 
-En esta circunstancias se selecciona la clase $$C_i$$ si es las clase con la probabilidad 
-máxima, i.e., $$C_i = \textsf{arg max}_k P(C_k \mid x)$$ y además $$P(C_i \mid x) > 1 - \lambda $$.
+En esta circunstancias se selecciona la clase $$\hat y$$ 
+si es la clase con la probabilidad máxima (i.e., 
+$$\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$$) y además 
+$$\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$$
