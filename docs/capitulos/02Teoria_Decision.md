@@ -47,7 +47,7 @@ caracteriza por variables aleatorios es el de la probabilidad.
 
 # Probabilidad
 
-En el [capítulo anterior](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) 
+En el [unidad anterior](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) 
 se describió que el punto de inicio de aprendizaje supervisado
 es el conjunto $$\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, donde $$x_i \in \mathbb R^d$$ 
 corresponde a la  $$i$$-ésima entrada y $$y_i$$ es la salida asociada a esa entrada;

@@ -75,7 +75,7 @@ Al igual que en aprendizaje no supervisado, en algunos casos es posible visualiz
 
 ![Conjunto de entrenamiento](/AprendizajeComputacional/assets/images/clases.png)
 
-Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple linea recta podría separar estos puntos. La siguiente figura muestra un ejemplo de lo que haría un clasificador representado por la línea verde; la clase es dada por el signo de  $$ax + by + c $$, donde  $$a$$, $b$ y  $$c$$ son parámetros identificados a partir de  $$\mathcal D$$.
+Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple linea recta podría separar estos puntos. La siguiente figura muestra un ejemplo de lo que haría un clasificador representado por la línea verde; la clase es dada por el signo de  $$ax + by + c $$, donde  $$a$$, $$b$$ y  $$c$$ son parámetros identificados a partir de  $$\mathcal D$$.
 
 ![Clasificación](/AprendizajeComputacional/assets/images/clases2.png)
 
