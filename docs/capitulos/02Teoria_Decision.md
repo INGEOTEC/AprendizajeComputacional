@@ -164,7 +164,8 @@ Finalmente, es importante mencionar que $$P(\cdot \mid x)$$ cumple con todos los
 probabilidad, para este caso, suponiendo $$K$$ clases entonces $$\sum_i^K P(C_i \mid x) = 1$$.
 -->
 
-## Ejemplo 
+## Ejemplo
+{: #sec:tres-normales } 
 
 Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección
 presenta un problema sintético. El procedimiento es el siguiente, primero se generarán
@@ -226,7 +227,7 @@ se puede visualizar las tres nubes de puntos, donde el color indica la clase.
 Quitando la evidencia del Teorema de Bayes se observa que 
 $$\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$.
 En el ejemplo creado se observa que $$\mathbb P(\mathcal X=1) = \frac{1000}{3000},$$ las otras probabilidades
-a priori tienen el mismo valor, es decir, $$\mathbb P(\mathcal X=2) = \mathbb P(\mathcal X=2) = \frac{1}{3}.$$ 
+a priori tienen el mismo valor, es decir, $$\mathbb P(\mathcal X=2) = \mathbb P(\mathcal X=3) = \frac{1}{3}.$$ 
 
 La verosimilitud está definida en las variables `p1`, `p2` y `p3`; en particular en la función 
 `pdf`, es decir, $$\mathbb P(\mathcal X \mid \mathcal Y=1)$$ es `p1.pdf`, $$\mathbb P(\mathcal X \mid \mathcal Y=2)$$ corresponde a `p2.pdf` y equivalentemente `p3.pdf` es la verosimilitud cuando $$\mathcal Y=3.$$
@@ -323,15 +324,18 @@ La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve
 a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer
 esta variabilidad de la medición del error es calculando su **error estandar**. 
 
-El **error estandar** está definido como $$\sqrt{\mathbb V(\hat \theta)}$$ donde 
+El [error estandar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar) 
+está definido como $$\sqrt{\mathbb V(\hat \theta)}$$ donde 
 $$\hat \theta$$ es el valor estimado, en este caso el `error`. 
 El error es una variable aleatoria que sigue una distribución
 de Bernoulli, dado que para cada ejemplo tiene dos valores $$1$$ que indica que en ese 
 ejemplo el clasificador se equivocó y $$0$$ cuando se predice la clase correcta. 
-El parámetro de la distribución Bernoulli corresponde al error, sea
-$$p$$ este parámetro entonces 
-$$\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}}.$$ Para el ejemplo
-analizado el error estandar se calcula con la siguiente instrucción
+El parámetro de la distribución Bernoulli, $$p$$, se estima como la media
+entonces el error estandar de $$p$$ corresponde al 
+[error estandar de la media](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media), i.e.,  
+$$\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$$ dado que 
+la varianza $$\sigma^2$$ de una distribución Bernoulli con parámetro $$p$$ es $$p (1 - p)$$.  
+Para el ejemplo analizado el error estandar se calcula con la siguiente instrucción
 
 ```python
 se_formula = np.sqrt(error * (1 - error) / 3000)

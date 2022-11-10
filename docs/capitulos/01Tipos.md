@@ -25,9 +25,14 @@ En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pare
 
 **Aprendizaje no-supervisado** es aquel donde se tiene un conjunto de entradas y se busca aprender alguna relación de estas entradas, por ejemplo, generando grupos o utilizando estas entradas para hacer una transformación o encontrar un patrón. 
 
-Finalmente **aprendizaje por refuerzo** es aquel donde se aprender utilizando una función de refuerzo, es decir, se puede ver como un algoritmo que realiza una acción y la función de refuerzo regresa una calificación, de esta manera se puede saber cuáles son aquellas acciones que tienen una mayor recompensa. En particular este último tipo de aprendizaje se puede entender mas claro con un ejemplo de control, como se muestra en el siguiente video. 
-
-{%include refuerzo.html %}
+Finalmente **aprendizaje por refuerzo** es aquel donde se tiene un agente que tiene que aprender
+como interactuar con un ambiente. La interacción es tomando una acción en cada diferente 
+estado del ambiente. Por ejemplo, el agente puede ser un jugador virtual en un 
+juego de ajedrez entonces la acción es identificar y mover una pieza en el tablero, 
+el objetivo de ganar la partida. La característica de aprendizaje por refuerzo 
+es que el agente va a recibir una recompensa al final de la interacción con el ambiente, 
+e.g., final del juego y el objetivo es optimizar las acciones para que la recompensa sea
+la mayor posible. 
 
 ## Aplicaciones de Aprendizaje Computacional
 

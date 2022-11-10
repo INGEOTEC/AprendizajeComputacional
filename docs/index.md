@@ -33,7 +33,7 @@ Por otro lado, existen problemas para los cuales escribir una secuencia de pasos
 |$$\mathbf x$$     | Vector Columna $$\mathbf x \in \mathbb R^d$$             |
 |$$d$$             | Dimensión                                                |
 |$$\mathbf w^\intercal \cdot \mathbf x$$ | Producto punto donde $$\mathbf w$$ y $$\mathbf x \in \mathbb R^d$$ |
-|$$\mathcal D$$    | Conjunto de datos $$\{(x_i, y_i) \mid i=1, \dots N\}$$   |
+|$$\mathcal D$$    | Conjunto de datos                                        |
 |$$\mathcal T$$    | Conjunto de entrenamiento                                | 
 |$$\mathcal V$$    | Conjunto de validación                                   |
 |$$\mathcal G$$    | Conjunto de prueba                                       |
