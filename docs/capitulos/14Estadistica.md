@@ -35,7 +35,7 @@ distribuidos, entonces la media corresponde a
 
 $$\hat \mu = \frac{1}{N} \sum_{x \in \mathcal D} x.$$
 
-El error estandar de $$\hat \mu$$ es $$\sqrt(\mathbb V(\hat \mu))$$. Para derivar
+El error estandar de $$\hat \mu$$ es $$\sqrt{\mathbb V(\hat \mu)}$$. Para derivar
 el valor análitico de este error estandar es necesario utilizar la siguiente 
 propiedad de la varianza:
 
