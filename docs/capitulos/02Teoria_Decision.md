@@ -220,6 +220,7 @@ plt.savefig('gaussian_3classes.png', dpi=300)
 El resultado del código anterior se muestra en la siguiente figura, donde 
 se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
 
+{: #fig:gaussian_3classes }
 ![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
 
 Quitando la evidencia del Teorema de Bayes se observa que 
@@ -279,16 +280,9 @@ $$2$$ y los restantes a la clase $$3$$. A continuación se muestra el arreglo
 y = np.concatenate([np.ones(1000), np.ones(1000) + 1, np.ones(1000) + 2])
 ```
 
-La pregunta es conocer cuantos ejemplos no fueron clasificados de manera correcta,
-el siguiente código muestra el procedimiento para calcular el error. 
-
-```python
-error = (y != prediccion).sum()
-```
-
-Dado que los datos se encuentran en $$\mathbb R^2$$ se puede visualizar aquellos ejemplos
-donde el proceso de clasificación falló, el siguiente código muestra el procedimiento
-para visualizar los datos. 
+Teniendo las predicciones y los valores de reales de las clases, lo que se busca
+es visualizar los ejemplos que no fueron clasificados de manera correcta,
+el siguiente código muestra este procedimiento.  
 
 ```python
 _ = [dict(x=x, y=y, error=error) 
@@ -309,6 +303,80 @@ donde el proceso de clasificación cometió un error.
 
 
 ![Predicción](/AprendizajeComputacional/assets/images/gaussian_3classes_hy.png)
+
+# Error de Clasificación
+
+Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, 
+este produce errores al momento de usarlo para clasificar. 
+Se podía asumir que este error en clasificación iba a ocurrir desde el 
+momento que las [nubes de puntos](#fig:gaussian_3classes) de la clase 1 y 2 se traslapan.
+
+El ejemplo sirve también para ilustrar otro comportamiento que se tiene cuando se
+mide el error de cualquier algoritmo de aprenizaje supervisado. Primero se
+empieza por medir el error promedio utilizando el siguiente código.
+
+```python
+error = (y != prediccion).mean()
+```
+
+La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve 
+a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer
+esta variabilidad de la medición del error es calculando su **error estandar**. 
+
+El **error estandar** está definido como $$\sqrt{\mathbb V(\hat \theta)}$$ donde 
+$$\hat \theta$$ es el valor estimado, en este caso el `error`. 
+El error es una variable aleatoria que sigue una distribución
+de Bernoulli, dado que para cada ejemplo tiene dos valores $$1$$ que indica que en ese 
+ejemplo el clasificador se equivocó y $$0$$ cuando se predice la clase correcta. 
+El parámetro de la distribución Bernoulli corresponde al error, sea
+$$p$$ este parámetro entonces 
+$$\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}}.$$ Para el ejemplo
+analizado el error estandar se calcula con la siguiente instrucción
+
+```python
+se_formula = np.sqrt(error * (1 - error) / 3000)
+```
+
+teniendo un valor de $$0.00196$$. 
+
+Existen casos donde el error estandar no se puede estimar analíticamente como es el 
+caso de la media en una distribución Bernoulli. En esos casos se puede estimar mediante
+la técnica de Bootstrap. Esta técnica requiere que los datos con los que se
+estima el parámetro se seleccionen con remplazo $$N$$ veces, en la primera linea
+se generan 500 repeticiones del tamaño de `y` de números enteros entre $$[0, m)$$ donde
+$$m$$ es el tamaño de `y`. Por cada iteración, se estima el parámetro de interés. En
+la segunda linea se itera por `S` calculando el error con la muestra indicada. Finalmente
+se calcula la desviación estandar de los parámetros estimados en el paso anterior `B`, 
+lo cual se observa en la tercera linea y ese valor corresponde al error estandar. 
+El error estandar calculado mediante Bootstrap es $$0.00194.$$
+
+
+```python
+S = np.random.randint(y.shape[0], size=(500, y.shape[0]))
+B = [(y[s] != prediccion[s]).mean() for s in S]
+se = np.std(B)
+```
+
+El error estandar corresponde a la distribución que tiene la estimación del parámetro
+de interés mediante Boostrap se simulo está distribución y con el siguiente 
+código se puede observar su histograma, donde los datos estimados se encuentran
+en la lista `B`.
+
+```
+sns.histplot(B)
+```
+
+<!--
+plt.savefig('hist_error_3classes_hy.png', dpi=300)
+-->
+
+La siguiente figura muestra el histograma de la estimación del error en el ejemplo
+analizado.
+
+![Histograma del error](/AprendizajeComputacional/assets/images/hist_error_3classes_hy.png)
+
+
+
 # Riesgo
 
 Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un 
