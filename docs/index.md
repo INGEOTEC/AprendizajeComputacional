@@ -57,13 +57,10 @@ en particular algunas figuras, fueron generadas por la Dra. Sánchez.
 
 # Bibliografía
 
-El curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. 
+El curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. De cualquier manera es importante comentar que el curso está basado en los siguientes libros de texto:
 
-De cualquier manera es importante comentar que el curso está basado principalmente en el siguiente libro de texto:
-
-- Introduction to machine learning, Third Edition. Ethem Alpaydin. MIT Press
-
-y los textos complementarios. 
-
+- Introduction to machine learning, Third Edition. Ethem Alpaydin. MIT Press.
+- [Probabilistic Machine Learning: An Introduction. Kevin Patrick Murphy. MIT Press](https://probml.github.io/pml-book/book1.html).
+- An Introduction to Statistical Learning with Applications in R. Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani. Springer Texts in Statistics.
 - All of Statistics. A Concise Course in Statistical Inference. Larry Wasserman. MIT Press.
 - Understanding Machine Learning: From Theory to Algorithms. Shai Shalev-Shwartz and Shai Ben-David. Cambridge University Press.
