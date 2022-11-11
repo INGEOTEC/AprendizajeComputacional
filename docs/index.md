@@ -63,4 +63,5 @@ El curso trata de ser auto-contenido, es decir, no debería de ser necesario lee
 - [Probabilistic Machine Learning: An Introduction. Kevin Patrick Murphy. MIT Press](https://probml.github.io/pml-book/book1.html).
 - An Introduction to Statistical Learning with Applications in R. Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani. Springer Texts in Statistics.
 - All of Statistics. A Concise Course in Statistical Inference. Larry Wasserman. MIT Press.
+- An Introduction to the Bootstrap. Bradley Efron and Robert J. Tibshirani. Monographs on Statistics and Applied Probability 57. Springer-Science+Business Media. 
 - Understanding Machine Learning: From Theory to Algorithms. Shai Shalev-Shwartz and Shai Ben-David. Cambridge University Press.
