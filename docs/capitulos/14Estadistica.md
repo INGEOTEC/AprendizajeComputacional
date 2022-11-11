@@ -68,25 +68,47 @@ donde $$\sigma^2$$ es la varianza de la distribución usada para generar $$\math
 
 ## Ejemplo
 
+El siguiente ejemplo complementa la información al presentar el
+error estandar de la media cuando los datos vienen de una distribución
+Gausiana. Suponiendo que se tiene $$1000$$ muestras de una
+distribución Gausiana $$\mathcal N(1, 4),$$ i.e., $$\mu=1$$ y $$\sigma=2$$.
+La error estandar de estimar la media con esos datos está dado por
+$$\mathbb V(\hat \mu) = \sqrt{\frac{\sigma^2}{N}} = \sqrt{\frac{4}{1000}}=0.0632.$$ 
+
+Continuado con el ejemplo, se simula la generación de esta población
+de $$1000$$ elementos. El primer paso es iniciar la clase `norm` 
+(que implementa una distribución Gausiana) para que se simule 
+$$\mathcal N(1, 4).$$ Es importante notar que el parámetro `scale`
+de `norm` corresponde a la desviación estandar $$\sigma.$$
+
 ```python
 p1 = norm(loc=1, scale=2)
 ```
 
-$$\mathbb V(\hat \mu) = \sqrt{\frac{\sigma^2}{N}} = \sqrt{\frac{4}{1000}}=0.0632$$
+Usando `p1` se simulan 500 poblaciones de 1000 elementos cada una,
+y para cada una de esas poblaciones se calcula su media. La primera
+linea crea la muestra $$\mathcal D$$ y a continuación se calcula
+la media por cada población, renglon de `D`.
 
 ```python
-X = p1.rvs(size=(500, 1000))
-mu = [x.mean() for x in X]
+D = p1.rvs(size=(500, 1000))
+mu = [x.mean() for x in D]
 ```
+
+El error estandar es la desvicación estandar de `mu`,
+el cual se puede calcular con la siguiente instrucción. `se` tiene 
+un valor de $$0.0637$$, que es similar al obtenido mediante
+$$\mathbb V(\hat \mu).$$
 
 ```python
 se = np.std(mu)
 ```
 
-$$0.0637$$
+Para complementar la información se presenta el histograma 
+de `mu` donde se puede observar la distribución de estimar 
+la media de una población. 
 
 ```python
-
 sns.histplot(mu)
 ```
 
@@ -94,6 +116,7 @@ sns.histplot(mu)
 plt.savefig('normal_mean.png', dpi=300)
 -->
 
+<!--
 ![Histograma del error](/AprendizajeComputacional/assets/images/normal_mean.png)
 
 # Bootstrap
@@ -110,3 +133,5 @@ se = np.std(B)
 ```
 
 $$0.0623$$
+
+-->
