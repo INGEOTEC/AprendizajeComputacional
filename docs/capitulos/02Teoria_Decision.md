@@ -83,7 +83,7 @@ parámetros dados por $$\mathcal X$$, es decir,
 $$\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$$
 donde los parámetros de la función $$g$$ son identificados mediante $$\mathcal X$$
 y $$\epsilon \sim \mathcal N(0, \sigma^2)$$ es el error con media cero y desviación
-estandar $$\sigma$$. Con estas condiciones la salida $$y$$ es 
+estándar $$\sigma$$. Con estas condiciones la salida $$y$$ es 
 $$\mathbb E[\mathbb P(\mathcal Y \mid \mathcal X=x)].$$
 
 <!--
@@ -322,9 +322,9 @@ error = (y != prediccion).mean()
 
 La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve 
 a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer
-esta variabilidad de la medición del error es calculando su **error estandar**. 
+esta variabilidad de la medición del error es calculando su **error estándar**. 
 
-El [error estandar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar) 
+El [error estándar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar) 
 está definido como $$\sqrt{\mathbb V(\hat \theta)}$$ donde 
 $$\hat \theta$$ es el valor estimado, en este caso el `error`. 
 El error es una variable aleatoria que sigue una distribución
@@ -332,10 +332,10 @@ de Bernoulli, dado que para cada ejemplo tiene dos valores $$1$$ que indica que 
 ejemplo el clasificador se equivocó y $$0$$ cuando se predice la clase correcta. 
 El parámetro de la distribución Bernoulli, $$p$$, se estima como la media
 entonces el error estandar de $$p$$ corresponde al 
-[error estandar de la media](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media), i.e.,  
+[error estándar de la media](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media), i.e.,  
 $$\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$$ dado que 
 la varianza $$\sigma^2$$ de una distribución Bernoulli con parámetro $$p$$ es $$p (1 - p)$$.  
-Para el ejemplo analizado el error estandar se calcula con la siguiente instrucción
+Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción
 
 ```python
 se_formula = np.sqrt(error * (1 - error) / 3000)
@@ -343,16 +343,16 @@ se_formula = np.sqrt(error * (1 - error) / 3000)
 
 teniendo un valor de $$0.00196$$. 
 
-Existen casos donde el error estandar no se puede estimar analíticamente como es el 
+Existen casos donde el error estándar no se puede estimar analíticamente como es el 
 caso de la media en una distribución Bernoulli. En esos casos se puede estimar mediante
 la técnica de Bootstrap. Esta técnica requiere que los datos con los que se
 estima el parámetro se seleccionen con remplazo $$N$$ veces, en la primera linea
 se generan 500 repeticiones del tamaño de `y` de números enteros entre $$[0, m)$$ donde
 $$m$$ es el tamaño de `y`. Por cada iteración, se estima el parámetro de interés. En
 la segunda linea se itera por `S` calculando el error con la muestra indicada. Finalmente
-se calcula la desviación estandar de los parámetros estimados en el paso anterior `B`, 
-lo cual se observa en la tercera linea y ese valor corresponde al error estandar. 
-El error estandar calculado mediante Bootstrap es $$0.00194.$$
+se calcula la desviación estándar de los parámetros estimados en el paso anterior `B`, 
+lo cual se observa en la tercera linea y ese valor corresponde al error estándar. 
+El error estándar calculado mediante Bootstrap es $$0.00194.$$
 
 
 ```python
@@ -361,7 +361,7 @@ B = [(y[s] != prediccion[s]).mean() for s in S]
 se = np.std(B)
 ```
 
-El error estandar corresponde a la distribución que tiene la estimación del parámetro
+El error estándar corresponde a la distribución que tiene la estimación del parámetro
 de interés mediante Boostrap se simulo está distribución y con el siguiente 
 código se puede observar su histograma, donde los datos estimados se encuentran
 en la lista `B`.
