@@ -140,7 +140,7 @@ estándar. Suponiendo que se la estadística se calcula mediante la realización
 de $$N$$ variables aleatorias, $$\mathcal X \sim F$$, es decir, 
 $$\theta = g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N).$$ 
 Por ejemplo, la media es 
-$$g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N) = \frac{1}{N} \sum_i^N X_i.$$
+$$g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N) = \frac{1}{N} \sum_i^N \mathcal X_i.$$
 
 El Bootstrap simula la distribución $$\theta$$ mediante la selección
 con remplazo de $$N$$ elementos del conjunto de la muestra
