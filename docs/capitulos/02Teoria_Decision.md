@@ -164,7 +164,7 @@ Finalmente, es importante mencionar que $$P(\cdot \mid x)$$ cumple con todos los
 probabilidad, para este caso, suponiendo $$K$$ clases entonces $$\sum_i^K P(C_i \mid x) = 1$$.
 -->
 
-## Ejemplo
+## Problema Sintético
 {: #sec:tres-normales } 
 
 Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección
@@ -223,6 +223,8 @@ se puede visualizar las tres nubes de puntos, donde el color indica la clase.
 
 {: #fig:gaussian_3classes }
 ![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
+
+## Predicción
 
 Quitando la evidencia del Teorema de Bayes se observa que 
 $$\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$.
@@ -343,16 +345,21 @@ se_formula = np.sqrt(error * (1 - error) / 3000)
 
 teniendo un valor de $$0.00196$$. 
 
-Existen casos donde el error estándar no se puede estimar analíticamente como es el 
-caso de la media en una distribución Bernoulli. En esos casos se puede estimar mediante
-la técnica de Bootstrap. Esta técnica requiere que los datos con los que se
-estima el parámetro se seleccionen con remplazo $$N$$ veces, en la primera linea
-se generan 500 repeticiones del tamaño de `y` de números enteros entre $$[0, m)$$ donde
-$$m$$ es el tamaño de `y`. Por cada iteración, se estima el parámetro de interés. En
-la segunda linea se itera por `S` calculando el error con la muestra indicada. Finalmente
-se calcula la desviación estándar de los parámetros estimados en el paso anterior `B`, 
-lo cual se observa en la tercera linea y ese valor corresponde al error estándar. 
-El error estándar calculado mediante Bootstrap es $$0.00194.$$
+Aunque el error estándar del parámetro $$p$$ de la distribución Bernoulli si 
+se puede calcular analíticamente, se usará la técnica de 
+[Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
+para ejemplificar aquellas estadísticas donde no se puede. 
+Esta técnica requiere generar $$B$$ muestras de $$N$$ elementos con remplazo
+de los datos. En este caso los datos son los errores entre `y` y `prediccion`. 
+Siguiendo el método presentado en el 
+[apéndice](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
+se generan los índices para generar la muestra como se observa en la primera
+línea del siguiente código. En la segunda línea se hacen las $$B$$ repeticiones
+las cuales consisten en calcular $$\hat p$$. Se puede observar como se usa 
+directamente `y` y `prediccion` junto con el arreglo de índices `s`
+para calcular la media del error. Finalmente se calcula la desviación estándar 
+de `B` (tercera línea) y ese valor corresponde al error estándar. 
+El error estándar, `se`, calculado es $$0.00194.$$
 
 
 ```python
