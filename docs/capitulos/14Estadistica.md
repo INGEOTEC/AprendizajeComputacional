@@ -16,6 +16,16 @@ estadísticos usados en el curso.
 1. TOC
 {:toc}
 
+## Paquetes usados
+{: .no_toc .text-delta }
+```python
+from scipy.stats import norm
+from matplotlib import pylab as plt
+import numpy as np
+import seaborn as sns
+sns.set_theme()
+```
+
 # Error estandar
 {: #sec:error-estandar}
 
@@ -55,3 +65,48 @@ $$\begin{eqnarray}
 \end{eqnarray}$$
 
 donde $$\sigma^2$$ es la varianza de la distribución usada para generar $$\mathcal D$$. 
+
+## Ejemplo
+
+```python
+p1 = norm(loc=1, scale=2)
+```
+
+$$\mathbb V(\hat \mu) = \sqrt{\frac{\sigma^2}{N}} = \sqrt{\frac{4}{1000}}=0.0632$$
+
+```python
+X = p1.rvs(size=(500, 1000))
+mu = [x.mean() for x in X]
+```
+
+```python
+se = np.std(mu)
+```
+
+$$0.0637$$
+
+```python
+
+sns.histplot(mu)
+```
+
+<!--
+plt.savefig('normal_mean.png', dpi=300)
+-->
+
+![Histograma del error](/AprendizajeComputacional/assets/images/normal_mean.png)
+
+# Bootstrap
+{: #sec:bootstrap }
+
+```python
+D = X[0]
+```
+
+```python
+S = np.random.randint(D.shape[0], size=(500, D.shape[0]))
+B = [(D[s]).mean() for s in S]
+se = np.std(B)
+```
+
+$$0.0623$$
