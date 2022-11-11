@@ -44,9 +44,9 @@ $$\sqrt{\mathbb V(\hat \theta)}$$ es la media, es decir,
 se tiene una muestra $$\mathcal D$$ con $$N$$ elementos independientes y identicamente 
 distribuidos, entonces la media corresponde a
 
-$$\hat \mu = \frac{1}{N} \sum_{x \in \mathcal D} x.$$
+$$\bar x = \frac{1}{N} \sum_{x \in \mathcal D} x.$$
 
-El error estándar de $$\hat \mu$$ es $$\sqrt{\mathbb V(\hat \mu)}$$. Para derivar
+El error estándar de $$\bar x $$ es $$\sqrt{\mathbb V(\bar x)}$$. Para derivar
 el valor análitico de este error estándar es necesario utilizar la siguiente 
 propiedad de la varianza:
 
@@ -55,13 +55,12 @@ $$\mathbb V(\sum_i a_i \mathcal X_i) = \sum_i a_i^2 \mathbb V(\mathcal X_i),$$
 donde $$a_i$$ representa una constante y las variables aleatorias $$\mathcal X$$ son
 independientes. En lugar de utilizar la definición asumiendo la realización de las
 variables aleatorias, esto es, cuando $$\mathcal D$$ tiene valores, se define la media
-con respecto a $$N$$ variables aleatorias, i.e., $$\hat \mu = \frac{1}{N} \sum_i^N \mathcal X_i.$$
+con respecto a $$N$$ variables aleatorias, i.e., $$\bar{\mathcal X} = \frac{1}{N} \sum_i^N \mathcal X_i.$$
 En estas condiciones se observa que para el caso del error estándar de
-la media la constante es $$\frac{1}{N}$$ y las variables son independientes de acuerdo a la forma
-que se construyó $$\mathcal D$$ entonces
+la media la constante es $$\frac{1}{N}$$ y las variables son independientes entonces
 
 $$\begin{eqnarray}
-\sqrt{\mathbb V(\hat \mu)} &=& \sqrt{\mathbb V(\frac{1}{N} \sum_i^N \mathcal X_i)} \\
+\sqrt{\mathbb V(\bar{\mathcal X})} &=& \sqrt{\mathbb V(\frac{1}{N} \sum_i^N \mathcal X_i)} \\
 &=& \sqrt{ \sum_i^N \frac{1}{N^2}  \mathbb V(\mathcal X_i)}\\
 &=& \sqrt{ \frac{1}{N^2} \sum_i^N \sigma^2} \\
 &=& \sqrt{ \frac{N}{N^2} \sigma^2} \\
