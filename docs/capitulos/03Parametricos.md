@@ -21,6 +21,17 @@ clasificación.
 
 # Introducción
 
+Existen diferentes tipos de algoritmos que se puede utilizar para resolver problemas de
+aprendizaje supervisado y no supervisado. En particular, esta unidad se enfoca en presentar 
+las técnicas que se pueden caracterizar como métodos paramétricos. 
+
+Los métodos paramétricos se identifican por asumir que los datos provienen de una distribución 
+de la cual se desconocen los parámetros y el procedimiento es encontrar aquellos parámetros 
+de la distribución que mejor modelen los datos. Una vez obtenidos los parámetros 
+se cuenta con todos los elementos para utilizar el modelo y predecir la característica para
+la cual fue entrenada. 
+
+<!--
 Habiendo descrito el uso de la probabilidad para identificar la clase mas probable o encontrar la 
 acción con menor riesgo es posible describir como se entrenan y usan algunos algoritmos de 
 clasificación y regresión basados en la teoría de probabilidad.
@@ -40,6 +51,23 @@ posteriori para seleccionar la clase, esto porque la evidencia, es decir $$P(x)$
 para todas las clases. Entonces una función discriminante equivalente estaría dada por: $$g_i(x) = P(x \mid C_i)P(C_i) $$.
 
 Es momento para describir el procedimiento para encontrar los parámetros de $$P(x \mid C_i)$$ y $$P(C_i)$$.
+-->
+
+# Metodología en Aprendizaje Supervisado
+
+Antes de inicar con los métodos paramétricos es importante mencionar
+que todos los algoritmos de aprendizaje siguen los siguiente paso. 
+
+1. Se inicia con un conjunto de entrenamiento $$\mathcal T$$
+2. Se estiman los parámetros $$\theta$$ de una función $$f$$ que modela el fenómeno
+3. Se usa $$f$$ para predecir datos $$x \not \in \mathcal T$$
+4. Se mide el rendimiento de $$f$$
+
+En la [unidad anterior](/AprendizajeComputacional/capitulos/02Teoria_Decision) 
+se presentaron algunos de los pasos del algoritmo general de aprendizaje supervisado. En 
+particular los pasos 1 y 2 no fueron tratados. El paso 3 habla sobre la 
+[predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
+
 
 # Estimación de Parámetros
 

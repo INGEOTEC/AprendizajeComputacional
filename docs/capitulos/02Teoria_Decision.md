@@ -225,6 +225,7 @@ se puede visualizar las tres nubes de puntos, donde el color indica la clase.
 ![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
 
 ## Predicción
+{: #sec:prediccion-normal }
 
 Quitando la evidencia del Teorema de Bayes se observa que 
 $$\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$.
