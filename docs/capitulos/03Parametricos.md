@@ -53,18 +53,25 @@ para todas las clases. Entonces una función discriminante equivalente estaría 
 Es momento para describir el procedimiento para encontrar los parámetros de $$P(x \mid C_i)$$ y $$P(C_i)$$.
 -->
 
-# Metodología en Aprendizaje Supervisado
+# Metodología General en Aprendizaje
 
-Antes de inicar con los métodos paramétricos es importante mencionar
-que todos los algoritmos de aprendizaje siguen los siguiente paso. 
+Antes de inicar con describiendo los métodos paramétricos es importante mencionar
+la metodología que se sigue en de problemas de aprendizaje computacional.
 
-1. Se inicia con un conjunto de entrenamiento $$\mathcal T$$
-2. Se estiman los parámetros $$\theta$$ de una función $$f$$ que modela el fenómeno
-3. Se usa $$f$$ para predecir datos $$x \not \in \mathcal T$$
-4. Se mide el rendimiento de $$f$$
+1. Todo empieza con un conjunto de datos $$\mathcal D$$ que tiene la información del fenómeno de interés.
+2. De $$\mathcal D$$ se selecciona el conjunto de entrenamiento $$\mathcal T$$.
+3. Se diseña un algoritmo, $$f$$ utilizando $$\mathcal T \subset \mathcal D$$.
+4. Se usa $$f$$ para predecir datos $$x \not \in \mathcal T$$
+5. Se mide el rendimiento de $$f$$
 
 En la [unidad anterior](/AprendizajeComputacional/capitulos/02Teoria_Decision) 
-se presentaron algunos de los pasos del algoritmo general de aprendizaje supervisado. En 
+se realizaron los pasos 4 y 5 de la metodología general. El paso 4 se 
+realizó en la 
+[predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
+de los datos de 
+
+
+ algunos de los pasos del algoritmo general de aprendizaje supervisado. En 
 particular los pasos 1 y 2 no fueron tratados. El paso 3 habla sobre la 
 [predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
 
