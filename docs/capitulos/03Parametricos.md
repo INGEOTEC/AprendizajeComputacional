@@ -51,18 +51,6 @@ posteriori para seleccionar la clase, esto porque la evidencia, es decir $$P(x)$
 para todas las clases. Entonces una función discriminante equivalente estaría dada por: $$g_i(x) = P(x \mid C_i)P(C_i) $$.
 
 Es momento para describir el procedimiento para encontrar los parámetros de $$P(x \mid C_i)$$ y $$P(C_i)$$.
--->
-
-# Metodología General en Aprendizaje
-
-Antes de inicar con describiendo los métodos paramétricos es importante mencionar
-la metodología que se sigue en de problemas de aprendizaje computacional.
-
-1. Todo empieza con un conjunto de datos $$\mathcal D$$ que tiene la información del fenómeno de interés.
-2. De $$\mathcal D$$ se selecciona el conjunto de entrenamiento $$\mathcal T$$.
-3. Se diseña un algoritmo, $$f$$ utilizando $$\mathcal T \subset \mathcal D$$.
-4. Se usa $$f$$ para predecir datos $$x \not \in \mathcal T$$
-5. Se mide el rendimiento de $$f$$
 
 En la [unidad anterior](/AprendizajeComputacional/capitulos/02Teoria_Decision) 
 se realizaron los pasos 4 y 5 de la metodología general. El paso 4 se 
@@ -74,6 +62,9 @@ de los datos de
  algunos de los pasos del algoritmo general de aprendizaje supervisado. En 
 particular los pasos 1 y 2 no fueron tratados. El paso 3 habla sobre la 
 [predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
+
+-->
+
 
 
 # Estimación de Parámetros
