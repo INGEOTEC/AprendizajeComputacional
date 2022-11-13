@@ -260,6 +260,7 @@ donde el proceso de clasificación cometió un error.
 ![Predicción](/AprendizajeComputacional/assets/images/gaussian_3classes_hy.png)
 
 # Error de Clasificación
+{: #sec:error-clasificacion}
 
 Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, 
 este produce errores al momento de usarlo para clasificar. 

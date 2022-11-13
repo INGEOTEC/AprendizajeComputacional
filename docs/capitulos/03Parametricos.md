@@ -51,19 +51,18 @@ posteriori para seleccionar la clase, esto porque la evidencia, es decir $$P(x)$
 para todas las clases. Entonces una función discriminante equivalente estaría dada por: $$g_i(x) = P(x \mid C_i)P(C_i) $$.
 
 Es momento para describir el procedimiento para encontrar los parámetros de $$P(x \mid C_i)$$ y $$P(C_i)$$.
-
-En la [unidad anterior](/AprendizajeComputacional/capitulos/02Teoria_Decision) 
-se realizaron los pasos 4 y 5 de la metodología general. El paso 4 se 
-realizó en la 
-[predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
-de los datos de 
-
-
- algunos de los pasos del algoritmo general de aprendizaje supervisado. En 
-particular los pasos 1 y 2 no fueron tratados. El paso 3 habla sobre la 
-[predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
-
 -->
+
+# Metodología
+
+Hasta el momento se han presentado ejemplos de los pasos 4 y 5 
+de la [metodología general](/AprendizajeComputacional/capitulos/01Tipos/#sec:metodologia-general);
+esto fue en la sección de 
+[Predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
+y la sección de 
+[Error de Clasificación](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion). 
+
+
 
 
 
