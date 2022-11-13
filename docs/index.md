@@ -39,7 +39,7 @@ Por otro lado, existen problemas para los cuales escribir una secuencia de pasos
 |$$\mathcal G$$    | Conjunto de prueba                                       |
 |$$N$$             | Número de ejemplos                                       | 
 |$$K$$             | Número de clases                                         |
-|$$\mathbb P(\cdot)$$  | Distribución de probabilidad                         |
+|$$\mathbb P(\cdot)$$  | Probabilidad                                         |
 |$$\mathcal X, \mathcal Y$$    | Variables aleatorías                         |
 |$$\mathcal N(\mu, \sigma^2)$$    | Distribución Normal con parámetros $$\mu$$ y $$\sigma^2$$|
 |$$f_{\mathcal X}$$| Función de densidad de probabilidad de $$\mathcal X$$    |
