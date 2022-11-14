@@ -61,12 +61,25 @@ esto fue en la sección de
 [Predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) 
 y la sección de 
 [Error de Clasificación](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion). 
+Esta sección complementa los ejemplos anteriores al utilizar todos pasos 
+de la metodología general de aprendizaje supervisado. En partícular se enfoca 
+al paso 3 que corresponde al diseño del algoritmo $$f$$ que modela el fenómeno de
+interés utilizando los datos $$\mathcal T \subset \mathcal D.$$
 
-
-
+El algoritmo $$f$$ corresponde a asumir que los datos $$\mathcal D$$ provienen de 
+una distribución $$F$$ la cual tiene una serie de parámetros $$\theta$$ que 
+son identificados con $$\mathcal T.$$
 
 
 # Estimación de Parámetros
+
+Se inicia la descripción de métodos parámetricos presentando el procedimiento general
+para estimar los parámetros de una distribución. Se cuenta con un conjunto $$\mathcal D$$
+donde los elementos $$x \in \mathcal D$$ son $$x \in \mathbb R^d$$. Los elementos $$x \in \mathcal D$$ tienen un distribución $$F$$, i.e., $$x \sim F$$, son independientes y $$F$$ está 
+definida por la función de densidad de probabilidad $$f$$ que está definida
+por $$\theta$$ parámetros. 
+
+<!--
 
 Recordando que el ingrediente inicial en aprendizaje computacional es el conjunto de entrenamiento, 
 formado por muestras independientes e identicamente distribuidas, se inicia la descripción desde el 
@@ -75,9 +88,13 @@ tomada de una distribución de probabilidad $$p$$ definida por los parámetros $
 
 $$x_i \sim P(x \mid \theta) $$.
 
-El objetivo es encontrar los parámetros $$\theta$$ que harían observar a $$\mathcal X$$ lo mas 
-probable. Iniciando con una caso muy simple, donde $$\mathcal X=\{x_1, x_2\}$$. En este caso lo que se 
-busca es maximizar la probabilidad de observar $$x_1$$ y $$x_2$$, es decir, $$\theta$$ es $$\textsf{arg max}_\theta P(x_1, x_2 \mid \theta)$$. Utilizando la definición de probabilidad condicional, se 
+-->
+
+El objetivo es encontrar los parámetros $$\theta$$ que harían observar a $$\mathcal D$$ lo mas 
+probable. Iniciando con una caso muy simple, donde $$\mathcal D=\{x_1, x_2\}$$. En este caso lo que se 
+busca es maximizar la probabilidad de observar $$x_1$$ y $$x_2$$, es decir, $$\theta$$ es $$\textsf{arg max}_\theta \mathbb P(x_1, x_2 \mid \theta)$$. 
+
+Utilizando la definición de probabilidad condicional, se 
 puede escribir también como: $$P_\theta(x_1, x_1) = P_\theta(x_1 \mid x_2) P_\theta(x_2) $$ donde el 
 parámetro $$\theta$$ se pone como subíndice para simplificar la notación.
 
