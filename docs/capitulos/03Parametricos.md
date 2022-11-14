@@ -76,8 +76,11 @@ son identificados con $$\mathcal T.$$
 Se inicia la descripción de métodos parámetricos presentando el procedimiento general
 para estimar los parámetros de una distribución. Se cuenta con un conjunto $$\mathcal D$$
 donde los elementos $$x \in \mathcal D$$ son $$x \in \mathbb R^d$$. Los elementos $$x \in \mathcal D$$ tienen un distribución $$F$$, i.e., $$x \sim F$$, son independientes y $$F$$ está 
-definida por la función de densidad de probabilidad $$f$$ que está definida
-por $$\theta$$ parámetros. 
+definida por la función de densidad de probabilidad $$f_{\theta}$$ que está definida
+por $$\theta$$ parámetros. Utilizando $$\mathcal D$$ el objetivo es identificar
+los parámetros $$\theta$$ que harían observar a $$\mathcal D$$ lo más probable. 
+
+
 
 <!--
 
@@ -88,10 +91,10 @@ tomada de una distribución de probabilidad $$p$$ definida por los parámetros $
 
 $$x_i \sim P(x \mid \theta) $$.
 
--->
-
 El objetivo es encontrar los parámetros $$\theta$$ que harían observar a $$\mathcal D$$ lo mas 
-probable. Iniciando con una caso muy simple, donde $$\mathcal D=\{x_1, x_2\}$$. En este caso lo que se 
+probable. 
+
+Iniciando con una caso muy simple, donde $$\mathcal D=\{x_1, x_2\}$$. En este caso lo que se 
 busca es maximizar la probabilidad de observar $$x_1$$ y $$x_2$$, es decir, $$\theta$$ es $$\textsf{arg max}_\theta \mathbb P(x_1, x_2 \mid \theta)$$. 
 
 Utilizando la definición de probabilidad condicional, se 
@@ -100,8 +103,21 @@ parámetro $$\theta$$ se pone como subíndice para simplificar la notación.
 
 Recordando que por definición $$x_1$$ y $$x_2$$ son independientes, entonces: $$P_\theta(x_1, x_1) = P_\theta(x_1 \mid x_2) P_\theta(x_2) = P_\theta(x_1) P_\theta(x_2) $$.
 
-# Verosimilitud
+-->
 
+## Verosimilitud
+
+Una manera de plantear lo anterior es maximizando la verosimilitud. La versosimilitud es 
+la distribución conjunta de los elementos en $$\mathcal D$$ tomandola como una función 
+de los parámetros $$\theta,$$ es decir,
+
+$$\mathcal L(\theta) = \prod_{x \in \mathcal D} f_\theta (x),$$
+
+siendo el logaritmo de la verosimilitud 
+
+$$\ell(\theta) = \log \mathcal L(\theta) = \sum_{x \in \mathcal D} \log f_\theta (x).$$
+
+<!--
 Extendiendo el caso anterior para todas las muestras en $$\mathcal X$$ queda la definición de 
 verosimilitud que es:
 
@@ -112,6 +128,8 @@ por lo genera es mas sencillo trabajar con sumas en lugar de productos, por lo q
 muy utilizada es utilizar el logaritmo de la verosimilitud quedando la función a maximizar como:
 
 $$\mathcal L(\theta \mid \mathcal X) = \sum_{i=1}^N \log P(x_i \mid \theta) $$.
+
+-->
 
 ## Distribucción de Bernoulli
 
