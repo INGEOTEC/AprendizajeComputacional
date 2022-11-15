@@ -17,6 +17,17 @@ clasificación.
 1. TOC
 {:toc}
 
+## Paquetes usados
+{: .no_toc .text-delta }
+```python
+from scipy.stats import multivariate_normal
+from matplotlib import pylab as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+sns.set_theme()
+```
+
 ---
 
 # Introducción
@@ -80,35 +91,14 @@ definida por la función de densidad de probabilidad $$f_{\theta}$$ que está de
 por $$\theta$$ parámetros. Utilizando $$\mathcal D$$ el objetivo es identificar
 los parámetros $$\theta$$ que harían observar a $$\mathcal D$$ lo más probable. 
 
-
-
-<!--
-
-Recordando que el ingrediente inicial en aprendizaje computacional es el conjunto de entrenamiento, 
-formado por muestras independientes e identicamente distribuidas, se inicia la descripción desde el 
-caso más simple enfocados a $$\mathcal X = \{ x_i \mid i=1, \ldots, N\} $$ y suponiendo que $$x_i$$ es 
-tomada de una distribución de probabilidad $$p$$ definida por los parámetros $$\theta$$, es decir:
-
-$$x_i \sim P(x \mid \theta) $$.
-
-El objetivo es encontrar los parámetros $$\theta$$ que harían observar a $$\mathcal D$$ lo mas 
-probable. 
-
-Iniciando con una caso muy simple, donde $$\mathcal D=\{x_1, x_2\}$$. En este caso lo que se 
-busca es maximizar la probabilidad de observar $$x_1$$ y $$x_2$$, es decir, $$\theta$$ es $$\textsf{arg max}_\theta \mathbb P(x_1, x_2 \mid \theta)$$. 
-
-Utilizando la definición de probabilidad condicional, se 
-puede escribir también como: $$P_\theta(x_1, x_1) = P_\theta(x_1 \mid x_2) P_\theta(x_2) $$ donde el 
-parámetro $$\theta$$ se pone como subíndice para simplificar la notación.
-
-Recordando que por definición $$x_1$$ y $$x_2$$ son independientes, entonces: $$P_\theta(x_1, x_1) = P_\theta(x_1 \mid x_2) P_\theta(x_2) = P_\theta(x_1) P_\theta(x_2) $$.
-
--->
-
 ## Verosimilitud
 
 Una manera de plantear lo anterior es maximizando la verosimilitud. La versosimilitud es 
-la distribución conjunta de los elementos en $$\mathcal D$$ tomandola como una función 
+la función distribución conjunta de los elementos en $$\mathcal D$$,
+i.e., $$f_\theta(x_1, x_2, \ldots, x_N).$$ Considerando que la muestras
+son independientes entonces 
+$$f_\theta(x_1, x_2, \ldots, x_N) = \prod_{x \in \mathcal D} f_\theta (x).$$
+La función de verosimilitud considera la ecuación anterior como una función 
 de los parámetros $$\theta,$$ es decir,
 
 $$\mathcal L(\theta) = \prod_{x \in \mathcal D} f_\theta (x),$$
@@ -116,20 +106,6 @@ $$\mathcal L(\theta) = \prod_{x \in \mathcal D} f_\theta (x),$$
 siendo el logaritmo de la verosimilitud 
 
 $$\ell(\theta) = \log \mathcal L(\theta) = \sum_{x \in \mathcal D} \log f_\theta (x).$$
-
-<!--
-Extendiendo el caso anterior para todas las muestras en $$\mathcal X$$ queda la definición de 
-verosimilitud que es:
-
-$$l (\theta \mid \mathcal X) \equiv P(\mathcal X \mid \theta) = \prod_{i=1}^N P(x_i \mid \theta) $$.
-
-Utilizando esta definición $$\theta$$ sería $$\textsf{arg max}_\theta l (\theta \mid \mathcal X)$$, 
-por lo genera es mas sencillo trabajar con sumas en lugar de productos, por lo que una transformación 
-muy utilizada es utilizar el logaritmo de la verosimilitud quedando la función a maximizar como:
-
-$$\mathcal L(\theta \mid \mathcal X) = \sum_{i=1}^N \log P(x_i \mid \theta) $$.
-
--->
 
 ## Distribucción de Bernoulli
 
@@ -151,6 +127,7 @@ Realizando algunas operaciones algebraicas se obtiene:
 
 $$\hat p = \frac{1}{N}\sum_{i=1}^N x_i $$.
 
+<!--
 ## Distribución Multinomial
 
 Para el caso de una clasificación multi-clase (de $$K$$ clases) una distribución adecuada sería 
@@ -180,6 +157,89 @@ $$s^2_k = \frac{1}{\mid \mathcal X_k \mid} \sum_{x \in \mathcal X_k} (x - m_k)^2
 
 para el caso de $$x \in \mathbb R$$ o equivalente para el caso de que las variables sea independientes 
 en el caso de $$x \in \mathbb R^d$$, como se verá en los siguientes videos.
+-->
+
+# Ejemplo: Distribución Gausiana
+
+Esta sección sigue un camino práctico, donde se presenta el código para estimar
+los parámetros de una distribución Gausiana donde se conocen todos los parámetros, 
+la distribución se usa para generar 1000 muestras y después de esas muestras 
+se estiman los parámetros; de estas manera se tienen todos los elementos para
+comparar los parametros reales $$\theta$$ de los parámetros estimados $$\hat \theta.$$
+
+La distribución que se usará se utlizo en para generar un 
+[problema sintético](/AprendizajeComputacional/capitulos/03Parametrics/#sec:tres-normales)
+de tres clases. Los parámetros de la distribución son: $$\mathbf \mu = [5, 5]^T$$
+y  $$ \Sigma = \begin{pmatrix} 
+            4 & 0 \\
+            0 & 2 \\
+         \end{pmatrix}.$$ La siguiente instrucción se puede utilizar para generar 1000 
+muestras de esa distribución. 
+
+```python
+D = multivariate_normal(mean=[5, 5], 
+                        cov=[[4, 0], [0, 2]]).rvs(size=1000)
+```
+
+```python
+mu = np.mean(D, axis=0)
+```
+
+$$\hat \mu = [4.9334, 5.0413]^T$$ con una 
+[error estándar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media) (`se`)
+de $$[0.0648, 0.0436]^T$$ 
+
+```python
+se = np.std(D, axis=0) / np.sqrt(1000)
+```
+
+```python
+cov = np.cov(D, rowvar=False)
+```
+
+$$\hat \Sigma = \begin{pmatrix} 
+4.2076 & -0.0694 \\
+-0.0694 & 1.9044 \\
+\end{pmatrix}$$
+
+
+[Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
+
+```python
+S = np.random.randint(D.shape[0],
+                      size=(500, D.shape[0]))
+B = [np.cov(D[s], rowvar=False) for s in S]
+se = np.std(B, axis=0)
+```
+
+$$\begin{pmatrix} 
+0.1845 & 0.0869 \\
+0.0869 & 0.0875 \\
+\end{pmatrix}$$
+
+# Metodología de Clasificación
+
+[problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
+
+```python
+X = np.concatenate((X_1, X_2, X_3))
+y = np.concatenate([np.ones(1000), np.ones(1000) + 1, np.ones(1000) + 2])
+```
+
+```python
+index = np.arange(X.shape[0])
+np.random.shuffle(index)
+X = X[index]
+y = y[index]
+```
+
+
+
+
+En la unidad de Tipos de Aprendizaje se dieron algunas
+[definiciones](AprendizajeComputacional/capitulos/01Tipos/#definiciones-de-aprendizaje-supervisado) de aprendizaje supervisado,
+en particular el punto de inicio
+
 
 # Clasificador Bayesiano Ingenuo
 
