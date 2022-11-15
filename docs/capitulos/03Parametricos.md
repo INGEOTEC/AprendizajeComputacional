@@ -133,19 +133,19 @@ $$\mathcal L(\theta \mid \mathcal X) = \sum_{i=1}^N \log P(x_i \mid \theta) $$.
 
 ## Distribucción de Bernoulli
 
-Habiendo definido la verosimilitud estamos en el momento de presentar el primer ejemplo para 
-identificar $$\theta$$. Un problema de clasificación binaria se puede modelar con una distribución 
-Bernoulli, suponiendo que una clase se representa como $$0$$ y la otra clase como $$1$$. Entonces, la 
-probabilidad de ver $$1$$ es $$P(X=1) = p$$ y $$P(X=0) = 1 - p$$, donde $$p$$ es el parámetro a 
-identificar. Combinando estas ecuaciones se obtiene que $$P(x) = p^x (1 - p)^{1-x}$$.
+La verosimilitud se ejemplifica con la identificación del parámetro $$p$$ de una distribución 
+Bernoulli. Una distribución Bernoulli modela dos estados, por un lado se tiene la clase
+negativa identificada por $$0$$ y la otra clase como $$1$$. Entonces, la 
+probabilidad de ver $$1$$ es $$\mathbb P(X=1) = p$$ y $$\mathbb P(X=0) = 1 - p$$.
+Estas ecuaciones se pueden combinar para definir $$f_\theta(x) = p^x (1 - p)^{1-x}.$$
 
 Utilizando el logaritmo de la verosimilitud se tiene:
 
-$$\mathcal L(\mathcal p \mid \mathcal X) = \sum_{i=1}^N \log p^{x_i} (1 - p)^{1-x_i} = \sum_{i=1}^N x_i \log p + (1-x_i) \log (1 - p)$$.
+$$\ell(p) = \sum_{i=1}^N \log p^{x_i} (1 - p)^{1-x_i} = \sum_{i=1}^N x_i \log p + (1-x_i) \log (1 - p)$$.
 
-Recordando que el máximo de $$\mathcal L(\mathcal p \mid \mathcal X) $$ se obtiene cuando $$\frac{d}{dp} \mathcal L(\mathcal p \mid \mathcal X) = 0$$. En estas condiciones estimar $$p$$ quedaría como:
+Recordando que el máximo de $$\ell(\mathcal p) $$ se obtiene cuando $$\frac{d}{dp} \ell(\mathcal p) = 0$$. En estas condiciones estimar $$p$$ quedaría como:
 
-$$ \begin{eqnarray} \frac{d}{dp} \mathcal L(\mathcal p \mid \mathcal X) &=& 0 \\ \frac{d}{dp} [ \sum_{i=1}^N x_i \log p + (1-x_i) \log (1 - p)] &=& 0 \\ \frac{d}{d p} [ \sum_{i=1}^N x_i \log p + \log (1 - p) (N - \sum_{i=1}^N x_i) ] &=& 0\\ \sum_{i=1}^N x_i \frac{d}{d p} \log \mathcal p + (N - \sum_{i=1}^N x_i) \frac{d}{d p} \log (1 - \mathcal p) &=& 0\\ \sum_{i=1}^N x_i \frac{1}{p} + (N - \sum_{i=1}^N x_i) \frac{-1}{(1 - p)} &=& 0\\ \end{eqnarray}$$
+$$ \begin{eqnarray} \frac{d}{dp} \ell(\mathcal p) &=& 0 \\ \frac{d}{dp} [ \sum_{i=1}^N x_i \log p + (1-x_i) \log (1 - p)] &=& 0 \\ \frac{d}{d p} [ \sum_{i=1}^N x_i \log p + \log (1 - p) (N - \sum_{i=1}^N x_i) ] &=& 0\\ \sum_{i=1}^N x_i \frac{d}{d p} \log \mathcal p + (N - \sum_{i=1}^N x_i) \frac{d}{d p} \log (1 - \mathcal p) &=& 0\\ \sum_{i=1}^N x_i \frac{1}{p} + (N - \sum_{i=1}^N x_i) \frac{-1}{(1 - p)} &=& 0\\ \end{eqnarray}$$
 
 Realizando algunas operaciones algebraicas se obtiene:
 
