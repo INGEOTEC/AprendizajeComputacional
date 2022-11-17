@@ -107,7 +107,7 @@ Se puede asumir que existe una función $$f$$ que genera la relación entrada sa
 
 Para encontrar $$h^*$$, se utiliza $$\mathcal T$$; el conjunto de hipótesis (funciones), $$\mathcal H$$, que se considera puede aproximar $$f$$; una función de error, $$L$$; y el error empírico $$E(h \mid \mathcal T) = \sum_{(x, y) \in \mathcal T} L(y, h(x))$$. Utilizando estos elementos la función buscada es: $$h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal T)$$.
 
-El encontrar la función $$h^*$$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar es decir de predecir correctamente instancias no vistas. Considerando que se tiene un conjunto de prueba, $$\mathcal G=\{(x_i, y_i)\}$$ para $$i=1 \ldots M$$, donde $$\mathcal D \cap \mathcal G = \emptyset$$. La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $$E(h^* \mid \mathcal D) \approx E(h^* \mid \mathcal G) $$.
+El encontrar la función $$h^*$$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar es decir de predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $$\mathcal G=\{(x_i, y_i)\}$$ para $$i=1 \ldots M$$, donde $$\mathcal D \cap \mathcal G = \emptyset$$. La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $$E(h^* \mid \mathcal D) \approx E(h^* \mid \mathcal G) $$.
 
 ### Características de la hipótesis
 
