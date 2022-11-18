@@ -21,6 +21,8 @@ clasificación.
 {: .no_toc .text-delta }
 ```python
 from scipy.stats import multivariate_normal
+from scipy.special import logsumexp
+from sklearn.model_selection import train_test_split
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
@@ -41,28 +43,6 @@ de la cual se desconocen los parámetros y el procedimiento es encontrar aquello
 de la distribución que mejor modelen los datos. Una vez obtenidos los parámetros 
 se cuenta con todos los elementos para utilizar el modelo y predecir la característica para
 la cual fue entrenada. 
-
-<!--
-Habiendo descrito el uso de la probabilidad para identificar la clase mas probable o encontrar la 
-acción con menor riesgo es posible describir como se entrenan y usan algunos algoritmos de 
-clasificación y regresión basados en la teoría de probabilidad.
-
-Antes de iniciar la descripción del algoritmos y las herramientas necesarias para su entrenamiento, es 
-necesario introducir el uso de la función discriminante, $$g_i$$, para realizar la clasificación. 
-Recordemos que la clase selección mediante la siguiente regla: $$\textsf{arg max}_i P(C_i \mid x) $$ o 
-si se toma en cuenta el riesgo entonces se toma la acción que corresponde a $$\textsf{arg min}_i R
-(\alpha_i \mid x)$$. En este sentido se puede incluir una función discriminante que sirva de puente 
-entre el riesgo y/o la probabilidad, de tal manera que la clase seleccionada este dada por: $$\textsf{arg max}_i g_i(x)$$.
-
-Se puede observar que la función discriminante, $$g_i$$, en el caso de probabilidad estaría definida 
-como $$g_i(x) = P(C_i \mid x) $$ y en el caso de riesgo como: $$g_i(x) = - R(\alpha_i \mid x)$$.
-
-Usando la función discriminante se puede inferir que no es necesario calcular la probabilidad 
-posteriori para seleccionar la clase, esto porque la evidencia, es decir $$P(x)$$, es un factor común 
-para todas las clases. Entonces una función discriminante equivalente estaría dada por: $$g_i(x) = P(x \mid C_i)P(C_i) $$.
-
-Es momento para describir el procedimiento para encontrar los parámetros de $$P(x \mid C_i)$$ y $$P(C_i)$$.
--->
 
 # Metodología
 
@@ -127,39 +107,8 @@ Realizando algunas operaciones algebraicas se obtiene:
 
 $$\hat p = \frac{1}{N}\sum_{i=1}^N x_i $$.
 
-<!--
-## Distribución Multinomial
-
-Para el caso de una clasificación multi-clase (de $$K$$ clases) una distribución adecuada sería 
-Multinomial. Donde $$x_{i_k}$$ esta dada por:
-
-$$x_{i_k} \begin{cases} 1 \text{ si el }i\text{-ésimo ejemplo es de clase } \\ 0 \text{ de lo contrario} \end{cases} $$.
-
-Los parametros a estimar son: $$p_1, p_2, \ldots, p_K$$ con la restricción $$\sum_{k=1}^K p_k = 1$$. 
-El parámetro estimador quedaría como:
-
-$$p_k = \frac{1}{N} \sum_{i=1}^N x_{i_k} $$.
-
-## Distribución Normal
-
-Para el caso de $$P(x \mid C_i)$$ una de las distribuciones mas utilizadas es la normal, la cuál está 
-identificada por dos parámetros: $$\mu$$ y $$\sigma$$ en el caso de $$x \in \mathbb R$$; y $$ \mathbb \mu $$ y $$\Sigma$$ en el caso de $$x \in \mathbb R^d $$. Recordando que $$\sum_x P(x \mid C_i) = 1 $$, es decir, $$P(\cdot \mid C_i) $$ obedece los axiomas de probabilidad. Entonces, para un problema de $$ K $$ clases se tienen $$ K $$ pares de parámetros a identificar. Una manera de visualizar esto 
-sería por segmentar el conjunto de entrenamiento de tal manera que $$\mathcal X_c = \{x \mid (x, y) \in \mathcal X, y=c \} $$.
-
-Entonces $$\mathcal L(\mu_k, \sigma_k \mid \mathcal X_k) $$ sería la verosimilitud para identificar 
-los parámetros correspondientes a la clase $$k$$.
-
-Los estimados de $$\mu$$ y $$\sigma$$ se obtendrían como:
-
-$$m_k = \frac{1}{\mid \mathcal X_k \mid} \sum_{x \in \mathcal X_k} x $$
-
-$$s^2_k = \frac{1}{\mid \mathcal X_k \mid} \sum_{x \in \mathcal X_k} (x - m_k)^2 $$,
-
-para el caso de $$x \in \mathbb R$$ o equivalente para el caso de que las variables sea independientes 
-en el caso de $$x \in \mathbb R^d$$, como se verá en los siguientes videos.
--->
-
-# Ejemplo: Distribución Gausiana
+## Ejemplo: Distribución Gausiana
+{: #sec:estimacion-distribucion-gausiana }
 
 Esta sección sigue un camino práctico, donde se presenta el código para estimar
 los parámetros de una distribución Gausiana donde se conocen todos los parámetros, 
@@ -219,46 +168,299 @@ $$\begin{pmatrix}
 
 # Metodología de Clasificación
 
+En la sección 
 [problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
+se generó un problema de clasificación con tres clases, especificamente
+las entradas que definian a cada clase estaban en la variables
+`X_1`, `X_2` y `X_3`. Entonces las clases se pueden colocar 
+en la variable `y` tal como se indica a continuación. 
 
 ```python
 X = np.concatenate((X_1, X_2, X_3))
 y = np.concatenate([np.ones(1000), np.ones(1000) + 1, np.ones(1000) + 2])
 ```
 
-```python
-index = np.arange(X.shape[0])
-np.random.shuffle(index)
-X = X[index]
-y = y[index]
-```
+Las variables `X` y `y` contiene la información que conforma el conjunto
+$$\mathcal D = (\mathcal X, \mathcal Y)$$ donde cada renglón de `X`
+es una realización de la variable aleatoria $$\mathcal X$$ y equivalentemente
+cada elemento en `y` es una realización de $$\mathcal Y.$$
 
+## Conjunto de Entrenamiento y Prueba
 
-
-
+<!--
 En la unidad de Tipos de Aprendizaje se dieron algunas
 [definiciones](AprendizajeComputacional/capitulos/01Tipos/#definiciones-de-aprendizaje-supervisado) de aprendizaje supervisado,
 en particular el punto de inicio
+-->
 
+Anteriormente se había utilizado a $$\mathcal D$$ en el procedimiento
+de maximizar la verosimilitud, esto porque el objetivo en ese procedimiento
+es estimar los parámetros de la distribución. Pero el objetivo en 
+aprendizaje supervisado es diseñar un algoritmo (función en este caso)
+que modele la relación entre $$\mathcal X$$ y $$\mathcal Y$$. 
+Para conocer esto es necesario medir el rendimiento del algoritmo
+en instancias que no han sido vistas en el entrenamiento, 
+en el caso de esta unidad, es entrenar se refiere a la estimación 
+de los parámetros del modelo. En consecuencia, se requieren contar 
+con datos para medir el rendimiento a este conjunto de datos se le 
+conoce como el conjunto de prueba, $$\mathcal G$$, el cual se crea
+a partir de $$\mathcal D$$ de tal manera que 
+$$\mathcal G \cap \mathcal T = \emptyset$$ y 
+$$\mathcal D =  \mathcal G \cup \mathcal T.$$ La siguiente instrucción
+se puede utilizar para dividir los datos  
+
+```python
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+## Modelo
+
+[Teorema de Bayes](/AprendizajeComputacional/capitulos/02Teoria_Decision/#teorema-de-bayes)
+
+
+$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$$
+
+
+## Estimación de Parámetros
+
+[estimación de parámetros de una Gausiana](/AprendizajeComputacional/capitulos/03Parametricos/#sec:estimacion-distribucion-gausiana)
+
+```python
+labels, counts = np.unique(y_t, return_counts=True)
+prior = counts / counts.sum()
+```
+
+`prior` es $$[0.3292, 0.3412, 0.3296]$$
+
+
+```python
+likelihood = []
+for k in labels:
+    mask = y_t == k
+    mu = np.mean(T[mask], axis=0)
+    cov = np.cov(T[mask], rowvar=False)
+    likelihood_k = multivariate_normal(mean=mu, cov=cov)
+    likelihood.append(likelihood_k)
+```
+
+$$\hat \mu_1 = [5.1234 5.0177]^T$$, $$\hat \mu_2 = [1.5229 -1.5553]^T$$ y
+$$\hat \mu_3 = [12.5064 -3.4501]^T$$
+
+$$\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0409 \\ 0.0409 & 1.9562 \\ 
+\end{pmatrix}$$, 
+$$\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 1.0034 \\ 1.0034 & 2.8304 \\ 
+\end{pmatrix}$$ y 
+$$\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 3.0328 \\ 3.0328 & 6.8235 \\ 
+\end{pmatrix}$$
+
+## Predicción
+
+[predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal)
+
+```python
+def predict_prob(X, likelihood, prior):
+    likelihood = [m.pdf(X) for m in likelihood]
+    posterior = np.vstack(likelihood).T * prior
+    evidence = posterior.sum(axis=1)
+    return posterior / np.atleast_2d(evidence).T
+```
+
+```python
+def predict(X, likelihood, prior, labels):
+    _ = predict_prob(X, likelihood, prior)
+    return labels[np.argmax(_, axis=1)]
+```
+
+
+## Rendimiento
+
+[error de clasificación](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion)
+
+```python
+hy = predict(G, likelihood, prior, labels)
+
+```
+
+`error` es $$0.01$$ 
+
+
+```python
+error = (y_g != hy).mean()
+```
+
+
+```python
+se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
+```
+
+`se_formula` es $$0.0041$$ 
 
 # Clasificador Bayesiano Ingenuo
 
-En esta sección se describe mediante videos el desarrollo de un clasificador Bayesiano 
-ingenuo, pero antes de iniciar con la descripción lo primero es explicar el ejemplo 
-que se utilizará. 
+## Modelo
 
-En la siguiente figura se muestra un conjunto de puntos en $$ \mathbb{R}^2 $$ los cuales tiene asociado un color. El objetivo es encontrar una función capaz de definir el color de un nuevo punto, $$ x \in \mathbb{R}^2 $$, dado.
+## Estimación de Parámetros
 
-![Ejemmplo](/AprendizajeComputacional/assets/images/clusters.png) 
+```python
+likelihood = []
+for k in labels:
+    mask = y_t == k
+    mu = np.mean(T[mask], axis=0)
+    var = np.var(T[mask], axis=0, ddof=1)
+    likelihood_k = multivariate_normal(mean=mu, cov=var)
+    likelihood.append(likelihood_k)
+```
 
-El primer paso para hacer el ejemplo autocontenido es mostrar como se generó la figura, lo cual se puede ver en el siguiente video.
+$$\hat \mu_1 = [5.1234 5.0177]^T$$, $$\hat \mu_2 = [1.5229 -1.5553]^T$$ y
+$$\hat \mu_3 = [12.5064 -3.4501]^T$$
 
-{%include problema_clasificacion.html %}
 
-El algoritmo de clasificación se describe en el siguiente video. 
+$$\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0 \\ 0.0 & 1.9562 \\ 
+\end{pmatrix}$$, 
+$$\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 0.0 \\ 0.0 & 2.8304 \\ 
+\end{pmatrix}$$ y 
+$$\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 0.0 \\ 0.0 & 6.8235 \\ 
+\end{pmatrix}$$
 
-{%include naive_bayes.html %}
+## Predicción
 
+```python
+hy_ingenuo = predict(G, likelihood, prior, labels)
+```
+
+## Rendimiento
+
+con un `error` de $$0.0133$$ y un error estándar (`se_formula`)
+de $$0.0047$$
+
+```python
+error = (y_g != hy_ingenuo).mean()
+se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
+```
+
+# Diferencias en Rendimiento 
+
+```python
+diff = (y_g != hy_ingenuo).mean() -  (y_g != hy).mean()
+```
+
+
+[Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
+
+
+```python
+S = np.random.randint(y_g.shape[0],
+                      size=(500, y_g.shape[0]))
+B = [(y_g[s] != hy_ingenuo[s]).mean() -  (y_g[s] != hy[s]).mean()
+     for s in S]
+se = np.std(B, axis=0)
+```
+
+```python
+sns.displot(B, kde=True)
+```
+
+<!--
+plt.savefig('comp_bayes_classificadores.png', dpi=300)
+-->
+
+![Diferencia entre Clasificadores Bayesianos](/AprendizajeComputacional/assets/images/comp_bayes_classificadores.png)
+
+# Clase: Clasificador Bayesiano Gausiano
+
+```python
+class GaussianBayes(object):
+    def __init__(self, naive=False) -> None:
+        self._naive = naive
+
+    @property
+    def naive(self):
+        return self._naive
+    
+    @property
+    def labels(self):
+        return self._labels
+
+    @labels.setter
+    def labels(self, labels):
+        self._labels = labels        
+```
+
+## Estimación de Parámetros
+
+```python
+    def fit(self, X, y):
+        self.prior = y
+        self.likelihood = (X, y)
+        return self
+```
+
+```python
+    @property
+    def prior(self):
+        return self._prior
+
+    @prior.setter
+    def prior(self, y):
+        labels, counts = np.unique(y, return_counts=True)
+        prior = counts / counts.sum()        
+        self.labels = labels
+        self._prior = np.log(prior)
+```
+
+
+```python
+    @property
+    def likelihood(self):
+        return self._likelihood
+
+    @likelihood.setter
+    def likelihood(self, D):
+        X, y = D
+        likelihood = []
+        for k in self.labels:
+            mask = y == k
+            mu = np.mean(X[mask], axis=0)
+            if self.naive:
+                cov = np.var(X[mask], axis=0, ddof=1)
+            else:
+                cov = np.cov(X[mask], rowvar=False)
+            _ = multivariate_normal(mean=mu, cov=cov)
+            likelihood.append(_)
+        self._likelihood = likelihood
+```
+
+## Predicción
+
+```python
+    def predict(self, X):
+        hy = self.predict_log_proba(X)
+        _ = np.argmax(hy, axis=1)
+        return self.labels[_]
+```
+
+```python
+    def predict_proba(self, X):
+        _ = self.predict_log_proba(X)
+        return np.exp(_)
+```
+
+```python
+    def predict_log_proba(self, X):
+        log_likelihood = np.vstack([m.logpdf(X) 
+                                    for m in self.likelihood]).T
+        prior = self.prior
+        posterior = log_likelihood + prior
+        evidence = np.atleast_2d(logsumexp(posterior, axis=1)).T
+        return posterior - evidence
+```
+
+## Uso
+
+```python
+bayes = GaussianBayes().fit(T, y_t)
+hy = bayes.predict(G)
+```
 # Regresión
 
 Hasta este momento se han revisado métodos paramétricos en clasificación, ahora es el turno de abordar 
@@ -288,6 +490,3 @@ donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$w$$ se tiene
 
 $$w = (X^T X)^{-1} X^T y.$$
 
-En el siguiente video se muestra un ejemplo de regresión:
-
-{%include regresion.html %}

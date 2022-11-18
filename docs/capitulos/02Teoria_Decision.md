@@ -271,11 +271,13 @@ El ejemplo sirve también para ilustrar el 5 paso de la
 [metodología general](/AprendizajeComputacional/capitulos/01Tipos/#sec:metodologia-general)
 de los algoritmos de aprendizaje supervisado que corresponde a medir el 
 rendimiento de un modelo. Primero se empieza por medir el error promedio 
-utilizando el siguiente código.
+utilizando el siguiente código
 
 ```python
 error = (y != prediccion).mean()
 ```
+
+donde el `error` es $$0.0097$$.
 
 La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve 
 a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer
@@ -298,7 +300,7 @@ Para el ejemplo analizado el error estándar se calcula con la siguiente instruc
 se_formula = np.sqrt(error * (1 - error) / 3000)
 ```
 
-teniendo un valor de $$0.00196$$. 
+teniendo un valor de $$0.00179$$. 
 
 Aunque el error estándar del parámetro $$p$$ de la distribución Bernoulli si 
 se puede calcular analíticamente, se usará la técnica de 
@@ -314,7 +316,7 @@ las cuales consisten en calcular $$\hat p$$. Se puede observar como se usa
 directamente `y` y `prediccion` junto con el arreglo de índices `s`
 para calcular la media del error. Finalmente se calcula la desviación estándar 
 de `B` (tercera línea) y ese valor corresponde al error estándar. 
-El error estándar, `se`, calculado es $$0.00194.$$
+El error estándar, `se`, calculado es $$0.00189.$$
 
 
 ```python
@@ -329,7 +331,7 @@ código se puede observar su histograma, donde los datos estimados se encuentran
 en la lista `B`.
 
 ```
-sns.histplot(B)
+sns.displot(B, kde=True)
 ```
 
 <!--
