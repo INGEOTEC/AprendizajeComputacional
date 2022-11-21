@@ -23,6 +23,7 @@ clasificación.
 from scipy.stats import multivariate_normal
 from scipy.special import logsumexp
 from sklearn.model_selection import train_test_split
+from sklearn import datasets
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
@@ -425,7 +426,7 @@ class GaussianBayes(object):
                 cov = np.var(X[mask], axis=0, ddof=1)
             else:
                 cov = np.cov(X[mask], rowvar=False)
-            _ = multivariate_normal(mean=mu, cov=cov)
+            _ = multivariate_normal(mean=mu, cov=cov, allow_singular=True)
             likelihood.append(_)
         self._likelihood = likelihood
 ```
@@ -461,6 +462,66 @@ class GaussianBayes(object):
 bayes = GaussianBayes().fit(T, y_t)
 hy = bayes.predict(G)
 ```
+
+# Ejemplo: Breast Cancer Wisconsin
+
+
+```python
+X, y = datasets.load_breast_cancer(return_X_y=True)
+```
+
+
+[entrenamiento y prueba](/AprendizajeComputacional/capitulos/03Parametricos/#conjunto-de-entrenamiento-y-prueba)
+
+```python
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+## Entrenamiento
+
+```python
+gaussian = GaussianBayes().fit(X, y)
+naive = GaussianBayes(naive=True).fit(T, y_t)
+```
+
+## Predicción
+
+```python
+hy_gaussian = gaussian.predict(G)
+hy_naive = naive.predict(G)
+```
+
+## Rendimiento
+
+```python
+error_gaussian = (y_g != hy_gaussian).mean()
+error_naive = (y_g != hy_naive).mean()
+```
+
+clasificador gausiano $$0.0351$$ 
+ingenuo $$0.0614$$
+
+
+diferencia $$0.0263$$ con un error estándar de $$0.0226$$
+cociente entre la diferencia y el error estándar es de 
+$$1.1650$$
+
+
+<!--
+diff = (y_g != hy_naive).mean() -  (y_g != hy_gaussian).mean()
+
+S = np.random.randint(y_g.shape[0],
+                      size=(500, y_g.shape[0]))
+B = [(y_g[s] != hy_naive[s]).mean() -  (y_g[s] != hy_gaussian[s]).mean()
+     for s in S]
+se = np.std(B, axis=0)
+
+sns.displot(B, kde=True)
+plt.savefig('comp_bayes_breast_cancer.png', dpi=300)
+-->
+
+![Diferencia entre Clasificadores Bayesianos](/AprendizajeComputacional/assets/images/comp_bayes_breast_cancer.png)
+
 # Regresión
 
 Hasta este momento se han revisado métodos paramétricos en clasificación, ahora es el turno de abordar 
