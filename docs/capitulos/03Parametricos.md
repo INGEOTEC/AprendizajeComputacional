@@ -583,8 +583,24 @@ que usa la función cumulativa de densidad para calcular la probabilidad.
 
 # Regresión
 
-Hasta este momento se han revisado métodos paramétricos en clasificación, ahora es el turno de abordar 
-esto en el problema de regresión.
+Hasta este momento se han revisado métodos paramétricos en 
+clasificación, ahora es el turno de abordar 
+esto en el problema de regresión. La diferencia entre clasificación
+y regresión como se describió en 
+[anteriormente](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) es que $$\mathcal Y \in \mathbb R.$$
+
+En regresión el modelo que se asume es 
+que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \Sigma)$$,
+de tal manera que $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \Sigma)].$$ Donde 
+$$\mathbb E[\epsilon] = 0$$ y $$\mathbb V[\epsilon] = \sigma.$$
+
+Trabajando con $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \Sigma)],$$
+se tiene que $$y = \mathbb E[\mathbf w^T \mathbf x + \epsilon]$$ 
+lo cual se transforma en $$y = \mathbb E[\mathbf w^T \mathbf x] + \mathbb E[\epsilon]$$
+y finalemente se obtiene $$y = \mathbf w^T \mathbf x$$ dado que $$\mathbf w^T \mathbf x$$ es constante
+y $$\mathbb E[\epsilon]=0.$$
+
+
 
 Recordando, regresión es un problema de aprendizaje supervisado, es decir se cuenta con un conjunto de 
 entrenamiento, $$\mathcal X = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, de pares entrada y salida; la 
