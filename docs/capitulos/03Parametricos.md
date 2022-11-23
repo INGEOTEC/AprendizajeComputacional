@@ -601,7 +601,7 @@ y finalemente se obtiene $$y = \mathbf w^T \mathbf x$$ dado que $$\mathbf w^T \m
 y $$\mathbb E[\epsilon]=0.$$
 
 La función de densidad de probabilidad de una Gausiana corresponde a
-$$f(\mathbf w^T \mathbf x) = \frac{1}{\sigma \sqrt{(2\pi)}} \exp{-\frac{1}{2} (\frac{(\mathbf w^T \mathbf x -  \mu)}{\sigma})^2,$$
+$$f(\mathbf w^T \mathbf x) = \frac{1}{\sigma \sqrt{(2 \pi)}} \exp{-\frac{1}{2} (\frac{(\mathbf w^T \mathbf x -  \mu)}{\sigma})^2},$$
 
 donde en esta función se puede observar que los parámetros a identificar 
 son $$\mathbf w$$ y $$\sigma.$$ Utilizando el método de verosimilitud
