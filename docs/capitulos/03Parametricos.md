@@ -590,16 +590,25 @@ y regresión como se describió en
 [anteriormente](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) es que $$\mathcal Y \in \mathbb R.$$
 
 En regresión el modelo que se asume es 
-que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \Sigma)$$,
-de tal manera que $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \Sigma)].$$ Donde 
+que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma)$$,
+de tal manera que $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \sigma)].$$ Donde 
 $$\mathbb E[\epsilon] = 0$$ y $$\mathbb V[\epsilon] = \sigma.$$
 
-Trabajando con $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \Sigma)],$$
+Trabajando con $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \sigma)],$$
 se tiene que $$y = \mathbb E[\mathbf w^T \mathbf x + \epsilon]$$ 
 lo cual se transforma en $$y = \mathbb E[\mathbf w^T \mathbf x] + \mathbb E[\epsilon]$$
 y finalemente se obtiene $$y = \mathbf w^T \mathbf x$$ dado que $$\mathbf w^T \mathbf x$$ es constante
 y $$\mathbb E[\epsilon]=0.$$
 
+La función de densidad de probabilidad de una Gausiana corresponde a
+$$f(\mathbf w^T \mathbf x) = \frac{1}{\sigma \sqrt{(2\pi)}} \exp{-\frac{1}{2} (\frac{(\mathbf w^T \mathbf x -  \mu)}{\sigma})^2,$$
+
+donde en esta función se puede observar que los parámetros a identificar 
+son $$\mathbf w$$ y $$\sigma.$$ Utilizando el método de verosimilitud
+el cual corresponde a maximizar 
+
+$$\mathcal L(\theta) = \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x)$$
+$$\mathcal L(\theta) = \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{(2\pi)}} \exp{-\frac{1}{2} (\frac{(\mathbf w^T \mathbf x -  y)}{\sigma})^2$$
 
 
 Recordando, regresión es un problema de aprendizaje supervisado, es decir se cuenta con un conjunto de 
