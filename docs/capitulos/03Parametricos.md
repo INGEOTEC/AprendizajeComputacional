@@ -590,48 +590,50 @@ y regresión como se describió en
 [anteriormente](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) es que $$\mathcal Y \in \mathbb R.$$
 
 En regresión el modelo que se asume es 
-que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma)$$,
-de tal manera que $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \sigma)].$$ Donde 
-$$\mathbb E[\epsilon] = 0$$ y $$\mathbb V[\epsilon] = \sigma.$$
+que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)$$,
+de tal manera que $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)].$$
 
-Trabajando con $$y = \mathbb E[N(\mathbf w^T \mathbf x + \epsilon, \sigma)],$$
-se tiene que $$y = \mathbb E[\mathbf w^T \mathbf x + \epsilon]$$ 
-lo cual se transforma en $$y = \mathbb E[\mathbf w^T \mathbf x] + \mathbb E[\epsilon]$$
-y finalemente se obtiene $$y = \mathbf w^T \mathbf x$$ dado que $$\mathbf w^T \mathbf x$$ es constante
-y $$\mathbb E[\epsilon]=0.$$
+<!--
+Donde $$\mathbb E[\epsilon] = 0$$ y $$\mathbb V[\epsilon] = \sigma.$$
+-->
+
+Trabajando con $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)],$$
+se considera lo siguiente $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x, 0) + \mathcal N(0, \sigma^2)]$$ 
+que implica que el error $$\epsilon$$ es independiente de $$\mathbf x$$, 
+lo cual se transforma en $$y = \mathbf w^T \mathbf x + \mathbb E[\epsilon],$$ donde $$\mathbb E[\epsilon]=0.$$
+Por lo tanto $$y = \mathbf w^T \mathbf x.$$
 
 La función de densidad de probabilidad de una Gausiana corresponde a
-$$f(\mathbf w^T \mathbf x) = \frac{1}{\sigma \sqrt{(2 \pi)}} \exp{-\frac{1}{2} (\frac{(\mathbf w^T \mathbf x -  \mu)}{\sigma})^2},$$
+$$f(\alpha) = \frac{1}{\sigma \sqrt{2 \pi}} \exp{-\frac{1}{2} (\frac{\alpha -  \mu}{\sigma})^2},$$
 
-donde en esta función se puede observar que los parámetros a identificar 
-son $$\mathbf w$$ y $$\sigma.$$ Utilizando el método de verosimilitud
-el cual corresponde a maximizar 
+donde $$\alpha$$ en el caso de regresión corresponde 
+a $$\mathbf w^T \mathbf x$$ (i.e., $$\alpha = \mathbf w^T \mathbf x$$).
 
-$$\mathcal L(\theta) = \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x)$$
-$$\mathcal L(\theta) = \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{(2\pi)}} \exp{-\frac{1}{2} (\frac{(\mathbf w^T \mathbf x -  y)}{\sigma})^2$$
+Utilizando el método de verosimilitud el cual corresponde a maximizar 
 
+$$\mathcal L(\mathbf w, \sigma) = \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x)$$
 
-Recordando, regresión es un problema de aprendizaje supervisado, es decir se cuenta con un conjunto de 
-entrenamiento, $$\mathcal X = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, de pares entrada y salida; la 
-salida es $$ y_i \in \mathbb R$$.
+$$= \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2)}$$
 
-Entonces se busca una función con la forma $$ f: \mathbb{ R^d } \rightarrow \mathbb R $$ y que se 
-comporte como: $$ \forall_{(x, y) \in \mathcal X} f(x) = y  + \epsilon $$. 
+$$\ell(\mathbf w, \sigma) = \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2 $$
 
-Este problema se puede plantear como un problema de optimización o como un problema de algebra lineal. 
+$$= - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w^T \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.$$
+
+El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $$d$$ derivadas parciales para cada uno de los coeficientes $$\mathbf w$$. En este proceso se observar que
+el término $$N \log \frac{1}{\sigma \sqrt{2\pi}}$$ no depende de $$\mathbf w$$ entonces no afecta el máximo y se desprecia, lo mismo pasa para la constante $$\frac{1}{2\sigma^2}$$. Una vez obtenidos los parámetros $$\mathcal w$$ se obtiene el valor $$\sigma.$$ 
+
+Una manera equivalente de plantear este problema es 
+como un problema de algebra lineal, donde se tiene una matriz de observaciones $$X$$ que se construyen con las variables $$\mathbf x$$ de $$\mathcal X,$$ donde cada renglón de $$X$$ es una observación 
+
 Viéndolo como un problema de algebra lineal lo que se tiene es 
 
-$$ X w = y $$
+$$ X \mathbf w = y $$
 
-donde $$ X $$ son las observaciones, entradas o combinación de entradas, $$ w $$, son los pesos 
-asociados y $$y$$ es el vector que contiene las variables dependientes. 
+Identificar es $$\mathbf w$$, lo cual se puede realizar de la siguiente manera
 
-Tanto $$X$$ como $$y$$ son datos que se obtienen de $$\mathcal X$$ entonces lo que hace falta 
-identificar es $$w$$, lo cual se puede realizar de la siguiente manera
+$$ X^T X \mathbf w = X^T y $$
 
-$$ X^T X w = X^T y $$
+donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$\mathbf w$$ se tiene
 
-donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$w$$ se tiene
-
-$$w = (X^T X)^{-1} X^T y.$$
+$$\mathbf w = (X^T X)^{-1} X^T y.$$
 
