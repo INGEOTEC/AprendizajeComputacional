@@ -20,8 +20,10 @@ clasificación.
 ## Paquetes usados
 {: .no_toc .text-delta }
 ```python
+from EvoMSA.model import GaussianBayes
 from scipy.stats import norm, multivariate_normal
 from scipy.special import logsumexp
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
 from matplotlib import pylab as plt
@@ -636,4 +638,8 @@ $$ X^T X \mathbf w = X^T y $$
 donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$\mathbf w$$ se tiene
 
 $$\mathbf w = (X^T X)^{-1} X^T y.$$
+
+El error estándar de $$\mathcal w_j$$ 
+es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
+
 
