@@ -208,9 +208,7 @@ en la variable `y` tal como se indica a continuación.
 
 ```python
 X = np.concatenate((X_1, X_2, X_3))
-y = np.concatenate([np.ones(1000),
-                    np.ones(1000) + 1,
-                    np.ones(1000) + 2])
+y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 ```
 
 Las variables `X` y `y` contiene la información que conforma el conjunto
@@ -317,7 +315,18 @@ de la estimación del parámetro es Gausiana.
 ## Predicción
 {: #sec:prediccion }
 
-[predicción](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal)
+Una vez que se tiene la función que modela los datos, se está en condiciones de utilizarla
+para [predecir](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal)
+nuevos datos. 
+
+En esta ocasión se organiza el procedimiento de predicción en diferentes funciones, 
+la primera función recibe los datos a predecir `X` y los componentes del modelo, que 
+son la verosimilitud (`likelihood`) y el `prior`. La función calcula el a 
+posteriori $$\mathbb P(\mathcal Y=y \mid \mathcal X=x)$$
+que es la probabilidad de cada clase dada la entrada $$x$$. Se puede observar en 
+la primera linea que se usa la función de densidad de probabilidad (`pdf`) para
+cada clase y esta se multiplica por el `prior` y en la tercera linea se 
+calcula la evidencia. Finalmente, se regresa el a posteriori.  
 
 ```python
 def predict_prob(X, likelihood, prior):
@@ -326,6 +335,12 @@ def predict_prob(X, likelihood, prior):
     evidence = posterior.sum(axis=1)
     return posterior / np.atleast_2d(evidence).T
 ```
+
+La función `predict_proba` se utiliza como base para predecir la clase, 
+para la cual se requiere el mapa entre índices y clase que se identifica
+con la variable `labels`. Se observa que se llama a la función `predict_proba`
+y después se calcula el argumento que tiene la máxima probabilidad y se
+regresa la etiqueta asociada. 
 
 ```python
 def predict(X, likelihood, prior, labels):
@@ -336,31 +351,30 @@ def predict(X, likelihood, prior, labels):
 ## Rendimiento
 {: #sec:rendimiento }
 
-[error de clasificación](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion)
+El rendimiento del algoritmo se mide utilizando el conjunto de prueba `G`, 
+utilizando como medida el [error de clasificación.](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion) El primer paso es predecir
+las clases de los elementos en `G` utilizando la función `predict` que fue 
+diseñada anteriormente. Después se mide el error, utilizando la instrucción 
+que se presenta en la segunda línea. El error que presenta el algoritmo 
+en el conjunto de prueba es $$0.01,$$ el cual es ligeramente superior al 
+encontrado con el modelo ideal.  
 
 ```python
 hy = predict(G, likelihood, prior, labels)
-
-```
-
-`error` es $$0.01$$ 
-
-
-```python
 error = (y_g != hy).mean()
 ```
 
+El error estándar se calcula utilizando la siguiente instrucción 
+el cual tiene un valor de $$0.0041.$$
 
 ```python
 se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
 ```
 
-`se_formula` es $$0.0041$$ 
-
 # Clasificador Bayesiano Ingenuo
 
-## Modelo
-
+Uno de los clasificadores mas utilizados, sencillo de implementar y competitivo, es
+el clasificador Bayesiano Ingenuo. 
 [Anteriormente](/AprendizajeComputacional/capitulos/03Parametricos/#sec:model-clasificacion)
 se asumió que la variable aleatoria $$\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$$
 dado $$\mathcal Y$$ ($$\mathcal X_{\mid \mathcal Y}$$) 
@@ -372,13 +386,15 @@ es la función de densidad de probabilidad conjunta.
 En el clasificador Bayesiano Ingenuo se asume que las variables $$\mathcal X_i$$ 
 y $$\mathcal X_j$$ para $$i \neq j$$ son independientes, esto trae como consecuencia
 que $$f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).$$
+Esto quiere decir que cada variable está definida como una Gausina donde se tiene que 
+identificar $$\mu$$ y $$\sigma^2.$$
 
-
-
-extendiendo la función de densidad de probabilidad para una multiples variables se 
-tiene 
-
-## Estimación de Parámetros
+La estimación de los parámetros de estas distribuciones se puede realizar 
+utilizando un código similar siendo la única diferencia que en se calcula $$\sigma^2$$ 
+de cada variable en ligar de la covarianza $$\Sigma$$, esto se puede observar 
+en la quinta línea donde se usa la función `np.var` en el primer eje. El resto del 
+código es equivalente al presentado 
+[anteriormente.](/AprendizajeComputacional/capitulos/03Parametricos/#sec:estimacion-parametros)
 
 ```python
 likelihood = []
@@ -390,138 +406,46 @@ for k in labels:
     likelihood.append(likelihood_k)
 ```
 
-$$\hat \mu_1 = [5.1234, 5.0177]^T$$, $$\hat \mu_2 = [1.5229, -1.5553]^T$$ y
-$$\hat \mu_3 = [12.5064, -3.4501]^T$$
+Los parámetros estimados en la versión ingenua son equivalentes 
+con respecto a las medias,
+i.e., $$\hat \mu_1 = [5.1234, 5.0177]^T$$, $$\hat \mu_2 = [1.5229, -1.5553]^T$$ 
+y $$\hat \mu_3 = [12.5064, -3.4501]^T$$. La diferencia se puede observar
+en las varianzas, que a continuación se muestran como matriz de covarianza para
+resaltar la diferencia, 
+i.e., $$\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0 \\ 0.0 & 1.9562 \\ \end{pmatrix}$$
+, $$\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 0.0 \\ 0.0 & 2.8304 \\ \end{pmatrix}$$ 
+y $$\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 0.0 \\ 0.0 & 6.8235 \\ \end{pmatrix}$$
+se puede observar como los elementos fuera de la diagonal son ceros, lo cual indica
+la independencia entra las variables de entrada. 
 
+Finalemente, el código para 
+[predecir](/AprendizajeComputacional/capitulos/03Parametricos/#sec:prediccion) no se tiene 
+que modificar dado que el modelo está dado en las variables `likelihood` y `prior`.
 
-$$\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0 \\ 0.0 & 1.9562 \\ 
-\end{pmatrix}$$, 
-$$\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 0.0 \\ 0.0 & 2.8304 \\ 
-\end{pmatrix}$$ y 
-$$\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 0.0 \\ 0.0 & 6.8235 \\ 
-\end{pmatrix}$$
-
-## Predicción
-
-```python
-hy_ingenuo = predict(G, likelihood, prior, labels)
-```
-
-## Rendimiento
-
-con un `error` de $$0.0133$$ y un error estándar (`se_formula`)
-de $$0.0047$$
+El `error` del clasificador Bayesiano Ingenuo en el conjunto de prueba es 
+de $$0.0133$$ y su error estándar (`se_formula`) es $$0.0047.$$ Lo cual se calculó
+utilizando las siguientes dos instrucciones. 
 
 ```python
 error = (y_g != hy_ingenuo).mean()
 se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
 ```
 
-# Clase: Clasificador Bayesiano Gausiano
-
-```python
-class GaussianBayes(object):
-    def __init__(self, naive=False) -> None:
-        self._naive = naive
-
-    @property
-    def naive(self):
-        return self._naive
-    
-    @property
-    def labels(self):
-        return self._labels
-
-    @labels.setter
-    def labels(self, labels):
-        self._labels = labels        
-```
-
-## Estimación de Parámetros
-
-```python
-    def fit(self, X, y):
-        self.prior = y
-        self.likelihood = (X, y)
-        return self
-```
-
-```python
-    @property
-    def prior(self):
-        return self._prior
-
-    @prior.setter
-    def prior(self, y):
-        labels, counts = np.unique(y, return_counts=True)
-        prior = counts / counts.sum()        
-        self.labels = labels
-        self._prior = np.log(prior)
-```
-
-
-```python
-    @property
-    def likelihood(self):
-        return self._likelihood
-
-    @likelihood.setter
-    def likelihood(self, D):
-        X, y = D
-        likelihood = []
-        for k in self.labels:
-            mask = y == k
-            mu = np.mean(X[mask], axis=0)
-            if self.naive:
-                cov = np.var(X[mask], axis=0, ddof=1)
-            else:
-                cov = np.cov(X[mask], rowvar=False)
-            _ = multivariate_normal(mean=mu, cov=cov, allow_singular=True)
-            likelihood.append(_)
-        self._likelihood = likelihood
-```
-
-## Predicción
-
-```python
-    def predict(self, X):
-        hy = self.predict_log_proba(X)
-        _ = np.argmax(hy, axis=1)
-        return self.labels[_]
-```
-
-```python
-    def predict_proba(self, X):
-        _ = self.predict_log_proba(X)
-        return np.exp(_)
-```
-
-```python
-    def predict_log_proba(self, X):
-        log_likelihood = np.vstack([m.logpdf(X) 
-                                    for m in self.likelihood]).T
-        prior = self.prior
-        posterior = log_likelihood + prior
-        evidence = np.atleast_2d(logsumexp(posterior, axis=1)).T
-        return posterior - evidence
-```
-
-## Uso
-
-```python
-bayes = GaussianBayes().fit(T, y_t)
-hy = bayes.predict(G)
-```
-
 # Ejemplo: Breast Cancer Wisconsin
 
+Esta sección complementa el proceso de usar una clasificador Bayesiano al 
+generar un modelo del conjunto de datos de *Breast Cancer Wisconsin.* Estos
+datos se pueden obtener utilizando la función `load_breast_cancer`
+tal y como se muestra a continuación.
 
 ```python
 X, y = datasets.load_breast_cancer(return_X_y=True)
 ```
 
-
-[entrenamiento y prueba](/AprendizajeComputacional/capitulos/03Parametricos/#conjunto-de-entrenamiento-y-prueba)
+Como se ha mencionado, es necesario contar con los conjuntos de 
+[entrenamiento y prueba](/AprendizajeComputacional/capitulos/03Parametricos/#conjunto-de-entrenamiento-y-prueba) para poder realizar de manera
+completa un evaluación del proceso de clasificación. Esto se realiza
+ejecutando la siguiente instrucción.
 
 ```python
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
@@ -530,7 +454,7 @@ T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ## Entrenamiento
 
 ```python
-gaussian = GaussianBayes().fit(X, y)
+gaussian = GaussianBayes().fit(T, y_t)
 naive = GaussianBayes(naive=True).fit(T, y_t)
 ```
 
@@ -548,8 +472,8 @@ error_gaussian = (y_g != hy_gaussian).mean()
 error_naive = (y_g != hy_naive).mean()
 ```
 
-clasificador gausiano $$0.0351$$ 
-ingenuo $$0.0614$$
+clasificador gausiano $$0.0614$$
+ingenuo $$0.0877$$
 
 
 # Diferencias en Rendimiento 
@@ -560,9 +484,9 @@ diferencia $$0.0263$$
 diff = (y_g != hy_naive).mean() -  (y_g != hy_gaussian).mean()
 ```
 
-con un error estándar de $$0.0226$$
+con un error estándar de $$0.0240$$
 cociente entre la diferencia y el error estándar es de 
-$$1.1650$$
+$$1.0978$$
 
 [Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
 
