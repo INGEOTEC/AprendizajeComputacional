@@ -359,6 +359,23 @@ se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
 
 ## Modelo
 
+[Anteriormente](/AprendizajeComputacional/capitulos/03Parametricos/#sec:model-clasificacion)
+se asumió que la variable aleatoria $$\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$$
+dado $$\mathcal Y$$ ($$\mathcal X_{\mid \mathcal Y}$$) 
+es $$\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$$ 
+donde $$\mu_{\mathcal Y} \in \mathbb R^d$$, $$\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}.$$ 
+y $$f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$$ 
+es la función de densidad de probabilidad conjunta.
+
+En el clasificador Bayesiano Ingenuo se asume que las variables $$\mathcal X_i$$ 
+y $$\mathcal X_j$$ para $$i \neq j$$ son independientes, esto trae como consecuencia
+que $$f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).$$
+
+
+
+extendiendo la función de densidad de probabilidad para una multiples variables se 
+tiene 
+
 ## Estimación de Parámetros
 
 ```python
