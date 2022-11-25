@@ -20,8 +20,10 @@ clasificación.
 ## Paquetes usados
 {: .no_toc .text-delta }
 ```python
+from EvoMSA.model import GaussianBayes
 from scipy.stats import norm, multivariate_normal
 from scipy.special import logsumexp
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
 from matplotlib import pylab as plt
@@ -600,30 +602,61 @@ que usa la función cumulativa de densidad para calcular la probabilidad.
 
 # Regresión
 
-Hasta este momento se han revisado métodos paramétricos en clasificación, ahora es el turno de abordar 
-esto en el problema de regresión.
+Hasta este momento se han revisado métodos paramétricos en 
+clasificación, ahora es el turno de abordar 
+esto en el problema de regresión. La diferencia entre clasificación
+y regresión como se describió en 
+[anteriormente](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) es que $$\mathcal Y \in \mathbb R.$$
 
-Recordando, regresión es un problema de aprendizaje supervisado, es decir se cuenta con un conjunto de 
-entrenamiento, $$\mathcal X = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, de pares entrada y salida; la 
-salida es $$ y_i \in \mathbb R$$.
+En regresión el modelo que se asume es 
+que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)$$,
+de tal manera que $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)].$$
 
-Entonces se busca una función con la forma $$ f: \mathbb{ R^d } \rightarrow \mathbb R $$ y que se 
-comporte como: $$ \forall_{(x, y) \in \mathcal X} f(x) = y  + \epsilon $$. 
+<!--
+Donde $$\mathbb E[\epsilon] = 0$$ y $$\mathbb V[\epsilon] = \sigma.$$
+-->
 
-Este problema se puede plantear como un problema de optimización o como un problema de algebra lineal. 
+Trabajando con $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)],$$
+se considera lo siguiente $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x, 0) + \mathcal N(0, \sigma^2)]$$ 
+que implica que el error $$\epsilon$$ es independiente de $$\mathbf x$$, 
+lo cual se transforma en $$y = \mathbf w^T \mathbf x + \mathbb E[\epsilon],$$ donde $$\mathbb E[\epsilon]=0.$$
+Por lo tanto $$y = \mathbf w^T \mathbf x.$$
+
+La función de densidad de probabilidad de una Gausiana corresponde a
+$$f(\alpha) = \frac{1}{\sigma \sqrt{2 \pi}} \exp{-\frac{1}{2} (\frac{\alpha -  \mu}{\sigma})^2},$$
+
+donde $$\alpha$$ en el caso de regresión corresponde 
+a $$\mathbf w^T \mathbf x$$ (i.e., $$\alpha = \mathbf w^T \mathbf x$$).
+
+Utilizando el método de verosimilitud el cual corresponde a maximizar 
+
+$$\mathcal L(\mathbf w, \sigma) = \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x)$$
+
+$$= \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2)}$$
+
+$$\ell(\mathbf w, \sigma) = \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2 $$
+
+$$= - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w^T \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.$$
+
+El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $$d$$ derivadas parciales para cada uno de los coeficientes $$\mathbf w$$. En este proceso se observar que
+el término $$N \log \frac{1}{\sigma \sqrt{2\pi}}$$ no depende de $$\mathbf w$$ entonces no afecta el máximo y se desprecia, lo mismo pasa para la constante $$\frac{1}{2\sigma^2}$$. Una vez obtenidos los parámetros $$\mathcal w$$ se obtiene el valor $$\sigma.$$ 
+
+Una manera equivalente de plantear este problema es 
+como un problema de algebra lineal, donde se tiene una matriz de observaciones $$X$$ que se construyen con las variables $$\mathbf x$$ de $$\mathcal X,$$ donde cada renglón de $$X$$ es una observación 
+
 Viéndolo como un problema de algebra lineal lo que se tiene es 
 
-$$ X w = y $$
+$$ X \mathbf w = y $$
 
-donde $$ X $$ son las observaciones, entradas o combinación de entradas, $$ w $$, son los pesos 
-asociados y $$y$$ es el vector que contiene las variables dependientes. 
+Identificar es $$\mathbf w$$, lo cual se puede realizar de la siguiente manera
 
-Tanto $$X$$ como $$y$$ son datos que se obtienen de $$\mathcal X$$ entonces lo que hace falta 
-identificar es $$w$$, lo cual se puede realizar de la siguiente manera
+$$ X^T X \mathbf w = X^T y $$
 
-$$ X^T X w = X^T y $$
+donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$\mathbf w$$ se tiene
 
-donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$w$$ se tiene
+$$\mathbf w = (X^T X)^{-1} X^T y.$$
 
-$$w = (X^T X)^{-1} X^T y.$$
+El error estándar de $$\mathcal w_j$$ 
+es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
+
 
