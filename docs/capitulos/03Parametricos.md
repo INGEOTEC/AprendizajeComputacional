@@ -434,7 +434,7 @@ se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
 # Ejemplo: Breast Cancer Wisconsin
 
 Esta sección complementa el proceso de usar una clasificador Bayesiano al 
-generar un modelo del conjunto de datos de *Breast Cancer Wisconsin.* Estos
+generar dos modelos del conjunto de datos de *Breast Cancer Wisconsin.* Estos
 datos se pueden obtener utilizando la función `load_breast_cancer`
 tal y como se muestra a continuación.
 
@@ -453,12 +453,23 @@ T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 
 ## Entrenamiento
 
+Los dos modelos que se utilizarán será el clasificador de Bayes Gausiano
+y Bayesiano Ingenuo, utilizando la clase `GaussianBayes`
+que se explica en el  
+[apéndice de código.](/AprendizajeComputacional/capitulos/15Codigo/#clasificador-bayesiano-gausiano)
+Las siguientes dos instrucciones inicializan estos dos clasificadores, 
+la única diferencia es el parámetro `naive` que indica si el clasificador
+es ingenuo. 
+
 ```python
 gaussian = GaussianBayes().fit(T, y_t)
 naive = GaussianBayes(naive=True).fit(T, y_t)
 ```
 
 ## Predicción
+
+Habiendo definido los dos clasificador, las predicciones del conjunto de prueba 
+se realiza de la siguiente manera. 
 
 ```python
 hy_gaussian = gaussian.predict(G)
@@ -467,29 +478,33 @@ hy_naive = naive.predict(G)
 
 ## Rendimiento
 
+El rendimiento de ambos clasificadores se calcula de la siguiente manera 
+
 ```python
 error_gaussian = (y_g != hy_gaussian).mean()
 error_naive = (y_g != hy_naive).mean()
 ```
 
-clasificador gausiano $$0.0614$$
-ingenuo $$0.0877$$
-
-
+teniendo el clasificador Bayesiano Gausiano un error de $$0.0614$$
+y el error de Bayesiano Ingenuo es $$0.0877.$$ Se ha visto que el error
+es una variable aleatoria, entonces la pregunta es saber si la diferencia
+de rendimiento que se observa es estadisticamente significativa o es
+una diferencia que proviene de la aletoriedad de los datos. 
 # Diferencias en Rendimiento 
 
-diferencia $$0.0263$$ 
+Una manera de ver si existe una diferencia en rendimiento es calcular 
+la diferencia entre los dos errores de clasificación, esto es 
 
 ```python
 diff = (y_g != hy_naive).mean() -  (y_g != hy_gaussian).mean()
 ```
 
-con un error estándar de $$0.0240$$
-cociente entre la diferencia y el error estándar es de 
-$$1.0978$$
-
-[Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
-
+que tiene un valor de $$0.0263$$. De la misma manera que se ha utilizado la 
+técnica de 
+[bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
+para calcular el error estándar de la media, se puede usar para estimar
+el error estándar de la diferencia en rendimiento. El siguiente código
+muestra el procedimiento para estimar este error estándar. 
 
 ```python
 S = np.random.randint(y_g.shape[0],
@@ -498,6 +513,20 @@ B = [(y_g[s] != hy_naive[s]).mean() -  (y_g[s] != hy_gaussian[s]).mean()
      for s in S]
 se = np.std(B, axis=0)
 ```
+El error estándar de la diferencia de rendimiento es de $$0.0240,$$
+una procedimiento simple para saber si la diferencia observada es 
+estadisticamente significativa, es dividir la diferencia entre su 
+error estándar dando un valor de $$1.0978;$$ en el caso que el valor
+fuera igual o superior a 2 se sabría que la diferencia es significativa
+con una confianza de al menos 95%, esto asumiendo que la diferencia se
+comporta como una gausiana. 
+
+El histograma de los datos que se tienen en la variable `B`
+se observa en la siguiente figura. Se puede ver que la forma del
+histograma asemeja una gausina y que el cero esta en el cuerpo de
+la gausiana, tal y como lo confirmó el coeciente que se calculó 
+previamente. 
+
 
 ```python
 sns.displot(B, kde=True)
@@ -509,27 +538,28 @@ plt.savefig('comp_bayes_breast_cancer.png', dpi=300)
 
 ![Diferencia entre Clasificadores Bayesianos](/AprendizajeComputacional/assets/images/comp_bayes_breast_cancer.png)
 
-
-El área bajo la curva a la izquierda del cero es $$0.1220$$ 
-la cual se puede calcular con el siguiente código
+Una manera para conocer la probabilidad de manera exacta, es calcular
+el área bajo la curva a la izquierda del cero, este sería el valor $p$, 
+si este es menor a 0.05 quiere decir que se tiene una confianza mayor 
+del 95% de que los rendimientos son diferentes. Para este ejemplo,
+el área se puede calcular con el siguiente código
 
 ```python
 dist = norm(loc=diff, scale=se)
 dist.cdf(0)
 ```
 
-que usa la función cumulativa de densidad para calcular la probabilidad.
-
-
-
-
+teniendo el valor de $$0.1361$$, lo que significa que 
+se tiene una confianza del 86% de que los dos algoritmos 
+son diferentes considerando el error de clasificación como medida de
+rendimiento. 
 
 # Regresión
 
 Hasta este momento se han revisado métodos paramétricos en 
 clasificación, ahora es el turno de abordar 
 esto en el problema de regresión. La diferencia entre clasificación
-y regresión como se describió en 
+y regresión como se describió 
 [anteriormente](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) es que $$\mathcal Y \in \mathbb R.$$
 
 En regresión el modelo que se asume es 
@@ -547,40 +577,120 @@ lo cual se transforma en $$y = \mathbf w^T \mathbf x + \mathbb E[\epsilon],$$ do
 Por lo tanto $$y = \mathbf w^T \mathbf x.$$
 
 La función de densidad de probabilidad de una Gausiana corresponde a
+
 $$f(\alpha) = \frac{1}{\sigma \sqrt{2 \pi}} \exp{-\frac{1}{2} (\frac{\alpha -  \mu}{\sigma})^2},$$
 
-donde $$\alpha$$ en el caso de regresión corresponde 
+donde $$\alpha$$, en el caso de regresión, corresponde 
 a $$\mathbf w^T \mathbf x$$ (i.e., $$\alpha = \mathbf w^T \mathbf x$$).
 
 Utilizando el método de verosimilitud el cual corresponde a maximizar 
 
-$$\mathcal L(\mathbf w, \sigma) = \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x)$$
+$$\begin{eqnarray}
+\mathcal L(\mathbf w, \sigma) &=& \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x) \\
+&=& \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2)} \\
+\ell(\mathbf w, \sigma) &=& \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2 \\
+&=& - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w^T \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.
+\end{eqnarray}
+$$
 
-$$= \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2)}$$
+El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de 
+interés, entonces se resuelven $$d$$ derivadas parciales para cada uno de los 
+coeficientes $$\mathbf w$$. En este proceso se observar que el 
+término $$N \log \frac{1}{\sigma \sqrt{2\pi}}$$ no depende de $$\mathbf w$$ entonces no afecta el 
+máximo y se desprecia, lo mismo pasa para la constante $$\frac{1}{2\sigma^2}$$. Una vez obtenidos los 
+parámetros $$\mathcal w$$ se obtiene el valor $$\sigma.$$ 
 
-$$\ell(\mathbf w, \sigma) = \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2 $$
-
-$$= - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w^T \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.$$
-
-El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $$d$$ derivadas parciales para cada uno de los coeficientes $$\mathbf w$$. En este proceso se observar que
-el término $$N \log \frac{1}{\sigma \sqrt{2\pi}}$$ no depende de $$\mathbf w$$ entonces no afecta el máximo y se desprecia, lo mismo pasa para la constante $$\frac{1}{2\sigma^2}$$. Una vez obtenidos los parámetros $$\mathcal w$$ se obtiene el valor $$\sigma.$$ 
-
-Una manera equivalente de plantear este problema es 
-como un problema de algebra lineal, donde se tiene una matriz de observaciones $$X$$ que se construyen con las variables $$\mathbf x$$ de $$\mathcal X,$$ donde cada renglón de $$X$$ es una observación 
+Una manera equivalente de plantear este problema es como un problema de algebra lineal, 
+donde se tiene una matriz de observaciones $$X$$ que se construyen con las 
+variables $$\mathbf x$$ de $$\mathcal X,$$ donde cada renglón de $$X$$ es una observación. 
 
 Viéndolo como un problema de algebra lineal lo que se tiene es 
 
-$$ X \mathbf w = y $$
+$$ X \mathbf w = \mathbf y,$$
 
-Identificar es $$\mathbf w$$, lo cual se puede realizar de la siguiente manera
+donde identificar a $$\mathbf w$$ se puede realizar de la siguiente manera
 
-$$ X^T X \mathbf w = X^T y $$
+$$ X^T X \mathbf w = X^T \mathbf y.$$
 
-donde $$X^T$$ es la transpuesta de $$X$$. Despejando $$\mathbf w$$ se tiene
+Despejando $$\mathbf w$$ se tiene
 
-$$\mathbf w = (X^T X)^{-1} X^T y.$$
+$$\mathbf w = (X^T X)^{-1} X^T \mathbf y.$$
 
-El error estándar de $$\mathcal w_j$$ 
-es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
+Finalmente el error estándar de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
+
+## Ejemplo: Diabetes
+
+Esta sección ilustra el proceso de resolver un problema de regresión utilizando
+un método paramétrico, en particular una regresión lineal. El problema 
+se obtiene mediante la función `load_diabetes` de la siguiente manera
+
+```python
+X, y = datasets.load_diabetes(return_X_y=True)
+```
+
+El siguiente paso es generar los conjuntos de 
+[entrenamiento y prueba](AprendizajeComputacional/capitulos/03Parametricos/#sec:conjunto-entre-prueaba)
+
+```python
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+Con el conjunto de entrenamiento `T` y `y_t` se estiman los 
+parámetros de la regresión lineal tal y como se muestra a continuación
+
+```python
+m = LinearRegression().fit(T, y_t)
+```
+
+Los coeficientes de la regresión lineal 
+son $$\mathbf w=[60.5341, -275.0734, 483.8159, 328.7212, -1203.0419, 764.0044, 302.2494, 333.9155, 902.708, 30.2333]$$ y $$w_0=150.5390$$ 
+lo cual se encuentran en las siguientes variables
+
+```python
+m.coef_
+m.intercept_
+```
+
+La pregunta es si estos coeficientes son estadisticamente diferentes que cero, esto
+se puede identificar midiendo $$\sigma$$ lo cual es la desviación estándar del error
+tal y como se muestra en las siguientes instrucciones
+
+```python
+error = y_t - m.predict(T)
+std_error = np.std(error)
+```
+
+La error estándar de $$\mathbf w$$ es 
+
+```python
+diag = np.arange(T.shape[1])
+_ = np.sqrt((np.dot(T.T, T)**(-1))[diag, diag])
+se = std_error * _
+```
+
+y para saber si los coeficientes son significativamente diferente de cero
+se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes
+valores $$[0.9909, -4.6219, 8.2918, 5.4916, -20.1754, 13.0383, 5.2308, 5.5876, 14.6862, 0.514].$$
+Se observa que el primer coeficiente es menor que 2 lo mismo que el último lo cual significa
+que estas variables tiene un coeficiente que estadisticamente no es diferente de cero. 
+
+La predicción del conjunto de prueba se puede realizar con la siguiente instrucción
+
+```python
+hy = m.predict(G)
+```
+
+Finalmente, la siguiente figura muestra las predicciones contra las mediciones reales.
+También se incluye la linea que ilustra el modelo ideal. 
 
 
+```python
+sns.scatterplot(x=hy, y=y_g)
+sns.lineplot(x=[hy.min(), hy.max()], y=[y_g.min(), y_g.max()])
+```
+
+<!--
+plt.savefig('scatter_lineal_regresion.png', dpi=300)
+-->
+
+![Regresión Lineal](/AprendizajeComputacional/assets/images/scatter_lineal_regresion.png)
