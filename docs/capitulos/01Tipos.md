@@ -44,6 +44,19 @@ En el área de aprendizaje, hay una tendencia de utilizar plataformas donde dife
 
 En el ámbito científico también se han generado este tipo de plataformas aunque su objetivo es ligeramente diferente, lo que se busca es tener una medida objetiva de diferentes soluciones y en algunos casos facilitar la reproducibilidad de las soluciones. Ver por ejemplo [http://codalab.org]().
 
+# Metodología General en Aprendizaje Supervisado y No Supervisado
+{: #sec:metodologia-general }
+
+Antes de continuar con la descripción de los diferentes tipos 
+de aprendizaje es importante mencionar la metodología que se sigue en los problemas de aprendizaje 
+supervisado y no supervidado
+
+1. Todo empieza con un conjunto de datos $$\mathcal D$$ que tiene la información del fenómeno de interés.
+2. Se selecciona el conjunto de entrenamiento $$\mathcal T \subseteq \mathcal D$$.
+3. Se diseña un algoritmo, $$f$$, utilizando $$\mathcal T$$.
+4. Se utiliza $$f$$ para estimar las características modeladas.
+5. Se mide el rendimiento de $$f$$.
+
 # Aprendizaje No Supervisado
 
 Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar en conjunto de vectores en, i.e. $$\mathcal D = \{ x_1, \ldots, x_N \}$$, donde $$x_i \in \mathbb R^d$$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.

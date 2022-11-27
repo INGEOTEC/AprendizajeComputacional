@@ -86,29 +86,6 @@ y $$\epsilon \sim \mathcal N(0, \sigma^2)$$ es el error con media cero y desviac
 estándar $$\sigma$$. Con estas condiciones la salida $$y$$ es 
 $$\mathbb E[\mathbb P(\mathcal Y \mid \mathcal X=x)].$$
 
-<!--
-
-En particular podemos observar que el problema de regresión y de clasificación se puede 
-definir utilizando la definición de probabilidad condicional
-
-$$P(A \mid B) = \frac{P(AB)}{P(B)}$$,
-
-la cual se entiende como la probabilidad de observar el evento $$A$$ sabiendo que ya se 
-presentó el evento $$B$$.
-
-Es sencillo visualizar que en estas condiciones, el problema de clasificación se puede 
-plantear como el problema de selección la clase mas probable. Es decir, la clase seleccionada 
-corresponde a $$\textsf{arg max}_i P(C_i \mid x)$$. Por ejemplo, en caso
-de un problema binario, con clases $$0$$ y $$1$$ la respuesta sería:
-
-$$ \begin{cases} 1, P(C=1 \mid x) > 0.5\\ 0, \text{de lo contrario} \end{cases} $$.
-
-Por otro lado en regresión se puede plantear como 
-$$p(y \mid x) = \mathcal N(g(x \mid \theta), \sigma^2)$$, donde la función $$g$$ y sus 
-parámetros $$\theta$$ son identificados mediante el conjunto $$\mathcal X$$.
-
--->
-
 # Teorema de Bayes
 
 El problema se convierte en cómo calcular $$\mathbb P(\mathcal Y \mid \mathcal X)$$, 
@@ -131,38 +108,6 @@ Es importante mencionar que la evidencia se puede calcular mediante la probabili
 total, es decir:
 
 $$\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).$$
-
-<!--
-Se puede observar que calcular la probabilidad conjunta de los eventos $$A$$ y $$B$$, i.e., 
-$$P(AB)$$, en otras palabras el calcular las probabilidad conjunta entre entrada y salida. 
-Para evitar este paso, se puede expresar la relación de probabilidad
-condicional utilizando el teorema de Bayes.
-
-En la siguientes lineas se deriva el teorema. Recordando que la probabilidad conjunta es 
-conmutativa, es decir:$$P(AB) = P(BA)$$.
-
-Tomando esta característica como base y utilizando la definición de probabilidad condicional 
-se tiene:
-
-$$P(A\mid B)P(B) = P(B \mid A) P(A)$$,
-
-despejando $$P(A \mid B)$$ y asumiendo que $$P(B) > 0 $$ se obtiene el teorema de Bayes:
-
-$$P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}$$.
-
-Haciendo un cambio de variables para dejarlo en términos de la clase $$C$$ y de la entrada 
-$$x$$ se obtiene:
-
-$$P(C \mid x) = \frac{P(x \mid C) P(C)}{P(x)}$$,
-
-donde $$P(C)$$ es la probabilidad a priori, $$P(x \mid C)$$ es la verosimilitud de la clase y 
-$$P(x)$$ es la evidencia. La cual se puede calcular utilizando la ley de la probabilidad total:
-
-$$P(x) = \sum_i P(x \mid C_i) P(C_i)$$.
-
-Finalmente, es importante mencionar que $$P(\cdot \mid x)$$ cumple con todos los axiomas de 
-probabilidad, para este caso, suponiendo $$K$$ clases entonces $$\sum_i^K P(C_i \mid x) = 1$$.
--->
 
 ## Problema Sintético
 {: #sec:tres-normales } 
@@ -225,6 +170,13 @@ se puede visualizar las tres nubes de puntos, donde el color indica la clase.
 ![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
 
 ## Predicción
+{: #sec:prediccion-normal }
+
+En esta sección se describe el primer ejemplo del paso 4 de la 
+[metodología general](/AprendizajeComputacional/capitulos/01Tipos/#sec:metodologia-general)
+de los algoritmos de aprendizaje supervisado. El algoritmo $$f$$ mencionado en la metodología
+corresponde en este ejemplo al uso del Teorema de Bayes y las distribuciones `p1`, `p2` y `p3` y los 
+correspondientes priors. 
 
 Quitando la evidencia del Teorema de Bayes se observa que 
 $$\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$.
@@ -308,19 +260,24 @@ donde el proceso de clasificación cometió un error.
 ![Predicción](/AprendizajeComputacional/assets/images/gaussian_3classes_hy.png)
 
 # Error de Clasificación
+{: #sec:error-clasificacion}
 
 Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, 
 este produce errores al momento de usarlo para clasificar. 
 Se podía asumir que este error en clasificación iba a ocurrir desde el 
 momento que las [nubes de puntos](#fig:gaussian_3classes) de la clase 1 y 2 se traslapan.
 
-El ejemplo sirve también para ilustrar otro comportamiento que se tiene cuando se
-mide el error de cualquier algoritmo de aprenizaje supervisado. Primero se
-empieza por medir el error promedio utilizando el siguiente código.
+El ejemplo sirve también para ilustrar el 5 paso de la 
+[metodología general](/AprendizajeComputacional/capitulos/01Tipos/#sec:metodologia-general)
+de los algoritmos de aprendizaje supervisado que corresponde a medir el 
+rendimiento de un modelo. Primero se empieza por medir el error promedio 
+utilizando el siguiente código
 
 ```python
 error = (y != prediccion).mean()
 ```
+
+donde el `error` es $$0.0097$$.
 
 La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve 
 a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer
@@ -343,7 +300,7 @@ Para el ejemplo analizado el error estándar se calcula con la siguiente instruc
 se_formula = np.sqrt(error * (1 - error) / 3000)
 ```
 
-teniendo un valor de $$0.00196$$. 
+teniendo un valor de $$0.00179$$. 
 
 Aunque el error estándar del parámetro $$p$$ de la distribución Bernoulli si 
 se puede calcular analíticamente, se usará la técnica de 
@@ -359,7 +316,7 @@ las cuales consisten en calcular $$\hat p$$. Se puede observar como se usa
 directamente `y` y `prediccion` junto con el arreglo de índices `s`
 para calcular la media del error. Finalmente se calcula la desviación estándar 
 de `B` (tercera línea) y ese valor corresponde al error estándar. 
-El error estándar, `se`, calculado es $$0.00194.$$
+El error estándar, `se`, calculado es $$0.00189.$$
 
 
 ```python
@@ -374,7 +331,7 @@ código se puede observar su histograma, donde los datos estimados se encuentran
 en la lista `B`.
 
 ```
-sns.histplot(B)
+sns.displot(B, kde=True)
 ```
 
 <!--
