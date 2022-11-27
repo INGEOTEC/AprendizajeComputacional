@@ -434,8 +434,9 @@ se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
 
 # Ejemplo: Breast Cancer Wisconsin
 
-Esta sección complementa el proceso de usar una clasificador Bayesiano al 
-generar dos modelos del conjunto de datos de *Breast Cancer Wisconsin.* Estos
+Esta sección ilustra el uso del clasificador Bayesiano al 
+generar dos modelos (Clasificador Bayesiano y Bayesiano Ingenuo)
+del conjunto de datos de *Breast Cancer Wisconsin.* Estos
 datos se pueden obtener utilizando la función `load_breast_cancer`
 tal y como se muestra a continuación.
 
@@ -443,9 +444,9 @@ tal y como se muestra a continuación.
 X, y = datasets.load_breast_cancer(return_X_y=True)
 ```
 
-Como se ha mencionado, es necesario contar con los conjuntos de 
+El primer paso es contar con los conjuntos de 
 [entrenamiento y prueba](/AprendizajeComputacional/capitulos/03Parametricos/#conjunto-de-entrenamiento-y-prueba) para poder realizar de manera
-completa un evaluación del proceso de clasificación. Esto se realiza
+completa la evaluación del proceso de clasificación. Esto se realiza
 ejecutando la siguiente instrucción.
 
 ```python
@@ -454,10 +455,10 @@ T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 
 ## Entrenamiento
 
-Los dos modelos que se utilizarán será el clasificador de Bayes Gausiano
+Los dos modelos que se utilizarán será el clasificador Bayesiano Gausiano
 y Bayesiano Ingenuo, utilizando la clase `GaussianBayes`
 que se explica en el  
-[apéndice de código.](/AprendizajeComputacional/capitulos/15Codigo/#clasificador-bayesiano-gausiano)
+[apéndice.](/AprendizajeComputacional/capitulos/15Codigo/#clasificador-bayesiano-gausiano)
 Las siguientes dos instrucciones inicializan estos dos clasificadores, 
 la única diferencia es el parámetro `naive` que indica si el clasificador
 es ingenuo. 
@@ -469,7 +470,7 @@ naive = GaussianBayes(naive=True).fit(T, y_t)
 
 ## Predicción
 
-Habiendo definido los dos clasificador, las predicciones del conjunto de prueba 
+Habiendo definido los dos clasificadores, las predicciones del conjunto de prueba 
 se realiza de la siguiente manera. 
 
 ```python
@@ -486,11 +487,12 @@ error_gaussian = (y_g != hy_gaussian).mean()
 error_naive = (y_g != hy_naive).mean()
 ```
 
-teniendo el clasificador Bayesiano Gausiano un error de $$0.0614$$
+El clasificador Bayesiano Gausiano tiene un error de $$0.0614$$
 y el error de Bayesiano Ingenuo es $$0.0877.$$ Se ha visto que el error
-es una variable aleatoria, entonces la pregunta es saber si la diferencia
-de rendimiento que se observa es estadisticamente significativa o es
-una diferencia que proviene de la aletoriedad de los datos. 
+es una variable aleatoria, entonces la pregunta es saber si esta diferencia
+en rendimiento es significativa o es
+una diferencia que proviene de la aleatoriedad de los datos. 
+
 # Diferencias en Rendimiento 
 
 Una manera de ver si existe una diferencia en rendimiento es calcular 
@@ -514,20 +516,19 @@ B = [(y_g[s] != hy_naive[s]).mean() -  (y_g[s] != hy_gaussian[s]).mean()
      for s in S]
 se = np.std(B, axis=0)
 ```
+
 El error estándar de la diferencia de rendimiento es de $$0.0240,$$
 una procedimiento simple para saber si la diferencia observada es 
-estadisticamente significativa, es dividir la diferencia entre su 
-error estándar dando un valor de $$1.0978;$$ en el caso que el valor
+significativa, es dividir la diferencia entre su 
+error estándar dando un valor de $$1.0978.$$ En el caso que el valor
 fuera igual o superior a 2 se sabría que la diferencia es significativa
 con una confianza de al menos 95%, esto asumiendo que la diferencia se
-comporta como una gausiana. 
+comporta como una distribución Gausiana. 
 
 El histograma de los datos que se tienen en la variable `B`
 se observa en la siguiente figura. Se puede ver que la forma del
-histograma asemeja una gausina y que el cero esta en el cuerpo de
-la gausiana, tal y como lo confirmó el coeciente que se calculó 
-previamente. 
-
+histograma asemeja una distribución Gausiana y que el cero esta en el cuerpo de
+la Gausiana, tal y como lo confirmó el cociente que se calculado.
 
 ```python
 sns.displot(B, kde=True)
@@ -539,11 +540,11 @@ plt.savefig('comp_bayes_breast_cancer.png', dpi=300)
 
 ![Diferencia entre Clasificadores Bayesianos](/AprendizajeComputacional/assets/images/comp_bayes_breast_cancer.png)
 
-Una manera para conocer la probabilidad de manera exacta, es calcular
+Se puede conocer la probabilidad de manera exacta calculando
 el área bajo la curva a la izquierda del cero, este sería el valor $p$, 
 si este es menor a 0.05 quiere decir que se tiene una confianza mayor 
 del 95% de que los rendimientos son diferentes. Para este ejemplo,
-el área se puede calcular con el siguiente código
+el área se calcula con el siguiente código
 
 ```python
 dist = norm(loc=diff, scale=se)
