@@ -560,11 +560,14 @@ rendimiento.
 
 Hasta este momento se han revisado métodos paramétricos en 
 clasificación, ahora es el turno de abordar 
-esto en el problema de regresión. La diferencia entre clasificación
-y regresión como se describió 
-[anteriormente](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) es que $$\mathcal Y \in \mathbb R.$$
+el problema de regresión. La diferencia entre clasificación
+y regresión como se describió en la sección de  
+[aprendizaje supervisado](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) 
+es que en regresión $$\mathcal Y \in \mathbb R.$$
 
-En regresión el modelo que se asume es 
+El procedimiento de regresión que se describe en esta sección
+es regresión de **Mínimos Cuadrados Ordinaria** (OLS -*Ordinary Least Squares*-), en el 
+cual se asume  
 que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)$$,
 de tal manera que $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)].$$
 
@@ -599,18 +602,21 @@ El valor de cada parámetro se obtiene al calcular la derivada parcial con respe
 interés, entonces se resuelven $$d$$ derivadas parciales para cada uno de los 
 coeficientes $$\mathbf w$$. En este proceso se observar que el 
 término $$N \log \frac{1}{\sigma \sqrt{2\pi}}$$ no depende de $$\mathbf w$$ entonces no afecta el 
-máximo y se desprecia, lo mismo pasa para la constante $$\frac{1}{2\sigma^2}$$. Una vez obtenidos los 
+máximo siendo una constante en el proceso de derivación y por lo tanto se desprecia. 
+Lo mismo pasa para la constante $$\frac{1}{2\sigma^2}$$. Una vez obtenidos los 
 parámetros $$\mathcal w$$ se obtiene el valor $$\sigma.$$ 
 
 Una manera equivalente de plantear este problema es como un problema de algebra lineal, 
 donde se tiene una matriz de observaciones $$X$$ que se construyen con las 
-variables $$\mathbf x$$ de $$\mathcal X,$$ donde cada renglón de $$X$$ es una observación. 
+variables $$\mathbf x$$ de $$\mathcal X,$$ donde cada renglón de $$X$$ es una observación,
+y el vector dependiente $$\mathbf y$$ donde cada elemento es la respuesta correspondiente
+a la observación.
 
 Viéndolo como un problema de algebra lineal lo que se tiene es 
 
 $$ X \mathbf w = \mathbf y,$$
 
-donde identificar a $$\mathbf w$$ se puede realizar de la siguiente manera
+donde para identificar $$\mathbf w$$ se pueden realizar lo siguiente
 
 $$ X^T X \mathbf w = X^T \mathbf y.$$
 
@@ -618,13 +624,14 @@ Despejando $$\mathbf w$$ se tiene
 
 $$\mathbf w = (X^T X)^{-1} X^T \mathbf y.$$
 
-Finalmente el error estándar de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
+Previamente se ha presentado el error estándar de cada parámetro que se ha estimado, 
+en caso de la regresión el error estándar 
+de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
 
 ## Ejemplo: Diabetes
 
-Esta sección ilustra el proceso de resolver un problema de regresión utilizando
-un método paramétrico, en particular una regresión lineal. El problema 
-se obtiene mediante la función `load_diabetes` de la siguiente manera
+Esta sección ilustra el proceso de resolver un problema de regresión utilizando OLS.
+El problema a resolver se obtiene mediante la función `load_diabetes` de la siguiente manera
 
 ```python
 X, y = datasets.load_diabetes(return_X_y=True)
@@ -645,7 +652,7 @@ m = LinearRegression().fit(T, y_t)
 ```
 
 Los coeficientes de la regresión lineal 
-son $$\mathbf w=[60.5341, -275.0734, 483.8159, 328.7212, -1203.0419, 764.0044, 302.2494, 333.9155, 902.708, 30.2333]$$ y $$w_0=150.5390$$ 
+son $$\mathbf w=[11.4506, -270.97, 529.6703, 325.5005, -664.1954, 304.8051, 27.2395, 204.9071, 657.794, 98.7585]$$ y $$w_0=152.0305$$ 
 lo cual se encuentran en las siguientes variables
 
 ```python
@@ -653,9 +660,10 @@ m.coef_
 m.intercept_
 ```
 
-La pregunta es si estos coeficientes son estadisticamente diferentes que cero, esto
-se puede identificar midiendo $$\sigma$$ lo cual es la desviación estándar del error
-tal y como se muestra en las siguientes instrucciones
+La pregunta es si estos coeficientes son estadísticamente diferentes que cero, esto
+se puede conocer calculando el error estándar de cada coeficiente. Para lo cual 
+se requiere estimar $$\sigma$$ que corresponde a la desviación estándar del error
+tal y como se muestra en las siguientes instrucciones.
 
 ```python
 error = y_t - m.predict(T)
@@ -672,9 +680,9 @@ se = std_error * _
 
 y para saber si los coeficientes son significativamente diferente de cero
 se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes
-valores $$[0.9909, -4.6219, 8.2918, 5.4916, -20.1754, 13.0383, 5.2308, 5.5876, 14.6862, 0.514].$$
-Se observa que el primer coeficiente es menor que 2 lo mismo que el último lo cual significa
-que estas variables tiene un coeficiente que estadisticamente no es diferente de cero. 
+valores $$[0.1996, -4.7733, 9.4381, 5.8703, -11.9881, 5.5425, 0.4751, 3.6897, 11.4076, 1.8092].$$
+Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa
+que esas variables tiene un coeficiente que estadísticamente no es diferente de cero. 
 
 La predicción del conjunto de prueba se puede realizar con la siguiente instrucción
 
@@ -696,3 +704,56 @@ plt.savefig('scatter_lineal_regresion.png', dpi=300)
 -->
 
 ![Regresión Lineal](/AprendizajeComputacional/assets/images/scatter_lineal_regresion.png)
+
+
+Complementando el ejemplo anterior, se realiza un modelo que primero elimina 
+las variables que no son estadísticamente diferentes de cero (primera linea) y 
+después crea nuevas variables al incluir el cuadrado, ver las líneas dos y tres
+del siguiente código. 
+
+```python
+mask = np.fabs(m.coef_ / se) >= 2
+T = np.concatenate((T[:, mask], T[:, mask]**2), axis=1)
+G = np.concatenate((G[:, mask], G[:, mask]**2), axis=1)
+```
+
+Se observa que la identificación de los coeficientes $$\mathbf w$$ sigue siendo
+lineal aun y cuando la representación ya no es lineal por incluir el cuadrado. 
+Siguiendo los pasos descritos previamente, se inicializa el modelo y después se
+realiza la predicción.
+
+```python
+m2 = LinearRegression().fit(T, y_t)
+hy2 = m2.predict(G)
+```
+
+En este momento se compara si la diferencia entre el error cuadrático medio, del primer
+y segundo modelo, la diferencia es $$37.5319$$ indicando que el primer modelo es mejor. 
+
+```python
+diff = ((y_g - hy2)**2).mean() -  ((y_g - hy)**2).mean()
+```
+
+Para comprobar si esta diferencia es significativa se calcula el error estándar, 
+utilizando 
+[bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap)
+tal y como se muestra a continuación. 
+
+```python
+S = np.random.randint(y_g.shape[0],
+                      size=(500, y_g.shape[0]))
+B = [((y_g[s] - hy2[s])**2).mean() -  ((y_g[s] - hy[s])**2).mean()
+     for s in S]
+se = np.std(B, axis=0)
+```
+
+Finalmente, se calcula el área bajo la curva a la izquierda del cero, teniendo
+un valor de $$0.3666$$ lo cual indica que los dos modelos son similares. En este caso
+se prefiere el modelo más simple porque se observar que incluir el cuadrado de las variables
+no contribuye a generar un mejor model. El área bajo la curva se calcula con el siguiente 
+código. 
+
+```python
+dist = norm(loc=diff, scale=se)
+dist.cdf(0)
+```
