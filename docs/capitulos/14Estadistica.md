@@ -41,13 +41,13 @@ la técnica de Bootstrap.
 
 Una de las estadísticas donde si se puede calcular analíticamente 
 $$\sqrt{\mathbb V(\hat \theta)}$$ es la media, es decir, 
-se tiene una muestra $$\mathcal D$$ con $$N$$ elementos independientes y identicamente 
+se tiene una muestra $$\mathcal D$$ con $$N$$ elementos independientes y idénticamente 
 distribuidos, entonces la media corresponde a
 
 $$\bar x = \frac{1}{N} \sum_{x \in \mathcal D} x.$$
 
 El error estándar de $$\bar x $$ es $$\sqrt{\mathbb V(\bar x)}$$. Para derivar
-el valor análitico de este error estándar es necesario utilizar la siguiente 
+el valor analítico de este error estándar es necesario utilizar la siguiente 
 propiedad de la varianza:
 
 $$\mathbb V(\sum_i a_i \mathcal X_i) = \sum_i a_i^2 \mathbb V(\mathcal X_i),$$
@@ -73,7 +73,7 @@ para cualquier $$i$$, donde la distribución $$F$$ tiene una varianza $$\sigma^2
 $$\mathbb V(X_i)=\sigma^2.$$ 
 
 
-## Ejemplo
+## Ejemplo: Media
 {: #sec:ejemplo-normal-1d }
 
 El siguiente ejemplo complementa la información al presentar el
@@ -96,14 +96,14 @@ p1 = norm(loc=1, scale=2)
 Usando `p1` se simulan 500 poblaciones de 1000 elementos cada una,
 y para cada una de esas poblaciones se calcula su media. La primera
 linea crea la muestra $$\mathcal D$$ y a continuación se calcula
-la media por cada población, renglon de `D`.
+la media por cada población, renglón de `D`.
 
 ```python
 D = p1.rvs(size=(500, 1000))
 mu = [x.mean() for x in D]
 ```
 
-El error estándar es la desvicación estándar de `mu`,
+El error estándar es la desviación estándar de `mu`,
 el cual se puede calcular con la siguiente instrucción. `se` tiene 
 un valor de $$0.0634$$, que es similar al obtenido mediante
 $$\mathbb V(\hat \mu).$$
@@ -126,6 +126,39 @@ plt.savefig('normal_mean.png', dpi=300)
 
 ![Histograma de la media](/AprendizajeComputacional/assets/images/normal_mean.png)
 
+## Ejemplo: Coeficientes OLS
+{: #sec:error-estandar-ols }
+
+El error estándar de los coeficientes estimados con mínimos cuadrados
+se puede calcular de la siguiente forma. El primer paso es 
+utilizar la siguiente identidad
+
+$$\mathbb V(A \mathcal Y) = A \Sigma A^T,$$ 
+
+donde $$A$$ es una matriz y $$\mathcal Y$$ es un vector de variables aleatorias. La matriz $$A$$ en OLS es
+
+$$A=(X^T X)^{-1}X^T.$$
+
+quedando la varianza como
+
+$$\mathbb V(\mathbf w) = A \Sigma A^T,$$
+
+donde $$\Sigma$$ es la covarianza de $$\mathcal Y.$$ Dado 
+que $$\mathcal Y$$ tiene una varianza constante 
+entonces $$\Sigma=\sigma^2 I.$$ Usando esta información 
+se puede derivar la varianza de $$\mathbf w$$ 
+de la siguiente manera
+
+$$\begin{eqnarray}
+\mathbb V(\mathbf w) &=& A \sigma^2 I A^T \\  
+&=& \sigma^2 A  A^T \\
+&=& \sigma^2 (X^T X)^{-1}X^T ((X^T X)^{-1}X^T)^T\\
+&=& \sigma^2 (X^T X)^{-1}X^T X (X^T X)^{-1} \\
+&=& \sigma^2 (X^T X)^{-1}\\
+\end{eqnarray}$$
+
+Por lo tanto el error estándar 
+es: $$\textsf{se}(\mathbf w) = \sigma \sqrt{(X^T X)^{-1}}.$$
 
 # Bootstrap
 {: #sec:bootstrap }
@@ -172,8 +205,8 @@ D_mediana = D[0]
 
 La variable `D_mediana` tiene la muestra $$\mathcal D$$ con la que se trabajará
 para estimar el error estándar de la mediana. Se tienen que generar $$B$$ repeticiones
-de muestrar $$\mathcal D$$ $$N$$ veces con reemplazo. Esto se puede implementar
-usando índices y números aletorios de $$[0, N)$$ considerando que en Python
+de muestrear $$\mathcal D$$ $$N$$ veces con reemplazo. Esto se puede implementar
+usando índices y números aleatorios de $$[0, N)$$ considerando que en Python
 el primer índice es $$0$$. Este procedimiento se muestra en la primera linea
 del siguiente código. El arreglo `S` contiene los índices para realizar las
 $$B$$ muestras, en la segunda linea se itera por los renglones de `S` y en

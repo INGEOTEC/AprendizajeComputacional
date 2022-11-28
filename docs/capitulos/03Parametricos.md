@@ -625,7 +625,8 @@ Despejando $$\mathbf w$$ se tiene
 $$\mathbf w = (X^T X)^{-1} X^T \mathbf y.$$
 
 Previamente se ha presentado el error estándar de cada parámetro que se ha estimado, 
-en caso de la regresión el error estándar 
+en caso de la regresión el 
+[error estándar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-ols)
 de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
 
 ## Ejemplo: Diabetes
