@@ -48,6 +48,7 @@ se cuenta con todos los elementos para utilizar el modelo y predecir la caracter
 la cual fue entrenada. 
 
 # Metodología
+{: #sec:metodologia-met-parametricos }
 
 Hasta el momento se han presentado ejemplos de los pasos 4 y 5 
 de la [metodología general](/AprendizajeComputacional/capitulos/01Tipos/#sec:metodologia-general);
@@ -557,6 +558,7 @@ son diferentes considerando el error de clasificación como medida de
 rendimiento. 
 
 # Regresión
+{: #sec:regresion-ols }
 
 Hasta este momento se han revisado métodos paramétricos en 
 clasificación, ahora es el turno de abordar 

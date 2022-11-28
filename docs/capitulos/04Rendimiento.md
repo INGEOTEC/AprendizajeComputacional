@@ -19,15 +19,65 @@ El **objetivo** es conocer las características de diferentes medidas de rendimi
 
 # Introducción
 
+Es importante conocer el rendimiento del algoritmo de aprendizaje
+computacional desarrollado. En aprendizaje supervisado la medición
+se hace mediante el conjunto de prueba, $$\mathcal G$$, mientras 
+que en aprendizaje no supervisado es posible utilizar el conjunto 
+de entrenamiento $$\mathcal T$$ o utilizar un conjunto de prueba. 
+
+Por otro lado, en el proceso de estimar los parámetros o encontrar
+la función $$f$$ que modela los datos, se está optimizando una 
+función, en el caso de aprendizaje supervisado esta función 
+es una 
+[función de error](/AprendizajeComputacional/capitulos/01Tipos/#sec:definiciones-aprendizaje-supervisado) $$L.$$
+Por ejemplo, en [regresión](/AprendizajeComputacional/capitulos/03Parametricos/#sec:regresion-ols) $$L$$ es el error al cuadrado.
+
+Aunque en el proceso de entrenamiento se usa una función de error,
+es importante medir el rendimiento del algoritmo desarrollado
+en otras medidas. Esta sección describe algunas de las medidas
+más utilizadas para medir el rendimiento de algoritmos de 
+clasificación y regresión. 
+
+<!--
 Recordando que en aprendizaje supervisado se cuenta con el conjunto de entrenamiento, $$\mathcal X = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, utilizado para encontrar una función $$h^*$$ que se comporta similar a la función generadora de los datos esto mediante la minimización del error empírico $$E(h \mid \mathcal X) = \sum_{(x, y) \in \mathcal X} L(y, h(x))$$.
 
 Por otro lado, con el objetivo de medir la generalidad del algoritmo se cuenta con un conjunto de prueba $$\mathcal T={(x_i, y_i)}$$ para $$i=1 \ldots M$$ donde $$\mathcal X \cap \mathcal T = \emptyset$$. En $$\mathcal T$$ también se puede medir error empírico o cualquier otra medida de rendimiento.
+-->
 
 # Clasificación
 
 En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y F1 score, entre otras. 
 
-En [http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf]() se describe de manera axiomática algunas de estas medidas y en el siguiente video se verá de manera práctica. 
+En [esta publicación](http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf) se describe de manera axiomática algunas de estas medidas y en el siguiente video se verá de manera práctica. 
+
+Tabla de confusión
+
+|                |$$\mathcal{\hat Y}=p$$|$$\mathcal{\hat Y}=n$$|
+|----------------|----------------------|----------------------|
+|$$\mathcal Y=p$$|Verdaderos Pos.       |Falsos Neg.           |
+|$$\mathcal Y=n$$|Falsos Pos.           |Verdaderos Neg.       |
+
+
+Siguiendo una interpretación probabilística descrita
+en [este artículo](https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25) se presentan diferentes medidas de rendimiento.
+
+
+$$\textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}) = \mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p) + \mathbb P(\mathcal Y=n, \mathcal{\hat Y}=n)$$
+
+$$\begin{eqnarray}
+\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal Y=p \mid \mathcal{\hat Y}=p)\\
+&=& \frac{\mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p)}{\mathbb P(\mathcal{\hat Y}=p)}
+\end{eqnarray}$$
+
+
+$$\begin{eqnarray}
+\textsf{recall}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal{\hat Y}=p \mid \mathcal{Y}=p) \\
+&=& \frac{\mathbb P(\mathcal{\hat Y}=p, \mathcal{Y}=p)}{\mathbb P(\mathcal Y=p)}
+\end{eqnarray}$$
+
+
+$$F^+_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) \cdot \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) + \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}$$
+
 
 {%include rendimiento_clasificacion.html %}
 
