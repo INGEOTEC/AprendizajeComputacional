@@ -46,20 +46,35 @@ Por otro lado, con el objetivo de medir la generalidad del algoritmo se cuenta c
 
 # Clasificación
 
-En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y F1 score, entre otras. 
+En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y $F_1$, entre otras. 
+En [esta publicación](http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf) se describe de manera axiomática algunas de estas medidas
+y se dan recomendaciones en general sobre medidas de rendimiento
+para clasificadores. 
 
-En [esta publicación](http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf) se describe de manera axiomática algunas de estas medidas y en el siguiente video se verá de manera práctica. 
-
-Tabla de confusión
+Varias de las medidas de rendimiento toman como insume la 
+Tabla de confusión, la cual contiene la información del 
+proceso de clasificación. La siguiente tabla muestra la estructura
+de esta tabla para un problema binario, donde se tiene una clase
+positiva identificada con $$p$$ y una clase negativa ($$n$$).
+La variable $$\mathcal Y$$ indica las clases reales y la
+variable $$\mathcal{\hat Y}$$ representa la estimación (predicción)
+hecha por el clasificador. Adicionalmente, la tabla se puede 
+extender a $$K$$ clases siguiendo la misma 
+estructura; la diagonal contienen los elementos correctamente 
+identificados y los elementos fuera de la diagonal muestra
+los errores. 
 
 |                |$$\mathcal{\hat Y}=p$$|$$\mathcal{\hat Y}=n$$|
 |----------------|----------------------|----------------------|
 |$$\mathcal Y=p$$|Verdaderos Pos.       |Falsos Neg.           |
 |$$\mathcal Y=n$$|Falsos Pos.           |Verdaderos Neg.       |
 
-
-Siguiendo una interpretación probabilística descrita
-en [este artículo](https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25) se presentan diferentes medidas de rendimiento.
+La tabla se puede ver como valores nominales, es decir contar el número
+de ejemplos clasificados como verdaderos positivos o como 
+proporción de tal manera que las cuatro celdas sumen $$1$$. En esta
+descripción se asume que son proporcionen, esto porque se
+seguirá una interpretación probabilística descrita
+en [este artículo](https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25) para presentar las diferentes medidas de rendimiento.
 
 
 $$\textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}) = \mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p) + \mathbb P(\mathcal Y=n, \mathcal{\hat Y}=n)$$
