@@ -24,35 +24,23 @@ computacional desarrollado. En aprendizaje supervisado la medición
 se hace mediante el conjunto de prueba, $$\mathcal G$$, mientras 
 que en aprendizaje no supervisado es posible utilizar el conjunto 
 de entrenamiento $$\mathcal T$$ o utilizar un conjunto de prueba. 
-
-Por otro lado, en el proceso de estimar los parámetros o encontrar
-la función $$f$$ que modela los datos, se está optimizando una 
-función, en el caso de aprendizaje supervisado esta función 
-es una 
-[función de error](/AprendizajeComputacional/capitulos/01Tipos/#sec:definiciones-aprendizaje-supervisado) $$L.$$
-Por ejemplo, en [regresión](/AprendizajeComputacional/capitulos/03Parametricos/#sec:regresion-ols) $$L$$ es el error al cuadrado.
-
-Aunque en el proceso de entrenamiento se usa una función de error,
-es importante medir el rendimiento del algoritmo desarrollado
-en otras medidas. Esta sección describe algunas de las medidas
+Es importante notar que aunque en 
+el proceso de entrenamiento puede usar una función de rendimiento
+para estimar o encontrar el algoritmo que modela los datos,
+es importante complementar esta medición con otras
+funciones de rendimiento. Esta unidad describe algunas de las medidas
 más utilizadas para medir el rendimiento de algoritmos de 
 clasificación y regresión. 
 
-<!--
-Recordando que en aprendizaje supervisado se cuenta con el conjunto de entrenamiento, $$\mathcal X = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, utilizado para encontrar una función $$h^*$$ que se comporta similar a la función generadora de los datos esto mediante la minimización del error empírico $$E(h \mid \mathcal X) = \sum_{(x, y) \in \mathcal X} L(y, h(x))$$.
-
-Por otro lado, con el objetivo de medir la generalidad del algoritmo se cuenta con un conjunto de prueba $$\mathcal T={(x_i, y_i)}$$ para $$i=1 \ldots M$$ donde $$\mathcal X \cap \mathcal T = \emptyset$$. En $$\mathcal T$$ también se puede medir error empírico o cualquier otra medida de rendimiento.
--->
-
 # Clasificación
 
-En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y $F_1$, entre otras. 
+En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y $$F_1$$, entre otras. 
 En [esta publicación](http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf) se describe de manera axiomática algunas de estas medidas
 y se dan recomendaciones en general sobre medidas de rendimiento
 para clasificadores. 
 
 Varias de las medidas de rendimiento toman como insume la 
-Tabla de confusión, la cual contiene la información del 
+**Tabla de Confusión**, la cual contiene la información del 
 proceso de clasificación. La siguiente tabla muestra la estructura
 de esta tabla para un problema binario, donde se tiene una clase
 positiva identificada con $$p$$ y una clase negativa ($$n$$).
@@ -76,25 +64,61 @@ descripción se asume que son proporcionen, esto porque se
 seguirá una interpretación probabilística descrita
 en [este artículo](https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25) para presentar las diferentes medidas de rendimiento.
 
+## Error
+{: #sec:error }
 
-$$\textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}) = \mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p) + \mathbb P(\mathcal Y=n, \mathcal{\hat Y}=n)$$
+Se empieza la descripción con el 
+[error de clasificación](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion) el cual es la proporción
+de errores y se puede definir como 
+
+$$\textsf{error}(\mathcal Y, \mathcal{\hat Y}) = 1 -  \textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}).$$
+
+## Accuracy
+{: #sec:accuracy}
+
+El error se define mediante el accuracy. El accuracy es la proporción
+de ejemplos correctamente clasificados, utilizando la notación de la 
+tabla de confusión quedaría como:
+
+$$\textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}) = \mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p) + \mathbb P(\mathcal Y=n, \mathcal{\hat Y}=n).$$
+
+Una manera equivalente de ver el accuracy es utilizando la probabilidad
+condicional,
+es decir, $$\textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}) = \mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p) + \mathbb P(\mathcal{\hat Y}=n \mid \mathcal Y=n)\mathbb P(\mathcal Y=n).$$ 
+Esta manera ayuda a entender el caso cuando se tiene una clase con muchos
+ejemplos, e.g., $$\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),$$
+en ese caso se ve que el accuracy está dominado por el primer 
+término, i.e., $$\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).$$ En este caso, 
+la manera trivial de optimizar el accuracy es crear
+un clasificador que siempre regrese la clase $$p.$$ Por esta razón el 
+accuracy no es una medida adecuada cuando las clases
+son desbalanciadas, es buena medida 
+cuando $$\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$$
+
+## Precision
+{: #sec:precision }
+
 
 $$\begin{eqnarray}
 \textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal Y=p \mid \mathcal{\hat Y}=p)\\
 &=& \frac{\mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p)}{\mathbb P(\mathcal{\hat Y}=p)}
 \end{eqnarray}$$
 
+## Recall
+{: #sec:recall }
 
 $$\begin{eqnarray}
 \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal{\hat Y}=p \mid \mathcal{Y}=p) \\
 &=& \frac{\mathbb P(\mathcal{\hat Y}=p, \mathcal{Y}=p)}{\mathbb P(\mathcal Y=p)}
 \end{eqnarray}$$
 
+## $$F_\beta$$
 
-$$F^+_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) \cdot \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) + \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}$$
+$$F^+_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) \cdot \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}{\beta^2 \cdot \textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) + \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}$$
 
+## Entropía Cruzada
+{: #sec:entropia-cruzada }
 
-{%include rendimiento_clasificacion.html %}
 
 Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la Entropía cruzada (Cross entropy) que para una distribución discreta se define como: $$H(P, Q) = - \sum_x P(x) \log Q(x)$$.
 
