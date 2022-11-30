@@ -15,6 +15,15 @@ El **objetivo** es conocer las características de diferentes medidas de rendimi
 1. TOC
 {:toc}
 
+## Paquetes usados
+{: .no_toc .text-delta }
+```python
+from EvoMSA.model import GaussianBayes
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn import datasets
+import numpy as np
+```
 ---
 
 # Introducción
@@ -98,6 +107,13 @@ cuando $$\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$$
 ## Precision
 {: #sec:precision }
 
+La siguiente medida de rendimiento es la precision, se puede observar en 
+la probabilidad condicional es que se conoce la predicciones positivas y de
+esas predicciones se mide si son correctas. Basándose en esto, se puede 
+ver que una manera de generar un algoritmo competitivo en esta media corresponde
+a predecir la clase solo cuando exista una gran seguridad de la clase. 
+
+La segunda ecuación ayuda a medir en base de la tabla de confusión.
 
 $$\begin{eqnarray}
 \textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal Y=p \mid \mathcal{\hat Y}=p)\\
@@ -107,14 +123,46 @@ $$\begin{eqnarray}
 ## Recall
 {: #sec:recall }
 
+El recall complementa la precision, al calcular la probabilidad de 
+ejemplos correctamente clasificados como $$p$$ dados todos los ejemplos
+que se tienen de la clase $$p$$. En base a esta ecuación se puede observar
+que un algoritmo trivial con el máximo valor de recall solamente tiene 
+que predecir como clase $$p$$ todos los elementos. 
+
 $$\begin{eqnarray}
 \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal{\hat Y}=p \mid \mathcal{Y}=p) \\
 &=& \frac{\mathbb P(\mathcal{\hat Y}=p, \mathcal{Y}=p)}{\mathbb P(\mathcal Y=p)}
 \end{eqnarray}$$
 
 ## $$F_\beta$$
+{: #sec:f1 }
 
-$$F^+_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) \cdot \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}{\beta^2 \cdot \textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) + \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}$$
+Finalmente, una manera de combinar el recall con la precision es la 
+medida $$F_\beta$$, es probable que esta medida se reconozca más cuando $$\beta=1$$. 
+La idea de $$\beta$$ es ponderar el peso que se le quiere dar a la precision
+con respecto al recall.
+
+$$F^p_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) \cdot \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}{\beta^2 \cdot \textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) + \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}$$
+
+## Medidas Macro
+{: #sec:macro }
+
+En las definiciones de precision, recall y $$F_\beta$$ se ha usado un subíndice
+y superíndice con la letra $$p$$ esto es para indicar que la medida se está realizando
+con respecto a la clase $$p$$. Esto ayuda también a ilustrar que en un 
+problema de $$K$$ clases se tendrán $$K$$ diferentes medidas de precision, 
+recall y $$F_\beta;$$ cada una de esas medidas corresponde a cada clase. 
+
+En ocasiones es importante tener solamente una medida que englobe el rendimiento
+en el caso de los tres rendimientos que se han mencionado, se puede calcular
+su versión macro que es la media de la medida. Esto es para un problema 
+de $$K$$ clases la precision, recall y $$F_\beta$$ se definen de la siguiente manera.
+
+$$\textsf{macro-precision}(\mathcal Y, \mathcal{\hat Y}) =  \frac{1}{K}\sum_{k} \textsf{precision}_k(\mathcal Y, \mathcal{\hat Y}),$$ 
+
+$$\textsf{macro-recall}(\mathcal Y, \mathcal{\hat Y}) =  \frac{1}{K}\sum_{k} \textsf{recall}_k(\mathcal Y, \mathcal{\hat Y}),$$ 
+
+$$\textsf{macro-}F_\beta(\mathcal Y, \mathcal{\hat Y}) =  \frac{1}{K}\sum_{k} F^k_\beta(\mathcal Y, \mathcal{\hat Y}).$$ 
 
 ## Entropía Cruzada
 {: #sec:entropia-cruzada }
@@ -122,7 +170,22 @@ $$F^+_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precisio
 
 Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la Entropía cruzada (Cross entropy) que para una distribución discreta se define como: $$H(P, Q) = - \sum_x P(x) \log Q(x)$$.
 
-{%include entropia.html %}
+## Ejemplo
+
+El ejemplo de 
+[Breast Cancer Wisconsin](/AprendizajeComputacional/capitulos/03Parametricos/#ejemplo-breast-cancer-wisconsin)
+se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta
+el momento. 
+
+```python
+X, y = datasets.load_breast_cancer(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+gaussian = GaussianBayes().fit(T, y_t)
+naive = GaussianBayes(naive=True).fit(T, y_t)
+hy_gaussian = gaussian.predict(G)
+hy_naive = naive.predict(G)
+```
+
 
 # Regresión
 
