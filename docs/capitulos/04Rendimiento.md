@@ -24,6 +24,10 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets
 from sklearn import metrics
 import numpy as np
+import pandas as pd
+from matplotlib import pylab as plt
+import seaborn as sns
+sns.set_theme()
 ```
 ---
 
@@ -173,7 +177,7 @@ Una función de costo que ha sido muy utilizada en redes neuronales y en particu
 
 Para cada ejemplo $$x$$ se tiene $$\mathbb P(\mathcal Y=k \mid \mathcal X=x)$$
 y el clasificador predice $$\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
-Utilizando estas deficiones se puede decir que $$P=\mathbb P$$ y $$Q=\mathbb{\hat P}$$
+Utilizando estas definiciones se puede decir que $$P=\mathbb P$$ y $$Q=\mathbb{\hat P}$$
 en la definición de entropía cruzada; entonces
 
 $$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = -\sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
@@ -197,7 +201,7 @@ gaussian = GaussianBayes().fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 ```
 
-El clasificador gausiano tiene un `accuracy` de $$0.9474$$
+El clasificador Gausiano tiene un `accuracy` de $$0.9474$$
 
 ```python
 accuracy = metrics.accuracy_score(y_g, hy_gaussian)
@@ -219,11 +223,38 @@ f1 = metrics.f1_score(y_g, hy_gaussian, average=None)
 |`precision`|$$1$$           |$$0.9178$$      |$$0.9589$$|
 |`f1`       |$$0.9318$$      |$$0.9571$$      |$$0.9445$$|
 
-Por otro lado la `entropia` cruzadda es $$0.8637,$$
-que se puede calcular con el siguienet código.
+Por otro lado la `entropia` cruzada es $$0.8637,$$
+que se puede calcular con el siguiente código.
 
 ```python
+prob = gaussian.predict_proba(G)
 entropia = metrics.log_loss(y_g, prob)
+```
+
+Complementando la información de las medidas que se calculan
+mediante la a posteriori se encuentra la curva ROC, la cual se
+puede calcular con el siguiente código  
+
+```python
+fpr, tpr, thresholds = metrics.roc_curve(y_g, prob[:, 1])
+df = pd.DataFrame(dict(FPR=fpr, TPR=tpr))
+sns.lineplot(df, x='FPR', y='TPR')
+```
+
+<!--
+plt.savefig('roc_curve.png', dpi=300)
+-->
+
+La siguiente figura presenta la curva ROC para el problema analizado. 
+
+![Curva ROC](/AprendizajeComputacional/assets/images/roc_curve.png)
+
+Teniendo un valor de área bajo la curva (`auc_score`) de $$0.9927$$
+que se obtuvo de la siguiente manera.
+
+
+```python
+auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 ```
 
 # Regresión
@@ -237,6 +268,10 @@ Error absoluto medio (Mean Absolute Error): $$mae(\mathcal Y, \mathcal{\hat Y}) 
 Mean Absolute Percentaje Error: $$mape(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid $$
 
 La proporción de la varianza explicada por el modelo: $$R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)} $$
+
+## Ejemplo
+
+
 
 # Validación Cruzada
 
