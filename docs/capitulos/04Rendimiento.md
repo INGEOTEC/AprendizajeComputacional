@@ -169,16 +169,19 @@ $$\textsf{macro-}F_\beta(\mathcal Y, \mathcal{\hat Y}) =  \frac{1}{K}\sum_{k} F^
 {: #sec:entropia-cruzada }
 
 
-Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la Entropía cruzada (Cross entropy) que para una distribución discreta se define como: $$H(P, Q) = - \sum_x P(x) \log Q(x)$$. 
+Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la **Entropía Cruzada** (Cross Entropy) que para una distribución discreta se define como: $$H(P, Q) = - \sum_x P(x) \log Q(x)$$. 
 
 Para cada ejemplo $$x$$ se tiene $$\mathbb P(\mathcal Y=k \mid \mathcal X=x)$$
 y el clasificador predice $$\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
 Utilizando estas deficiones se puede decir que $$P=\mathbb P$$ y $$Q=\mathbb{\hat P}$$
 en la definición de entropía cruzada; entonces
 
-$$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
+$$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = -\sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
 
-Finalmente la medida de rendimiento quedaría como $$\sum_x H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)).$$
+Finalmente la medida de rendimiento quedaría como $$\sum_x H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)).$$ 
+Por ejemplo, para el caso $$K=2$$ se tiene
+
+$$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = -\mathbb P(\mathcal Y=1 \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=1 \mid \mathcal X=x) - (1-\mathbb P(\mathcal Y=1 \mid \mathcal X=x)) \log (1 - \mathbb{\hat P}(\mathcal Y=1 \mid \mathcal X=x)).$$
 
 ## Ejemplo
 
@@ -191,9 +194,7 @@ el momento.
 X, y = datasets.load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 gaussian = GaussianBayes().fit(T, y_t)
-naive = GaussianBayes(naive=True).fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
-hy_naive = naive.predict(G)
 ```
 
 El clasificador gausiano tiene un `accuracy` de $$0.9474$$
@@ -201,6 +202,10 @@ El clasificador gausiano tiene un `accuracy` de $$0.9474$$
 ```python
 accuracy = metrics.accuracy_score(y_g, hy_gaussian)
 ```
+
+Las medidas de `recall`, `precision` y `f1` se presentan en la siguiente
+tabla, en la última columna se presenta el macro de cada una de 
+las medidas. 
 
 ```python
 recall = metrics.recall_score(y_g, hy_gaussian, average=None)
@@ -214,28 +219,26 @@ f1 = metrics.f1_score(y_g, hy_gaussian, average=None)
 |`precision`|$$1$$           |$$0.9178$$      |$$0.9589$$|
 |`f1`       |$$0.9318$$      |$$0.9571$$      |$$0.9445$$|
 
-Por otro lado la `entropia` cruzadda es $$0.8637$$
+Por otro lado la `entropia` cruzadda es $$0.8637,$$
+que se puede calcular con el siguienet código.
 
 ```python
 entropia = metrics.log_loss(y_g, prob)
 ```
 
-
 # Regresión
 
 Con respecto a regresión las siguientes funciones son utilizadas como medidas de rendimiento.
 
-Error cuadrático medio (Mean Square Error): $$mse(y, \hat y) = \frac{1}{N} \sum_{i=1}^N (y_i - \hat y_i)^2 $$
+Error cuadrático medio (Mean Square Error): $$mse(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2 $$
 
-Error absoluto medio (Mean Absolute Error): $$mae(y, \hat y) = \frac{1}{N} \sum_{i=1}^N \mid y_i - \hat y_i \mid $$
+Error absoluto medio (Mean Absolute Error): $$mae(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid $$
 
-Mean Absolute Percentaje Error: $$mape(y, \hat y) = \frac{1}{N} \sum_{i=1}^N \mid \frac{y_i - \hat y_i}{y_i}\mid $$
+Mean Absolute Percentaje Error: $$mape(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid $$
 
-La proporción de la varianza explicada por el modelo: $$R^2(y, \hat y) = 1 - \frac{\sum_{i=1}^N (y_i - \hat y_i)^2)}{\sum_{i=1}^N (y_i - \bar y_i)^2)} $$
+La proporción de la varianza explicada por el modelo: $$R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)} $$
 
 # Validación Cruzada
-
-{%include kfold.html %}
 
 Continuando con la descripción de validación cruzada vamos a ver un ejemplo de Stratified K-fold cross-validation en el problema de iris y usando Naive Bayes.
 
@@ -248,7 +251,7 @@ from sklearn import naive_bayes
 import numpy as np
 from sklearn import metrics
 X, y = datasets.load_iris(return_X_y=True)
-````
+```
 
 Definimos para una $$k$$ de 30 e iniciamos la clase correspondiente
 
