@@ -22,6 +22,7 @@ from EvoMSA.model import GaussianBayes
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
+from sklearn import metrics
 import numpy as np
 ```
 ---
@@ -168,7 +169,16 @@ $$\textsf{macro-}F_\beta(\mathcal Y, \mathcal{\hat Y}) =  \frac{1}{K}\sum_{k} F^
 {: #sec:entropia-cruzada }
 
 
-Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la Entropía cruzada (Cross entropy) que para una distribución discreta se define como: $$H(P, Q) = - \sum_x P(x) \log Q(x)$$.
+Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la Entropía cruzada (Cross entropy) que para una distribución discreta se define como: $$H(P, Q) = - \sum_x P(x) \log Q(x)$$. 
+
+Para cada ejemplo $$x$$ se tiene $$\mathbb P(\mathcal Y=k \mid \mathcal X=x)$$
+y el clasificador predice $$\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
+Utilizando estas deficiones se puede decir que $$P=\mathbb P$$ y $$Q=\mathbb{\hat P}$$
+en la definición de entropía cruzada; entonces
+
+$$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
+
+Finalmente la medida de rendimiento quedaría como $$\sum_x H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)).$$
 
 ## Ejemplo
 
@@ -184,6 +194,30 @@ gaussian = GaussianBayes().fit(T, y_t)
 naive = GaussianBayes(naive=True).fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 hy_naive = naive.predict(G)
+```
+
+El clasificador gausiano tiene un `accuracy` de $$0.9474$$
+
+```python
+accuracy = metrics.accuracy_score(y_g, hy_gaussian)
+```
+
+```python
+recall = metrics.recall_score(y_g, hy_gaussian, average=None)
+precision = metrics.precision_score(y_g, hy_gaussian, average=None)
+f1 = metrics.f1_score(y_g, hy_gaussian, average=None)
+```
+
+|           |$$\mathcal Y=0$$|$$\mathcal Y=1$$|Macro     |
+|-----------|----------------|----------------|----------|
+|`recall`   |$$0.8723$$      |$$1$$           |$$0.9362$$|
+|`precision`|$$1$$           |$$0.9178$$      |$$0.9589$$|
+|`f1`       |$$0.9318$$      |$$0.9571$$      |$$0.9445$$|
+
+Por otro lado la `entropia` cruzadda es $$0.8637$$
+
+```python
+entropia = metrics.log_loss(y_g, prob)
 ```
 
 
