@@ -78,6 +78,18 @@ descripción se asume que son proporcionen, esto porque se
 seguirá una interpretación probabilística descrita
 en [este artículo](https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25) para presentar las diferentes medidas de rendimiento.
 
+Viendo la tabla de confusión como una proporción y combinando con
+la interpretación probabilística la tabla quedaría de la siguiente manera.
+
+|                |$$\mathcal{\hat Y}=p$$|$$\mathcal{\hat Y}=n$$|
+|----------------|----------------------|----------------------|
+|$$\mathcal Y=p$$|$$\mathbb P(\mathcal Y=p, \mathcal{\hat Y=p})$$|$$\mathbb P(\mathcal Y=p, \mathcal{\hat Y=n})$$|
+|$$\mathcal Y=n$$|$$\mathbb P(\mathcal Y=n, \mathcal{\hat Y=p})$$|$$\mathbb P(\mathcal Y=n, \mathcal{\hat Y=n})$$|
+
+Partiendo de esta tabla se puede calcular la probabilidad marginal 
+de cualquier variable y también las probabilidades condicionales, por 
+ejemplo $$\mathbb P(\mathcal Y=p) = \sum_k \mathbb P(\mathcal Y=p, \mathcal{\hat Y=k})$$ que es la suma de los elementos del primer renglón de la tabla anterior.
+
 ## Error
 {: #sec:error }
 
@@ -183,9 +195,31 @@ en la definición de entropía cruzada; entonces
 $$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = -\sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$$
 
 Finalmente la medida de rendimiento quedaría como $$\sum_x H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)).$$ 
+
+<!--
 Por ejemplo, para el caso $$K=2$$ se tiene
 
 $$H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = -\mathbb P(\mathcal Y=1 \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=1 \mid \mathcal X=x) - (1-\mathbb P(\mathcal Y=1 \mid \mathcal X=x)) \log (1 - \mathbb{\hat P}(\mathcal Y=1 \mid \mathcal X=x)).$$
+-->
+
+
+## Área Bajo la Curva *ROC*
+{: #sec:roc-curve }
+
+El área bajo la curva *ROC* (*Relative Operating Characteristic*) es una medida de
+rendimiento que también está pasada en la probabilidad a 
+posteriori $$\mathbb P(\mathcal Y \mid \mathcal X)$$ con la característica 
+de que la clase se selecciona en base a un umbral $$\rho$$. Es decir,
+dado un ejemplo $$x$$, este ejemplo pertenece a la clase $$p$$
+si $$\mathbb P(\mathcal Y=p \mid \mathcal X=x) \geq \rho.$$
+
+Se observa que modificando el umbral $$\rho$$ se tienen diferentes 
+tablas de confusión, para cada tabla de confusión posible se calcula 
+la tasa de verdaderos positivos (TPR) que corresponde al
+recall, i.e., $$\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=p),$$
+y la tasa de falsos positivos (FPR) que es $$\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=n).$$ Cada par de TPR y FPR representan un punto de la curva *ROC*.
+El rendimiento corresponde al área debajo de la curva delimitada por los
+pares TPR y FPR.
 
 ## Ejemplo
 
@@ -251,7 +285,6 @@ La siguiente figura presenta la curva ROC para el problema analizado.
 
 Teniendo un valor de área bajo la curva (`auc_score`) de $$0.9927$$
 que se obtuvo de la siguiente manera.
-
 
 ```python
 auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
