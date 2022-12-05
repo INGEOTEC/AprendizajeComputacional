@@ -305,7 +305,7 @@ La proporción de la varianza explicada por el modelo: $$R^2(\mathcal Y, \mathca
 ## Ejemplo
 
 
-
+<!--
 # Validación Cruzada
 
 Continuando con la descripción de validación cruzada vamos a ver un ejemplo de Stratified K-fold cross-validation en el problema de iris y usando Naive Bayes.
@@ -338,3 +338,4 @@ for tr, vs in kfold.split(X, y):
     P.append(_)
 print("Media: ", np.mean(P))
 ```
+-->
