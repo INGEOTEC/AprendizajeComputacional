@@ -47,6 +47,7 @@ más utilizadas para medir el rendimiento de algoritmos de
 clasificación y regresión. 
 
 # Clasificación
+{: #sec:clasificacion }
 
 En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y $$F_1$$, entre otras. 
 En [esta publicación](http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf) se describe de manera axiomática algunas de estas medidas
