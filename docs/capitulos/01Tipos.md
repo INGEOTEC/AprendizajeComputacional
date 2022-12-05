@@ -108,6 +108,7 @@ El problema de regresión es muy conocido y seguramente ya se imaginaron que la 
 Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, pero si permite ganar intuición sobre la forma en que trabajan estos algoritmos.
 
 ## Definiciones de Aprendizaje Supervisado
+{: #sec:definiciones-aprendizaje-supervisado }
 
 El primer paso es empezar a definir los diferentes conjuntos con los 
 que se trabaja en aprendizeje computacional. Todo inicia 
