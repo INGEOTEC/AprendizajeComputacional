@@ -294,19 +294,65 @@ auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 
 Con respecto a regresión las siguientes funciones son utilizadas como medidas de rendimiento.
 
-Error cuadrático medio (Mean Square Error): $$mse(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2 $$
+Error cuadrático medio (Mean Square Error): $$\textsf{mse}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2 $$
 
-Error absoluto medio (Mean Absolute Error): $$mae(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid $$
+Error absoluto medio (Mean Absolute Error): $$\textsf{mae}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid $$
 
-Mean Absolute Percentaje Error: $$mape(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid $$
+Media del porcentaje de error absoluto: $$\textsf{mape}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid $$
 
 La proporción de la varianza explicada por el modelo: $$R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)} $$
 
 ## Ejemplo
 
+Las medidas anteriores se ejemplifican utilizando el ejemplo
+de [diabetes](/AprendizajeComputacional/capitulos/03Parametricos/#sec:diabetes)
+que se puede descargar y modelar 
+[OLS](/AprendizajeComputacional/capitulos/03Parametricos/#sec:regresion-ols)
+de la siguiente manera.
+
+
 ```python
 X, y = datasets.load_diabetes(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+m = LinearRegression().fit(T, y_t) 
+```
+
+La predicción en el conjunto de prueba sería:
+
+```python
+hy = m.predict(G)
+```
+
+Las diferentes medidas de rendimiento para problemas de regresión se 
+puede calcular de la siguiente manera. 
+
+El error cuadrático medio, `mse` corresponde a
+
+```python
+mse = metrics.mean_squared_error(y_g, hy)
+```
+
+y tienen un valor de $$3533.5256.$$
+
+El error absoluto medio, `mae`, tiene un valor de $$49.1105,$$
+calculado de la siguiente manera
+
+```python
+mae = metrics.mean_absolute_error(y_g, hy)
+```
+
+La media del porcentaje de error absoluto, `mape`, es $$0.4739$$
+obtenido con el siguiente código 
+
+```python
+mape = metrics.mean_absolute_percentage_error(y_g, hy)
+```
+
+Finalmente, la varianza explicada por el modelo $$R^2$$, `r2`, es $$0.3925$$
+
+```python
+r2 = metrics.r2_score(y_g, hy)
+```
 
 <!--
 # Validación Cruzada

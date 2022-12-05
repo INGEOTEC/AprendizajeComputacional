@@ -632,6 +632,7 @@ en caso de la regresión el
 de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
 
 ## Ejemplo: Diabetes
+{: #sec:diabetes }
 
 Esta sección ilustra el proceso de resolver un problema de regresión utilizando OLS.
 El problema a resolver se obtiene mediante la función `load_diabetes` de la siguiente manera
