@@ -304,7 +304,11 @@ La proporción de la varianza explicada por el modelo: $$R^2(\mathcal Y, \mathca
 
 ## Ejemplo
 
+```python
+X, y = datasets.load_diabetes(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 
+```
 
 # Validación Cruzada
 
