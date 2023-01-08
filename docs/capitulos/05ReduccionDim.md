@@ -16,19 +16,133 @@ El **objetivo** de la unidad es aplicar técnicas de reducción de dimensionalid
 1. TOC
 {:toc}
 
+## Paquetes usados
+{: .no_toc .text-delta }
+```python
+from scipy.stats import multivariate_normal, norm, kruskal
+import numpy as np
+```
+
 ---
 
 # Introducción
 
-Habiendo descrito problemas de clasificación y regresión, podemos imaginar que existen ocasiones donde las variables que describen al problema no contribuyen dentro de la solución, o que su aporte está dado por otras componentes dentro de la descripción. Esto trae como consecuencia, en el mejor de los caso, que el algoritmo tenga un mayor costo computacional o en un caso menos afortunado que el algoritmo tenga un rendimiento menor al que se hubiera obtenido seleccionado las variables.
+Habiendo descrito problemas de clasificación y regresión, podemos imaginar que 
+existen ocasiones donde las variables que describen al problema no contribuyen 
+dentro de la solución, o que su aporte está dado por otras componentes dentro de la 
+descripción. Esto trae como consecuencia, en el mejor de los caso, que el algoritmo 
+tenga un mayor costo computacional o en un caso menos afortunado que el algoritmo 
+tenga un rendimiento menor al que se hubiera obtenido seleccionado las variables.
+Es pertinente mencionar que el caso contrario correspondiente al incremento del 
+número de variables es también un escenario factible y se abordará en otra ocasión.
 
-Es pertinente mencionar que el caso contrario correspondiente al incremento del número de variables es también un escenario factible y lo trataremos en otra ocasión.
+Existen diferentes maneras para reducir la dimensión de un problema, es decir, 
+transformar la representación original $$x \in \mathbb R^d $$ a una 
+representación $$\hat x \in \mathbb R^m $$ donde $$m < d$$.
+El objetivo es que la nueva representación $$\hat x$$ contenga la información
+necesaria para realizar la tarea de clasificación o regresión. También otro
+objetivo sería reducir a $$\mathbb R^2$$ o $$\mathbb R^3$$ de tal manera que se 
+pueda visualizar el problema. En este último caso el objetivo es que se mantengan 
+las características de los datos en $$\mathbb R^d$$ en la reducción.  
 
-Existen diferentes maneras para reducir la dimensión de un problema, es decir, transformar la representación original $$x \in \mathbb R^d $$ a una respresentación $$\hat x \in \mathbb R^m $$ donde $$d < m $$. El primer algoritmo que se describe es Selección hacia Adelante (Forward Selection). Este algoritmo corresponde a seleccionar de manera iterativa aquellas variables que para un algoritmo particular de aprendizaje supervisado es importante, donde el caso base es iniciar con ninguna variable. El complemento de Selección hacia adelante es selección hacia atrás (Backward Selection) donde se empieza con todas las características y se va eliminando una por una.
+Esta descripción inicia con una metodología de selección basada en 
+calcular estadísticas de los datos y descartar aquellas que no 
+proporcionan información de acuerdo a la estadística. 
 
-Se puede observar que las variables se encuentran sin ninguna modificación en la nueva representación, pero existe una vertiente de algoritmos de reducción de dimensión transforman las entradas originales, es decir, se genera una función tal que $$f: \mathbb R^d \rightarrow \mathbb R^m $$.
+# Selección de Variables basadas en Estadísticas
+
+Se utilizará el [problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
+de tres clases para describir el algoritmo de selección. Este problema está
+definido por tres Distribuciones Gausianas donde se crea una población de 
+1000 elementos para cada distribución de la siguiente manera. 
+
+```python
+p1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]])
+p2 = multivariate_normal(mean=[1.5, -1.5], cov=[[2, 1], [1, 3]])
+p3 = multivariate_normal(mean=[12.5, -3.5], cov=[[2, 3], [3, 7]])
+X_1 = p1.rvs(size=1000)
+X_2 = p2.rvs(size=1000)
+X_3 = p3.rvs(size=1000)
+```
+
+Estas tres distribuciones representan el problema de clasificación 
+para tres clases. El siguiente código une las 
+tres matrices `X_1`, `X_2` y `X_3` y genera un arreglo `y` que representa
+la clase. 
+
+
+```python
+D = np.concatenate((X_1, X_2, X_3), axis=0)
+y = np.array(['a'] * X_1.shape[0] + ['b'] * X_2.shape[0] + ['c'] * X_3.shape[0])
+```
+
+Por construcción el problema está en $$\mathbb R^2$$ y se sabe que las
+dos componentes contribuyen a la solución del mismo, es decir, 
+imagine que una de las variables se pierde, con la información 
+restante se desarrollaría un algoritmo de clasificación con un rendimiento
+mucho menor a aquel que tenga toda la información. 
+
+Continuando con el problema sintético, en está ocasión lo que se realiza es
+incluir en el problema una variable que no tiene relación con la clase, para
+esto se añade una variable aleatoria con una distribución Gausiana 
+con $$\mu=2$$ y $$\sigma=3$$ tal como se muestra en el siguiente código.
+
+```python
+N = norm.rvs(loc=2, scale=3, size=3000)
+D = np.concatenate((D, np.atleast_2d(N).T), axis=1)
+```
+
+El objetivo es encontrar la variable que no está relacionada con la salida. 
+Una manera de realizar esto es imaginar que si la media en las diferentes
+variables es la misma en todas las clases entonces esa variable no contribuye
+a discriminar la clase. En la sección [Estimación de Parámetros](/AprendizajeComputacional/capitulos/03Parametricos/#sec:estimacion-parametros)
+se presentó el procedimiento para obtener las medias que 
+definen $$\mathbb P(\mathcal X \mid \mathcal Y)$$ para cada clase. 
+El siguiente código muestra el procedimiento para calcular las medías 
+que son $$\mu_1=[4.9694, 5.0407, 1.9354]^T$$, $$\mu_2=[ 1.5279, -1.4644,  2.0522]^T$$
+y $$\mu_3=[12.553 , -3.4208,  2.0132]^T$$.
+
+```python
+labels = np.unique(y)
+[np.mean(D[y==i], axis=0) for i in labels]
+```
+
+Se observa que la media de la tercera variable es aproximadamente igual
+para las tres clases, teniendo un valor cercano a $$2$$ tal y como fue 
+generada. Entonces lo que se busca es un procedimiento que permita 
+identificar que las muestras en cada grupo (clase) hayan sido originadas por la 
+misma distribución. Es decir se busca una prueba que indique 
+que las primeras dos variables provienen de diferentes distribuciones y 
+que la tercera provienen de la misma distribución. Es pertinente comentar que este 
+procedimiento no es aplicable para problemas de regresión. 
+
+Si se puede suponer que los datos provienen de una Distribución Gausiana entonces
+la prueba a realizar es ANOVA, en caso contrario se puede utilizar su equivalente
+método no paramétrico como es la prueba Kruskal-Wallis. Considerando que
+de manera general se desconoce la distribución que genera los datos, entonces
+se presenta el uso de la segunda prueba.  
+
+La prueba Kruskal-Wallis identifica si un conjunto de muestras independientes
+provienen de la misma distribución. La hipótesis nula es que las muestras
+provienen de la misma distribución. La función `kruskal` implementa esta 
+prueba y recibe tantas muestras como argumentos. En el siguiente código 
+ilustra su uso, se observa que se llama a la función `kruskal` para cada 
+columna en `D` y se calcula su valor $$p$$. Los valores $$p$$
+obtenidos son: $$[0.0, 0.0, 0.5938]$$ lo cual indica que para las primeras
+dos variables la hipótesis nula se puede rechazar y por el otro lado la hipótesis
+nula es factible para la tercera variable con un valor $$p=0.5938$$
+
+```python
+res = [kruskal(*[D[y==l, i] for l in labels]).pvalue
+       for i in range(D.shape[1])]
+```
+
 
 # Selección hacia Adelante
+
+En este aparatado se describe es Selección hacia Adelante (Forward Selection). Este algoritmo corresponde a seleccionar de manera iterativa aquellas variables que para un algoritmo particular de aprendizaje supervisado es importante, donde el caso base es iniciar con ninguna variable. El complemento de Selección hacia adelante es selección hacia atrás (Backward Selection) donde se empieza con todas las características y se va eliminando una por una.
+
+Se puede observar que las variables se encuentran sin ninguna modificación en la nueva representación, pero existe una vertiente de algoritmos de reducción de dimensión transforman las entradas originales, es decir, se genera una función tal que $$f: \mathbb R^d \rightarrow \mathbb R^m $$.
 
 En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $$\mathcal X = \{(x_i, y_i)\}$$, con una función de error $$L$$ y un algoritmo de aprendizaje. La idea es ir selecciónando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización del algoritmo se pueden realizar de diferentes maneras, una es mediante la división de $$\mathcal X$$ en dos conjuntos: entrenamiento y validación; y la segunda manera corresponde a utilizar un k-Fold Cross-validation.
 
