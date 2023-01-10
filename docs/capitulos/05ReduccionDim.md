@@ -20,6 +20,8 @@ El **objetivo** de la unidad es aplicar técnicas de reducción de dimensionalid
 {: .no_toc .text-delta }
 ```python
 from scipy.stats import multivariate_normal, norm, kruskal
+from sklearn.datasets import load_diabetes
+from sklearn.feature_selection import f_regression, SelectKBest
 import numpy as np
 ```
 
@@ -53,8 +55,8 @@ proporcionan información de acuerdo a la estadística.
 
 Se utilizará el [problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
 de tres clases para describir el algoritmo de selección. Este problema está
-definido por tres Distribuciones Gausianas donde se crea una población de 
-1000 elementos para cada distribución de la siguiente manera. 
+definido por tres Distribuciones Gausianas donde se generan tres muestras de 
+1000 elementos cada una utilizando el siguiente código. 
 
 ```python
 p1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]])
@@ -136,6 +138,51 @@ nula es factible para la tercera variable con un valor $$p=0.5938$$
 res = [kruskal(*[D[y==l, i] for l in labels]).pvalue
        for i in range(D.shape[1])]
 ```
+
+En lugar de discriminar aquellas características que no aportan a modelar
+los datos, es más común seleccionar las mejores características. Este procedimiento
+se puede realizar utilizando los valores $$p$$ de la prueba 
+estadística o cualquier otra función que ordene la importancia de 
+las características. 
+
+El procedimiento equivalente a la estadística de Kruskal-Wallis en regresión
+es calcular la estadística F cuya hipótesis nula es asumir que el coeficiente
+obtenido en una regresión lineal entre las variables independientes y la 
+dependiente es zero. Esta estadística se encuentra implementada en 
+la función `f_regression`. El siguiente código muestra su uso en el 
+conjunto de datos de diabetes; el cual tiene $$10$$ variables 
+independientes. En la variable `p_values` se tienen los valores $$p$$
+se puede observar que el valor $$p$$ correspondiente a la segunda variable
+tiene un valor de $$0.3664$$, lo cual hace que esa variable no sea representativa
+para el problema que se está resolviendo. 
+
+
+```python
+X, y = load_diabetes(return_X_y=True)
+f_statistics, p_values = f_regression(X, y)
+```
+
+Un ejemplo que involucra la selección de las variables más representativas
+mediante una calificación que ordenan la importancia de las mismas se muestra en el 
+siguiente código. Se puede observar que las nueve variables seleccionadas 
+son: $$[0, 2, 3, 4, 5, 6, 7, 8, 9]$$ descartando la segunda variable que tiene
+el máximo valor $$p.$$ 
+
+
+```python
+sel = SelectKBest(score_func=f_regression, k=9).fit(X, y)
+sel.get_support(indices=True)
+```
+
+## Ventajas y Limitaciones
+
+Las técnicas vistas hasta este momento requieren de pocos recursos computacionales 
+para su cálculo. Además están basadas en estadísticas que permite saber 
+cuales son las razones de funcionamiento. Estas fortalezas también son origen 
+a sus debilidades, estas técnicas observan en cada paso las variables independientes
+de manera aislada y no consideran que estas variables pueden interactuar y
+que en varios problemas el mejor resultado se obtiene cuando las variables
+que definen al fenómeno interactúan. 
 
 
 # Selección hacia Adelante
