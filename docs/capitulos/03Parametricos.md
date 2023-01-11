@@ -66,6 +66,7 @@ una distribución $$F$$ la cual tiene una serie de parámetros $$\theta$$ que
 son identificados con $$\mathcal T.$$
 
 # Estimación de Parámetros
+{: #sec:estimacion-parametros }
 
 Se inicia la descripción de métodos paramétricos presentando el procedimiento general
 para estimar los parámetros de una distribución. Se cuenta con un conjunto $$\mathcal D$$
@@ -124,7 +125,7 @@ se estiman los parámetros; de estas manera se tienen todos los elementos para
 comparar los parámetros reales $$\theta$$ de los parámetros estimados $$\hat \theta.$$
 
 La distribución que se usará se utilizó para generar un 
-[problema sintético](/AprendizajeComputacional/capitulos/03Parametrics/#sec:tres-normales)
+[problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
 de tres clases. Los parámetros de la distribución son: $$\mathbf \mu = [5, 5]^T$$
 y  $$\Sigma = \begin{pmatrix} 4 & 0 \\ 0 & 2 \\ \end{pmatrix}.$$ 
 La siguiente instrucción se puede utilizar para generar 1000 muestras de esa distribución. 
@@ -563,8 +564,8 @@ rendimiento.
 Hasta este momento se han revisado métodos paramétricos en 
 clasificación, ahora es el turno de abordar 
 el problema de regresión. La diferencia entre clasificación
-y regresión como se describió en la sección de  
-[aprendizaje supervisado](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) 
+y regresión como se describió en la sección 
+de [aprendizaje supervisado](/AprendizajeComputacional/capitulos/01Tipos/#sec:aprendizaje-supervisado) 
 es que en regresión $$\mathcal Y \in \mathbb R.$$
 
 El procedimiento de regresión que se describe en esta sección

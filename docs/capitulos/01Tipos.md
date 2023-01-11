@@ -59,7 +59,7 @@ supervisado y no supervidado
 
 # Aprendizaje No Supervisado
 
-Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar en conjunto de vectores en, i.e. $$\mathcal D = \{ x_1, \ldots, x_N \}$$, donde $$x_i \in \mathbb R^d$$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
+Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar en conjunto de vectores, i.e. $$\mathcal D = \{ x_1, \ldots, x_N \}$$, donde $$x_i \in \mathbb R^d$$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
 
 El **objetivo** en aprendizaje no supervisado es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, en $$\mathcal D$$. Existen diferentes tareas que se pueden considerar dentro de este tipo de aprendizaje. Por ejemplo, el agrupamiento puede servir para segmentar clientes o productos, en otra linea también cabría el análisis del carrito de compras (Market Basket Analysis); donde el objetivo es encontrar la co-ocurrencias de productos, es decir, se quiere estimar la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
 
@@ -77,7 +77,7 @@ Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los
 # Aprendizaje Supervisado
 {: #sec:aprendizaje-supervisado }
 
-Aprendizaje supervisado es un problema donde el componente inicial es un conjunto de pares, entrada y salida. Es decir se cuenta con $$\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, donde $$x_i \in \mathbb R^d$$ corresponde a la  $$i$$-ésima entrada y $$y_i$$ es la salida asociada a esa entrada. Tomando en cuenta estas condiciones iniciales podemos definir el *objetivo* de aprendizaje supervisado como encontrar un algoritmo capaz de regresar la salida $$y$$ dada una entrada una entrada $$x$$.
+Aprendizaje supervisado es un problema donde el componente inicial es un conjunto de pares, entrada y salida. Es decir se cuenta con $$\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$$, donde $$x_i \in \mathbb R^d$$ corresponde a la  $$i$$-ésima entrada y $$y_i$$ es la salida asociada a esa entrada. Tomando en cuenta estas condiciones iniciales podemos definir el *objetivo* de aprendizaje supervisado como encontrar un algoritmo capaz de regresar la salida $$y$$ dada una entrada $$x$$.
 
 Existe una gran variedad de problemas que se puede categorizar como tareas de aprendizaje supervisado, solamente hay que recordar que en todos los casos se inicia con un conjunto $$\mathcal D$$ de pares entrada y salida. En ocasiones la construcción del conjunto es directa, por ejemplo en el caso de que se quiera identificar si una persona será sujeta a un crédito, entonces el 
 conjunto a crear esta compuesto por las características de las personas que se les ha otorgado un crédito y el estado final de crédito, es decir, si el crédito fue pagado o no fue pagado. En otro ejemplo, suponiendo que se quiere crear un algoritmo capaz de identificar si un texto dado tiene una polaridad positiva o negativa, entonces el conjunto se crea recolectando textos y a cada texto un conjunto de personas decide si el texto dado es positivo o negativo y la polaridad final es el consenso de varias opiniones; a este problema en general se le conoce como análisis de sentimientos.
@@ -117,11 +117,11 @@ documento como $$\mathcal T$$. Este conjunto se utiliza
 para estimar los parámetros o en general buscar 
 un algoritmo que tenga el comportamiento esperado.
 
-Se puede asumir que existe una función $$f$$ que genera la relación entrada salida mostrada en $$\mathcal D$$, es decir, idealmente se tiene que $$\forall_{(x, y) \in \mathcal D} f(x) = y$$. En este contexto, aprendizaje supervisado se entiende como el proceso de encontrar una función $$h^*$$ que se comporta similar a $$f$$.
+Se puede asumir que existe una función $$f$$ que genera la relación entrada salida mostrada en $$\mathcal T$$, es decir, idealmente se tiene que $$\forall_{(x, y) \in \mathcal D} f(x) = y$$. En este contexto, aprendizaje supervisado se entiende como el proceso de encontrar una función $$h^*$$ que se comporta similar a $$f$$.
 
 Para encontrar $$h^*$$, se utiliza $$\mathcal T$$; el conjunto de hipótesis (funciones), $$\mathcal H$$, que se considera puede aproximar $$f$$; una función de error, $$L$$; y el error empírico $$E(h \mid \mathcal T) = \sum_{(x, y) \in \mathcal T} L(y, h(x))$$. Utilizando estos elementos la función buscada es: $$h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal T)$$.
 
-El encontrar la función $$h^*$$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar es decir de predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $$\mathcal G=\{(x_i, y_i)\}$$ para $$i=1 \ldots M$$, donde $$\mathcal D \cap \mathcal G = \emptyset$$. La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $$E(h^* \mid \mathcal D) \approx E(h^* \mid \mathcal G) $$.
+El encontrar la función $$h^*$$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $$\mathcal G=\{(x_i, y_i)\}$$ para $$i=1 \ldots M$$, donde $$\mathcal D \cap \mathcal G = \emptyset$$. La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $$E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G) $$.
 
 ### Características de la hipótesis
 
