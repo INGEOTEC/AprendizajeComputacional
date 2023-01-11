@@ -60,6 +60,7 @@ calcular estadísticas de los datos y descartar aquellas que no
 proporcionan información de acuerdo a la estadística. 
 
 # Selección de Variables basadas en Estadísticas
+{: #sec:seleccion-var-estadistica }
 
 Se utilizará el [problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
 de tres clases para describir el algoritmo de selección. Este problema está
