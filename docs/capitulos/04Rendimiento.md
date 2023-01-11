@@ -230,8 +230,8 @@ se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta
 el momento. 
 
 ```python
-X, y = datasets.load_breast_cancer(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+D, y = datasets.load_breast_cancer(return_X_y=True)
+T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
 gaussian = GaussianBayes().fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 ```
