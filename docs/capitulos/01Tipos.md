@@ -17,6 +17,10 @@ El **objetivo** de la unidad es conocer los diferentes tipos de aprendizaje comp
 
 ---
 
+{%include 01Tipos.html %}
+
+---
+
 # Introducción
 
 Aprendizaje computacional es una rama de la IA que estudia los algoritmos que son capaces de aprender a partir de una serie de ejemplos o con alguna guía. Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. 
