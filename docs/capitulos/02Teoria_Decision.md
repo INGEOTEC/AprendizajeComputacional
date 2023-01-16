@@ -7,7 +7,7 @@ nav_order: 3
 # Teoría de Decisión Bayesiana
 {: .fs-10 .no_toc }
 
-El **objectivo** de la unidad es analizar el uso de la teoría de la probabilidad para 
+El **objetivo** de la unidad es analizar el uso de la teoría de la probabilidad para 
 la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas 
 de clasificación y su uso para tomar la decisión que reduzca el riesgo. 
 
@@ -79,12 +79,14 @@ Para el caso de regresión ($$y \in \mathbb R$$), el problema se puede plantear
 asumiento que $$\mathcal Y$$ proviene de una distribución particular cuyos
 parámetros están dados por la entrada $$\mathcal X$$. Por ejemplo, en regresión
 lineal se asume que $$\mathcal Y$$ proviene de una distribución Gausiana con 
-parámetros dados por $$\mathcal X$$, es decir, 
-$$\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$$
+parámetros dados por $$\mathcal X$$,
+es decir, $$\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$$
 donde los parámetros de la función $$g$$ son identificados mediante $$\mathcal X$$
 y $$\epsilon \sim \mathcal N(0, \sigma^2)$$ es el error con media cero y desviación
-estándar $$\sigma$$. Con estas condiciones la salida $$y$$ es 
-$$\mathbb E[\mathbb P(\mathcal Y \mid \mathcal X=x)].$$
+estándar $$\sigma$$. Con estas condiciones la salida $$y$$ 
+es $$\mathbb E[\mathcal Y \mid \mathcal X=x];$$ asumiendo que se esa variable
+se distribuye como una normal 
+entonces $$\mathbb E[\mathcal Y \mid \mathcal X=x]= \mathbb E[g(x) + \epsilon]=g(x) + \mathbb E[\epsilon]=g(x).$$
 
 # Teorema de Bayes
 
