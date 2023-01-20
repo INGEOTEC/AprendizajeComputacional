@@ -543,7 +543,7 @@ plt.savefig('comp_bayes_breast_cancer.png', dpi=300)
 ![Diferencia entre Clasificadores Bayesianos](/AprendizajeComputacional/assets/images/comp_bayes_breast_cancer.png)
 
 Se puede conocer la probabilidad de manera exacta calculando
-el área bajo la curva a la izquierda del cero, este sería el valor $p$, 
+el área bajo la curva a la izquierda del cero, este sería el valor $$p$$, 
 si este es menor a 0.05 quiere decir que se tiene una confianza mayor 
 del 95% de que los rendimientos son diferentes. Para este ejemplo,
 el área se calcula con el siguiente código
