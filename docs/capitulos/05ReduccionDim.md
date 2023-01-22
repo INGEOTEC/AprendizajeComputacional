@@ -28,6 +28,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn import decomposition
 from EvoMSA.model import GaussianBayes
 import numpy as np
+import pandas as pd
 from matplotlib import pylab as plt
 import seaborn as sns
 sns.set_theme()
@@ -525,18 +526,18 @@ Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, p
 ```python
 pca = decomposition.PCA(n_components=2).fit(D)
 Xn = pca.transform(D)
-plt.plot(Xn[:, 0], Xn[:, 1], '.')
 ```
 
 El siguiente código se utiliza para visualizar los datos. El 
-resultado se muestra en la siguiente figura, donde se observa
-de azul los elementos que corresponden a la clase 0, en naranja
-los de la clase 1 y en verde los de la clase 2.
+resultado se muestra en la figura contigua, donde se observa
+en diferente color cada una de las clases.
 
 ```python
-sns.scatterplot(hue=[f'Clase {x}' for x in y],
-                x=Xn[:, 0], 
-                y=Xn[:, 1])
+
+data = pd.DataFrame([dict(x=x, y=y, clase=c)
+                     for (x, y), c in zip(Xn, y)])
+sns.relplot(data, kind='scatter',
+            x='x', y='y', hue='clase')
 ```
 
 <!--
