@@ -533,7 +533,6 @@ resultado se muestra en la figura contigua, donde se observa
 en diferente color cada una de las clases.
 
 ```python
-
 data = pd.DataFrame([dict(x=x, y=y, clase=c)
                      for (x, y), c in zip(Xn, y)])
 sns.relplot(data, kind='scatter',

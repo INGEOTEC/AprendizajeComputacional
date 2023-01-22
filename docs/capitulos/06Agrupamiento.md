@@ -26,7 +26,7 @@ from sklearn import decomposition
 from sklearn import metrics
 from scipy import linalg
 import numpy as np
-from pandas as pd
+import pandas as pd
 from matplotlib import pylab as plt
 import seaborn as sns
 sns.set_theme()
@@ -99,7 +99,7 @@ Xn = pca.transform(G_1)
 mu = pca.transform(np.atleast_2d(G_1.mean(axis=0)))[0]
 data = pd.DataFrame(dict(x=Xn[:, 0], y=Xn[:, 1], tipo=['G_1'] * Xn.shape[0]))
 data.loc[Xn.shape[0]] = dict(x=mu[0], y=mu[1], tipo='mu_1')
-sns.scatterplot(data, hue='tipo', x='x', y='y')
+sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 plt.savefig('iris-k-means-g1.png', dpi=300)
 -->
 
@@ -159,17 +159,14 @@ G = dis.argmin(axis=1)
 <!--
 pca = decomposition.PCA(n_components=2).fit(D)
 D_pca = pca.transform(D)
-Xn = pca.transform(D)
-G_1 = Xn[np.where(G == 0)]
-G_2 = Xn[np.where(G)]
-G_1 = pd.DataFrame(dict(x=G_1[:, 0], y=G_1[:, 1], tipo=['G_1'] * G_1.shape[0]))
-G_2 = pd.DataFrame(dict(x=G_2[:, 0], y=G_2[:, 1], tipo=['G_2'] * G_2.shape[0]))
+data = pd.DataFrame([dict(x=x, y=y, tipo=f'G_{g}') 
+                     for (x, y), g in zip(D_pca, G)])
 mu = np.vstack((D_pca[50], D_pca[100]))
 mu_data = pd.DataFrame(dict(x=mu[:, 0], 
                             y=mu[:, 1],
                             tipo=['mu'] * mu.shape[0]))
-data = pd.concat((G_1, G_2, mu_data))
-sns.scatterplot(data, hue='tipo', x='x', y='y')
+data = pd.concat((data, mu_data))
+sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 plt.savefig('iris-k-means-g.png', dpi=300)
 -->
 
@@ -221,7 +218,7 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          y=D_pca[:, 1],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
-sns.scatterplot(data, hue='tipo', x='x', y='y')
+sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 plt.savefig('kmeans-2grp.png', dpi=300)
 -->
 
@@ -252,7 +249,7 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          y=D_pca[:, 1],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
-sns.scatterplot(data, hue='tipo', x='x', y='y')
+sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 plt.savefig('kmeans-3grp.png', dpi=300)
 -->
 
@@ -260,6 +257,8 @@ La siguiente figura muestra los tres grupos y con sus
 tres respectivas medias en color rojo. 
 
 ![K-medias tres grupos](/AprendizajeComputacional/assets/images/kmeans-3grp.png)
+
+# Rendimiento
 
 Recordando que en aprendizaje no supervisado no se tiene una variable
 dependiente que predecir. En este caso particular se utilizó 
@@ -300,3 +299,83 @@ conjunto del iris.
 ```python
 metrics.accuracy_score(y, cl_cambio)
 ```
+
+En general en agrupamiento no se cuenta con la composición de los 
+grupos, es más, se desconocen cuántos grupos modela el problema. Para
+estas ocasiones es imposible medir el accuracy o cualquier otra medida
+de agrupamiento que requiera la composición de real de los grupos. 
+
+Una medida que no requiere conocer los grupos es el 
+**Silhouette Coefficient**; el cual mide la calidad de los grupos,
+mientras mayor sea el valor significa una mejor calidad en los 
+grupos. Este coeficiente se basa en la siguiente función:
+
+$$s = \frac{b - a}{\max(a, b)},$$
+
+donde $$a$$ corresponde a la distancia media entre un elemento y todos las objetos del mismo grupo; y $$b$$ es la distancia media entre la muestra y todos los elementos del grupo más cercano.
+
+Por ejemplo, en el problema del Iris $$s$$ tiene un valor 
+de $$0.5528$$ calculado con la siguiente instrucción. 
+
+```python
+metrics.silhouette_score(D, cl, metric='euclidean')
+```
+
+Otra medida de la calidad de los grupos es índice de **Calinski-Harabasz*
+que mide la dispersión entre grupos y dentro del grupo, al 
+igual que Silhouette, mientras mayor sea la estadística
+mejor es el agrupamiento. Para el problema del Iris 
+el índice de Calinski-Harabasz tiene un valor de $$561.6278$$
+obtenido con la siguiente instrucción.
+
+```python
+metrics.calinski_harabasz_score(D, cl)
+```
+
+
+
+# Número de Grupos
+
+Utilizando una medida de rendimiento de agrupamiento se analizar
+cual sería el número adecuado de grupos para un problema dado.
+El procedimiento es variar el número de grupos y medir el 
+rendimiento para cada grupo y quedarse con aquel que da el mejor
+rendimiento considerando también el número de grupos. 
+
+Por ejemplo, el siguiente instrucción calcula el coeficiente 
+de Silhouette y el índice de Calinski-Harabasz en el problema
+del Iris. 
+
+```python
+S1 = []
+S2 = []
+for k in range(2, 11):
+    m = KMeans(n_clusters=k).fit(D)
+    cl = m.predict(D)
+    _ = metrics.silhouette_score(D, cl, metric='euclidean')
+    S1.append(_)
+    _ = metrics.calinski_harabasz_score(D, cl)
+    S2.append(_)
+```
+
+<!--
+data = pd.DataFrame([{'Calinski-Harabasz': b,  'Silhouette': a, 'K': k} 
+                     for k, (a, b) in enumerate(zip(S1, S2))])
+data.set_index('K', inplace=True)
+
+sns.lineplot(data=data.Silhouette, color=sns.color_palette()[0])
+ax2 = plt.twinx()
+sns.lineplot(data=data['Calinski-Harabasz'], 
+             color=sns.color_palette()[1], ax=ax2)
+plt.savefig('k-means-performance-k.png', dpi=300)
+-->
+
+Estas dos estadísticas se pueden observar en la siguiente figura.
+En color azul se observa el coeficiente de Silhouette; 
+donde el mejor resultado es cuando $$K=2$$. En color naranja 
+se muestra el índice Calinski-Harabasz done el mejor
+resultado se tiene cuando $$K=3$$. Considerando que se está trabajando
+con el problema del Iris se conoce que la mejor agrupación es
+para $$K=3$$ dado que son tres clases.
+
+![Rendimiento variando $$k$$](/AprendizajeComputacional/assets/images/k-means-performance-k.png)
