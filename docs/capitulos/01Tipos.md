@@ -62,6 +62,7 @@ supervisado y no supervidado
 5. Se mide el rendimiento de $$f$$.
 
 # Aprendizaje No Supervisado
+{: #sec:aprendizaje-no-supervisado }
 
 Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar en conjunto de vectores, i.e. $$\mathcal D = \{ x_1, \ldots, x_N \}$$, donde $$x_i \in \mathbb R^d$$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
 

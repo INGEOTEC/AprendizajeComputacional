@@ -511,6 +511,7 @@ Si suponemos que $$x \sim \mathcal N_d(\mu, \Sigma)$$ y $$ w \in \mathbb R^d $$ 
 Utilizando esta información se puede describir el problema como encontrar $$w_1 $$ tal que $$\textsf{Var}(z_1)$$ sea máxima, donde $$\textsf{Var}(z_1) = w_1^T \Sigma w_1 $$. Dado que en este problema de optimización tiene multiples soluciones, se busca además maximizar bajo la restricción de $$\mid\mid w_1 \mid\mid = 1$$. Escribiéndolo como un problema de Lagrange quedaría como: $$\max_{w_1} w_1^T \Sigma w_1 - \alpha (w^T_1 w_1 - 1)$$. Derivando con respecto a $$w_1$$ se tiene que la solución es: $$\Sigma w_i = \alpha w_i $$ donde esto se cumple solo si $$w_1 $$ es un eigenvector de $$\Sigma$$ y $$\alpha$$ es el eigenvalor correspondiente. Para encontrar $$w_2$$ se requiere $$\mid\mid w_2 \mid\mid = 1$$ y que los vectores sean ortogonales, es decir, $$w_2^T w_1 = 0$$. Realizando las operaciones necesarias se encuentra que $$w_2$$ corresponde al segundo eigenvector y así sucesivamente.
 
 ## Ejemplo - Visualización
+{: #sec:visualizacion-iris }
 
 Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemplos se encuetran en $$\mathbb R^4$$ entonces para poderlos graficar en $$\mathbb R^2$$ se requiere realizar una transformación como podría ser Análisis de Componentes Principales.
 
@@ -532,7 +533,6 @@ resultado se muestra en la figura contigua, donde se observa
 en diferente color cada una de las clases.
 
 ```python
-
 data = pd.DataFrame([dict(x=x, y=y, clase=c)
                      for (x, y), c in zip(Xn, y)])
 sns.relplot(data, kind='scatter',
