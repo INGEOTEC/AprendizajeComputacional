@@ -520,28 +520,28 @@ Empezamos por cargar los datos del problema tal y como se muestra en la siguient
 D, y = load_iris(return_X_y=True)
 ```
 
-Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $$\mathbb R^2$$ los datos, entonces el ocupamos dos componentes. La primera linea inicializa la clase de PCA, después se hace la proyección en la segunda línea y finalmente se grafican los datos.
+Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $$\mathbb R^2$$ los datos, entonces el ocupamos dos componentes. La primera linea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
 
 ```python
 pca = decomposition.PCA(n_components=2).fit(D)
 Xn = pca.transform(D)
 plt.plot(Xn[:, 0], Xn[:, 1], '.')
-``` 
+```
 
-El resultado de este proceso se puede observar en la siguiente figura.
+El siguiente código se utiliza para visualizar los datos. El 
+resultado se muestra en la siguiente figura, donde se observa
+de azul los elementos que corresponden a la clase 0, en naranja
+los de la clase 1 y en verde los de la clase 2.
+
+```python
+sns.scatterplot(hue=[f'Clase {x}' for x in y],
+                x=Xn[:, 0], 
+                y=Xn[:, 1])
+```
+
+<!--
+plt.savefig('pca.png', dpi=300)
+-->
+
 
 ![PCA](/AprendizajeComputacional/assets/images/pca.png)
-
-En este problema nos podría ayudar el identificar cada punto con la clase a la que pertenecen usando un color por cada clase. Esto se puede lograr con el siguiente código.
-
-```python 
-for kl in np.unique(y):
-    m = y == kl
-    plt.plot(Xn[m, 0], Xn[m, 1], '.')
-```  
-
-El resultado obtenido es:
-
-![PCA con color](/AprendizajeComputacional/assets/images/pca-color.png)
-
-Se puede observar en este ejercicio como la clase representada por el color azul es linealmente separable de las otras dos clases.
