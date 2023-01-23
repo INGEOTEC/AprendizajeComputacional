@@ -182,8 +182,8 @@ correspondientes priors.
 
 Quitando la evidencia del Teorema de Bayes se observa que 
 $$\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$$.
-En el ejemplo creado se observa que $$\mathbb P(\mathcal X=1) = \frac{1000}{3000},$$ las otras probabilidades
-a priori tienen el mismo valor, es decir, $$\mathbb P(\mathcal X=2) = \mathbb P(\mathcal X=3) = \frac{1}{3}.$$ 
+En el ejemplo creado se observa que $$\mathbb P(\mathcal Y=1) = \frac{1000}{3000},$$ las otras probabilidades
+a priori tienen el mismo valor, es decir, $$\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.$$ 
 
 La verosimilitud está definida en las variables `p1`, `p2` y `p3`; en particular en la función 
 `pdf`, es decir, $$\mathbb P(\mathcal X \mid \mathcal Y=1)$$ es `p1.pdf`, $$\mathbb P(\mathcal X \mid \mathcal Y=2)$$ corresponde a `p2.pdf` y equivalentemente `p3.pdf` es la verosimilitud cuando $$\mathcal Y=3.$$
