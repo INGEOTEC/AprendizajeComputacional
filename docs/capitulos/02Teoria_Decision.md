@@ -30,6 +30,10 @@ sns.set_theme()
 
 ---
 
+{%include 02Teoria_Decision.html %}
+
+---
+
 # Introducción
 
 Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una 
