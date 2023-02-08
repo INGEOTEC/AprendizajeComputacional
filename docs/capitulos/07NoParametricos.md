@@ -153,7 +153,8 @@ def riesgo(D, m=10):
     return (2 / ((N - 1) * h)) - ((N + 1) * cuadrado / ((N - 1) * h))
 ```
 
-donde las partes que no han sido descritas solamente implementan las ecuación $$\hat J(h)$$.
+donde las partes que no han sido descritas solamente implementan 
+la ecuación $$\hat J(h)$$.
 
 Finalemente se busca minimar el valor $$h$$ que minimiza la ecuación, iterando
 por diferentes valores de $$m$$ se obtiene la siguiente gráfica del riesgo con
