@@ -657,8 +657,8 @@ m = LinearRegression().fit(T, y_t)
 ```
 
 Los coeficientes de la regresión lineal 
-son $$\mathbf w=[11.4506, -270.97, 529.6703, 325.5005, -664.1954, 304.8051, 27.2395, 204.9071, 657.794, 98.7585]$$ y $$w_0=152.0305$$ 
-lo cual se encuentran en las siguientes variables
+son $$\mathbf w=[11.4506, -270.97, 529.6703, 325.5005, -664.1954, 304.8051, 27.2395, 204.9071, 657.794, 98.7585]$$ 
+y $$w_0=152.0305$$ lo cual se encuentran en las siguientes variables
 
 ```python
 m.coef_
