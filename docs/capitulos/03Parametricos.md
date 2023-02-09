@@ -32,6 +32,9 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme()
 ```
+---
+
+{%include 03Parametricos.html %}
 
 ---
 
@@ -657,15 +660,15 @@ m = LinearRegression().fit(T, y_t)
 ```
 
 Los coeficientes de la regresión lineal 
-son $$\mathbf w=[11.4506, -270.97, 529.6703, 325.5005, -664.1954, 304.8051, 27.2395, 204.9071, 657.794, 98.7585]$$ y $$w_0=152.0305$$ 
-lo cual se encuentran en las siguientes variables
+son $$\mathbf w=[11.4506, -270.97, 529.6703, 325.5005, -664.1954, 304.8051, 27.2395, 204.9071, 657.794, 98.7585 ]$$ 
+y $$w_0=152.0305$$ lo cual se encuentran en las siguientes variables
 
 ```python
 m.coef_
 m.intercept_
 ```
 
-La pregunta es si estos coeficientes son estadísticamente diferentes que cero, esto
+La pregunta es si estos coeficientes son estadísticamente diferentes de cero, esto
 se puede conocer calculando el error estándar de cada coeficiente. Para lo cual 
 se requiere estimar $$\sigma$$ que corresponde a la desviación estándar del error
 tal y como se muestra en las siguientes instrucciones.
@@ -675,7 +678,7 @@ error = y_t - m.predict(T)
 std_error = np.std(error)
 ```
 
-La error estándar de $$\mathbf w$$ es 
+El error estándar de $$\mathbf w$$ es 
 
 ```python
 diag = np.arange(T.shape[1])

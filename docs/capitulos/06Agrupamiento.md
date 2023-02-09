@@ -93,16 +93,6 @@ puede calcular con el siguiente código.
 mu_1 = G_1.mean(axis=0)
 ```
 
-<!--
-pca = decomposition.PCA(n_components=2).fit(D)
-Xn = pca.transform(G_1)
-mu = pca.transform(np.atleast_2d(G_1.mean(axis=0)))[0]
-data = pd.DataFrame(dict(x=Xn[:, 0], y=Xn[:, 1], tipo=['G_1'] * Xn.shape[0]))
-data.loc[Xn.shape[0]] = dict(x=mu[0], y=mu[1], tipo='mu_1')
-sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
-plt.savefig('iris-k-means-g1.png', dpi=300)
--->
-
 La siguiente figura muestra los elementos seleccionados ($$x \in G_1$$) 
 y la media ($$\mu_1$$) del grupo. Los elementos se encuentran
 en $$\mathbb R^4$$ y para visualizarlos se transformaron usando PCA
@@ -110,6 +100,23 @@ descrito [previamente.](/AprendizajeComputacional/capitulos/05ReduccionDim/#sec:
 
 
 ![Grupo uno en primera iteración](/AprendizajeComputacional/assets/images/iris-k-means-g1.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+pca = decomposition.PCA(n_components=2).fit(D)
+Xn = pca.transform(G_1)
+mu = pca.transform(np.atleast_2d(G_1.mean(axis=0)))[0]
+data = pd.DataFrame(dict(x=Xn[:, 0], y=Xn[:, 1], tipo=['G_1'] * Xn.shape[0]))
+data.loc[Xn.shape[0]] = dict(x=mu[0], y=mu[1], tipo='mu_1')
+sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+```
+</details>
+<!--
+plt.savefig('iris-k-means-g1.png', dpi=300)
+-->
 
 
 ## $$G_i$$
@@ -156,7 +163,19 @@ se realiza esta asignación.
 G = dis.argmin(axis=1)
 ```
 
-<!--
+
+La siguiente figura muestra los grupos formados, el primer grupo `G_1`
+se encuentra en azul y el segundo en naranja, también muestra los elementos
+que fueron usados como medias de cada grupo; estos elementos
+se observan en color verde. 
+
+![Grupos en primera iteración](/AprendizajeComputacional/assets/images/iris-k-means-g.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
 pca = decomposition.PCA(n_components=2).fit(D)
 D_pca = pca.transform(D)
 data = pd.DataFrame([dict(x=x, y=y, tipo=f'G_{g}') 
@@ -167,15 +186,11 @@ mu_data = pd.DataFrame(dict(x=mu[:, 0],
                             tipo=['mu'] * mu.shape[0]))
 data = pd.concat((data, mu_data))
 sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+```
+</details>
+<!--
 plt.savefig('iris-k-means-g.png', dpi=300)
 -->
-
-La siguiente figura muestra los grupos formados, el primer grupo `G_1`
-se encuentra en azul y el segundo en naranja, también muestra los elementos
-que fueron usados como medias de cada grupo; estos elementos
-se observan en color verde. 
-
-![Grupos en primera iteración](/AprendizajeComputacional/assets/images/iris-k-means-g.png)
 
 
 ## Algoritmo
@@ -207,7 +222,17 @@ m = KMeans(n_clusters=2).fit(D)
 cl = m.predict(D)
 ```
 
-<!--
+La siguiente figura muestra el resultado del algoritmo k-means
+en el conjunto del Iris, se muestran los dos grupos $$G_1$$ y 
+$$G_2$$ y en color verde $$\mu_1$$ y $$\mu_2$$. 
+
+![K-medias dos grupos](/AprendizajeComputacional/assets/images/kmeans-2grp.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
 pca = decomposition.PCA(n_components=2).fit(D)
 D_pca = pca.transform(D)
 mu = pca.transform(m.cluster_centers_)
@@ -219,14 +244,11 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
 sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+```
+</details>
+<!--
 plt.savefig('kmeans-2grp.png', dpi=300)
 -->
-
-La siguiente figura muestra el resultado del algoritmo k-means
-en el conjunto del Iris, se muestran los dos grupos $$G_1$$ y 
-$$G_2$$ y en color verde $$\mu_1$$ y $$\mu_2$$. 
-
-![K-medias dos grupos](/AprendizajeComputacional/assets/images/kmeans-2grp.png)
 
 
 Un procedimiento equivalente se puede realizar para generar 
@@ -238,7 +260,16 @@ m = KMeans(n_clusters=3).fit(D)
 cl = m.predict(D)
 ```
 
-<!--
+La siguiente figura muestra los tres grupos y con sus 
+tres respectivas medias en color rojo. 
+
+![K-medias tres grupos](/AprendizajeComputacional/assets/images/kmeans-3grp.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
 pca = decomposition.PCA(n_components=2).fit(D)
 D_pca = pca.transform(D)
 mu = pca.transform(m.cluster_centers_)
@@ -250,13 +281,11 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
 sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+```
+</details>
+<!--
 plt.savefig('kmeans-3grp.png', dpi=300)
 -->
-
-La siguiente figura muestra los tres grupos y con sus 
-tres respectivas medias en color rojo. 
-
-![K-medias tres grupos](/AprendizajeComputacional/assets/images/kmeans-3grp.png)
 
 # Rendimiento
 
@@ -358,18 +387,6 @@ for k in range(2, 11):
     S2.append(_)
 ```
 
-<!--
-data = pd.DataFrame([{'Calinski-Harabasz': b,  'Silhouette': a, 'K': k} 
-                     for k, (a, b) in enumerate(zip(S1, S2))])
-data.set_index('K', inplace=True)
-
-sns.lineplot(data=data.Silhouette, color=sns.color_palette()[0])
-ax2 = plt.twinx()
-sns.lineplot(data=data['Calinski-Harabasz'], 
-             color=sns.color_palette()[1], ax=ax2)
-plt.savefig('k-means-performance-k.png', dpi=300)
--->
-
 Estas dos estadísticas se pueden observar en la siguiente figura.
 En color azul se observa el coeficiente de Silhouette; 
 donde el mejor resultado es cuando $$K=2$$. En color naranja 
@@ -379,3 +396,22 @@ con el problema del Iris se conoce que la mejor agrupación es
 para $$K=3$$ dado que son tres clases.
 
 ![Rendimiento variando $$k$$](/AprendizajeComputacional/assets/images/k-means-performance-k.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+data = pd.DataFrame([{'Calinski-Harabasz': b,  'Silhouette': a, 'K': k} 
+                     for k, (a, b) in enumerate(zip(S1, S2))])
+data.set_index('K', inplace=True)
+
+sns.lineplot(data=data.Silhouette, color=sns.color_palette()[0])
+ax2 = plt.twinx()
+sns.lineplot(data=data['Calinski-Harabasz'], 
+             color=sns.color_palette()[1], ax=ax2)
+```
+</details>
+<!--
+plt.savefig('k-means-performance-k.png', dpi=300)
+-->
