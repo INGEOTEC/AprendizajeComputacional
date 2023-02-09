@@ -440,21 +440,27 @@ for var in range(T.shape[1]):
     perf.append(np.mean(perf_inner))
 ```
 
-<!--
-sns.barplot(x=list(range(len(perf))), y=perf)
-plt.grid()
-plt.xlabel('Variable')
-plt.ylabel('Macro-Recall')
-plt.savefig('var-forward-sel.png', dpi=300)
--->
-
 La siguiente figura muestra el rendimiento de las 30 variables, 
 se observa como una gran parte de las variables proporcionan 
 un rendimiento superior al $$0.8$$ y la variable que tiene el mejor
 rendimiento es la que corresponde al índice $$27$$ y valor $$0.9057.$$
 
 ![Selección hacia Adelante](/AprendizajeComputacional/assets/images/var-forward-sel.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
 
+```python
+sns.barplot(x=list(range(len(perf))), y=perf)
+plt.grid()
+plt.xlabel('Variable')
+plt.ylabel('Macro-Recall')
+```
+</details>
+<!--
+plt.savefig('var-forward-sel.png', dpi=300)
+-->
 
 El algoritmo de selección hacia atrás y adelante se implementa en 
 la clase `SequentialFeatureSelector` y su uso se observa en las siguientes
