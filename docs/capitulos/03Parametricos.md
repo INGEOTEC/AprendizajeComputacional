@@ -32,6 +32,9 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme()
 ```
+---
+
+{%include 03Parametricos.html %}
 
 ---
 
@@ -665,7 +668,7 @@ m.coef_
 m.intercept_
 ```
 
-La pregunta es si estos coeficientes son estadísticamente diferentes que cero, esto
+La pregunta es si estos coeficientes son estadísticamente diferentes de cero, esto
 se puede conocer calculando el error estándar de cada coeficiente. Para lo cual 
 se requiere estimar $$\sigma$$ que corresponde a la desviación estándar del error
 tal y como se muestra en las siguientes instrucciones.
