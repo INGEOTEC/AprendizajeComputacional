@@ -116,7 +116,7 @@ $$ \begin{eqnarray} \frac{d}{dp} \ell(\mathcal p) &=& 0 \\ \frac{d}{dp} [ \sum_{
 
 Realizando algunas operaciones algebraicas se obtiene:
 
-$$\hat p = \frac{1}{N}\sum_{i=1}^N x_i $$.
+$$\hat p = \frac{1}{N}\sum_{i=1}^N x_i.$$
 
 ## Ejemplo: Distribución Gausiana
 {: #sec:estimacion-distribucion-gausiana }
