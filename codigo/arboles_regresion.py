@@ -20,12 +20,14 @@ df = pd.DataFrame([dict(x=x, y=y, clase=1) for x, y in X_1] + \
 
 sns.relplot(data=df, kind='scatter',
             x='x', y='y', hue='clase')
+plt.savefig('clases3-arboles.png', dpi=300)
 
 X = np.concatenate((X_1, X_2, X_3), axis=0)
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 arbol = tree.DecisionTreeClassifier().fit(X, y)
 
-tree.plot_tree(arbol)
+_ = tree.plot_tree(arbol)
+plt.savefig('tree.png', dpi=300)
 
 
 # from sklearn import datasets
