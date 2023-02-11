@@ -35,8 +35,14 @@ sns.set_theme()
 # Introducción
 
 Los árboles de decisión son una estructura de datos jerárquica, la cual se construye utilizando una 
-estrategia de divide y vencerás. Los árboles están conformados por nodos internos, donde se realizan 
-operaciones, y hojas las cuales indican la clase o la respuesta.
+estrategia de divide y vencerás. Los árboles son un método no paramétrico diseñado para problemas
+de regresión y clasificación. 
+
+El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una regla 
+que muestra el camino de acuerdo a la entrada y la hoja indica la clase o 
+respuesta que corresponde a la entrada.
+
+
 
 ```python
 X_1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
