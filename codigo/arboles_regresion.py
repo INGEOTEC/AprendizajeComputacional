@@ -25,6 +25,7 @@ X = np.concatenate((X_1, X_2, X_3), axis=0)
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 arbol = tree.DecisionTreeClassifier().fit(X, y)
 
+tree.plot_tree(arbol)
 
 
 # from sklearn import datasets
