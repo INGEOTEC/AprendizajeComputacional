@@ -19,11 +19,11 @@ regresión.
 ## Paquetes usados
 {: .no_toc .text-delta }
 ```python
-from scipy.stats import multivariate_normal
+from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_digits, load_diabetes
-from scipy.stats import norm
-from collections import Counter
+from sklearn.inspection import DecisionBoundaryDisplay
+from scipy.stats import multivariate_normal
 import numpy as np
 import pandas as pd
 from matplotlib import pylab as plt
@@ -34,36 +34,107 @@ sns.set_theme()
 
 # Introducción
 
-Los árboles de decisión son una estructura de datos jerárquica, la cual se construye utilizando una 
-estrategia de divide y vencerás. Los árboles son un método no paramétrico diseñado para problemas
+Los árboles de decisión son una estructura de datos jerárquica, la cual se 
+construye utilizando una estrategia de divide y vencerás. Los árboles son un 
+método no paramétrico diseñado para problemas
 de regresión y clasificación. 
 
-El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una regla 
-que muestra el camino de acuerdo a la entrada y la hoja indica la clase o 
-respuesta que corresponde a la entrada.
+El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una 
+regla que muestra el camino de acuerdo a la entrada y la hoja indica la clase 
+o respuesta que corresponde a la entrada.
 
+# Clasificación
+{: #sec:clasificacion }
 
+Utilizando el procedimiento para generar [tres Distribuciones Gausianas](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
+se generan las siguientes poblaciones con 
+medias $$\mu_1=[5, 5]^T$$, $$\mu_2=[-5, -10]^T$$ y $$\mu_3=[15, -6]^T$$; 
+utilizando las matrices de covarianza originales.
+
+![Tres Distribuciones Gausianas](/AprendizajeComputacional/assets/images/clases3-arboles.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
 
 ```python
 X_1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
 X_2 = multivariate_normal(mean=[-5, -10], cov=[[2, 1], [1, 3]]).rvs(1000)
 X_3 = multivariate_normal(mean=[15, -6], cov=[[2, 3], [3, 7]]).rvs(1000)
-
 df = pd.DataFrame([dict(x=x, y=y, clase=1) for x, y in X_1] + \
                   [dict(x=x, y=y, clase=2) for x, y in X_2] + \
                   [dict(x=x, y=y, clase=3) for x, y in X_3])
-
 sns.relplot(data=df, kind='scatter',
             x='x', y='y', hue='clase')
 ```
-
+</details>
 <!--
-plt.savefig()
+plt.savefig('clases3-arboles.png', dpi=300)
 -->
 
-En la siguiente figura se muestra un ejemplo de un árbol de decisión.
+Con estas tres poblaciones, donde cada distribución genera una clase
+se crea un árbol de decisión. El árbol se muestra en la siguiente
+figura, donde se observa la siguiente información en cada nodo. La 
+primera linea muestra la función de corte, la función de corte
+se define en el proceso de construcción del árbol y se usa para 
+guiar a cualquier elemento que se quiera clasificar. 
+
+La segunda y tercera linea de información en el nodo, corresponde
+a datos obtenidos durante el proceso de entrenamiento, esto son 
+el número de elementos que llegaron al nodo y la frecuencia de cada 
+clase en ese nodo. Por ejemplo, la raíz (nodo superior)
+tiene la función de corte $$x \leq 10.294$$, recibió $$3000$$ elementos
+y cada clase tiene $$1000$$ elementos. Utilizando la frecuencia de 
+clase se define la función de costo la cual se usa para dividir 
+los elementos que llegan al nodo, aquellos para los cuales la función
+es verdadera se envían al nodo izquierdo y el resto al nodo derecho. 
+De esta manera se observa que $$1999$$ están en el nodo izquierdo 
+de la raíz y $$1001$$ en el nodo derecho de la raíz. Los nodos 
+que no tiene hijos, se les conoce como hojas; estos nodos son los 
+que indican la case, por ejemplo la hoja derecha tiene $$1000$$ 
+elementos en la clase $$2$$. 
 
 ![Árbol](/AprendizajeComputacional/assets/images/tree.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+X = np.concatenate((X_1, X_2, X_3), axis=0)
+y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
+arbol = tree.DecisionTreeClassifier().fit(X, y)
+_ = tree.plot_tree(arbol, impurity=False,
+                   feature_names=['x', 'y'], label='none')
+```
+</details>
+<!--
+plt.savefig('tree.png', dpi=300)
+-->
+
+![Árbol de Decisión y su Función de Decisión](/AprendizajeComputacional/assets/images/tree-funcion-decision.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+```python
+ax = plt.subplot(2, 1, 1)
+arbol = tree.DecisionTreeClassifier(min_samples_split=1002).fit(X, y)
+_ = tree.plot_tree(arbol, impurity=False, ax=ax,
+                   feature_names=['x', 'y'], label='none')
+ax = plt.subplot(2, 1, 2)
+DecisionBoundaryDisplay.from_estimator(arbol, X, cmap=plt.cm.RdYlBu,
+                                       response_method='predict',
+                                       ax=ax, xlabel='x', ylabel='y')
+for i, color in enumerate('ryb'):
+    mask = y == (i + 1)
+    plt.scatter(X[mask, 0], X[mask, 1], c=color,
+        label=f'{i+1}', cmap=plt.cm.RdYlBu, edgecolor='black')
+```
+</details>
+<!--
+plt.savefig('tree-funcion-decision.png', dpi=300)
+-->
 
 La descripción de la figura anterior se puede observar en el siguiente video.
 
