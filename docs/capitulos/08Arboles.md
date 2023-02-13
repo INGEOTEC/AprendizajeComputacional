@@ -80,7 +80,7 @@ a la función de corte, la tercera línea es la entropía
 ($$H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$$), 
 la cuarta es el número de elementos que llegaron al nodo y 
 la última la frecuencia de cada clase en ese nodo. Por ejemplo, 
-la raíz (#0) tiene la función de corte $$x \leq 10.294$$, tiene una entropía 
+la raíz (#0) tiene la función de corte $$x \leq 10.517$$, tiene una entropía 
 de $$1.585$$, recibió $$3000$$ elementos y cada clase tiene $$1000$$ ejemplos.
 
 Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, 
@@ -114,10 +114,10 @@ La siguiente figura muestra el árbol generado cuando el nodo #6 se quita. Se ob
 un árbol con menos nodos, aunque la entropía es diferente de cero en la hoja #4. 
 La segunda parte de la figura muestra la función de decisión que genera el árbol 
 de decisión. Se observa que cada regla divide el espacio en dos. La raíz (#0)
-divide los datos utilizando $$x \leq 10.294$$, donde todos los elementos para los cuales
+divide los datos utilizando $$x \leq 10.517$$, donde todos los elementos para los cuales
 la función es verdadera se envían al nodo izquierdo (#1), de lo contrario se envían a la 
 hoja derecha (#4). Al nodo #1 llegan $$1999$$ los cuales se divide en
-utilizando $$y \leq -1.693$$, dando como resultado $$1000$$ en su hoja izquierda (#2)
+utilizando $$y \leq -1.812$$, dando como resultado $$1000$$ en su hoja izquierda (#2)
 y $$999$$ en su hoja derecha (#3). 
 
 
@@ -151,8 +151,8 @@ Utilizando el árbol mostrado en la figura anterior, se puede explicar el proces
 de clasificar un nuevo elemento. Por ejemplo, el 
 elemento $$\mathbf u=(x=-3, y=0.5)$$ (que se muestra en la siguiente 
 figura como un punto negro) se clasifica de la siguiente manera. La función de 
-corte ($$x \leq 10.294$$) de la raíz (#0) indica $$\mathbf u$$ pasa al nodo izquierdo #1.
-La función de corte ($$y \leq -1.693$$) del nodo #1 indica que $$\mathbf u$$ se
+corte ($$x \leq 10.517$$) de la raíz (#0) indica $$\mathbf u$$ pasa al nodo izquierdo #1.
+La función de corte ($$y \leq -1.812$$) del nodo #1 indica que $$\mathbf u$$ se
 envía a la hoja #3. La clase mayoritaria ($$999$$ elementos) en la hoja #3 
 es la clase $$1$$, entonces $$\mathbf u$$ pertenece a la clase $$1$$ de acuerdo 
 al árbol de decisión generado. 
@@ -198,7 +198,28 @@ $$L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\m
 
 donde 
 
+```python
+def H(arr):
+    a, b = np.unique(arr, return_counts=True)
+    b = b / b.sum()
+    return - (b * np.log2(b, where=b != 0)).sum()
+```
 
+```python
+orden = np.argsort(X, axis=0)
+
+for x in orden.T:
+    y_s = y[x]
+    D_m = y_s.shape[0]
+    corte = np.where(np.diff(y_s))[0]
+    for j in corte:
+        izq = y_s[:j]
+        der = y_s[j:]
+        a = (izq.shape[0] / D_m) * H(izq)
+        b = (der.shape[0] / D_m) * H(der)
+        print(a + b, (X[x[j+1], 0] + X[x[j], 0]) / 2)
+    break
+```
 
 
 etiqueta cada hijo del 
