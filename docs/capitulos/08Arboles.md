@@ -74,25 +74,23 @@ plt.savefig('clases3-arboles.png', dpi=300)
 
 Con estas tres poblaciones, donde cada distribución genera una clase
 se crea un árbol de decisión. El árbol se muestra en la siguiente
-figura, donde se observa la siguiente información en cada nodo. La 
-primera linea muestra la función de corte, la función de corte
-se define en el proceso de construcción del árbol y se usa para 
-guiar a cualquier elemento que se quiera clasificar. 
+figura, donde se observa, en cada nodo interno, la siguiente información. La 
+primera linea muestra el identificador del nodo, la segunda corresponde
+a la función de corte, la tercera línea es la entropía 
+($$H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$$), 
+la cuarta es el número de elementos que llegaron al nodo y 
+la última la frecuencia de cada clase en ese nodo. Por ejemplo, 
+la raíz (#0) tiene la función de corte $$x \leq 10.294$$, tiene una entropía 
+de $$1.585$$, recibió $$3000$$ elementos y cada clase tiene $$1000$$ ejemplos.
 
-La segunda y tercera linea de información en el nodo, corresponde
-a datos obtenidos durante el proceso de entrenamiento, esto son 
-el número de elementos que llegaron al nodo y la frecuencia de cada 
-clase en ese nodo. Por ejemplo, la raíz (nodo superior)
-tiene la función de corte $$x \leq 10.294$$, recibió $$3000$$ elementos
-y cada clase tiene $$1000$$ elementos. Utilizando la frecuencia de 
-clase se define la función de costo la cual se usa para dividir 
-los elementos que llegan al nodo, aquellos para los cuales la función
-es verdadera se envían al nodo izquierdo y el resto al nodo derecho. 
-De esta manera se observa que $$1999$$ están en el nodo izquierdo 
-de la raíz y $$1001$$ en el nodo derecho de la raíz. Los nodos 
-que no tiene hijos, se les conoce como hojas; estos nodos son los 
-que indican la case, por ejemplo la hoja derecha tiene $$1000$$ 
-elementos en la clase $$2$$. 
+Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, 
+dado que son la parte final del árbol. En el árbol mostrado se observa
+que la entropía en todos los casos es $$0$$, lo cual indica que todos los 
+elementos que llegaron a ese nodo son de la misma clase. No en todos los 
+casos las hojas tienen entropía cero y existen parámetros en la creación
+del árbol que permiten crear árboles más simples. Por ejemplo, la hoja #6
+tiene solamente un ejemplo, uno se podría preguntar ¿qué pasaría si esa
+hoja se elimina? El resultado es tener un árbol más simple. 
 
 ![Árbol](/AprendizajeComputacional/assets/images/tree.png)
 <details markdown="block">
@@ -103,25 +101,38 @@ elementos en la clase $$2$$.
 ```python
 X = np.concatenate((X_1, X_2, X_3), axis=0)
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
-arbol = tree.DecisionTreeClassifier().fit(X, y)
-_ = tree.plot_tree(arbol, impurity=False,
-                   feature_names=['x', 'y'], label='none')
+arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(X, y)
+_ = tree.plot_tree(arbol, node_ids=True,
+                   feature_names=['x', 'y'], label='root')
 ```
 </details>
 <!--
 plt.savefig('tree.png', dpi=300)
 -->
 
+La siguiente figura muestra el árbol generado cuando el nodo #6 se quita. Se observa
+un árbol con menos nodos, aunque la entropía es diferente de cero en la hoja #4. 
+La segunda parte de la figura muestra la función de decisión que genera el árbol 
+de decisión. Se observa que cada regla divide el espacio en dos. La raíz (#0)
+divide los datos utilizando $$x \leq 10.294$$, donde todos los elementos para los cuales
+la función es verdadera se envían al nodo izquierdo (#1), de lo contrario se envían a la 
+hoja derecha (#4). Al nodo #1 llegan $$1999$$ los cuales se divide en
+utilizando $$y \leq -1.693$$, dando como resultado $$1000$$ en su hoja izquierda (#2)
+y $$999$$ en su hoja derecha (#3). 
+
+
+
 ![Árbol de Decisión y su Función de Decisión](/AprendizajeComputacional/assets/images/tree-funcion-decision.png)
 <details markdown="block">
   <summary>
     Código de la figura
   </summary>
+
 ```python
 ax = plt.subplot(2, 1, 1)
-arbol = tree.DecisionTreeClassifier(min_samples_split=1002).fit(X, y)
-_ = tree.plot_tree(arbol, impurity=False, ax=ax,
-                   feature_names=['x', 'y'], label='none')
+arbol = tree.DecisionTreeClassifier(criterion='entropy', min_samples_split=1002).fit(X, y)
+_ = tree.plot_tree(arbol, node_ids=True,
+                   feature_names=['x', 'y'], label='root')
 ax = plt.subplot(2, 1, 2)
 DecisionBoundaryDisplay.from_estimator(arbol, X, cmap=plt.cm.RdYlBu,
                                        response_method='predict',
@@ -136,19 +147,54 @@ for i, color in enumerate('ryb'):
 plt.savefig('tree-funcion-decision.png', dpi=300)
 -->
 
-La descripción de la figura anterior se puede observar en el siguiente video.
+Utilizando el árbol mostrado en la figura anterior, se puede explicar el proceso
+de clasificar un nuevo elemento. Por ejemplo, el 
+elemento $$\mathbf u=(x=-3, y=0.5)$$ (que se muestra en la siguiente 
+figura como un punto negro) se clasifica de la siguiente manera. La función de 
+corte ($$x \leq 10.294$$) de la raíz (#0) indica $$\mathbf u$$ pasa al nodo izquierdo #1.
+La función de corte ($$y \leq -1.693$$) del nodo #1 indica que $$\mathbf u$$ se
+envía a la hoja #3. La clase mayoritaria ($$999$$ elementos) en la hoja #3 
+es la clase $$1$$, entonces $$\mathbf u$$ pertenece a la clase $$1$$ de acuerdo 
+al árbol de decisión generado. 
 
-{%include arboles.html %}
+![Predicción](/AprendizajeComputacional/assets/images/tree-prediccion.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
 
-# Construcción de un Árbol de Decisión
+```python
+DecisionBoundaryDisplay.from_estimator(arbol, X, cmap=plt.cm.RdYlBu,
+                                       response_method='predict',
+                                       xlabel='x', ylabel='y')
+for i, color in enumerate('ryb'):
+    mask = y == (i + 1)
+    plt.scatter(X[mask, 0], X[mask, 1], c=color,
+                label=f'{i+1}', cmap=plt.cm.RdYlBu,
+                edgecolor='black')
 
-La construcción un árbol se realiza mediante un procedimiento recursivo en donde se aplica una función 
-$$f_m(x)$$ que etiqueta cada hijo del nodo $$m$$ con respecto a las etiquetas del proceso de 
-clasificación. Por ejemplo, en el árbol de la figura anterior, la función $$f_m$$ tiene la forma $$f_m(x) = x_i \leq a$$, donde el parámetro $$i$$ y $$a$$ son aquellos que optimizan una función de 
-aptitud. En el siguiente video se illustra como funciona este proceso recursivo en un problema de 
+plt.scatter([-3], [0.5], c='k',
+            label=f'{i+1}', cmap=plt.cm.RdYlBu, 
+            edgecolor='black')
+```
+</details>
+<!--
+plt.savefig('tree-prediccion.png', dpi=300)
+-->
+
+## Entrenamiento
+{: #sec:clasificacion-entrenamiento }
+
+La construcción un árbol se realiza mediante un procedimiento recursivo en donde 
+se aplica una función  de corte $$f_m(\mathbf x)$$ que divide los datos utilizando
+el corte que maximice una función de costo. 
+
+
+etiqueta cada hijo del 
+nodo $$m$$ con respecto a las etiquetas del proceso de clasificación. Por ejemplo, en el árbol de la figura anterior, la función $$f_m$$ tiene la forma $$f_m(x) = x_i \leq a$$, donde el parámetro $$i$$ y $$a$$ son aquellos que optimizan una función de 
+aptitud. En el siguiente video se ilustra como funciona este proceso recursivo en un problema de 
 clasificación.
 
-{%include arboles_construccion.html %}
 
 Para poder seleccionar la variable independiente y el valor que se utilizará para hacer el corte
 se requiere medir que tan bueno sería seleccionar la variable y un valor particular. Para medirlo
