@@ -186,8 +186,19 @@ plt.savefig('tree-prediccion.png', dpi=300)
 {: #sec:clasificacion-entrenamiento }
 
 La construcción un árbol se realiza mediante un procedimiento recursivo en donde 
-se aplica una función  de corte $$f_m(\mathbf x)$$ que divide los datos utilizando
-el corte que maximice una función de costo. 
+se aplica la función de corte $$f_m(\mathbf x) = x_i \leq a$$ en el nodo $$m$$, donde 
+el parámetro $$a$$ y la componente $$x_i$$ se identifican utilizando los datos
+que llegan al nodo $$m$$ de tal manera que se maximice una función de costo.
+
+Una función de costo podría estar basada en la entropía, es decir, para cada 
+posible corte se mide la entropía en los nodos generados y se calcula la esperanza
+de la entropía de la siguiente manera. 
+
+$$L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),$$
+
+donde 
+
+
 
 
 etiqueta cada hijo del 
