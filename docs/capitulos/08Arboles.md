@@ -204,11 +204,8 @@ $$H(\mathcal X) = \sum_{x \in \mathcal X} - p(x) \log_2 p(x).$$
 
 En la siguiente imagen, se puede ver como el valor de la entropía es máximo cuando se tiene el mismo número de muestras para cada clase, y conforme la uniformidad se pierde, el valor de la entropía se disminuye. El valor de la entropía es igual a 0 cuando todas las muestras pertenecen a la misma clase o categoría. 
 
-![Entropía](/AprendizajeComputacional/assets/images/entropia.png)
 
 Una manera de encontrar los parámetros $$ i $$ y $$ a $$ de la función de corte $$ f_m(x) = x_i \leq a $$ es utilizando la entropía $$ H(\mathcal X) $$. La idea es que en cada corte, se minimice la entropía.
-
-{%include arboles2.html %}
 
 Al evaluar cada posible corte, se calcula la ganancia de entropía en base a la siguiente ecuación:
 
@@ -218,7 +215,7 @@ donde $$ \mathcal X $$ representa todas las muestras, $$ \mid \mathcal X \mid $$
 
 Finalmente, se selecciona el corte cuya ganancia sea máxima.
 
-## Regresión
+# Regresión
 
 Hasta este momento se ha visto como se optimizan los parámetros de la función de corte $$f_m$$ para 
 problemas de clasificación. 
@@ -226,18 +223,3 @@ problemas de clasificación.
 La única diferencia con problemas de regresión es la función que se utiliza para optimizar los 
 parámetros, en el caso de clasificación es entropía y en el caso de regresión podría ser el error 
 cuadrático medio o la suma de los errores absolutos. 
-
-# Clasificación
-
-En el siguiente video se describe los efectos que tiene uno de los parámetros de los árboles de decisión,
-esto en particular para generar árboles que se pueda entender facilmente. 
-
-{%include arboles_clasificacion.html %}
-
-# Regresión
-
-En el siguiente video se realiza un análisis equivalente al hecho en problemas de clasificación. 
-
-{%include arboles_regresion.html %}
-
-
