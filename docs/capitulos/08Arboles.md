@@ -24,9 +24,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_digits, load_diabetes
 from sklearn.inspection import DecisionBoundaryDisplay
 from scipy.stats import multivariate_normal
+from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
-from matplotlib import pylab as plt
 import seaborn as sns
 sns.set_theme()
 ```
@@ -196,7 +196,10 @@ de la entropía de la siguiente manera.
 
 $$L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),$$
 
-donde 
+donde $$H(\mathcal D_h)$$ es la entropía de las etiquetas del conjunto $$\mathcal D_h$$,
+la entropía se puede calcular con la siguiente función. La función recibe un 
+arreglo con las clases, está protegida para calcular $$0 \log 0 = 0$$ y 
+finalmente regresa la entropía de `arr`.
 
 ```python
 def H(arr):
@@ -205,47 +208,110 @@ def H(arr):
     return - (b * np.log2(b, where=b != 0)).sum()
 ```
 
-```python
-orden = np.argsort(X, axis=0)
+La función que optimiza $$L(x_i, a),$$ para encontrar $$a$$ 
+se implementa en el procedimiento `corte_var`. Este procedimiento 
+asume que las etiquetas (`labels`) están ordenadas por la variable $$x_i$$, es decir
+la primera etiqueta corresponde al valor mínimo de $$x_i$$ y la última al valor 
+máximo. Considerando esto, el valor de $$a$$ es el índice con el menor costo.
+En la primera linea se inicializa la variable `mejor` para guardar el valor
+de $$a$$ con mejor costo. La segunda linea corresponde a $$\mid \mathcal D_m \mid$$,
+en la tercera línea se identifican los diferentes valores de $$a$$ que se tiene
+que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia 
+con respecto al elemento adyacente, esto se calcula con la función `np.diff`; 
+dado que está quita el primer elemento entonces es necesario incrementar $$1.$$
+El ciclo es por todos los puntos de corte, se calculan el costo para 
+los elementos que están a la izquierda y derecha del corte y se compara el resultado
+con el costo con menor valor encontrado hasta el momento. La última línea regresa
+el costo mejor así como el índice donde se encontró. 
 
-for x in orden.T:
-    y_s = y[x]
-    D_m = y_s.shape[0]
-    corte = np.where(np.diff(y_s))[0]
+```python
+def corte_var(labels):
+    mejor = (np.inf, None)
+    D_m = labels.shape[0]
+    corte = np.where(np.diff(labels))[0] + 1
     for j in corte:
-        izq = y_s[:j]
-        der = y_s[j:]
+        izq = labels[:j]
+        der = labels[j:]
         a = (izq.shape[0] / D_m) * H(izq)
         b = (der.shape[0] / D_m) * H(der)
-        print(a + b, (X[x[j+1], 0] + X[x[j], 0]) / 2)
-    break
+        perf = a + b
+        if perf < mejor[0]:
+          mejor = (perf, j)
+    return mejor
 ```
 
+En el siguiente ejemplo se usa la función `corte_var`; la función regresa
+un costo de $$0.459$$ y el punto de corte es el elemento $$3$$, se puede observar
+que es el mejor punto de corte en el arreglo dado. 
 
-etiqueta cada hijo del 
-nodo $$m$$ con respecto a las etiquetas del proceso de clasificación. Por ejemplo, en el árbol de la figura anterior, la función $$f_m$$ tiene la forma $$f_m(x) = x_i \leq a$$, donde el parámetro $$i$$ y $$a$$ son aquellos que optimizan una función de 
-aptitud. En el siguiente video se ilustra como funciona este proceso recursivo en un problema de 
-clasificación.
+```python
+corte_var(np.array([0, 0, 1, 0, 0, 0]))
+```
 
+Con la función `corte_var` se optimiza el valor $$a$$ de $$L(x_i, a)$$, ahora
+es el turno de optimizar $$x_i$$ con respecto a la función de costo. El procedimiento
+`corte` encuentra el mínimo con respecto de $$x_i$$, está función recibe los índices
+(`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $$0$$
+al número de elemento del conjunto $$\mathcal D$$ menos uno. La primera línea 
+define la variable donde se guarda el menor costo, en la segunda línea se ordenan 
+las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo
+va por todas las variables $$x_i$$. Dentro del ciclo se llama a la función 
+`corte_var` donde se observa como las etiquetas van ordenadas de acuerdo a la variable
+que se está analizando; la función regresa el corte con menor costo y se compara
+con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. 
+Finalmente, se regresa `mejor` y los índices ordenados para poder identificar
+los elementos del hijo izquierdo y derecho.  
 
-Para poder seleccionar la variable independiente y el valor que se utilizará para hacer el corte
-se requiere medir que tan bueno sería seleccionar la variable y un valor particular. Para medirlo
-se utiliza la entropía, $$H(\mathcal X)$$, la cual es una medida de "caos" o sorpresa. En este caso, mide la "uniformidad" de la distribución de probabilidad. Se define como:
+```python
+def corte(idx):
+    mejor = (np.inf, None, None)
+    orden = np.argsort(X[idx], axis=0)
+    labels = y[idx]
+    for i, x in enumerate(orden.T):
+        comp = corte_var(labels[x])
+        if comp[0] < mejor[0]:
+            mejor = (comp[0], i, comp[1])
+    return mejor, idx[orden[:, mejor[1]]]
+```    
 
-$$H(\mathcal X) = \sum_{x \in \mathcal X} - p(x) \log_2 p(x).$$
+Con la función `corte` se puede encontrar los parámetros de la función de
+corte $$f_m(\mathbf x) = x_i \leq a$$ para cada nodo del árbol completo 
+del ejemplo anterior. Por ejemplo, la función para la raíz (#0) que se observa
+en la figura es $$f_{\#0}(\mathbf x) = x \leq 10.517$$, el siguiente código
+siguiente se utiliza para encontrar estos parámetros. 
 
-En la siguiente imagen, se puede ver como el valor de la entropía es máximo cuando se tiene el mismo número de muestras para cada clase, y conforme la uniformidad se pierde, el valor de la entropía se disminuye. El valor de la entropía es igual a 0 cuando todas las muestras pertenecen a la misma clase o categoría. 
+```python
+best, orden = corte(np.arange(X.shape[0]))
+perf, i, j = best
+(X[orden[j], i] + X[orden[j-1], i]) / 2
+```
 
+La variable `orden` tiene la información para dividir el conjunto dado,
+lo cual se realiza en las siguientes instrucciones, donde `idx_i` corresponde
+a los elementos a la izquierda y `idx_d` son los de la derecha. 
 
-Una manera de encontrar los parámetros $$ i $$ y $$ a $$ de la función de corte $$ f_m(x) = x_i \leq a $$ es utilizando la entropía $$ H(\mathcal X) $$. La idea es que en cada corte, se minimice la entropía.
+```python
+idx_i = orden[:j]
+idx_d = orden[j:]
+```
 
-Al evaluar cada posible corte, se calcula la ganancia de entropía en base a la siguiente ecuación:
+Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros
+de la función de corte del nodo #1 que son $$f_{\#1}(\mathbf x) = y \leq -1.812$$,
+esto se puede verificar con el siguiente código.
 
-$$ \textsf{Ganancia} = H( \mathcal X ) - \sum_m \frac{\mid \mathcal X_m \mid}{\mid \mathcal X \mid}  H(\mathcal X_m) $$
+```python
+best, orden = corte(idx_i)
+perf, i, j = best
+(X[orden[j], i] + X[orden[j-1], i]) / 2
+```
 
-donde $$ \mathcal X $$ representa todas las muestras, $$ \mid \mathcal X \mid $$ el número total de muestras, $$ \mathcal X_m $$ las muestras en el nodo $$ m $$ y finalmente, $$ \mid \mathcal X_m \mid $$ el número de muestras en el nodo $$ m $$.
+Equivalentemente, para $$f_{\#4}(\mathbf x) = y \leq 3.488$$ se tiene 
 
-Finalmente, se selecciona el corte cuya ganancia sea máxima.
+```python
+best, orden = corte(idx_d)
+perf, i, j = best
+(X[orden[j], i] + X[orden[j-1], i]) / 2
+```
 
 # Regresión
 
