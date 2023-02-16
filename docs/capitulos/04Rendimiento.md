@@ -122,34 +122,35 @@ accuracy no es una medida adecuada cuando las clases
 son desbalanciadas, es buena medida 
 cuando $$\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$$
 
-## Precision
-{: #sec:precision }
-
-La siguiente medida de rendimiento es la precision, se puede observar en 
-la probabilidad condicional es que se conoce la predicciones positivas y de
-esas predicciones se mide si son correctas. Basándose en esto, se puede 
-ver que una manera de generar un algoritmo competitivo en esta media corresponde
-a predecir la clase solo cuando exista una gran seguridad de la clase. 
-
-La segunda ecuación ayuda a medir en base de la tabla de confusión.
-
-$$\begin{eqnarray}
-\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal Y=p \mid \mathcal{\hat Y}=p)\\
-&=& \frac{\mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p)}{\mathbb P(\mathcal{\hat Y}=p)}
-\end{eqnarray}$$
-
 ## Recall
 {: #sec:recall }
 
-El recall complementa la precision, al calcular la probabilidad de 
+La siguiente medida de rendimiento es el recall, este calcula la probabilidad de 
 ejemplos correctamente clasificados como $$p$$ dados todos los ejemplos
 que se tienen de la clase $$p$$. En base a esta ecuación se puede observar
 que un algoritmo trivial con el máximo valor de recall solamente tiene 
 que predecir como clase $$p$$ todos los elementos. 
 
+La segunda ecuación ayuda a medir en base de la tabla de confusión.
+
 $$\begin{eqnarray}
 \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal{\hat Y}=p \mid \mathcal{Y}=p) \\
 &=& \frac{\mathbb P(\mathcal{\hat Y}=p, \mathcal{Y}=p)}{\mathbb P(\mathcal Y=p)}
+\end{eqnarray}$$
+
+## Precision
+{: #sec:precision }
+
+La precision complementa el recall, al calcular la probabilidad de los ejemplos
+correctamente clasificados como $$p$$ dadas las predicciones de los ejemplos. Es decir,
+en la probabilidad condicional se observa que se conocen las predicciones positivas y de
+esas predicciones se mide si estas son correctamente clasificadas. Basándose en esto, se 
+puede ver que una manera de generar un algoritmo competitivo en esta media corresponde
+a predecir la clase solo cuando exista una gran seguridad de la clase. 
+
+$$\begin{eqnarray}
+\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) &=& \mathbb P(\mathcal Y=p \mid \mathcal{\hat Y}=p)\\
+&=& \frac{\mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p)}{\mathbb P(\mathcal{\hat Y}=p)}
 \end{eqnarray}$$
 
 ## $$F_\beta$$
