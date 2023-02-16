@@ -361,7 +361,7 @@ el siguiente código.
 (y_t != arbol.predict(T)).mean()
 ```
 
-
+<!--
 # Regresión
 
 Hasta este momento se ha visto como se optimizan los parámetros de la función de corte $$f_m$$ para 
@@ -370,3 +370,4 @@ problemas de clasificación.
 La única diferencia con problemas de regresión es la función que se utiliza para optimizar los 
 parámetros, en el caso de clasificación es entropía y en el caso de regresión podría ser el error 
 cuadrático medio o la suma de los errores absolutos. 
+-->
