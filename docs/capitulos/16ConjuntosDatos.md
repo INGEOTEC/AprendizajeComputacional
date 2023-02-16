@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Conjunto de Datos (Apéndice)
+title: Conjuntos de Datos (Apéndice)
 nav_order: 17
 ---
 
@@ -23,7 +23,13 @@ from scipy.stats import multivariate_normal
 import numpy as np
 ```
 
-# Problema Sintético Mezcla de Clases
+# Problemas Sintéticos
+
+En esta sección se presentan los problemas sintéticos que corresponden
+aquellos problemas en los que se conocen todos los parámetros y 
+se usan para mostrar algunas características de los algoritmos.
+
+## Mezcla de Clases
 
 ```python
 p1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]])
@@ -38,7 +44,7 @@ La siguiente figura muestra estas tres distribuciones.
 
 ![Tres clases generadas por tres distribuciones gausianas multivariadas](/AprendizajeComputacional/assets/images/gaussian_3classes.png)
 
-# Problema Sintético 3 Clases Separadas
+## Clases Separadas
 
 ```python
 X_1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
@@ -50,16 +56,20 @@ Este problema se muestra en la siguiente figura.
 
 ![Tres Distribuciones Gausianas](/AprendizajeComputacional/assets/images/clases3-arboles.png)
 
-# Breast Cancer Wisconsin
+# Problemas de Clasificación
 
-El conjunto de datos de Breast Cancer Wisconsin es un problema de clasificación
-que se obtiene con el siguiente código. 
+En esta sección se listan los problemas de clasificación utilizados durante 
+el curso. 
+## Breast Cancer Wisconsin
+
+El conjunto de datos de Breast Cancer Wisconsin se obtiene con 
+el siguiente código. 
 
 ```python
 X, y = load_breast_cancer(return_X_y=True)
 ```
 
-# Iris
+## Iris
 
 Un conjunto clásico en problemas de clasificación es el problema del 
 Iris que se encuentra con las siguientes instrucciones.
@@ -68,7 +78,7 @@ Iris que se encuentra con las siguientes instrucciones.
 X, y = load_iris(return_X_y=True)
 ```
 
-# Números
+## Números
 
 El conjunto de Digits es un conjunto de clasificación donde 
 se trata de identificar el número escrito en una imagen; este conjunto
@@ -78,9 +88,14 @@ de datos se descarga utilizando las siguientes instrucciones.
 X, y = load_digits(return_X_y=True)
 ```
 
-# Diabetes
+# Problemas de Regresión
 
-El conjunto de datos Diabetes es un problema de regresión que se puede
+En esta sección se listan los problemas de regresión utilizados para
+ejemplificar los algoritmos y su rendimiento. 
+
+## Diabetes
+
+El conjunto de datos Diabetes es un problema que se puede
 recuperar usando el siguiente código. 
 
 ```python

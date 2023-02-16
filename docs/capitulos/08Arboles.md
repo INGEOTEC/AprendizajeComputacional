@@ -328,20 +328,37 @@ T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 La siguiente instrucción entrena un árbol de decisión utilizando 
 como función de costo la entropía. En la librería se encuentran 
 implementadas otras funciones como el coeficiente Gini y 
-[Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada) (_Log-loss_).
+[Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada) (_Log-loss_). 
 
 ```python
 arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(T, y_t)
 ```
 
+Como es de esperarse la predicción se realiza con el método `predict`
+como se ve a continuación. 
+
 ```python
 hy = arbol.predict(G)
 ```
 
-0.0351
+El error en el conjunto de prueba $$\mathcal G$$ es $$0.0351$$,
+se puede comparar este error con otros algoritmos utilizados
+en este conjunto como clasificadores paramétricos basados en 
+distribuciones [Gausianas](/AprendizajeComputacional/capitulos/03Parametricos/#sec:gaussina-perf-breast_cancer). La siguiente instrucción
+muestra el cálculo del error. 
 
 ```python
 (y_g != hy).mean()
+```
+
+Un dato interesante, considerando los parámetros con los que se inicializó
+el árbol, entonces este hizo que todas las hojas fueran puras, es decir,
+con entropía cero. Por lo tanto el error de clasificación en el conjunto 
+de entrenamiento $$\mathcal T$$ es cero, como se puede verificar con
+el siguiente código. 
+
+```python
+(y_t != arbol.predict(T)).mean()
 ```
 
 
