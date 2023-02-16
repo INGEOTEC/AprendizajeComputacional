@@ -21,9 +21,9 @@ El **objetivo** de la unidad es aplicar técnicas de reducción de dimensionalid
 ```python
 from scipy.stats import multivariate_normal, norm, kruskal
 from sklearn.datasets import load_diabetes, load_breast_cancer, load_iris
-from sklearn.feature_selection import f_regression, SelectKBest
+from sklearn.feature_selection import f_regression, SelectKBest, SequentialFeatureSelector
 from sklearn.model_selection import train_test_split, KFold
-from sklearn.metrics import recall_score
+from sklearn.metrics import recall_score, make_scorer
 from sklearn.naive_bayes import GaussianNB
 from sklearn import decomposition
 from EvoMSA.model import GaussianBayes
@@ -480,8 +480,9 @@ seleccionadas se pueden observar con la función `get_support`.
 En este caso las variables seleccionadas 
 son: $$[1, 4, 8, 9, 11, 14, 16, 18, 19, 20, 21, 22, 23, 27, 28].$$
 
-El siguiente código utiliza selección hacia atrás en el mismo conjunto de 
-datos, dando como resultado la siguiente
+Utilizando el parámetro `direction='backward'` para utilizar
+selección hacia atrás en el mismo conjunto de datos, 
+da como resultado la siguiente
 selección $$[2, 3, 10, 12, 15, 16, 20, 21, 22, 23, 24, 25, 27, 28, 29].$$
 Se puede observar que las variables seleccionadas por los métodos 
 son diferentes. Esto es factible porque los algoritmos solo aseguran
