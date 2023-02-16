@@ -80,7 +80,7 @@ o que su diferencia sea muy pequeña y entonces se toma la decisión de desconoc
 el valor de la salida.
 
 Para el caso de regresión ($$y \in \mathbb R$$), el problema se puede plantear
-asumiento que $$\mathcal Y$$ proviene de una distribución particular cuyos
+asumiendo que $$\mathcal Y$$ proviene de una distribución particular cuyos
 parámetros están dados por la entrada $$\mathcal X$$. Por ejemplo, en regresión
 lineal se asume que $$\mathcal Y$$ proviene de una distribución Gausiana con 
 parámetros dados por $$\mathcal X$$,
@@ -107,7 +107,7 @@ Utilizando estas ecuaciones el **Teorema de Bayes** queda como
 $$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},$$
 
 donde al término $$\mathbb P(\mathcal X \mid \mathcal Y)$$ se le conoce como verosimilitud,
-$$\mathbb P(\mathcal Y)$$ es la probabilida a priori y $$\mathbb P(\mathcal X)$$ 
+$$\mathbb P(\mathcal Y)$$ es la probabilidad a priori y $$\mathbb P(\mathcal X)$$ 
 es la evidencia. 
 
 Es importante mencionar que la evidencia se puede calcular mediante la probabilidad
