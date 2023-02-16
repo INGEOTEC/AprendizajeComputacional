@@ -21,7 +21,7 @@ regresión.
 ```python
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_digits, load_diabetes
+from sklearn.datasets import load_breast_cancer
 from sklearn.inspection import DecisionBoundaryDisplay
 from scipy.stats import multivariate_normal
 from matplotlib import pylab as plt
@@ -312,6 +312,38 @@ best, orden = corte(idx_d)
 perf, i, j = best
 (X[orden[j], i] + X[orden[j-1], i]) / 2
 ```
+
+## Ejemplo: Breast Cancer Wisconsin
+
+Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar
+el algoritmo de Árboles de Decisión. Las siguientes instrucciones se
+descargan los datos y se dividen en los conjuntos de entrenamiento
+y prueba.  
+
+```python
+X, y = load_breast_cancer(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+La siguiente instrucción entrena un árbol de decisión utilizando 
+como función de costo la entropía. En la librería se encuentran 
+implementadas otras funciones como el coeficiente Gini y 
+[Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada) (_Log-loss_).
+
+```python
+arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(T, y_t)
+```
+
+```python
+hy = arbol.predict(G)
+```
+
+0.0351
+
+```python
+(y_g != hy).mean()
+```
+
 
 # Regresión
 

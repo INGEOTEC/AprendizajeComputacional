@@ -25,9 +25,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_digits, load_diabetes
 from scipy.stats import norm
 from collections import Counter
+from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
-from matplotlib import pylab as plt
 import seaborn as sns
 sns.set_theme()
 ```
@@ -312,7 +312,7 @@ en total se seleccionan $$k$$ elementos.
 
 El clasificador de vecinos cercanos tiene una implementación 
 directa, aunque ineficiente, cuando el número de ejemplos en 
-el conjunto de entrenamiento es grande. Este implementación 
+el conjunto de entrenamiento es grande. Esta implementación 
 se ejemplifica con los datos de dígitos que se cargan y 
 se dividen en el conjunto de entrenamiento y prueba de 
 la siguiente manera. 

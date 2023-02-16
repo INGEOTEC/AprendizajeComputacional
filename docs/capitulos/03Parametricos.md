@@ -21,11 +21,11 @@ clasificación.
 {: .no_toc .text-delta }
 ```python
 from EvoMSA.model import GaussianBayes
-from scipy.stats import norm, multivariate_normal
-from scipy.special import logsumexp
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn import datasets
+from sklearn.datasets import load_breast_cancer, load_diabetes
+from scipy.stats import norm, multivariate_normal
+from scipy.special import logsumexp
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
@@ -283,8 +283,6 @@ en el segundo $$\mathbb P(\mathcal Y=2) = 0.3412$$ y
 en el tercero $$\mathbb P(\mathcal Y=3) = 0.3296$$ que es
 aproximadamente $$\frac{1}{3}$$ el cual es el valor real del prior. 
 
-<!-- $$[0.3292, 0.3412, 0.3296]$$ -->
-
 Siguiendo los pasos en [estimación de parámetros de una Gausiana](/AprendizajeComputacional/capitulos/03Parametricos/#sec:estimacion-distribucion-gausiana) se pueden estimar los parámetros
 para cada Gausiana dada la clase. Es decir, se tiene que estimar los 
 parámetros $$\mu$$ y $$\Sigma$$ para la clase $$1$$, $$2$$ y $$3$$. Esto se puede realizar
@@ -446,7 +444,7 @@ datos se pueden obtener utilizando la función `load_breast_cancer`
 tal y como se muestra a continuación.
 
 ```python
-X, y = datasets.load_breast_cancer(return_X_y=True)
+X, y = load_breast_cancer(return_X_y=True)
 ```
 
 El primer paso es contar con los conjuntos de 
@@ -484,6 +482,7 @@ hy_naive = naive.predict(G)
 ```
 
 ## Rendimiento
+{: #sec:gaussina-perf-breast_cancer }
 
 El rendimiento de ambos clasificadores se calcula de la siguiente manera 
 
@@ -642,7 +641,7 @@ Esta sección ilustra el proceso de resolver un problema de regresión utilizand
 El problema a resolver se obtiene mediante la función `load_diabetes` de la siguiente manera
 
 ```python
-X, y = datasets.load_diabetes(return_X_y=True)
+X, y = load_diabetes(return_X_y=True)
 ```
 
 El siguiente paso es generar los conjuntos de 

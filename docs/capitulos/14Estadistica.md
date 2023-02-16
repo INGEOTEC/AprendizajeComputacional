@@ -7,7 +7,7 @@ nav_order: 15
 # Estadística
 {: .fs-10 .no_toc }
 
-El **objectivo** de este apéndice es complementar la información de algunos procedimientos
+El **objetivo** de este apéndice es complementar la información de algunos procedimientos
 estadísticos usados en el curso. 
 
 ## Tabla de Contenido

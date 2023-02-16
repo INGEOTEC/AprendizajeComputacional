@@ -21,7 +21,7 @@ El **objetivo** es conocer las características de diferentes medidas de rendimi
 from EvoMSA.model import GaussianBayes
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn import datasets
+from sklearn.datasets import load_breast_cancer, load_diabetes
 from sklearn import metrics
 import numpy as np
 import pandas as pd
@@ -230,7 +230,7 @@ se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta
 el momento. 
 
 ```python
-D, y = datasets.load_breast_cancer(return_X_y=True)
+D, y = load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
 gaussian = GaussianBayes().fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
@@ -313,7 +313,7 @@ de la siguiente manera.
 
 
 ```python
-X, y = datasets.load_diabetes(return_X_y=True)
+X, y = load_diabetes(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 m = LinearRegression().fit(T, y_t) 
 ```
@@ -354,38 +354,3 @@ Finalmente, la varianza explicada por el modelo $$R^2$$, `r2`, es $$0.3925$$
 ```python
 r2 = metrics.r2_score(y_g, hy)
 ```
-
-<!--
-# Validación Cruzada
-
-Continuando con la descripción de validación cruzada vamos a ver un ejemplo de Stratified K-fold cross-validation en el problema de iris y usando Naive Bayes.
-
-El primer paso seria importar las librerías necesarias y los datos.
-
-```python
-from sklearn import datasets
-from sklearn import model_selection
-from sklearn import naive_bayes
-import numpy as np
-from sklearn import metrics
-X, y = datasets.load_iris(return_X_y=True)
-```
-
-Definimos para una $$k$$ de 30 e iniciamos la clase correspondiente
-
-```python
-K = 30
-kfold = model_selection.StratifiedKFold(shuffle=True, n_splits=K)
-P = []
-```
-Finalmente guardamos en la variable P el accuracy y se calcula la media
-
-```python
-for tr, vs in kfold.split(X, y):
-    m = naive_bayes.GaussianNB().fit(X[tr], y[tr])
-    yh = m.predict(X[vs])
-    _ = metrics.accuracy_score(y[vs], yh)
-    P.append(_)
-print("Media: ", np.mean(P))
-```
--->

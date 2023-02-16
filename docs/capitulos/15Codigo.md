@@ -7,7 +7,7 @@ nav_order: 16
 # Código
 {: .fs-10 .no_toc }
 
-El **objectivo** de este apéndice es describir algunas de las clases y métodos
+El **objetivo** de este apéndice es describir algunas de las clases y métodos
 de Python utilizadas en el curso. 
 
 ## Tabla de Contenido
