@@ -31,6 +31,10 @@ sns.set_theme()
 ```
 ---
 
+{%include 04Rendimiento.html %}
+
+---
+
 # Introducción
 
 Es importante conocer el rendimiento del algoritmo de aprendizaje
