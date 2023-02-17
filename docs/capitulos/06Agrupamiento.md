@@ -31,6 +31,9 @@ from matplotlib import pylab as plt
 import seaborn as sns
 sns.set_theme()
 ```
+---
+
+{%include 06Agrupamiento.html %}
 
 ---
 
