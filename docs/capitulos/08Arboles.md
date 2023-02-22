@@ -21,7 +21,7 @@ regresión.
 ```python
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import load_breast_cancer, load_diabetes
 from sklearn.inspection import DecisionBoundaryDisplay
 from scipy.stats import multivariate_normal
 from matplotlib import pylab as plt
@@ -83,15 +83,6 @@ la última la frecuencia de cada clase en ese nodo. Por ejemplo,
 la raíz (#0) tiene la función de corte $$x \leq 10.517$$, tiene una entropía 
 de $$1.585$$, recibió $$3000$$ elementos y cada clase tiene $$1000$$ ejemplos.
 
-Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, 
-dado que son la parte final del árbol. En el árbol mostrado se observa
-que la entropía en todos los casos es $$0$$, lo cual indica que todos los 
-elementos que llegaron a ese nodo son de la misma clase. No en todos los 
-casos las hojas tienen entropía cero y existen parámetros en la creación
-del árbol que permiten crear árboles más simples. Por ejemplo, la hoja #6
-tiene solamente un ejemplo, uno se podría preguntar ¿qué pasaría si esa
-hoja se elimina? El resultado es tener un árbol más simple. 
-
 ![Árbol](/AprendizajeComputacional/assets/images/tree.png)
 <details markdown="block">
   <summary>
@@ -110,6 +101,15 @@ _ = tree.plot_tree(arbol, node_ids=True,
 plt.savefig('tree.png', dpi=300)
 -->
 
+Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, 
+dado que son la parte final del árbol. En el árbol mostrado se observa
+que la entropía en todos los casos es $$0$$, lo cual indica que todos los 
+elementos que llegaron a ese nodo son de la misma clase. No en todos los 
+casos las hojas tienen entropía cero y existen parámetros en la creación
+del árbol que permiten crear árboles más simples. Por ejemplo, la hoja #6
+tiene solamente un ejemplo, uno se podría preguntar ¿qué pasaría si esa
+hoja se elimina? El resultado es tener un árbol más simple. 
+
 La siguiente figura muestra el árbol generado cuando el nodo #6 se quita. Se observa
 un árbol con menos nodos, aunque la entropía es diferente de cero en la hoja #4. 
 La segunda parte de la figura muestra la función de decisión que genera el árbol 
@@ -119,8 +119,6 @@ la función es verdadera se envían al nodo izquierdo (#1), de lo contrario se e
 hoja derecha (#4). Al nodo #1 llegan $$1999$$ los cuales se divide en
 utilizando $$y \leq -1.812$$, dando como resultado $$1000$$ en su hoja izquierda (#2)
 y $$999$$ en su hoja derecha (#3). 
-
-
 
 ![Árbol de Decisión y su Función de Decisión](/AprendizajeComputacional/assets/images/tree-funcion-decision.png)
 <details markdown="block">
@@ -146,6 +144,9 @@ for i, color in enumerate('ryb'):
 <!--
 plt.savefig('tree-funcion-decision.png', dpi=300)
 -->
+
+## Predicción
+{: #sec:prediccion}
 
 Utilizando el árbol mostrado en la figura anterior, se puede explicar el proceso
 de clasificar un nuevo elemento. Por ejemplo, el 
@@ -361,13 +362,85 @@ el siguiente código.
 (y_t != arbol.predict(T)).mean()
 ```
 
-<!--
+
 # Regresión
 
-Hasta este momento se ha visto como se optimizan los parámetros de la función de corte $$f_m$$ para 
-problemas de clasificación. 
+Hasta este momento se ha visto como se optimizan los parámetros de la función de 
+corte $$f_m$$ para problemas de clasificación; donde la optimización fue 
+guiada por la esperanza de la entropía. La única diferencia con problemas 
+de regresión es la función de costo que se utiliza para optimizar los 
+parámetros de la función de corte $$f_m(\mathbf x) = x_i \leq a.$$
 
-La única diferencia con problemas de regresión es la función que se utiliza para optimizar los 
-parámetros, en el caso de clasificación es entropía y en el caso de regresión podría ser el error 
-cuadrático medio o la suma de los errores absolutos. 
+En regresión una función de costo utilizada es la varianza. Para ejemplificar
+el uso de esta función se utilizan los datos de Diabetes tal y como se muestran 
+en las siguientes instrucciones. 
+
+```python
+X, y = load_diabetes(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+Con los datos de entrenamiento se genera el siguiente árbol de decisión
+para regresión. Solamente se muestran la información de la raíz y sus 
+dos hijos. En la raíz se observa los parámetros de la función de corte, 
+se selecciona la variable con índice 8 y se envían 235 elementos al hijo
+izquierdo y el resto al hijo derecho. 
+
+![Predicción](/AprendizajeComputacional/assets/images/tree-regression.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+arbol = tree.DecisionTreeRegressor().fit(T, y_t)
+tree.plot_tree(arbol, max_depth=1)
+```
+</details>
+<!--
+plt.savefig('tree-regression.png', dpi=300)
 -->
+
+El siguiente método implementa la función de corte para regresión se puede 
+observar que la única diferente con la función `corte_var` definida en clasificación
+es que la entropía `H` se cambia por la varianza `np.var`. 
+
+```python
+def corte_var(response):
+    mejor = (np.inf, None)
+    D_m = response.shape[0]
+    corte = np.where(np.diff(response))[0] + 1
+    for j in corte:
+        izq = response[:j]
+        der = response[j:]
+        a = (izq.shape[0] / D_m) * np.var(izq)
+        b = (der.shape[0] / D_m) * np.var(der)
+        perf = a + b
+        if perf < mejor[0]:
+          mejor = (perf, j)
+    return mejor    
+```
+
+La función `corte_var` de regresión se utiliza para encontrar el punto de corte 
+en los datos del conjunto de entrenamiento de la siguiente manera. En la primera
+linea se ordenan las variables independientes, 
+
+```python
+orden = T.argsort(axis=0)
+[corte_var(y_t[orden[:, x]]) for x in range(10)]
+```
+
+```python
+[(5449.789764562434, 163),
+ (5632.407130716309, 3),
+ (4105.070662138225, 216),
+ (4783.219062677263, 262),
+ (5438.874320806805, 213),
+ (5478.920350629145, 235),
+ (4768.01945466938, 133),
+ (4460.273924735048, 156),
+ (4058.1609926353785, 235),
+ (4975.506628234843, 275)]
+```
+
+
