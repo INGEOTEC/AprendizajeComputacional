@@ -225,6 +225,7 @@ los elementos que están a la izquierda y derecha del corte y se compara el resu
 con el costo con menor valor encontrado hasta el momento. La última línea regresa
 el costo mejor así como el índice donde se encontró. 
 
+{: #func:corte }
 ```python
 def corte_var(labels):
     mejor = (np.inf, None)
@@ -365,14 +366,35 @@ el siguiente código.
 
 # Regresión
 
+Los árboles de decisión aplicados a problemas de regresión siguen una 
+idea equivalente a los desarrollados en problemas de clasificación. Para
+ejemplificar las diferencias se utiliza el siguiente problema sintético;
+el cual corresponde a la suma de un seno y un coseno como se 
+muestra a continuación. 
+
 ```python
 X = np.linspace(-5, 5, 100)
 y = np.sin(x) + 0.3 * np.cos(x * 3.)
 ```
 
+Con este problema se genera un árbol de decisión utilizando la 
+siguiente instrucción. El método `fit` espera recibir un arreglo
+en dos dimensiones por eso se usa la función `np.atleast_2d` y 
+se calcula la transpuesta siguiendo el formato esperado. Se 
+observa el uso del parámetro `max_depth` para limitar la profundidad
+del árbol de decisión. 
+
 ```python
 arbol = tree.DecisionTreeRegressor(max_depth=3).fit(np.atleast_2d(X).T, y)
 ```
+
+El árbol de decisión obtenido se muestra en la siguiente figura. La 
+información que se muestra en cada nodo interno es equivalente a la 
+mostrada en los árboles de clasificación. La diferencia es que en los 
+árboles de regresión se muestra el promedio (`value`) de las salidas
+que llegan a ese nodo y en regresión es la frecuencia de clases. 
+Se observa que si la entrada es $$x=-4.5$$ entonces la respuesta
+la da el nodo #4 con un valor de $$1.088.$$
 
 
 ![Árbol de Regresión](/AprendizajeComputacional/assets/images/tree-regresion.png)
@@ -389,6 +411,15 @@ _ = tree.plot_tree(arbol, node_ids=True,
 <!--
 plt.savefig('tree-regresion.png', dpi=300)
 -->
+
+## Predicción
+
+El árbol anterior se usa para predecir todos los puntos del conjunto
+de entrenamiento, el resultado se muestra en la siguiente figura. Se 
+observa que la predicción es discreta, son escalones y esto es porque
+las hojas predicen el promedio de los valores que llegaron hasta ahí,
+en este caso el árbol tiene 8 hojas entonces a lo más ese árbol 
+puede predecir 8 valores distintos. 
 
 ![Árbol de Regresión Predicción](/AprendizajeComputacional/assets/images/tree-regresion-prediccion.png)
 <details markdown="block">
@@ -407,14 +438,14 @@ sns.relplot(df, kind='line')
 plt.savefig('tree-regresion-prediccion.png', dpi=300)
 -->
 
-Hasta este momento se ha visto como se optimizan los parámetros de la función de 
-corte $$f_m$$ para problemas de clasificación; donde la optimización fue 
-guiada por la esperanza de la entropía. La única diferencia con problemas 
-de regresión es la función de costo que se utiliza para optimizar los 
-parámetros de la función de corte $$f_m(\mathbf x) = x_i \leq a.$$
+## Entrenamiento
 
-En regresión una función de costo utilizada es la varianza. Para ejemplificar
-el uso de esta función se utilizan los datos de Diabetes tal y como se muestran 
+Con respecto al proceso de entrenamiento la diferencia entre clasificación y
+regresión se encuentra en la función de costo que guía el proceso de 
+optimización. En el caso de clasificación la función de costo era
+la esperanza de la entropía. Por otro lado, en regresión una función 
+de costo utilizada es la varianza que es el error cuadrático
+que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran 
 en las siguientes instrucciones. 
 
 ```python
@@ -444,7 +475,8 @@ plt.savefig('tree-regression.png', dpi=300)
 -->
 
 El siguiente método implementa la función de corte para regresión se puede 
-observar que la única diferente con la función `corte_var` definida en clasificación
+observar que la única diferente con la función `corte_var` 
+definida en [clasificación](/AprendizajeComputacional/capitulos/08Arboles/#func:corte) 
 es que la entropía `H` se cambia por la varianza `np.var`. 
 
 ```python
@@ -463,14 +495,20 @@ def corte_var(response):
     return mejor    
 ```
 
-La función `corte_var` de regresión se utiliza para encontrar el punto de corte 
-en los datos del conjunto de entrenamiento de la siguiente manera. En la primera
-linea se ordenan las variables independientes, 
+La función `corte_var` de regresión se utiliza para encontrar 
+el punto de corte en los datos del conjunto de entrenamiento de 
+la siguiente manera. En la primera linea se ordenan las variables independientes y en la segunda línea se itera por todas las variables
+independientes para calcular el corte con costo mínimo. 
 
 ```python
 orden = T.argsort(axis=0)
 [corte_var(y_t[orden[:, x]]) for x in range(10)]
 ```
+
+El resultado de ejecutar el código anterior se muestra a continuación;
+donde se observa que el costo mínimo corresponde a la variable con 
+índice 8 y se corta en 235 elementos, tal y como se muestra en la 
+figura anterior nodo derecho de la raíz. 
 
 ```python
 [(5449.789764562434, 163),
