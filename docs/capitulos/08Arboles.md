@@ -365,6 +365,48 @@ el siguiente código.
 
 # Regresión
 
+```python
+X = np.linspace(-5, 5, 100)
+y = np.sin(x) + 0.3 * np.cos(x * 3.)
+```
+
+```python
+arbol = tree.DecisionTreeRegressor(max_depth=3).fit(np.atleast_2d(X).T, y)
+```
+
+
+![Árbol de Regresión](/AprendizajeComputacional/assets/images/tree-regresion.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+_ = tree.plot_tree(arbol, node_ids=True,
+                   feature_names=['x'], label='root')
+```
+</details>
+<!--
+plt.savefig('tree-regresion.png', dpi=300)
+-->
+
+![Árbol de Regresión Predicción](/AprendizajeComputacional/assets/images/tree-regresion-prediccion.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+df = pd.DataFrame(dict(X=X, y=y, 
+                       predicción=arbol.predict(np.atleast_2d(X).T)))
+df.set_index('X', inplace=True)
+sns.relplot(df, kind='line')
+```
+</details>
+<!--
+plt.savefig('tree-regresion-prediccion.png', dpi=300)
+-->
+
 Hasta este momento se ha visto como se optimizan los parámetros de la función de 
 corte $$f_m$$ para problemas de clasificación; donde la optimización fue 
 guiada por la esperanza de la entropía. La única diferencia con problemas 

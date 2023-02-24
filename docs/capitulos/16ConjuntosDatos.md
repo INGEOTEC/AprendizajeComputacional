@@ -20,7 +20,11 @@ El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en
 ```python
 from sklearn.datasets import load_breast_cancer, load_diabetes, load_digits
 from scipy.stats import multivariate_normal
+from matplotlib import pylab as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
+sns.set_theme()
 ```
 
 # Problemas Sintéticos
@@ -92,6 +96,36 @@ X, y = load_digits(return_X_y=True)
 
 En esta sección se listan los problemas de regresión utilizados para
 ejemplificar los algoritmos y su rendimiento. 
+
+## Problema Sintético
+
+El siguiente ejemplo es un problema de regresión
+sintético que se forma de la suma de dos funciones
+trascendentales como se muestra en el siguiente 
+código. 
+
+```python
+X = np.linspace(-5, 5, 100)
+y = np.sin(x) + 0.3 * np.cos(x * 3.)
+```
+
+La siguiente figura muestra este problema sintético.
+
+![Regresión Trascendental](/AprendizajeComputacional/assets/images/regresion-trascedental.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+df = pd.DataFrame(dict(X=X, y=y))
+df.set_index('X', inplace=True)
+sns.relplot(df, kind='line')
+```
+</details>
+<!--
+plt.savefig('regresion-trascedental.png', dpi=300)
+-->
 
 ## Diabetes
 
