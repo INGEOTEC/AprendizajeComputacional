@@ -68,7 +68,7 @@ y $$p_j = \int_{B_j} f(u) du$$, donde $$p_j$$ es la probabilidad
 del $$j$$-ésimo bin y $$\hat p_j$$ es su estimación. Usando está 
 definición se puede definir la estimación de $$f$$ como: 
 
-$$ \hat f(x) = \sum_{j=1}^N \frac{\hat p_j}{h} I(x \in B_j). $$
+$$ \hat f(x) = \sum_{j=1}^N \frac{\hat p_j}{h} 1(x \in B_j). $$
 
 Con esta formulación se puede ver la motivación de usar histogramas como estimador de $$f$$ véase:
 
@@ -248,7 +248,7 @@ a $$\textsf{kNN}(x)=(x_{\pi_1}, x_{\pi_2}, \ldots, x_{\pi_k}).$$
 
 Una maneara intuitiva de definir $$h$$ sería en lugar de pensar en un valor constante para 
 toda la función, utilizar la distancia que existe con el $$k$$ vecino mas cercano, es 
-decir, $$h=d(w_{\pi_k}, x)=d_k(x)$$. 
+decir, $$h=d(w_{\pi_k}, x)=d_k(x)$$, donde $$w_{\pi_k} \in \mathcal D$$. 
 Remplazando esto en el estimado de densidad por kernel se obtiene:
 
 $$\hat f(x) = \frac{1}{d_k(x) N} \sum_{w \in \mathcal D} K(\frac{x - w}{d_k(x)}).$$
@@ -290,7 +290,7 @@ Utilizando la notación $$kNN(x)$$ se define el volumen de $$kNN(x)$$
 como $$V(x)$$ y $$N_c(x)=\sum_{x_{\pi} \in \textsf{kNN}(x)} 1(y_\pi=c)$$ 
 donde $$y_\pi$$ es la salida asociada a $$x_\pi$$. $$N_c(x)$$ corresponde
 al número de vecinos de $$x$$ que pertenecen a la clase $$c$$. Con 
-esta notación se define lo siguiente:
+esta notación se define la verosimilitud como:
 
 $$\mathbb P(\mathcal X=x \mid \mathcal Y=c) = \frac{N_c(x)}{N_c V(x)},$$
 
