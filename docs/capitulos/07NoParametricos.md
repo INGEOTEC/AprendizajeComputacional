@@ -34,6 +34,10 @@ sns.set_theme()
 
 ---
 
+{%include 07NoParametricos.html %}
+
+---
+
 # Introducción
 
 Los métodos paramétricos asumen que los datos provienen de un modelo común, 
