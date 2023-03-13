@@ -381,7 +381,7 @@ en el conjunto $$\mathcal G$$ lo cual fue presentado anteriormente.
 perf = []
 kfold = KFold(shuffle=True)
 for ts, vs in kfold.split(T):
-    gaussian = GaussianBayes().fit(T[ts], y_t[ts])
+    gaussian = GaussianBayes(naive=True).fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf.append(_)
