@@ -19,28 +19,61 @@ El **objetivo** de la unidad es conocer y aplicar diferentes métodos lineales d
 
 # Introducción
 
-En sesiones anteriores hemos visto diferentes técnicas para discriminar entre clases. De manera general hemos visto que si se cuenta con una función discrimitante, $$g(x)$$, se puede seleccinar la clase utilizando la siguiente regla:
+En unidades anteriores se han visto diferentes técnicas para discriminar entre clases;
+en particular se ha descrito el uso de la 
+probabilidad $$\mathbb P(\mathcal Y \mid \mathcal X)$$ para encontrar la clase más 
+probable. Los parámetros de $$\mathbb P(\mathcal Y \mid \mathcal X)$$ se han 
+estimado utilizando métodos [paramétricos](/AprendizajeComputacional/capitulos/03Parametricos) y [no paramétricos](/AprendizajeComputacional/capitulos/07NoParametricos/). En está unidad se describe el uso de funciones discriminantes
+para la clasificación y su similitud con el uso 
+de $$\mathbb P(\mathcal Y \mid \mathcal X).$$
 
-$$C(x) = \textsf{argmax}_{j=1}^K g_j(x)$$.
+# Función Discriminante
+{: #sec:discriminante }
 
-Se puede observar que en el caso de métodos paramétricos la función $$g_j(x)$$ corresponde a utilizar $$P(C \mid X)$$, donde los parametros de las funciones de densidad correspondientes a la probabilidad a priori y la verosimilitud se calculan estiman utilizando los datos de entrenamiento. También se describieron los métodos no paramétricos donde la función de densidad no se conoce y se aproxima con estos métodos. 
+En la unidad de [Teoría de Decisión Bayesiana](/AprendizajeComputacional/capitulos/02Teoria_Decision/#ejemplos) se describió el uso 
+de $$\mathbb P(\mathcal Y \mid \mathcal X)$$ para clasificar, se mencionó
+que la clase a la que pertenece $$\mathcal X=x$$ es la de mayor probabilidad,
+es decir,  
 
-Por otro lado en esta unidad revisares aquellos métodos donde la función discriminante no se basa en el uso de la verosimilitud, en su lugar se asume que la frontera entre las clases tiene una forma particular, en este caso lineal, que puede separar los datos correctamente. Es decir, la función discriminte puede tener la siguiente forma:
+$$C(x) = \textsf{argmax}_{k=1}^K \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$
 
-$$g_j(x \mid w_j, w_{j0}) = w_j \cdot x + w_{j0},$$
+donde $$K$$ es el número de clases y $$\mathcal Y=k$$ representa la $$k$$-ésima
+clase. Considerando que la [evidencia](/AprendizajeComputacional/capitulos/02Teoria_Decision/#teorema-de-bayes) 
+es un factor que normaliza, entonces, $$C(x)$$ se puede definir de la siguiente manera. 
 
-En el caso general, $$x \in \mathbb R^d$$,  $$w_j \in \mathbb R^d$$ y $$\cdot$$ representa el producto punto entre dos vectores. 
+$$C(x) = \textsf{argmax}_{k=1}^K \mathbb P(\mathcal X=x \mid \mathcal Y=k)\mathbb P(\mathcal Y=k).$$
 
-# Clasificación binaria
+Agrupando la probabilidad a priori y verosimilitud en una función $$g_k,$$ 
+es decir, $$g_k(x) = P(\mathcal X=x \mid \mathcal Y=k)\mathbb P(\mathcal Y=k),$$  
+hace que $$C(x)$$ se sea:
 
-En clasificación binaría se puede observar que no es necesario definir dos funciones discriminantes, $$g_1$$ y $$g_2$$, lo cual se puede verificar del siguiente razonamiento:
+$$C(x) = \textsf{argmax}_{k=1}^K g_k(x).$$
+
+Observando $$C(x)$$ y olvidando los pasos utilizados para derivarla,
+uno se puede imaginar que lo único necesario para generar un clasificador
+de $$K$$ clases es definir un conjunto de functions $$g_k$$ que separen las
+clases correctamente. En esta unidad se presentan diferentes maneras para 
+definir $$g_k$$ con la característica de que todas ellas son lineales,
+e.g., $$g_k(\mathbf x) = \mathbf w_k \cdot \mathbf x + w_{k_0}.$$
+
+# Clasificación Binaria
+
+La descripción de discriminantes lineales empieza con el caso particular de
+dos clases, i.e., $$K=2$$. En este caso $$C(x)$$ es encontrar el máximo
+de las dos funciones $$g_1$$ y $$g_2$$. Una manear equivalente sería
+definir a $$C(x)$$ como 
+
+$$C(x) = \textsf{sign}(g_1(x) - g_2(x)),$$
+
+donde $$\textsf{sign}$$ es la función que regresa el signo, entonces solo 
+queda asociar el signo positivo a la clase 1 y el negativo a la clase 2. 
+Utilizando esta definición se observa lo siguiente.
 
 $$
 \begin{eqnarray*}
-    g(x) &=& g_1(x) - g_2(x) \\
-         &=& (w_1 x + w_{10}) - (w_2 x + w_{20}) \\
-         &=& (w_1 + w_2) x + (w_{10} - w_{20}) \\
-         &=& w x + w_0
+    g_1(\mathbf x) - g_2(\mathbf x) &=& (\mathbf w_1 \cdot \mathbf x + w_{1_0}) - (\mathbf w_2 \cdot \mathbf x + w_{2_0}) \\
+         &=& (\mathbf w_1 + \mathbf w_2) \cdot \mathbf x + (w_{1_0} - w_{2_0}) \\
+         &=& \mathbf w \cdot \mathbf x + w_0
 \end{eqnarray*}.$$
 
 En este caso la clase está dada por el signo de $$g(x)$$, es decir, $$x$$ corresponda a la clase positiva si $$g(x)>0$$. Se puede observar que la constante $$w_0$$ está actuando como un umbral, es decir, $$x$$ corresponde a la clase positiva si $$w x > - w_0$$. Utilizando esta notación se observa que el origen se encuentra en el lado positivo del hiperplano si $$w_0 > 0$$, de lo contrario se encuentra del lado negativo.
