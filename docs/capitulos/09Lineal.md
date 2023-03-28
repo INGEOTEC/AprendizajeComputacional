@@ -15,6 +15,17 @@ El **objetivo** de la unidad es conocer y aplicar diferentes métodos lineales d
 1. TOC
 {:toc}
 
+## Paquetes usados
+{: .no_toc .text-delta }
+```python
+from sklearn.svm import LinearSVC
+from scipy.stats import multivariate_normal
+from matplotlib import pylab as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+sns.set_theme()
+```
 ---
 
 # Introducción
@@ -59,28 +70,166 @@ e.g., $$g_k(\mathbf x) = \mathbf w_k \cdot \mathbf x + w_{k_0}.$$
 # Clasificación Binaria
 
 La descripción de discriminantes lineales empieza con el caso particular de
-dos clases, i.e., $$K=2$$. En este caso $$C(x)$$ es encontrar el máximo
+dos clases, i.e., $$K=2$$. En este caso $$C(\mathbf x)$$ es encontrar el máximo
 de las dos funciones $$g_1$$ y $$g_2$$. Una manear equivalente sería
-definir a $$C(x)$$ como 
+definir a $$C(\mathbf x)$$ como 
 
-$$C(x) = \textsf{sign}(g_1(x) - g_2(x)),$$
+$$C(\mathbf x) = \textsf{sign}(g_1(\mathbf x) - g_2(\mathbf x)),$$
 
 donde $$\textsf{sign}$$ es la función que regresa el signo, entonces solo 
 queda asociar el signo positivo a la clase 1 y el negativo a la clase 2. 
-Utilizando esta definición se observa lo siguiente.
+Utilizando esta definición se observa lo siguiente
 
 $$
 \begin{eqnarray*}
     g_1(\mathbf x) - g_2(\mathbf x) &=& (\mathbf w_1 \cdot \mathbf x + w_{1_0}) - (\mathbf w_2 \cdot \mathbf x + w_{2_0}) \\
          &=& (\mathbf w_1 + \mathbf w_2) \cdot \mathbf x + (w_{1_0} - w_{2_0}) \\
          &=& \mathbf w \cdot \mathbf x + w_0
-\end{eqnarray*}.$$
+\end{eqnarray*},$$
 
-En este caso la clase está dada por el signo de $$g(x)$$, es decir, $$x$$ corresponda a la clase positiva si $$g(x)>0$$. Se puede observar que la constante $$w_0$$ está actuando como un umbral, es decir, $$x$$ corresponde a la clase positiva si $$w x > - w_0$$. Utilizando esta notación se observa que el origen se encuentra en el lado positivo del hiperplano si $$w_0 > 0$$, de lo contrario se encuentra del lado negativo.
+donde se concluye que para el caso binario es necesario definir 
+solamente una función discriminante y que los parámetros de esta función 
+son $$\mathbf w$$ y $$\mathbf w_0.$$ Otra característica que se ilustra
+es que el parámetro $$\mathbf w_0$$ está actuando como un umbral, 
+es decir, $$\mathbf x$$ corresponde a la clase positiva 
+si $$\mathbf w \cdot \mathbf x > -w_0.$$
 
-En la siguiente figura se observa el plano (linea verde) que divide las dos clases, este plano representa los puntos que satisfacen $$g(x)=0$$. 
+En la siguiente figura se observa el plano (linea) que divide las dos clases, este plano representa los puntos que satisfacen $$g(\mathbf x)=0$$. 
 
 ![Discriminante Lineal](/AprendizajeComputacional/assets/images/discriminante.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]]).rvs(1000)
+X_2 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
+
+T = np.concatenate((X_1, X_2))
+y_t = np.array(['P'] * X_1.shape[0] + ['N'] * X_2.shape[0])
+linear = LinearSVC(dual=False).fit(T, y_t)
+w_1, w_2 = linear.coef_[0]
+w_0 = linear.intercept_[0]
+g_0 = [dict(x=x, y=y, tipo='g(x)=0')
+       for x, y in zip(T[:, 0], (-w_0 - w_1 * T[:, 0]) / w_2)]
+df = pd.DataFrame(g_0 + \
+                  [dict(x=x, y=y, clase='P') for x, y in X_1] + \
+                  [dict(x=x, y=y, clase='N') for x, y in X_2]
+                 )
+ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
+sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo', palette=['k'], legend=True)
+ax.axis('equal')
+```  
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('discriminante.png', dpi=300)
+-->
+
+# Geometría de la Función de Decisión
+{: #sec:geometria-funcion-decision }
+
+La función discriminante $$g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$$
+tiene una representación gráfica. Lo primero que se observa es que los 
+parámetros $$\mathbf w$$ viven en al mismo espacio que los datos, tal y como se 
+puede observar en la siguiente figura. 
+
+![Discriminante Lineal y Pesos](/AprendizajeComputacional/assets/images/discriminante_2.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+_ = pd.DataFrame([dict(x=w_1, y=w_2, clase='w')])
+df = pd.concat((df, _), axis=0)
+ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
+sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo', palette=['k'], legend=True)
+ax.axis('equal')
+```
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('discriminante_2.png', dpi=300)
+-->
+
+Siguiendo con la descripción los parámetros $$\mathbf w$$ y la función $$g(\mathbf x)$$
+son ortogonales, tal y como se muestra en la siguiente figura.
+
+![Ortogonalidad del Discriminante Lineal y w](/AprendizajeComputacional/assets/images/discriminante_3.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+w = np.array([w_1, w_2]) / np.linalg.norm([w_1, w_2])
+len_0 = w_0 / np.linalg.norm([w_1, w_2])
+df = pd.DataFrame(g_0 + \
+                  [dict(x=x, y=y, clase='P') for x, y in X_1] + \
+                  [dict(x=x, y=y, clase='N') for x, y in X_2] + \
+                  [dict(x=0, y=0, tipo='lw'),
+                   dict(x=-w[0]*len_0, y=-w[1]*len_0, tipo='lw')]
+                 )
+ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
+sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo',
+             palette=['k'] + sns.color_palette()[2:],
+             legend=True)
+ax.axis('equal')
+```
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('discriminante_3.png', dpi=300)
+-->
+
+Donde $$\ell \mathbf w$$ corresponde al vector $$\mathbf w$$ multiplicado
+por un factor $$\ell$$ de tal manera que intersecte con $$g(\mathbf x)=0.$$
+El factor $$\ell$$ corresponde a la distancia que hay del origen a $$g(\mathbf x)=0$$
+la cual es $$\ell = \frac{w_0}{\mid\mid \mathbf w \mid\mid}.$$ El signo de $$\ell$$ 
+indica el lado donde se encuentra el origen con respecto a $$g(\mathbf x)=0$$
+
+![g(x)=0 y w x =0 ](/AprendizajeComputacional/assets/images/discriminante_4.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+vec = np.array([2, (-w_0 - w_1 * 2) / w_2]) - np.array([1, (-w_0 - w_1 * 1) / w_2])
+x_max = T[:, 0].max()
+length = np.linalg.norm(np.array([x_max, (-w_0 - w_1 * x_max) / w_2]) -
+                        np.array([-w[0]*len_0, -w[1]*len_0]))
+vec_der = length * vec / np.linalg.norm(vec)
+x_min = T[:, 0].min()
+length = np.linalg.norm(np.array([x_min, (-w_0 - w_1 * x_min) / w_2]) -
+                        np.array([-w[0]*len_0, -w[1]*len_0]))
+vec_izq = -length * vec / np.linalg.norm(vec)
+g = [dict(x=x, y=(- w_1 * x) / w_2, tipo='wx=0')
+     for x in np.linspace(vec_izq[0], vec_der[0])]
+df = pd.DataFrame([dict(x=x, y=y, clase='P') for x, y in X_1] + \
+                  [dict(x=x, y=y, clase='N') for x, y in X_2] +\
+                  [dict(x=w_1, y=w_2, clase='w')] +\
+                  g_0 + g)
+ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
+sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo',
+             palette=['k'] + sns.color_palette()[3:],
+             legend=True)
+ax.plot([vec_der[0], x_max], [vec_der[1], (-w_0 - w_1 * x_max) / w_2], '--',
+        color=sns.color_palette()[4])
+ax.axis('equal')
+```
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('discriminante_4.png', dpi=300)
+-->
+
 
 # Múltiples clases
 
