@@ -111,14 +111,14 @@ y_t = np.array(['P'] * X_1.shape[0] + ['N'] * X_2.shape[0])
 linear = LinearSVC(dual=False).fit(T, y_t)
 w_1, w_2 = linear.coef_[0]
 w_0 = linear.intercept_[0]
-g_0 = [dict(x=x, y=y, tipo='g(x)=0')
+g_0 = [dict(x1=x, x2=y, tipo='g(x)=0')
        for x, y in zip(T[:, 0], (-w_0 - w_1 * T[:, 0]) / w_2)]
 df = pd.DataFrame(g_0 + \
-                  [dict(x=x, y=y, clase='P') for x, y in X_1] + \
-                  [dict(x=x, y=y, clase='N') for x, y in X_2]
+                  [dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2]
                  )
-ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
-sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo', palette=['k'], legend=True)
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='tipo', palette=['k'], legend=True)
 ax.axis('equal')
 ```  
 </details>
@@ -143,10 +143,10 @@ puede observar en la siguiente figura.
   </summary>
 
 ```python
-_ = pd.DataFrame([dict(x=w_1, y=w_2, clase='w')])
+_ = pd.DataFrame([dict(x1=w_1, x2=w_2, clase='w')])
 df = pd.concat((df, _), axis=0)
-ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
-sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo', palette=['k'], legend=True)
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='tipo', palette=['k'], legend=True)
 ax.axis('equal')
 ```
 </details>
@@ -169,13 +169,13 @@ son ortogonales, tal y como se muestra en la siguiente figura.
 w = np.array([w_1, w_2]) / np.linalg.norm([w_1, w_2])
 len_0 = w_0 / np.linalg.norm([w_1, w_2])
 df = pd.DataFrame(g_0 + \
-                  [dict(x=x, y=y, clase='P') for x, y in X_1] + \
-                  [dict(x=x, y=y, clase='N') for x, y in X_2] + \
-                  [dict(x=0, y=0, tipo='lw'),
-                   dict(x=-w[0]*len_0, y=-w[1]*len_0, tipo='lw')]
+                  [dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2] + \
+                  [dict(x1=0, x2=0, tipo='lw'),
+                   dict(x1=-w[0]*len_0, x2=-w[1]*len_0, tipo='lw')]
                  )
-ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
-sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo',
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='tipo',
              palette=['k'] + sns.color_palette()[2:],
              legend=True)
 ax.axis('equal')
@@ -209,14 +209,15 @@ x_min = T[:, 0].min()
 length = np.linalg.norm(np.array([x_min, (-w_0 - w_1 * x_min) / w_2]) -
                         np.array([-w[0]*len_0, -w[1]*len_0]))
 vec_izq = -length * vec / np.linalg.norm(vec)
-g = [dict(x=x, y=(- w_1 * x) / w_2, tipo='wx=0')
+
+g = [dict(x1=x, x2=(- w_1 * x) / w_2, tipo='wx=0')
      for x in np.linspace(vec_izq[0], vec_der[0])]
-df = pd.DataFrame([dict(x=x, y=y, clase='P') for x, y in X_1] + \
-                  [dict(x=x, y=y, clase='N') for x, y in X_2] +\
-                  [dict(x=w_1, y=w_2, clase='w')] +\
+df = pd.DataFrame([dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2] +\
+                  [dict(x1=w_1, x2=w_2, clase='w')] +\
                   g_0 + g)
-ax = sns.scatterplot(data=df, x='x', y='y', hue='clase', legend=True)
-sns.lineplot(data=df, x='x', y='y', ax=ax, hue='tipo',
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='tipo',
              palette=['k'] + sns.color_palette()[3:],
              legend=True)
 ax.plot([vec_der[0], x_max], [vec_der[1], (-w_0 - w_1 * x_max) / w_2], '--',
