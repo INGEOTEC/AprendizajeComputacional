@@ -288,7 +288,7 @@ para cada Gausiana dada la clase. Es decir, se tiene que estimar los
 parámetros $$\mu$$ y $$\Sigma$$ para la clase $$1$$, $$2$$ y $$3$$. Esto se puede realizar
 iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos
 en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en el slice
-de la linea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal`
+de la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal`
 para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final
 es guardar las instancias de las distribuciones en la lista `likelihood`.
 
@@ -329,8 +329,8 @@ la primera función recibe los datos a predecir `X` y los componentes del modelo
 son la verosimilitud (`likelihood`) y el `prior`. La función 
 calcula $$\mathbb P(\mathcal Y=y \mid \mathcal X=x)$$
 que es la probabilidad de cada clase dada la entrada $$x$$. Se puede observar en 
-la primera linea que se usa la función de densidad de probabilidad (`pdf`) para
-cada clase y esta se multiplica por el `prior` y en la tercera linea se 
+la primera línea que se usa la función de densidad de probabilidad (`pdf`) para
+cada clase y esta se multiplica por el `prior` y en la tercera línea se 
 calcula la evidencia. Finalmente, se regresa el a posteriori.  
 
 ```python
@@ -698,7 +698,7 @@ hy = m.predict(G)
 ```
 
 Finalmente, la siguiente figura muestra las predicciones contra las mediciones reales.
-También se incluye la linea que ilustra el modelo ideal. 
+También se incluye la línea que ilustra el modelo ideal. 
 
 
 ```python
@@ -714,7 +714,7 @@ plt.savefig('scatter_lineal_regresion.png', dpi=300)
 
 
 Complementando el ejemplo anterior, se realiza un modelo que primero elimina 
-las variables que no son estadísticamente diferentes de cero (primera linea) y 
+las variables que no son estadísticamente diferentes de cero (primera línea) y 
 después crea nuevas variables al incluir el cuadrado, ver las líneas dos y tres
 del siguiente código. 
 

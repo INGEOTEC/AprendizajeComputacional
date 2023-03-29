@@ -56,7 +56,7 @@ y el objetivo es usar $$\mathcal D$$ para estimar la función
 de densidad $$\hat f$$. 
 
 El **histograma** es una manera para estimar la función de densidad. Para 
-formar un histograma se divide la linea en $$h$$ segmentos disjuntos, los 
+formar un histograma se divide la línea en $$h$$ segmentos disjuntos, los 
 cuales se denominan _bins_. El histograma corresponde a una función constante 
 por partes, donde la altura es la proporción de elementos de $$\mathcal D$$ 
 que caen en el bin analizado. 
@@ -110,7 +110,7 @@ de `numpy` y librerías tradicionales.
 
 Para el ilustrar el método para generar el histograma se genera
 un histograma con 100 bins (primera línea). El siguiente paso
-(segunda linea) es encontrar los límites de los bins, para
+(segunda línea) es encontrar los límites de los bins, para
 este proceso se usa la función `np.linspace`. En la tercera
 línea se encuentra el bin de cada elemento, con la característica
 que `np.searchsorted` regresa $$0$$ si el valor es menor que el límite 
@@ -335,7 +335,7 @@ conjunto $$\mathcal D$$, la cantidad de vecinos ($$k$$)
 y la distancia. 
 
 El código de la función `kNN` se muestra a continuación, donde
-en la primera linea se convierte a $$x$$ en un arreglo de dos
+en la primera línea se convierte a $$x$$ en un arreglo de dos
 dimensiones. Esto tiene el objetivo de generar un código que
 pueda buscar los $$k$$ vecinos cercanos de un conjunto de puntos.
 Por ejemplo, se podría calcular los vecinos cercanos de 
@@ -398,9 +398,9 @@ el parámetro de la clase, la función calculará $$N_c(x)$$ para todas las clas
 La función `N_c` recibe de parámetros todos los parámetros de `kNN` y además 
 requiere la clases de cada elemento de $$\mathcal D$$ estas clases se dan 
 como un arreglo adicional. El siguiente código muestra la función, donde
-en la primera linea se calcula los $$k$$ vecinos y después se transforman
+en la primera línea se calcula los $$k$$ vecinos y después se transforman
 los índices a las clases correspondientes, el resultado es guardado
-en la variable `knn`. La segunda linea usa la clase `Counter` para contar
+en la variable `knn`. La segunda línea usa la clase `Counter` para contar
 la frecuencia de cada clase en cada ejemplo dado en `x`. 
 
 ```python
@@ -426,7 +426,7 @@ Counter({3: 1, 7: 4})
 ```
 
 El error de este algoritmo en el conjunto de prueba es $$0.0139$$,
-calculado con las siguientes instrucciones. Se observa que la primera linea genera 
+calculado con las siguientes instrucciones. Se observa que la primera línea genera 
 las predicciones usando la función `most_common` y a continuación se 
 calcula el error.  
 

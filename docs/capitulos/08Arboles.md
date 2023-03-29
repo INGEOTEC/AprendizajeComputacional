@@ -75,7 +75,7 @@ plt.savefig('clases3-arboles.png', dpi=300)
 Con estas tres poblaciones, donde cada distribución genera una clase
 se crea un árbol de decisión. El árbol se muestra en la siguiente
 figura, donde se observa, en cada nodo interno, la siguiente información. La 
-primera linea muestra el identificador del nodo, la segunda corresponde
+primera línea muestra el identificador del nodo, la segunda corresponde
 a la función de corte, la tercera línea es la entropía 
 ($$H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$$), 
 la cuarta es el número de elementos que llegaron al nodo y 
@@ -214,8 +214,8 @@ se implementa en el procedimiento `corte_var`. Este procedimiento
 asume que las etiquetas (`labels`) están ordenadas por la variable $$x_i$$, es decir
 la primera etiqueta corresponde al valor mínimo de $$x_i$$ y la última al valor 
 máximo. Considerando esto, el valor de $$a$$ es el índice con el menor costo.
-En la primera linea se inicializa la variable `mejor` para guardar el valor
-de $$a$$ con mejor costo. La segunda linea corresponde a $$\mid \mathcal D_m \mid$$,
+En la primera línea se inicializa la variable `mejor` para guardar el valor
+de $$a$$ con mejor costo. La segunda línea corresponde a $$\mid \mathcal D_m \mid$$,
 en la tercera línea se identifican los diferentes valores de $$a$$ que se tiene
 que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia 
 con respecto al elemento adyacente, esto se calcula con la función `np.diff`; 
@@ -497,7 +497,7 @@ def corte_var(response):
 
 La función `corte_var` de regresión se utiliza para encontrar 
 el punto de corte en los datos del conjunto de entrenamiento de 
-la siguiente manera. En la primera linea se ordenan las variables independientes y en la segunda línea se itera por todas las variables
+la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables
 independientes para calcular el corte con costo mínimo. 
 
 ```python

@@ -206,11 +206,11 @@ origen a $$g(\mathbf x)=0$$ la cual
 es $$\ell = \frac{w_0}{\mid\mid \mathbf w \mid\mid}.$$ El signo de $$\ell$$ 
 indica el lado donde se encuentra el origen con respecto a $$g(\mathbf x)=0$$
 
-La siguiente figura muestra en rojo la linea generada 
+La siguiente figura muestra en rojo la línea generada 
 por $$\mathbf w \cdot \mathbf x=0$$, la función 
 discriminante $$g(\mathbf x)=0$$ (negro), la línea puntuada muestra la distancia
 entre ellas, que corresponde a $$\ell$$ y el vector $$\mathbf w$$. Visualmente,
-se observa que $$\mathbf w$$ está pegado a la linea roja, pero esto solo 
+se observa que $$\mathbf w$$ está pegado a la línea roja, pero esto solo 
 es un efecto de la resolución y estos elementos no se tocan.  
 
 ![g(x)=0 y w x =0 ](/AprendizajeComputacional/assets/images/discriminante_4.png)
@@ -220,7 +220,7 @@ es un efecto de la resolución y estos elementos no se tocan.
   </summary>
 
 ```python
-vec = np.array([2, (-w_0 - w_1 * 2) / w_2]) - np.array([1, (-w_0 - w_1 * 1) / w_2])
+vec = np.array([1, (- w_1 * 1) / w_2])
 x_max = T[:, 0].max()
 length = np.linalg.norm(np.array([x_max, (-w_0 - w_1 * x_max) / w_2]) -
                         np.array([-w[0]*len_0, -w[1]*len_0]))
@@ -251,7 +251,70 @@ plt.tight_layout()
 plt.savefig('discriminante_4.png', dpi=300)
 -->
 
+Finalmente, será de utilidad representar a cada punto en $$\mathcal D$$ de la siguiente
+manera 
 
+$$\mathbf x = \mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid},$$
+
+donde $$\mathbf x_g$$ corresponde a la proyección en el hiperplano ($$g(\mathbf x) = 0$$) 
+de $$\mathbf x$$ y $$\ell$$ es la distancia que hay del hiperplano a $$\mathbf x$$. 
+Utilizando esta representación se puede derivar la distancia $$r$$ 
+de $$\mathbf x$$ con el siguiente procedimiento. 
+
+{: #eq:distancia-hiperplano }
+$$\begin{eqnarray*}
+g(\mathbf x) &=& g(\mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid})\\
+&=& \mathbf w \cdot (\mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid}) + w_0\\
+&=& \mathbf w \cdot (\mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid})\\
+&=& \mathbf w \cdot \mathbf x_g + \ell \mathbf w \cdot \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid}\\
+&=& \ell \mathbf w \cdot \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid}\\
+&=& \ell \mid\mid\mathbf w\mid\mid\\
+\ell &=& \frac{g(\mathbf x)}{\mid\mid\mathbf w \mid\mid}
+\end{eqnarray*}$$
+
+Como ya se había visto la distancia del origen al hiperplano está dada 
+por $$\ell_0 = \frac{w_0}{\mid\mid\mathbf w \mid\mid}$$ y de cualquier elemento
+por $$\ell_{\mathbf x} = \frac{g(\mathbf x)}{\mid\mid\mathbf w \mid\mid}.$$
+La siguiente figura muestra la $$\ell_{\mathbf x}$$ en un elemento de la clase negativa. 
+Se puede observar el punto $$\mathbf x_g$$ que es donde intersecta la línea 
+con el hiperplano.
+
+![Distancia al hiperplano ](/AprendizajeComputacional/assets/images/discriminante_5.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+point = X_2[X_2.argmax(axis=0)[1]]
+point_g = vec *  np.dot(point, vec) / np.dot(vec, vec) - len_0 * w
+df = pd.DataFrame(g_0 + \
+                  [dict(x1=x, x2=y, clase='P') for x, y in X_1] +\
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2] +\
+                  [dict(x1=point_g[0], x2=point_g[1], tipo='lx')] +\
+                  [dict(x1=point[0], x2=point[1], tipo='lx')]                  
+                 )
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax,
+             hue='tipo',palette=['k'] + sns.color_palette()[4:], legend=True)
+ax.axis('equal')
+```
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('discriminante_5.png', dpi=300)
+-->
+
+Considerando que el problema mostrado en la figura anterior está en $$\mathbb R^2$$,
+entonces $$\mathbf x_g$$ está dado por 
+
+$$\mathbf x_g = \frac{\mathbf x \cdot \mathbf x_0}{\mathbf x_0 \cdot \mathbf x_0} \mathbf x_0 - \ell_0 \frac{\mathbf w}{\mid\mid\mathbf w \mid\mid},$$
+
+donde $$\ell_0$$ es la distancia del origen al hiperplano y $$\mathbf x_0$$ es cualquier
+vector que está en $$\mathbf x_0 \cdot \mathbf w=0.$$ Para dimensiones mayores el 
+término $$\frac{\mathbf x \cdot \mathbf x_0}{\mathbf x_0 \cdot \mathbf x_0}$$ es la proyección
+al hiperplano $$A$$ tal que $$A \mathbf w = 0.$$
 ## Múltiples Clases
 
 Una manera de tratar un problema de $$K$$ clases, es convertirlo en
@@ -295,21 +358,17 @@ $$(\mathbf w \cdot \mathbf x_i + w_0) y_i \geq +1,$$
 
 donde $$(\mathbf x_i, y_i) \in \mathcal D.$$ 
 
-La función discriminante es $$g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$$ y la distancia que existe entre cualquier punto $$\mathbf x_i$$ 
-al discriminante está dada por 
+La función discriminante es $$g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$$ y 
+la [distancia](/AprendizajeComputacional/capitulos/09Lineal/#eq:distancia-hiperplano) 
+que existe entre cualquier punto $$\mathbf x_i$$ al discriminante está dada por 
 
-$$\frac{(\mathbf w \cdot \mathbf x_i + w_0) y_i}{\mid \mid \mathbf w \mid \mid}.$$
+$$\frac{g(\mathbf x_i)}{\mid\mid \mathbf w \mid\mid}y_i.$$
 
-Entonces, se puede ver que lo que se busca es encontrar $$w, w_0$$ de tal manera que cualquier punto $$x_i$$ esté lo mas alejada posible del discriminante, esto se logra minimizando $$w$$, es decir, resolviendo el siguiente problema de optimización:
+Entonces, se puede ver que lo que se busca es encontrar $$\mathbf w$$ de tal manera que cualquier punto $$\mathbf x_i$$ esté lo mas alejada posible del discriminante, esto se logra minimizando $$\mathbf w$$, es decir, resolviendo el siguiente problema de optimización:
 
-$$ \min \frac{1}{2} \mid \mid w \mid \mid $$
+$$\min \frac{1}{2} \mid\mid\mathbf w \mid\mid$$
 
-sujeto a $$ (w^T x_i + w_0) y_i \geq +1, \forall (x_i, y_i) \in \mathcal X $$.
-
-En el siguiente video se muestra el uso de una Máquina de Soporte Vectorial lineal y
-se compara contra Regresión Logística
-
-{%include linear_svm.html %}
+sujeto a $$ (\mathbf w \cdot \mathbf x_i + w_0) y_i \geq +1, \forall (\mathbf x_i, y_i) \in \mathcal D.$$
 
 ## Kernel
 
