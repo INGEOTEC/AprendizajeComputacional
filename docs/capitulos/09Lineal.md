@@ -67,7 +67,7 @@ clases correctamente. En esta unidad se presentan diferentes maneras para
 definir $$g_k$$ con la característica de que todas ellas son lineales,
 e.g., $$g_k(\mathbf x) = \mathbf w_k \cdot \mathbf x + w_{k_0}.$$
 
-# Clasificación Binaria
+## Clasificación Binaria
 
 La descripción de discriminantes lineales empieza con el caso particular de
 dos clases, i.e., $$K=2$$. En este caso $$C(\mathbf x)$$ es encontrar el máximo
@@ -128,7 +128,7 @@ plt.tight_layout()
 plt.savefig('discriminante.png', dpi=300)
 -->
 
-# Geometría de la Función de Decisión
+## Geometría de la Función de Decisión
 {: #sec:geometria-funcion-decision }
 
 La función discriminante $$g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$$
@@ -156,8 +156,20 @@ plt.tight_layout()
 plt.savefig('discriminante_2.png', dpi=300)
 -->
 
-Siguiendo con la descripción los parámetros $$\mathbf w$$ y la función $$g(\mathbf x)$$
-son ortogonales, tal y como se muestra en la siguiente figura.
+Siguiendo con la descripción, los parámetros $$\mathbf w$$ y la función $$g(\mathbf x)$$
+son ortogonales, tal y como se muestra en la siguiente figura. Analiticamente la 
+ortogonalidad se define de la siguiente manera. Sea $$\mathbf x_a$$ y $$\mathbf x_b$$
+dos puntos en $$g(\mathbf x)=0$$, es decir, 
+
+$$\begin{eqnarray*}
+g(\mathbf x_a) &=& g(\mathbf x_b) \\
+\mathbf w \cdot \mathbf x_a + w_0 &=& \mathbf w \cdot \mathbf x_b + w_0\\
+\mathbf w \cdot (\mathbf x_a -  \mathbf x_b) &=& 0,
+\end{eqnarray*}$$
+
+donde el vector $$\mathbf x_a -  \mathbf x_b$$ es paralelo a $$g(\mathbf x)=0$$,
+ortogonal a $$\mathbf w$$ y el sub-espacio generado por $$\mathbf w \cdot (\mathbf x_a -  \mathbf x_b) = 0$$
+pasa por el origen. 
 
 ![Ortogonalidad del Discriminante Lineal y w](/AprendizajeComputacional/assets/images/discriminante_3.png)
 <details markdown="block">
@@ -187,11 +199,19 @@ plt.tight_layout()
 plt.savefig('discriminante_3.png', dpi=300)
 -->
 
-Donde $$\ell \mathbf w$$ corresponde al vector $$\mathbf w$$ multiplicado
-por un factor $$\ell$$ de tal manera que intersecte con $$g(\mathbf x)=0.$$
-El factor $$\ell$$ corresponde a la distancia que hay del origen a $$g(\mathbf x)=0$$
-la cual es $$\ell = \frac{w_0}{\mid\mid \mathbf w \mid\mid}.$$ El signo de $$\ell$$ 
+En la figura anterior, $$\ell \mathbf w$$ corresponde al 
+vector $$\mathbf w$$ multiplicado por un factor $$\ell$$ de tal manera que intersecte 
+con $$g(\mathbf x)=0.$$ El factor $$\ell$$ corresponde a la distancia que hay del 
+origen a $$g(\mathbf x)=0$$ la cual 
+es $$\ell = \frac{w_0}{\mid\mid \mathbf w \mid\mid}.$$ El signo de $$\ell$$ 
 indica el lado donde se encuentra el origen con respecto a $$g(\mathbf x)=0$$
+
+La siguiente figura muestra en rojo la linea generada 
+por $$\mathbf w \cdot \mathbf x=0$$, la función 
+discriminante $$g(\mathbf x)=0$$ (negro), la línea puntuada muestra la distancia
+entre ellas, que corresponde a $$\ell$$ y el vector $$\mathbf w$$. Visualmente,
+se observa que $$\mathbf w$$ está pegado a la linea roja, pero esto solo 
+es un efecto de la resolución y estos elementos no se tocan.  
 
 ![g(x)=0 y w x =0 ](/AprendizajeComputacional/assets/images/discriminante_4.png)
 <details markdown="block">
@@ -232,68 +252,81 @@ plt.savefig('discriminante_4.png', dpi=300)
 -->
 
 
-# Múltiples clases
+## Múltiples Clases
 
-Una manera de tratar un problema de $$k$$ clases, es convertirlo en
-$$k$$ problemas de clasificación binarios, a este procedimiento se le conoce como Uno vs Resto. 
-La idea es entrenar $$k$$ clasificadores donde la clase positiva corresponde
-a cada una de las clases y la clase de negativa se construye con todas las clases 
-que no son la clase positiva en esa iteración. Finalmente, la clase predicha corresponde
-al clasificador que tiene el valor máximo en la función discriminante. 
+Una manera de tratar un problema de $$K$$ clases, es convertirlo en
+$$K$$ problemas de clasificación binarios, a este procedimiento 
+se le conoce como _Uno vs Resto_. La idea es entrenar $$K$$ clasificadores 
+donde la clase positiva corresponde a cada una de las clases y la clase de 
+negativa se construye con todas las clases que no son la clase positiva en esa 
+iteración. Finalmente, la clase predicha corresponde al clasificador que tiene 
+el valor máximo en la función discriminante. 
 
 En la siguiente figura ejemplifica el comportamiento de esta técnica
 en un problema de tres clases y utilizando un clasificador con discrimitante lineal.
-Se puede observar como la clase naranja esta separada por una linea de las clases verde
-y azul, de igualmente se puede ver como existe una linea que separa la clase azul de las 
-otras clases y la tercera linea separa la clase verde de la clase azul y naranja. 
+En la figura se muestra las tres funciones discriminantes $$g_k(\mathbf x)=0$$,
+los parámetros escalados de esas funciones, i.e., $$ \ell_k \mathbf w_k$$ y los
+datos. Por ejemplo se observa como la clase $$1$$ mostrada en azul, se separa
+de las otras dos clases con la función $$g_1(\mathbf x)=0$$, es decir, 
+para $$g_1(\mathbf x)=0$$ la clase positiva es $$1$$ y la clase negativa corresponde
+a los elementos que corresponde a las clases $$2$$ y $$3.$$
 
 ![Discriminante Lineal](/AprendizajeComputacional/assets/images/clases3.png)
 
-Para tratar de explicar con mayor detalle la técnica de Uno vs Resto, utilizaremos 
-el clasificador de Bayes Ingenuo para ejemplificar este escenario. En el siguiente
-código se cargan las librearías necesarias, así como los datos del Iris. 
+# Máquinas de Soporte Vectorial
 
-```python
-import numpy as np
-from sklearn.datasets import load_iris
-from sklearn.naive_bayes import GaussianNB
-X, y = load_iris(return_X_y=True)
-```
+Es momento de describir algunos algoritmos para estimar los parámetros $$\mathbf w$$,
+empezando por las máquinas de soporte vectorial. En este clasificador se asume un problema binario y las clases están representadas por $$-1$$ y $$1$$, 
+es decir, $$y \in \{-1, 1\}$$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
 
-Recordando que la idea es generar $$k$$ clasificadores, lo cuales en el 
-siguiente código se guardarán en la lista $$C$$. El ciclo itera por todas
-las clases que hay, en la siguiente linear se genera un arreglo $$yb$$ donde
-se pondrá generará el problema binario, donde $$1$$ corresponde a la clase positiva  
-y $$0$$ a la clase negativa. En las últimas lineas se entrena al clasificador y se
-guarda en la lista $$C$$.
+Sea $$\mathbf x_i$$ un ejemplo que corresponde a la clase $$1$$ 
+entonces se busca $$\mathbf w$$ tal que
 
-```python
-C = []
-for cl in np.unique(y):
-    yb = np.empty_like(y)
-    m = y == cl
-    yb[m] = 1
-    yb[~m] = 0
-    _ = GaussianNB().fit(X, yb)
-    C.append(_)
-```
+$$\mathbf w \cdot \mathbf x_i + w_0 \geq +1.$$
 
-Finalmente, el procedimiento para predecir sería preguntar a cada clasificador por la
-clase y escoger al valor máximo; dado que se está utilizando un clasificador de Bayes Ingenuo, 
-podemos utilizar la probabilidad de la clase positiva para este propósito. 
-El siguiente código calcula el valor de la probabilidad para la clase positiva en 
-los $$k$$ clasificadores, se usa la transpuesta para obtener una matriz donde cada renglón
-sea un ejemplo y se tengan $$k$$ columnas.
+En el caso contrario, es decir, $$\mathbf x_i$$ un ejemplo de la 
+clase $$-1$$, entonces 
 
-```python
-hy = np.vstack([c.predict_proba(X)[:, 1] for c in C]).T
-```
+$$\mathbf w \cdot \mathbf x_i + w_0 \leq -1.$$
 
-Finalmente la clase se calcularía con el valor máximo como se observa en el siguiente código.
+Estas ecuaciones se pueden escribir como 
 
-```python
-hy = hy.argmax(axis=1)
-```
+$$(\mathbf w \cdot \mathbf x_i + w_0) y_i \geq +1,$$
+
+donde $$(\mathbf x_i, y_i) \in \mathcal D.$$ 
+
+La función discriminante es $$g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$$ y la distancia que existe entre cualquier punto $$\mathbf x_i$$ 
+al discriminante está dada por 
+
+$$\frac{(\mathbf w \cdot \mathbf x_i + w_0) y_i}{\mid \mid \mathbf w \mid \mid}.$$
+
+Entonces, se puede ver que lo que se busca es encontrar $$w, w_0$$ de tal manera que cualquier punto $$x_i$$ esté lo mas alejada posible del discriminante, esto se logra minimizando $$w$$, es decir, resolviendo el siguiente problema de optimización:
+
+$$ \min \frac{1}{2} \mid \mid w \mid \mid $$
+
+sujeto a $$ (w^T x_i + w_0) y_i \geq +1, \forall (x_i, y_i) \in \mathcal X $$.
+
+En el siguiente video se muestra el uso de una Máquina de Soporte Vectorial lineal y
+se compara contra Regresión Logística
+
+{%include linear_svm.html %}
+
+## Kernel
+
+Existen problemas donde no es posible encontrar una función lineal que discrimine entre las clases, para estos problemas es común utilizar una transformación de tal manera que en el nuevo espacio el problema sea linealmente separable. 
+
+Existen varias funciones que son utilizadas para este fin, en general cualquier función con la forma $$K(x, y) \rightarrow \mathbb R$$ funcionaría.
+
+La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, la clase de un ejemplo $$x$$, estaría dada por:
+
+$$g(x) = \sum_{x_i \in \mathcal X} w_i K(x, x_i) + w_0,$$
+
+donde $$x$$ corresponde a la clase positiva si $$g(x)$$ es positivo, de lo 
+contrario sería clase negativa. 
+
+El siguiente video se describe el uso kernel dentro de una Máquina de Soporte Vectorial.
+
+{%include svm.html %}
 
 # Regresión Logística
 
@@ -381,52 +414,3 @@ $$ E(w, w_0 \mid \mathcal X) = \frac{1}{2} \sum_{(x, y) \in \mathcal X} (y - \ha
 
 También en este caso, no existe una solución cerrada para encontrar los parámetros $$w$$ y $$w_0$$. 
 
-# Máquinas de Soporte Vectorial
-
-Las máquinas de soporte vectorial siguen la idea de encontrar una función discriminante lineal que separe las clase. En este clasificador se asume un problema binario y las clases están representadas por $$-1$$ y $$1$$, es decir, $$y \in \{-1, 1\}$$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
-
-Sea $$x_i$$ un ejemplo que corresponde a la clase $$1$$ entonces se busca $$w$$ tal que
-
-$$w^T x_i + w_0 \geq +1.$$
-
-En el caso contrario, es decir, $$x_i$$ un ejemplo de la clase $$-1$$, entonces 
-
-$$w^T x_i + w_0 \leq -1.$$
-
-Estas ecuaciones se pueden escribir como 
-
-$$(w^T x_i + w_0) y_i \geq +1,$$
-
-donde $$(x_i, y_i) \in \mathcal X$$. 
-
-La función discriminante es $$ w^T x + w_0 $$ y la distancia que existe entre cualquier punto $$x_i$$ al discriminante está dada por 
-
-$$\frac{(w^T x_i + w_0) y_i }{\mid \mid w \mid \mid}$$
-
-Entonces, se puede ver que lo que se busca es encontrar $$w, w_0$$ de tal manera que cualquier punto $$x_i$$ esté lo mas alejada posible del discriminante, esto se logra minimizando $$w$$, es decir, resolviendo el siguiente problema de optimización:
-
-$$ \min \frac{1}{2} \mid \mid w \mid \mid $$
-
-sujeto a $$ (w^T x_i + w_0) y_i \geq +1, \forall (x_i, y_i) \in \mathcal X $$.
-
-En el siguiente video se muestra el uso de una Máquina de Soporte Vectorial lineal y
-se compara contra Regresión Logística
-
-{%include linear_svm.html %}
-
-## Kernel
-
-Existen problemas donde no es posible encontrar una función lineal que discrimine entre las clases, para estos problemas es común utilizar una transformación de tal manera que en el nuevo espacio el problema sea linealmente separable. 
-
-Existen varias funciones que son utilizadas para este fin, en general cualquier función con la forma $$K(x, y) \rightarrow \mathbb R$$ funcionaría.
-
-La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, la clase de un ejemplo $$x$$, estaría dada por:
-
-$$g(x) = \sum_{x_i \in \mathcal X} w_i K(x, x_i) + w_0,$$
-
-donde $$x$$ corresponde a la clase positiva si $$g(x)$$ es positivo, de lo 
-contrario sería clase negativa. 
-
-El siguiente video se describe el uso kernel dentro de una Máquina de Soporte Vectorial.
-
-{%include svm.html %}
