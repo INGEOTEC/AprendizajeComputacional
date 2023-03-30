@@ -30,8 +30,12 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme()
 ```
+
 ---
 
+{%include 08Arboles.html %}
+
+---
 # Introducción
 
 Los árboles de decisión son una estructura de datos jerárquica, la cual se 
