@@ -339,7 +339,7 @@ a los elementos que corresponde a las clases $$2$$ y $$3.$$
 # Máquinas de Soporte Vectorial
 
 Es momento de describir algunos algoritmos para estimar los parámetros $$\mathbf w$$,
-empezando por las máquinas de soporte vectorial. En este clasificador se asume un problema binario y las clases están representadas por $$-1$$ y $$1$$, 
+y $$w_0$$ empezando por las máquinas de soporte vectorial. En este clasificador se asume un problema binario y las clases están representadas por $$-1$$ y $$1$$, 
 es decir, $$y \in \{-1, 1\}$$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
 
 Sea $$\mathbf x_i$$ un ejemplo que corresponde a la clase $$1$$ 
@@ -368,7 +368,128 @@ Entonces, se puede ver que lo que se busca es encontrar $$\mathbf w$$ de tal man
 
 $$\min \frac{1}{2} \mid\mid\mathbf w \mid\mid$$
 
-sujeto a $$ (\mathbf w \cdot \mathbf x_i + w_0) y_i \geq +1, \forall (\mathbf x_i, y_i) \in \mathcal D.$$
+sujeto a $$(\mathbf w \cdot \mathbf x_i + w_0) y_i \geq +1, \forall (\mathbf x_i, y_i) \in \mathcal D.$$
+
+## Optimización
+
+Este es un problema de optimización que se puede resolver utilizando
+multiplicadores de Lagrange lo cual quedaría como 
+
+$$f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdot \mathbf x_i + w_0) y_i - 1),$$
+
+donde el mínimo corresponde a maximizar con respecto a $$\alpha_i \geq 0$$ y 
+minimizar con respecto a $$\mathbf w$$ y $$w_0.$$ En esta formulación existe el
+problema para aquellos problemas donde no es posible encontrar un hiperplano 
+que separa las dos clases. Para estos casos donde no es posible encontrar una separación
+perfecta se propone utilizar 
+
+$$(\mathbf w \cdot \mathbf x_i + w_0) y_i \geq 1 - \xi_i,$$ 
+
+donde $$\xi$$ captura los errores empezando por aquellos elementos que están del lado
+correcto del hiperplano, pero que no son mayores a $$1$$. La siguiente figura
+muestra un ejemplo donde existe un elemento positivo que se encuentra entre la función
+de decisión y el hiperplano de margen, i.e., el que corresponde a la  
+restricción $$\mathbf w \cdot \mathbf x_i + w_0 \geq 1$$, es decir se punto
+tiene un $$0 < \xi < 1.$$
+
+![Máquina de Soporte Vectorial](/AprendizajeComputacional/assets/images/SVM1.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]]).rvs(1000)
+X_2 = multivariate_normal(mean=[8, 8], cov=[[4, 0], [0, 2]]).rvs(1000)
+T = np.concatenate((X_1, X_2))
+y_t = np.array(['P'] * X_1.shape[0] + ['N'] * X_2.shape[0])
+
+linear = LinearSVC(dual=False).fit(T, y_t)
+w_1, w_2 = linear.coef_[0]
+w_0 = linear.intercept_[0]
+w = np.array([w_1, w_2]) / np.linalg.norm([w_1, w_2])
+g_0 = [dict(x1=x, x2=y, tipo='g(x)=0')
+       for x, y in zip(T[:, 0], (-w_0 - w_1 * T[:, 0]) / w_2)]
+g_p = [dict(x1=p['x1'] + w[0], x2=p['x2'] + w[1], tipo='g(x)=1')
+       for p in g_0]
+g_n = [dict(x1=p['x1'] - w[0], x2=p['x2'] - w[1], tipo='g(x)=-1')
+       for p in g_0]
+df = pd.DataFrame(g_0 + g_p + g_n +\
+                  [dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2]
+                 )
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax,
+             hue='tipo', palette=['k'] + sns.color_palette()[2:], legend=True)
+ax.axis('equal')
+```  
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('SVM1.png', dpi=300)
+-->
+
+Continuando con el problema de optimización, en las condiciones anteriores 
+la función a optimizar es $$\min \frac{1}{2} \mid\mid\mathbf w \mid\mid + C \sum_i^N \xi_i,$$
+utilizando multiplicadores de Lagrange queda como
+
+$$f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdot \mathbf x_i + w_0) y_i - 1 + \xi_i) - \sum_i^N \beta_i \xi_i.$$
+
+Se observa que el parámetro $$C$$ controla la penalización que se hace a los 
+elementos que se encuentran en el lado incorrecto del hiperplano o dentro del margen. 
+La siguiente figura muestra el hiperplano generado utilizando $$C=1$$ y $$C=0.1.$$
+Se observa como el elemento que está correctamente clasificado en $$C=1$$ pasa al lado
+incorrecto del hiperplano, ademas se ve como la función de decisión rota cuando
+el valor cambia. 
+
+![SVM Restricción](/AprendizajeComputacional/assets/images/SVM2.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+for k, (C, legend) in enumerate(zip([1, 0.1], [False, True])):
+     linear = LinearSVC(dual=False, C=C).fit(T, y_t)
+     w_1, w_2 = linear.coef_[0]
+     w_0 = linear.intercept_[0]
+     w = np.array([w_1, w_2]) / np.linalg.norm([w_1, w_2])
+     g_0 = [dict(x1=x, x2=y, tipo='g(x)=0')
+          for x, y in zip(T[:, 0], (-w_0 - w_1 * T[:, 0]) / w_2)]
+     g_p = [dict(x1=p['x1'] + w[0], x2=p['x2'] + w[1], tipo='g(x)=1')
+          for p in g_0]
+     g_n = [dict(x1=p['x1'] - w[0], x2=p['x2'] - w[1], tipo='g(x)=-1')
+          for p in g_0]
+     df = pd.DataFrame(g_0 + g_p + g_n +\
+                    [dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                    [dict(x1=x, x2=y, clase='N') for x, y in X_2]
+                    )
+     ax = plt.subplot(1, 2, k + 1)
+     sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=legend, ax=ax)
+     sns.lineplot(data=df, x='x1', y='x2', ax=ax,
+               hue='tipo', palette=['k'] + sns.color_palette()[2:], legend=legend)
+     ax.axis('equal')
+     ax.set_title(f'C={C}')
+     if legend:
+          sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+```  
+</details>
+<!--
+plt.savefig('SVM2.png', dpi=300)
+-->
+
+Este problema de optimización cumple con todas las características para poder encontrar 
+su solución optimizando el problema dual. El problema dual corresponde a maximizar $$f_p$$
+con respecto a $$\alpha_i,$$ sujeto a que las restricciones de que el gradiente de $$f_p$$
+con respecto a $$\mid\mid\mathbf w \mid\mid$$, $$w_0$$ y $$\xi_i$$ sean cero.
+Utilizando estas características el problema dual corresponde a 
+
+{: #eq:dual }
+$$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j \mathbf x_i \cdot \mathbf x_j,$$
+
+sujeto a las restricciones $$\sum_i \alpha_i y_i = 0$$ y $$0 \leq \alpha_i \leq C.$$
 
 ## Kernel
 
