@@ -68,6 +68,7 @@ definir $$g_k$$ con la característica de que todas ellas son lineales,
 e.g., $$g_k(\mathbf x) = \mathbf w_k \cdot \mathbf x + w_{k_0}.$$
 
 ## Clasificación Binaria
+{: #sec:binaria }
 
 La descripción de discriminantes lineales empieza con el caso particular de
 dos clases, i.e., $$K=2$$. En este caso $$C(\mathbf x)$$ es encontrar el máximo
@@ -487,110 +488,218 @@ con respecto a $$\mid\mid\mathbf w \mid\mid$$, $$w_0$$ y $$\xi_i$$ sean cero.
 Utilizando estas características el problema dual corresponde a 
 
 {: #eq:dual }
-$$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j \mathbf x_i \cdot \mathbf x_j,$$
+$$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j \mathbf x_i \cdot \mathbf x_j,$$
 
 sujeto a las restricciones $$\sum_i \alpha_i y_i = 0$$ y $$0 \leq \alpha_i \leq C.$$
 
+El problema de optimización dual tiene unas características que lo hacen deseable en 
+ciertos casos, por ejemplo, el problema depende del número de ejemplos ($$N$$) en lugar
+de la dimensión. Entonces en problemas donde $$d > N$$ es más conveniente utilizar
+el dual.
+
 ## Kernel
 
-Existen problemas donde no es posible encontrar una función lineal que discrimine entre las clases, para estos problemas es común utilizar una transformación de tal manera que en el nuevo espacio el problema sea linealmente separable. 
+La otra característica del problema dual es que permite visualizar lo siguiente.
+Suponiendo que se usa una función $$\phi: \mathbb R^d \leftarrow \mathbf R^{\hat d},$$
+de tal manera, que en el espacio $$\phi$$ se puede encontrar un hiperplano que 
+separa las clases. Incorporando la función $$\phi$$ produce la siguiente función a optimizar
 
-Existen varias funciones que son utilizadas para este fin, en general cualquier función con la forma $$K(x, y) \rightarrow \mathbb R$$ funcionaría.
+$$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j \phi(\mathbf x_i) \cdot \phi(\mathbf x_j),$$
 
-La idea es que en este nuevo espacio los coeficientes $$ w $$ están asociados a ejemplos del conjunto de entrenamiento, es decir, la clase de un ejemplo $$x$$, estaría dada por:
+donde primero se transforman todos los datos al espacio generado 
+por $$\phi$$ y después se calcula el producto punto. 
+El producto punto se puede cambiar por una función **Kernel**, 
+i.e., $$K(\mathbf x_i, \mathbf x_j) = \phi(\mathbf x_i) \cdot \phi(\mathbf x_j)$$
+lo cual hace que innecesaria la transformación al espacio $$\phi.$$ Utilizando
+la función de kernel, el problema de optimización dual queda como:
 
-$$g(x) = \sum_{x_i \in \mathcal X} w_i K(x, x_i) + w_0,$$
+$$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j K(\mathbf x_i, \mathbf x_j).$$
 
-donde $$x$$ corresponde a la clase positiva si $$g(x)$$ es positivo, de lo 
-contrario sería clase negativa. 
+La función discriminante está dada por $$g(\mathbf x) = \sum_i \alpha_i y_i K(\mathbf x_i, \mathbf x),$$ donde aquellos elementos donde $$\alpha \neq 0$$ se les conoce
+como los vectores de soporte. Estos elementos son los que se encuentran 
+en el margen, dentro del margen y en el lado incorrecto de la función discriminante.
 
-El siguiente video se describe el uso kernel dentro de una Máquina de Soporte Vectorial.
+La siguiente figura muestra los datos del iris (proyectados con [Análisis de Componentes Principales](/AprendizajeComputacional/capitulos/05ReduccionDim/#sec:pca)),
+las clases se encuentran en color azul, naranja y verde; en color rojo se 
+muestran los vectores de soporte. La figura derecha muestra en color negro aquellos
+vectores de soporte que se encuentran en el lado incorrecto del hiperplano. 
+Por otro lado se puede observar como los vectores de soporte separan las clases,
+del lado izquierdo se encuentran todos los elementos de la clase $$0$$,
+después se observan las clases $$1$$ y del lado derecho las clases $$2$$. Los vectores
+de soporte están en la frontera de las clases y los errores se encuentran entre las 
+clases $$1$$ y $$2$$ que corresponden a las que no son linealmente separables. 
 
-{%include svm.html %}
+
+![Vectores de Soporte](/AprendizajeComputacional/assets/images/SVM3.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+X, y = load_iris(return_X_y=True)
+linear = SVC(kernel='poly', degree=2, C=10).fit(X, y)
+hy = linear.predict(X)
+D = PCA(n_components=2).fit_transform(X)
+mask = np.zeros(D.shape[0])
+mask[linear.support_] = True
+s = 'S'
+df = pd.DataFrame([dict(x1=x1, x2=x2, tipo=f'{l if not c else s}', error=err)
+                   for (x1, x2), c, l, err in zip(D, mask, y, y != hy)])
+for k, legend in enumerate([False, True]):     
+     if legend:
+          df.loc[df.error, 'tipo'] = 'X'
+     df.sort_values(by='tipo', inplace=True)
+     ax = plt.subplot(1, 2, k + 1)          
+     sns.scatterplot(data=df, x='x1', y='x2',
+                     palette=sns.color_palette()[:4] + ['k'],
+                     hue='tipo', legend=legend, ax=ax)
+     if legend:
+          sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+```  
+</details>
+<!--
+plt.savefig('SVM3.png', dpi=300)
+-->
 
 # Regresión Logística
 
-Antes de iniciar la descripción de regresión logísticas definimos la función $$\textsf{logit}$$
-la cual es:
+En [clasificación binaria](/AprendizajeComputacional/capitulos/09Lineal/#sec:binaria) se 
+describió que la función discriminante se puede definir como la resta, 
+i.e., $$g_1(\mathbf x) - g_2(\mathbf x);$$ equivalentemente se pudo haber seleccionado
+la división ($$\frac{g_1(\mathbf x)}{g_2(\mathbf x)}$$) para generar la función discriminante
+o el logaritmo de la división, i.e., $$\log \frac{g_1(\mathbf x)}{g_2(\mathbf x)}.$$
+Esta última ecuación en el caso de $$g_i(\mathbf x)=\mathbb P(\mathcal Y=i \mid \mathcal X=\mathbf x)$$ corresponde a la función $$\textsf{logit}$$, tal y como se muestra 
+a continuación.
 
-$$\textsf{logit}(y) = \log \frac{y}{1 - y}$$
+$$\log \frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)} = \frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{1 - \mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}= \textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)),$$
 
 donde la inversa del $$\textsf{logit}$$ es la función sigmoide, $$\textsf{sigmoid}(x) = \frac{1}{1 + \exp(-x)}$$, es decir $$\textsf{sigmoid}(\textsf{logit}(y)) = y$$.
 
-Una manera de definir a este clasificador es suponiendo que el problema de clasificación es 
-binario y definiendo la función discriminante como $$\textsf{logit}(P(C_1 \mid x))$$; 
-expandiendo este término se obtiene:
+Trabajando un poco con el $$\textsf{logit}$$ se puede observar que para el caso 
+de dos clases está función queda como 
 
-$$
-\begin{eqnarray*}
-    \textsf{logit}(P(C_1 \mid x)) &=& \log \frac{P(C_1 \mid x)}{1 - P(C_1 \mid x)} \\
-                                  &=& \log \frac{P(C_1 \mid x)}{P(C_2 \mid x)} \\
-                                  &=& \log \frac{\frac{P(x \mid C_1) P(C_1)}{P(x)}}{\frac{P(x \mid C_2) P(C_2)}{P(x)}} \\
-                                  &=&  \log \frac{P(x \mid C_1) P(C_1)}{P(x \mid C_2) P(C_2)} \\
-                                  &=& \log \frac{P(x \mid C_1)}{P(x \mid C_2)} + \log \frac{P(C_1)}{P(C_2)}
-\end{eqnarray*}
-$$
+$$\begin{eqnarray*}
+\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) &=& \log\frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)}\\
+&=& \log\frac{\mathbb P(\mathcal X=\mathbf x \mid \mathcal Y=1)\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal X=\mathbf x \mid \mathcal Y=2)\mathbb P(\mathcal Y=2)}\\
+&=& \log\frac{\mathbb P(\mathcal X=\mathbf x \mid \mathcal Y=1)}{\mathbb P(\mathcal X=\mathbf x \mid \mathcal Y=2)} + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}
+\end{eqnarray*},$$
 
-se observar que se usa el hecho de que $$P(C_1 \mid x) + P(C_2 \mid x) = 1$$ y 
-el Teorema de Bayes. En métodos paramétricos y no paramétricos se vieron técnicas
-para definir la verosimilitud de la clase, i.e., $$P(x \mid C)$$; por el contrario, en 
-regresión logística se asume una forma, es decir, se asume:
+asumiendo que la matriz de covarianza ($$\Sigma$$) es compartida entre las dos clases 
+la ecuación anterior quedaría como:
 
-$$\log \frac{P(x \mid C_1)}{P(x \mid C_2)} = w \cdot x + w_0^v.$$
+$$\begin{eqnarray*}
+\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) &=& \log \frac{(2\pi)^{-\frac{d}{2}} \mid\Sigma \mid^{-\frac{1}{2}}\exp{(-\frac{1}{2}(\mathbf x - \mathbf \mu_1)^T \Sigma^{-1}(\mathbf x - \mathbf \mu_1))}}{(2\pi)^{-\frac{d}{2}} \mid\Sigma \mid^{-\frac{1}{2}}\exp{(-\frac{1}{2}(\mathbf x - \mathbf \mu_2)^T \Sigma^{-1}(\mathbf x - \mathbf \mu_2))}} + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}\\
+&=&\mathbf w \cdot \mathbf x + w_0
+\end{eqnarray*}$$
 
-Tomando en cuenta que $$\log \frac{P(C_1)}{P(C_2)}$$ es una constante, $$w_0^p$$, 
-entonces quedaría como: $$ \textsf{logit}(P(C_1 \mid x)) = w \cdot x + w_0$$, 
-donde $$w_0 = w_0^v + w_0^p$$. Despejando $$P(C_1 \mid x)$$:
+donde $$\mathbf w=\Sigma^{-1}(\mathbf \mu_1 - \mathbf \mu_2)$$ 
+y $$w_0=-\frac{1}{2}(\mathbf \mu_1 + \mathbf \mu_2)^T \Sigma^{-1}(\mathbf \mu_1 + \mathbf \mu_2)+ \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$$
 
-$$ \hat y(x) = P(C_1 \mid x) = \textsf{sigmoid}(w \cdot x + w_0) = \frac{1}{1 + \exp{-(w \cdot x + w_0)}}.$$
+En el caso de regresión logística, se asume que $$\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) = \mathbf w \cdot \mathbf x + w_0$$ y se realiza ninguna 
+asunción sobre la distribución que tienen los datos. Equivalentemente,
+se puede asumir que $$\log\frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)} = \mathbf w \cdot \mathbf x + w_0^0,$$ realizando
+algunas substituciones se puede ver que $$w_0 = w_0^0 + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$$
 
-Se puede asumir que $$ y \mid x $$ sigue una distribución Bernoulli en el caso de dos clases, entonces la máxima verosimilitud quedaría como:
+## Optimización
 
-$$ l(w, w_0 \mid \mathcal X) = \prod_{(x, y) \in \mathcal X} (\hat y(x))^{y} (1 -  \hat y(x)))^{1-y}. $$
+Se puede asumir que $$ \mathcal Y \mid \mathcal X$$ sigue una distribución Bernoulli en el caso de dos clases, entonces el [logaritmo de la verosimilitud](/AprendizajeComputacional/capitulos/03Parametricos/#sec:verosimilitud) quedaría como:
+
+$$\ell(\mathbf w, w_0 \mid \mathcal D) = \prod_{(\mathbf x, y) \in \mathcal D} (C(\mathbf x))^{y} (1 -  C(\mathbf x)))^{1-y},$$
+
+donde $$C(\mathbf x)$$ es la clase estimada por el clasificador. 
 
 Siempre que se tiene que obtener el máximo de una función esta se puede transformar a un 
-problema de minimización, por ejemplo, para el caso anterior definiendo como $$E = -\log l$$, 
-utilizando esta transformación el problema sería minimizar la siguiente función:
+problema de minimización, por ejemplo, para el caso anterior definiendo 
+como $$E = -\log \ell$$, utilizando esta transformación el problema sería 
+minimizar la siguiente función:
 
-$$E(w, w_0 \mid \mathcal X) = - \sum_{(x, y) \in \mathcal X} y \log \hat y(x) + (1-y) \log (1 -  \hat y(x)).$$
+$$E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \log C(x) + (1-y) \log (1 -  C(x)).$$
 
-Es importante notar que la ecuación anterior corresponde a Entropía cruzada,
-definida como: $$H(P, Q) = - \sum_w P(w) \log Q(w)$$. La Entropía cruzada 
-para dos clases, $$x$$ y $$w$$, es:
+Es importante notar que la ecuación anterior corresponde a [Entropía cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada), 
+donde $$y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))$$ 
+y $$C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)$$ 
+y los términos $$1-y$$ y $$1-C(\mathbf x)$$ corresponde a la otra clase. 
 
-$$
-\begin{eqnarray*}
-    H(P, Q) &=& -[P(x) \log Q(x) + P(w) \log Q(w)] \\
-            &=& -[P(x) \log Q(x) + (1 - P(x)) \log (1 - Q(x))]
-\end{eqnarray*}
-$$
+Otra característica de $$E(\mathbf w, w_0 \mid \mathcal D)$$ es que no tiene una 
+solución cerrada y por lo tanto es necesario utilizar un método de [optimización](/AprendizajeComputacional/capitulos/10Optimizacion/) para encontrar los parámetros $$\mathbf w$$ y $$w_0$$. 
 
-utilizando la notación usada en $$E(w, w_0 \mid \mathcal X)$$ se puede observar que 
-$$y=P(x)$$ y $$\hat y(x)=Q(x)$$, es decir $$E(w, w_0 \mid \mathcal X) = \sum_{(x, y) \in \mathcal X} H(y, \hat y(x))$$.
 
-Otra característica de $$E(w, w_0 \mid \mathcal X)$$ es que no tiene una solución cerrada y 
-por lo tanto es necesario utilizar un método de optimización iterativo para 
-encontrar los parámetros $$w$$ y $$w_0$$. 
+# Comparación
 
-En el siguiente video se describe el uso de regresión logística 
+Es momento de comparar el comportamiento de los dos métodos de
+discriminantes lineales visto en la unidad, estos son, Máquinas
+de Soporte Vectorial (MSV) y Regresión Logística (RL). La
+siguiente figura muestra el hiperplano generado por MSV y RL,
+además se puede observar los valores de los pesos $$\mathbf w$$
+para cada uno de los algoritmos. 
 
-{%include regresion_logistica.html %}
+![Hiperplanos](/AprendizajeComputacional/assets/images/lineal_comp.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
 
-# Discriminación por Regresión
+```python
+svm = LinearSVC(dual=False).fit(T, y_t)
+lr = LogisticRegression().fit(T, y_t)
 
-En regresión se supone que la respuesta del sistema se modela como: $$y = \hat y(x) + \epsilon$$,
-donde $$\epsilon \sim \mathcal N(0, \sigma^2)$$. Asumiento que $$y \in \{0, 1\}$$ una forma
-de restringir a que los valores de $$\hat y$$ se encuentren en el intervalo adecuado es 
-haciendo $$\hat y(x) = \textsf{sigmoid}(w x + w_0)$$.
+g = []
+for model, tipo in zip([svm, lr], ['MSV', 'RL']):
+     w_1, w_2 = model.coef_[0]
+     w_0 = model.intercept_[0]
+     g += [dict(x1=x, x2=y, tipo=tipo)
+           for x, y in zip(T[:, 0], (-w_0 - w_1 * T[:, 0]) / w_2)]
+     g.append(dict(x1=w_1, x2=w_2, clase=tipo))
+df = pd.DataFrame(g + \
+                  [dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2]
+                 )
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', 
+             ax=ax, hue='tipo', 
+             palette=sns.color_palette(), 
+             legend=True)
+ax.axis('equal')
+```
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
+plt.tight_layout()
+plt.savefig('lineal_comp.png', dpi=300)
+-->
 
-En estas condiciones la verosimilitud es:
 
-$$ l(w, w_0 \mid \mathcal X) = \prod_{(x, y) \in \mathcal X} \frac{1}{\sqrt{2\pi \sigma}} \exp[\frac{(y - \hat y(x))^2}{2 \sigma^2}]. $$
+Complementando la comparación anterior con los datos del iris que se pueden
+obtener con las siguientes dos instrucciones. 
 
-Al igual que en regresión logística, un problema de maximiación se puede plantear como un
-problema de minimización; para el caso anterior quedaría como: 
+```python
+D, y = load_iris(return_X_y=True)
+T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
+```
 
-$$ E(w, w_0 \mid \mathcal X) = \frac{1}{2} \sum_{(x, y) \in \mathcal X} (y - \hat y(x))^2.$$ 
+Los clasificadores a comparar son una máquina de soporte vectorial lineal,
+una máquina de soporte vectorial usando un kernel polinomial de grado $$1$$
+y una regresión logística, tal y como se muestra en el siguiente código. 
 
-También en este caso, no existe una solución cerrada para encontrar los parámetros $$w$$ y $$w_0$$. 
+```python
+svm = LinearSVC(dual=False).fit(T, y_t)
+svm_k = SVC(kernel='poly', degree=1).fit(T, y_t)
+lr = LogisticRegression().fit(T, y_t)
+```
+
+La siguiente tabla muestra el rendimiento de estos algoritmos en el conjunto
+de prueba, se puede observar que estos algoritmos tienen rendimientos 
+diferentes para esta selección del conjunto de entrenamiento y prueba. 
+También en esta ocasión la máquina de soporte vectorial es la que 
+presenta el mejor rendimiento. Aunque es importante aclarar que 
+este rendimiento es resultado del proceso aleatorio de selección
+del conjunto de entrenamiento y prueba.
+
+Clasificador | Precision | Recall | $$F_1$$ |
+-------------|-----------|--------|---------|
+MSV - Lineal | 0.9524    | 0.9667 | 0.9568  |
+MSV - Kernel | 0.8889    | 0.9000 | 0.8745  |
+RL           | 0.9167    | 0.9333 | 0.9153  |
 

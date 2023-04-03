@@ -508,6 +508,7 @@ los algoritmos de vistos se observa un máximo de $$d$$ elementos de
 ese total.
 
 # Análisis de Componentes Principales
+{: #sec:pca }
 
 Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $$f: \mathbb R^d \rightarrow \mathbb R^m $$ donde $$m < d $$
 

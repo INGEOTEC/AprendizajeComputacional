@@ -81,6 +81,7 @@ por $$\theta$$ parámetros. Utilizando $$\mathcal D$$ el objetivo es identificar
 los parámetros $$\theta$$ que hacen observar a $$\mathcal D$$ lo más probable. 
 
 ## Verosimilitud
+{: #sec:verosimilitud }
 
 Una solución para maximizar el observar $$\mathcal D$$ es maximizando la verosimilitud. 
 La verosimilitud es la función distribución conjunta de los elementos en $$\mathcal D$$,
