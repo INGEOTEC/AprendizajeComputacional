@@ -346,15 +346,15 @@ T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
 
 La validación cruzada con k-iteraciones se puede realizar
 con la clase `KFold` de la siguiente manera. La primera
-linea crear una variable para guardar el rendimiento. En la 
-segunda linea se inicializa el procedimiento indicando que los 
+línea crear una variable para guardar el rendimiento. En la 
+segunda línea se inicializa el procedimiento indicando que los 
 datos sean tomados al azar. Después se realiza el ciclo con 
 las $$k$$ iteraciones, para cada iteración se genera un índice
 `ts` que indica cuales son los datos del conjunto de entrenamiento
 y `vs` que corresponde a los datos de validación. Se estiman 
-los parámetros usando `ts` tal y como se observa en la cuarta linea.
+los parámetros usando `ts` tal y como se observa en la cuarta línea.
 Habiendo estimado los parámetros se predicen los datos del conjunto
-de validación (5 linea), se mide el recall en todas las clases y se 
+de validación (5 línea), se mide el recall en todas las clases y se 
 guarda en la lista `perf.` Al final se calcula la media de 
 los $$k$$ rendimientos medidos, teniendo un valor de $$[0.8943, 0.9818].$$
 
@@ -508,6 +508,7 @@ los algoritmos de vistos se observa un máximo de $$d$$ elementos de
 ese total.
 
 # Análisis de Componentes Principales
+{: #sec:pca }
 
 Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $$f: \mathbb R^d \rightarrow \mathbb R^m $$ donde $$m < d $$
 
@@ -531,7 +532,7 @@ Empezamos por cargar los datos del problema tal y como se muestra en la siguient
 D, y = load_iris(return_X_y=True)
 ```
 
-Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $$\mathbb R^2$$ los datos, entonces el ocupamos dos componentes. La primera linea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
+Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $$\mathbb R^2$$ los datos, entonces el ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
 
 ```python
 pca = decomposition.PCA(n_components=2).fit(D)

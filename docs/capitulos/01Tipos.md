@@ -66,7 +66,7 @@ supervisado y no supervidado
 
 Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar en conjunto de vectores, i.e. $$\mathcal D = \{ x_1, \ldots, x_N \}$$, donde $$x_i \in \mathbb R^d$$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
 
-El **objetivo** en aprendizaje no supervisado es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, en $$\mathcal D$$. Existen diferentes tareas que se pueden considerar dentro de este tipo de aprendizaje. Por ejemplo, el agrupamiento puede servir para segmentar clientes o productos, en otra linea también cabría el análisis del carrito de compras (Market Basket Analysis); donde el objetivo es encontrar la co-ocurrencias de productos, es decir, se quiere estimar la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
+El **objetivo** en aprendizaje no supervisado es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, en $$\mathcal D$$. Existen diferentes tareas que se pueden considerar dentro de este tipo de aprendizaje. Por ejemplo, el agrupamiento puede servir para segmentar clientes o productos, en otra línea también cabría el análisis del carrito de compras (Market Basket Analysis); donde el objetivo es encontrar la co-ocurrencias de productos, es decir, se quiere estimar la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
 
 Regresando a la representación vectorial, existen casos donde se pueden visualizar los elementos de $$\mathcal D$$, lo cuales están representados como puntos que se muestran en la siguiente figura. Claramente esto solo es posible si $$x_i \in \mathbb R^2$$ o si se hace algún tipo de transformación  $$f: \mathbb R^d \rightarrow \mathbb R^2$$.
 
@@ -98,11 +98,11 @@ Al igual que en aprendizaje no supervisado, en algunos casos es posible visualiz
 
 ![Conjunto de entrenamiento](/AprendizajeComputacional/assets/images/clases.png)
 
-Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple linea recta podría separar estos puntos. La siguiente figura muestra un ejemplo de lo que haría un clasificador representado por la línea verde; la clase es dada por el signo de  $$ax + by + c $$, donde  $$a$$, $$b$$ y  $$c$$ son parámetros identificados a partir de  $$\mathcal D$$.
+Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple línea recta podría separar estos puntos. La siguiente figura muestra un ejemplo de lo que haría un clasificador representado por la línea verde; la clase es dada por el signo de  $$ax + by + c $$, donde  $$a$$, $$b$$ y  $$c$$ son parámetros identificados a partir de  $$\mathcal D$$.
 
 ![Clasificación](/AprendizajeComputacional/assets/images/clases2.png)
 
-Siguiendo en esta misma linea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $$x$$, y el otro eje es la salida, i.e. $$y$$. La siguiente figura muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
+Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $$x$$, y el otro eje es la salida, i.e. $$y$$. La siguiente figura muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
 
 ![Regresión](/AprendizajeComputacional/assets/images/regresion.png)
 
@@ -165,7 +165,7 @@ $$ h^*(x) = \begin{cases} y & \text{si} (x, y) \in \mathcal T\\ 0 & \end{cases} 
 
 Es fácil observar que este algoritmo tiene $$E(h^* \mid \mathcal T) = 0$$ dado que se aprende todo el conjunto de entrenamiento.
 
-La siguiente figura muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la linea naranja, la linea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento no se muestran; pero se pueden visualizar dado que son datos generados por una parábola mas un error gaussiano. Entonces podemos ver que la linea naranja pasa de manera exacta por todos los datos de entrenamiento y da como resultado la linea naranja que claramente tiene un comportamiento mas complejo que el comportamiento de la parábola que generó los datos.
+La siguiente figura muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la línea naranja, la línea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento no se muestran; pero se pueden visualizar dado que son datos generados por una parábola mas un error gaussiano. Entonces podemos ver que la línea naranja pasa de manera exacta por todos los datos de entrenamiento y da como resultado la línea naranja que claramente tiene un comportamiento mas complejo que el comportamiento de la parábola que generó los datos.
 
 ![Sobre-entrenamiento](/AprendizajeComputacional/assets/images/overfitting-2.png)
 
@@ -173,6 +173,6 @@ La siguiente figura muestra el comportamiento de un algoritmo que sobre-aprende,
 
 Por otro lado existen problemas donde el conjunto de algoritmos $$\mathcal H $$ no tienen los grados de libertad necesarios para aprender, dependiendo de la medida de error esto se refleja como $$E(h^* \mid \mathcal T) \gg 0$$.
 
-La siguiente figura muestra un problema de clasificación donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. El problema de clasificación es encontrar una función que logre separar las dos clases, las cuales están representadas por los puntos en color azul y verde, el algoritmo de aprendizaje intenta separar estas clases mediante una linea (dibujada en rojo) y como se puede observar una linea no tiene los suficientes grados de libertad para separar las clases.
+La siguiente figura muestra un problema de clasificación donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. El problema de clasificación es encontrar una función que logre separar las dos clases, las cuales están representadas por los puntos en color azul y verde, el algoritmo de aprendizaje intenta separar estas clases mediante una línea (dibujada en rojo) y como se puede observar una línea no tiene los suficientes grados de libertad para separar las clases.
 
 ![Sub-entrenamiento](/AprendizajeComputacional/assets/images/sub-aprendizaje.png)

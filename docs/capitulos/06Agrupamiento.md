@@ -216,7 +216,7 @@ no cambian.
 
 En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos 
 en el conjunto del iris. La clase se inicializa primero con 2 grupos 
-(primera linea). En la segunda instrucción se predice los grupos 
+(primera línea). En la segunda instrucción se predice los grupos 
 para todo el conjunto de datos. Las medias para cada grupo 
 se encuentran en el atributo `cluster_centers_.`
 

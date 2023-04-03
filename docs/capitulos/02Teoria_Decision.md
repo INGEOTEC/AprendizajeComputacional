@@ -106,9 +106,9 @@ Utilizando estas ecuaciones el **Teorema de Bayes** queda como
 
 $$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},$$
 
-donde al término $$\mathbb P(\mathcal X \mid \mathcal Y)$$ se le conoce como verosimilitud,
-$$\mathbb P(\mathcal Y)$$ es la probabilidad a priori y $$\mathbb P(\mathcal X)$$ 
-es la evidencia. 
+donde al término $$\mathbb P(\mathcal X \mid \mathcal Y)$$ se le conoce como **verosimilitud**,
+$$\mathbb P(\mathcal Y)$$ es la probabilidad **a priori** y $$\mathbb P(\mathcal X)$$ 
+es la **evidencia**. 
 
 Es importante mencionar que la evidencia se puede calcular mediante la probabilidad
 total, es decir:
