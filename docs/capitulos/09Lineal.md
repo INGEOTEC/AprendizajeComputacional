@@ -19,6 +19,7 @@ El **objetivo** de la unidad es conocer y aplicar diferentes métodos lineales d
 {: .no_toc .text-delta }
 ```python
 from sklearn.svm import LinearSVC
+from sklearn.linear_model import LogisticRegression
 from scipy.stats import multivariate_normal
 from matplotlib import pylab as plt
 import numpy as np
@@ -259,7 +260,7 @@ $$\mathbf x = \mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mid\mid},$
 
 donde $$\mathbf x_g$$ corresponde a la proyección en el hiperplano ($$g(\mathbf x) = 0$$) 
 de $$\mathbf x$$ y $$\ell$$ es la distancia que hay del hiperplano a $$\mathbf x$$. 
-Utilizando esta representación se puede derivar la distancia $$r$$ 
+Utilizando esta representación se puede derivar la distancia $$\ell$$ 
 de $$\mathbf x$$ con el siguiente procedimiento. 
 
 {: #eq:distancia-hiperplano }
