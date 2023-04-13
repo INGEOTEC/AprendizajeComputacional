@@ -130,7 +130,7 @@ comparar los parámetros reales $$\theta$$ de los parámetros estimados $$\hat \
 
 La distribución que se usará se utilizó para generar un 
 [problema sintético](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
-de tres clases. Los parámetros de la distribución son: $$\mathbf \mu = [5, 5]^T$$
+de tres clases. Los parámetros de la distribución son: $$\mathbf \mu = [5, 5]^\intercal$$
 y  $$\Sigma = \begin{pmatrix} 4 & 0 \\ 0 & 2 \\ \end{pmatrix}.$$ 
 La siguiente instrucción se puede utilizar para generar 1000 muestras de esa distribución. 
 
@@ -148,9 +148,9 @@ mu = np.mean(D, axis=0)
 ```
 
 donde el eje de operación es el primero que corresponde 
-al índice $$0.$$ La media estimada es: $$\hat \mu = [4.9334, 5.0413]^T$$ con un 
+al índice $$0.$$ La media estimada es: $$\hat \mu = [4.9334, 5.0413]^\intercal$$ con un 
 [error estándar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media) (`se`)
-de $$[0.0648, 0.0436]^T$$ que se calcula con el siguiente código. 
+de $$[0.0648, 0.0436]^\intercal$$ que se calcula con el siguiente código. 
 
 ```python
 se = np.std(D, axis=0) / np.sqrt(1000)
@@ -305,8 +305,8 @@ for k in labels:
 ```
 
 Los valores estimados para la media, en cada clase 
-son: $$\hat \mu_1 = [5.1234, 5.0177]^T,$$ $$\hat \mu_2 = [1.5229, -1.5553]^T$$ 
-y $$\hat \mu_3 = [12.5064, -3.4501]^T$$. Para las  matrices de covarianza, 
+son: $$\hat \mu_1 = [5.1234, 5.0177]^\intercal,$$ $$\hat \mu_2 = [1.5229, -1.5553]^\intercal$$ 
+y $$\hat \mu_3 = [12.5064, -3.4501]^\intercal$$. Para las  matrices de covarianza, 
 los valores estimados corresponden 
 a $$\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0409 \\ 0.0409 & 1.9562 \\ \end{pmatrix},$$ $$\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 1.0034 \\ 1.0034 & 2.8304 \\ \end{pmatrix}$$ 
 y $$\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 3.0328 \\ 3.0328 & 6.8235 \\ \end{pmatrix}.$$
@@ -413,8 +413,8 @@ for k in labels:
 
 Los parámetros estimados en la versión ingenua son equivalentes 
 con respecto a las medias,
-i.e., $$\hat \mu_1 = [5.1234, 5.0177]^T$$, $$\hat \mu_2 = [1.5229, -1.5553]^T$$ 
-y $$\hat \mu_3 = [12.5064, -3.4501]^T$$. La diferencia se puede observar
+i.e., $$\hat \mu_1 = [5.1234, 5.0177]^\intercal$$, $$\hat \mu_2 = [1.5229, -1.5553] ^\intercal$$ 
+y $$\hat \mu_3 = [12.5064, -3.4501]^\intercal$$. La diferencia se puede observar
 en las varianzas, que a continuación se muestran como matrices de covarianza para
 resaltar la diferencia, 
 i.e., $$\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0 \\ 0.0 & 1.9562 \\ \end{pmatrix}$$
@@ -574,33 +574,33 @@ es que en regresión $$\mathcal Y \in \mathbb R.$$
 El procedimiento de regresión que se describe en esta sección
 es regresión de **Mínimos Cuadrados Ordinaria** (OLS -*Ordinary Least Squares*-), en el 
 cual se asume  
-que $$\mathcal Y \sim \mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)$$,
-de tal manera que $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)].$$
+que $$\mathcal Y \sim \mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)$$,
+de tal manera que $$y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)].$$
 
 <!--
 Donde $$\mathbb E[\epsilon] = 0$$ y $$\mathbb V[\epsilon] = \sigma.$$
 -->
 
-Trabajando con $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x + \epsilon, \sigma^2)],$$
-se considera lo siguiente $$y = \mathbb E[\mathcal N(\mathbf w^T \mathbf x, 0) + \mathcal N(0, \sigma^2)]$$ 
+Trabajando con $$y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)],$$
+se considera lo siguiente $$y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x, 0) + \mathcal N(0, \sigma^2)]$$ 
 que implica que el error $$\epsilon$$ es independiente de $$\mathbf x$$, 
-lo cual se transforma en $$y = \mathbf w^T \mathbf x + \mathbb E[\epsilon],$$ donde $$\mathbb E[\epsilon]=0.$$
-Por lo tanto $$y = \mathbf w^T \mathbf x.$$
+lo cual se transforma en $$y = \mathbf w \cdot \mathbf x + \mathbb E[\epsilon],$$ donde $$\mathbb E[\epsilon]=0.$$
+Por lo tanto $$y = \mathbf w \cdot \mathbf x.$$
 
 La función de densidad de probabilidad de una Gausiana corresponde a
 
 $$f(\alpha) = \frac{1}{\sigma \sqrt{2 \pi}} \exp{-\frac{1}{2} (\frac{\alpha -  \mu}{\sigma})^2},$$
 
 donde $$\alpha$$, en el caso de regresión, corresponde 
-a $$\mathbf w^T \mathbf x$$ (i.e., $$\alpha = \mathbf w^T \mathbf x$$).
+a $$\mathbf w \cdot \mathbf x$$ (i.e., $$\alpha = \mathbf w \cdot \mathbf x$$).
 
 Utilizando el método de verosimilitud el cual corresponde a maximizar 
 
 $$\begin{eqnarray}
-\mathcal L(\mathbf w, \sigma) &=& \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w^T \mathbf x) \\
-&=& \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2)} \\
-\ell(\mathbf w, \sigma) &=& \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w^T \mathbf x -  y}{\sigma})^2 \\
-&=& - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w^T \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.
+\mathcal L(\mathbf w, \sigma) &=& \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w \cdot \mathbf x) \\
+&=& \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w \cdot \mathbf x -  y}{\sigma})^2)} \\
+\ell(\mathbf w, \sigma) &=& \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w \cdot \mathbf x -  y}{\sigma})^2 \\
+&=& - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w \cdot \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.
 \end{eqnarray}
 $$
 
@@ -624,16 +624,16 @@ $$ X \mathbf w = \mathbf y,$$
 
 donde para identificar $$\mathbf w$$ se pueden realizar lo siguiente
 
-$$ X^T X \mathbf w = X^T \mathbf y.$$
+$$ X^\intercal X \mathbf w = X^\intercal \mathbf y.$$
 
 Despejando $$\mathbf w$$ se tiene
 
-$$\mathbf w = (X^T X)^{-1} X^T \mathbf y.$$
+$$\mathbf w = (X^\intercal X)^{-1} X^\intercal \mathbf y.$$
 
 Previamente se ha presentado el error estándar de cada parámetro que se ha estimado, 
 en caso de la regresión el 
 [error estándar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-ols)
-de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^T X)^{-1}_{jj}}.$$
+de $$\mathcal w_j$$ es $$\sigma \sqrt{(X^\intercal X)^{-1}_{jj}}.$$
 
 ## Ejemplo: Diabetes
 {: #sec:diabetes }

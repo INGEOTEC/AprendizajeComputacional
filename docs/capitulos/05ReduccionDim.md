@@ -114,8 +114,8 @@ a discriminar la clase. En la sección [Estimación de Parámetros](/Aprendizaje
 se presentó el procedimiento para obtener las medias que 
 definen $$\mathbb P(\mathcal X \mid \mathcal Y)$$ para cada clase. 
 El siguiente código muestra el procedimiento para calcular las medías 
-que son $$\mu_1=[4.9694, 5.0407, 1.9354]^T$$, $$\mu_2=[ 1.5279, -1.4644,  2.0522]^T$$
-y $$\mu_3=[12.553 , -3.4208,  2.0132]^T$$.
+que son $$\mu_1=[4.9694, 5.0407, 1.9354]^\intercal$$, $$\mu_2=[ 1.5279, -1.4644,  2.0522]^\intercal$$
+y $$\mu_3=[12.553 , -3.4208,  2.0132]^\intercal$$.
 
 ```python
 labels = np.unique(y)
@@ -513,13 +513,13 @@ ese total.
 Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $$f: \mathbb R^d \rightarrow \mathbb R^m $$ donde $$m < d $$
 
 La idea de PCA es buscar una matriz de 
-proyección $$W^T \in \mathbb R^{m \times d}$$ tal que los elementos 
-de $$\mathcal D = \{x_i\}$$ sea transformados utilizando $$z = W^T x$$
+proyección $$W^\intercal \in \mathbb R^{m \times d}$$ tal que los elementos 
+de $$\mathcal D = \{x_i\}$$ sea transformados utilizando $$z = W^\intercal x$$
 donde $$z \in \mathbb R^m$$. El objetivo es que la muestra $$z_1$$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
 
-Si suponemos que $$x \sim \mathcal N_d(\mu, \Sigma)$$ y $$ w \in \mathbb R^d $$ entonces $$w^T x \sim \mathcal N(w^T \mu, w^T \Sigma w)$$ y por lo tanto $$\textsf{Var} (w^T x) = w^T \Sigma w $$.
+Si suponemos que $$\mathbf x \sim \mathcal N_d(\mu, \Sigma)$$ y $$\mathbf w \in \mathbb R^d$$ entonces $$\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)$$ y por lo tanto $$\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.$$
 
-Utilizando esta información se puede describir el problema como encontrar $$w_1 $$ tal que $$\textsf{Var}(z_1)$$ sea máxima, donde $$\textsf{Var}(z_1) = w_1^T \Sigma w_1 $$. Dado que en este problema de optimización tiene multiples soluciones, se busca además maximizar bajo la restricción de $$\mid\mid w_1 \mid\mid = 1$$. Escribiéndolo como un problema de Lagrange quedaría como: $$\max_{w_1} w_1^T \Sigma w_1 - \alpha (w^T_1 w_1 - 1)$$. Derivando con respecto a $$w_1$$ se tiene que la solución es: $$\Sigma w_i = \alpha w_i $$ donde esto se cumple solo si $$w_1 $$ es un eigenvector de $$\Sigma$$ y $$\alpha$$ es el eigenvalor correspondiente. Para encontrar $$w_2$$ se requiere $$\mid\mid w_2 \mid\mid = 1$$ y que los vectores sean ortogonales, es decir, $$w_2^T w_1 = 0$$. Realizando las operaciones necesarias se encuentra que $$w_2$$ corresponde al segundo eigenvector y así sucesivamente.
+Utilizando esta información se puede describir el problema como encontrar $$\mathbf w_1$$ tal que $$\textsf{Var}(\mathbf z_1)$$ sea máxima, donde $$\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$$ Dado que en este problema de optimización tiene multiples soluciones, se busca además maximizar bajo la restricción de $$\mid\mid \mathbf w_1 \mid\mid = 1.$$ Escribiéndolo como un problema de Lagrange quedaría como: $$\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$$ Derivando con respecto a $$\mathbf w_1$$ se tiene que la solución es: $$\Sigma \mathbf w_i = \alpha \mathbf w_i$$ donde esto se cumple solo si $$\mathbf w_1$$ es un eigenvector de $$\Sigma$$ y $$\alpha$$ es el eigenvalor correspondiente. Para encontrar $$\mathbf w_2$$ se requiere $$\mid\mid \mathbf w_2 \mid\mid = 1$$ y que los vectores sean ortogonales, es decir, $$\mathbf w_2 \cdot \mathbf w_1 = 0.$$ Realizando las operaciones necesarias se encuentra que $$\mathbf w_2$$ corresponde al segundo eigenvector y así sucesivamente.
 
 ## Ejemplo - Visualización
 {: #sec:visualizacion-iris }

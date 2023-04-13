@@ -135,7 +135,7 @@ p3 = multivariate_normal(mean=[12.5, -3.5], cov=[[2, 3], [3, 7]])
 ```
 
 Los parámetros de la distribución son el vector de medías y la matriz
-de covarianza, para la primera distribución estos corresponden a $$\mathbf \mu = [5, 5]^T$$
+de covarianza, para la primera distribución estos corresponden a $$\mathbf \mu = [5, 5]^\intercal$$
 y 
 
 $$
