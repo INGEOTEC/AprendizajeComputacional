@@ -40,7 +40,7 @@ $$w^* = \textsf{argmin}_w E(w \mid \mathcal X)$$
 En el caso de que $$E(w \mid \mathcal X)$$ sea una función diferenciable, 
 el gradiente está dado por:
 
-$$\nabla_w E(w \mid \mathcal X) = [\frac{\partial E}{\partial w_1}, \frac{\partial E}{\partial w_2}, \ldots]^T.$$
+$$\nabla_w E(w \mid \mathcal X) = [\frac{\partial E}{\partial w_1}, \frac{\partial E}{\partial w_2}, \ldots]^\intercal.$$
 
 La idea general es tomar la dirección opuesta al gradiente para encontrar el 
 mínimo de la función. Entonces el cambio de parámetro está dado por 

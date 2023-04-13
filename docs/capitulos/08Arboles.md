@@ -52,7 +52,7 @@ o respuesta que corresponde a la entrada.
 
 Utilizando el procedimiento para generar [tres Distribuciones Gausianas](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales)
 se generan las siguientes poblaciones con 
-medias $$\mu_1=[5, 5]^T$$, $$\mu_2=[-5, -10]^T$$ y $$\mu_3=[15, -6]^T$$; 
+medias $$\mu_1=[5, 5]^\intercal$$, $$\mu_2=[-5, -10]^\intercal$$ y $$\mu_3=[15, -6]^\intercal$$; 
 utilizando las matrices de covarianza originales.
 
 ![Tres Distribuciones Gausianas](/AprendizajeComputacional/assets/images/clases3-arboles.png)
