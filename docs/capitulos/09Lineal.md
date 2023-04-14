@@ -21,6 +21,7 @@ El **objetivo** de la unidad es conocer y aplicar diferentes métodos lineales d
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
 from scipy.stats import multivariate_normal
+from sklearn.datasets import load_iris
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
