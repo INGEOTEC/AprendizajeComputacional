@@ -133,15 +133,15 @@ El error estándar de los coeficientes estimados con mínimos cuadrados
 se puede calcular de la siguiente forma. El primer paso es 
 utilizar la siguiente identidad
 
-$$\mathbb V(A \mathcal Y) = A \Sigma A^T,$$ 
+$$\mathbb V(A \mathcal Y) = A \Sigma A^\intercal,$$ 
 
 donde $$A$$ es una matriz y $$\mathcal Y$$ es un vector de variables aleatorias. La matriz $$A$$ en OLS es
 
-$$A=(X^T X)^{-1}X^T.$$
+$$A=(X^\intercal X)^{-1}X^\intercal.$$
 
 quedando la varianza como
 
-$$\mathbb V(\mathbf w) = A \Sigma A^T,$$
+$$\mathbb V(\mathbf w) = A \Sigma A^\intercal,$$
 
 donde $$\Sigma$$ es la covarianza de $$\mathcal Y.$$ Dado 
 que $$\mathcal Y$$ tiene una varianza constante 
@@ -150,15 +150,15 @@ se puede derivar la varianza de $$\mathbf w$$
 de la siguiente manera
 
 $$\begin{eqnarray}
-\mathbb V(\mathbf w) &=& A \sigma^2 I A^T \\  
-&=& \sigma^2 A  A^T \\
-&=& \sigma^2 (X^T X)^{-1}X^T ((X^T X)^{-1}X^T)^T\\
-&=& \sigma^2 (X^T X)^{-1}X^T X (X^T X)^{-1} \\
-&=& \sigma^2 (X^T X)^{-1}\\
+\mathbb V(\mathbf w) &=& A \sigma^2 I A^\intercal \\  
+&=& \sigma^2 A  A^\intercal \\
+&=& \sigma^2 (X^\intercal X)^{-1}X^\intercal ((X^\intercal X)^{-1}X^\intercal)^\intercal\\
+&=& \sigma^2 (X^\intercal X)^{-1}X^\intercal X (X^\intercal X)^{-1} \\
+&=& \sigma^2 (X^\intercal X)^{-1}\\
 \end{eqnarray}$$
 
 Por lo tanto el error estándar 
-es: $$\textsf{se}(\mathbf w) = \sigma \sqrt{(X^T X)^{-1}}.$$
+es: $$\textsf{se}(\mathbf w) = \sigma \sqrt{(X^\intercal X)^{-1}}.$$
 
 # Bootstrap
 {: #sec:bootstrap }

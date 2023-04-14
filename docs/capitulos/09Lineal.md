@@ -565,6 +565,7 @@ plt.savefig('SVM3.png', dpi=300)
 -->
 
 # Regresión Logística
+{: #sec:regresion-logistica }
 
 En [clasificación binaria](/AprendizajeComputacional/capitulos/09Lineal/#sec:binaria) se 
 describió que la función discriminante se puede definir como la resta, 
@@ -591,12 +592,12 @@ asumiendo que la matriz de covarianza ($$\Sigma$$) es compartida entre las dos c
 la ecuación anterior quedaría como:
 
 $$\begin{eqnarray*}
-\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) &=& \log \frac{(2\pi)^{-\frac{d}{2}} \mid\Sigma \mid^{-\frac{1}{2}}\exp{(-\frac{1}{2}(\mathbf x - \mathbf \mu_1)^T \Sigma^{-1}(\mathbf x - \mathbf \mu_1))}}{(2\pi)^{-\frac{d}{2}} \mid\Sigma \mid^{-\frac{1}{2}}\exp{(-\frac{1}{2}(\mathbf x - \mathbf \mu_2)^T \Sigma^{-1}(\mathbf x - \mathbf \mu_2))}} + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}\\
+\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) &=& \log \frac{(2\pi)^{-\frac{d}{2}} \mid\Sigma \mid^{-\frac{1}{2}}\exp{(-\frac{1}{2}(\mathbf x - \mathbf \mu_1)^\intercal \Sigma^{-1}(\mathbf x - \mathbf \mu_1))}}{(2\pi)^{-\frac{d}{2}} \mid\Sigma \mid^{-\frac{1}{2}}\exp{(-\frac{1}{2}(\mathbf x - \mathbf \mu_2)^\intercal \Sigma^{-1}(\mathbf x - \mathbf \mu_2))}} + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}\\
 &=&\mathbf w \cdot \mathbf x + w_0
 \end{eqnarray*}$$
 
 donde $$\mathbf w=\Sigma^{-1}(\mathbf \mu_1 - \mathbf \mu_2)$$ 
-y $$w_0=-\frac{1}{2}(\mathbf \mu_1 + \mathbf \mu_2)^T \Sigma^{-1}(\mathbf \mu_1 + \mathbf \mu_2)+ \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$$
+y $$w_0=-\frac{1}{2}(\mathbf \mu_1 + \mathbf \mu_2)^\intercal \Sigma^{-1}(\mathbf \mu_1 + \mathbf \mu_2)+ \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$$
 
 En el caso de regresión logística, se asume que $$\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) = \mathbf w \cdot \mathbf x + w_0$$ y se realiza ninguna 
 asunción sobre la distribución que tienen los datos. Equivalentemente,
@@ -615,6 +616,7 @@ Siempre que se tiene que obtener el máximo de una función esta se puede transf
 problema de minimización, por ejemplo, para el caso anterior definiendo 
 como $$E = -\log \ell$$, utilizando esta transformación el problema sería 
 minimizar la siguiente función:
+{: #eq:entropia-cruzada-2 }
 
 $$E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \log C(x) + (1-y) \log (1 -  C(x)).$$
 
