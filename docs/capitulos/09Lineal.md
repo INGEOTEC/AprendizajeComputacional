@@ -338,7 +338,44 @@ para $$g_1(\mathbf x)=0$$ la clase positiva es $$1$$ y la clase negativa corresp
 a los elementos que corresponde a las clases $$2$$ y $$3.$$
 
 ![Discriminante Lineal](/AprendizajeComputacional/assets/images/clases3.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
 
+```python
+X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]]).rvs(1000)
+X_2 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
+X_3 = multivariate_normal(mean=[-5, 20], cov=[[2, 1], [1, 2]]).rvs(1000)
+
+T = np.concatenate((X_1, X_2, X_3))
+y_t = np.array(['1'] * X_1.shape[0] + ['2'] * X_2.shape[0] + ['3'] * X_3.shape[0])
+linear = LinearSVC(dual=False).fit(T, y_t)
+g_0 = []
+for i, (w, w_0) in enumerate(zip(linear.coef_, linear.intercept_)):
+    w_1, w_2 = w
+    g_0 += [dict(x1=x, x2=y, tipo=f'g{i+1}(x)=0')
+            for x, y in zip(T[:, 0], (-w_0 - w[0] * T[:, 0]) / w[1])]
+W = [-w0 * w / np.linalg.norm(w)**2 
+     for w, w0 in zip(linear.coef_, linear.intercept_)]    
+df = pd.DataFrame(g_0 + \
+                  [dict(x1=x, x2=y, clase='1') for x, y in X_1] +\
+                  [dict(x1=x, x2=y, clase='2') for x, y in X_2] +\
+                  [dict(x1=x, x2=y, clase='3') for x, y in X_3] +\
+                  [dict(x1=w_1, x2=w_2, clase=f'lw{i+1}')
+                   for i, (w_1, w_2) in enumerate(W)]                  
+                 )
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='tipo',
+             palette=sns.color_palette()[6:], legend=True)
+ax.axis('equal')
+```
+</details>
+<!--
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.85))
+plt.tight_layout()
+plt.savefig('clases3.png', dpi=300)
+-->
 # Máquinas de Soporte Vectorial
 
 Es momento de describir algunos algoritmos para estimar los parámetros $$\mathbf w$$,
@@ -492,7 +529,7 @@ Utilizando estas características el problema dual corresponde a
 {: #eq:dual }
 $$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j \mathbf x_i \cdot \mathbf x_j,$$
 
-sujeto a las restricciones $$\sum_i \alpha_i y_i = 0$$ y $$0 \leq \alpha_i \leq C.$$
+sujeto a las restricciones $$\sum_i^N \alpha_i y_i = 0$$ y $$0 \leq \alpha_i \leq C.$$
 
 El problema de optimización dual tiene unas características que lo hacen deseable en 
 ciertos casos, por ejemplo, el problema depende del número de ejemplos ($$N$$) en lugar
@@ -517,7 +554,7 @@ la función de kernel, el problema de optimización dual queda como:
 
 $$f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j K(\mathbf x_i, \mathbf x_j).$$
 
-La función discriminante está dada por $$g(\mathbf x) = \sum_i \alpha_i y_i K(\mathbf x_i, \mathbf x),$$ donde aquellos elementos donde $$\alpha \neq 0$$ se les conoce
+La función discriminante está dada por $$g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x),$$ donde aquellos elementos donde $$\alpha \neq 0$$ se les conoce
 como los vectores de soporte. Estos elementos son los que se encuentran 
 en el margen, dentro del margen y en el lado incorrecto de la función discriminante.
 
