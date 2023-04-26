@@ -319,6 +319,7 @@ vector que está en $$\mathbf x_0 \cdot \mathbf w=0.$$ Para dimensiones mayores 
 término $$\frac{\mathbf x \cdot \mathbf x_0}{\mathbf x_0 \cdot \mathbf x_0}$$ es la proyección
 al hiperplano $$A$$ tal que $$A \mathbf w = 0.$$
 ## Múltiples Clases
+{: #sec:multiples-clases }
 
 Una manera de tratar un problema de $$K$$ clases, es convertirlo en
 $$K$$ problemas de clasificación binarios, a este procedimiento 

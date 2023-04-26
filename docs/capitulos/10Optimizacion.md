@@ -344,6 +344,7 @@ suma_entropia_cruzada(_, T, y_l)
 
 
 # Actualización de Parámetros
+{: #sec:actualizacion-parametros }
 
 Por supuesto la regla $$\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E$$ para actualizar los parámetros $$\mathbf w$$ no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es una problema de optimización convexo, en este tipo de problemas un algoritmos para encontrar los parámetros es el `BFGS`. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística. Se observa como se usa la misma función de error (`suma_entropia_cruzada`) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son `[11.079313 , 15.680828 ,  1.5512476]` y tiene un error $$9.548535e-06.$$
 
