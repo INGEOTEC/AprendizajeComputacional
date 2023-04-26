@@ -39,7 +39,7 @@ Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisa
 {: #sec:regresion-logistica-multinomial }
 
 La idea de regresión logística es modelar $$\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Ber}(y \mid \textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0)),$$ es decir, que la 
-clase $$y$$ esta modelada como una distribución Bernoulli con parámetro $$\textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0).$$ Siguiendo está definición que es equivalente a la mostrada [anteriormente](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion), se puede modelar a un problema de multiples clases como $$\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Cat}(y \mid \textsf{softmax}(W \mathbf x + \mathbf w_0)),$$ es decir, que la clase proviene de una distribución Categórica con parámetros $$\textsf{softmax}(W \cdot \mathbf x + \mathbf w_0),$$ donde $$W \in \mathbb R^{K \times d},$$ $$\mathbf x \in \mathbb R^d$$ y $$\mathbf w_0 \in \mathbb R^d.$$ 
+clase $$y$$ esta modelada como una distribución Bernoulli con parámetro $$\textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0).$$ Siguiendo está definición que es equivalente a la mostrada [anteriormente](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion), se puede modelar a un problema de multiples clases como $$\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Cat}(y \mid \textsf{softmax}(W \mathbf x + \mathbf w_0)),$$ es decir, que la clase proviene de una distribución Categórica con parámetros $$\textsf{softmax}(W \mathbf x + \mathbf w_0),$$ donde $$W \in \mathbb R^{K \times d},$$ $$\mathbf x \in \mathbb R^d$$ y $$\mathbf w_0 \in \mathbb R^d.$$ 
 
 La función $$\textsf{softmax}(\mathbf v)$$, donde $$\mathbf v = W \mathbf x + \mathbf w_0$$ está definida como:
 
@@ -190,146 +190,207 @@ plt.savefig('comp-gd-adam.png', dpi=300)
 Finalmente el accuracy en el conjunto de entrenamiento del modelo estimado con `fit` es $$0.8867$$ (`(y == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es $$0.9667.$$
 
 # Perceptrón
+{: #sec:preceptron }
 
-La unidad básica de 
-procesamiento es el perceptrón, el cual está definido como 
-$$\hat y = \sum_{i=1}^d w_i x_i + w_0$$. 
-Utilizando un vector $$x = (1,x_1, x_2, \ldots, x_d)$$, entonces
-el perceptrón se puede definir como $$\hat y = w \cdot x$$, donde
-$$w=(w_0, w_1, \ldots, w_d)$$. En caso de clasificación se puede
-definir una función umbral para seleccionar la clase, una posibilidad
-sería la función $$\textsf{sigmoid}$$ y la ecuación sería equivalente
-a regresión logística. 
+La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de [Discriminantes Lineales](/AprendizajeComputacional/capitulos/09Lineal), es decir,  $$g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.$$ En problemas de clasificación binaria se encuentran los parámetros 
+de $$g(\mathbf x)$$ de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de [Regresión](/AprendizajeComputacional/capitulos/03Parametricos/#sec:regresion-ols) los parámetros 
+de $$g(\mathbf x)$$ se encuentran utilizando mínimos cuadrados. 
 
-Para el caso de $$K$$ clases, el perceptrón se puede definir como $$\hat y = W \cdot x$$ donde $$W \in \mathbb R^{K \times (d + 1)}$$. Si se requiere conocer
-la probabilidad de ocurrencia de cada clase, se puede utilizar la función
-softmax, que está definida como:
+En el case de tener $$K>2$$ clases entonces el problema se puede afrontar entrenando $$g_k(\mathbf x)$$ 
+perceptrones ($$k=1, \ldots, K$$) tal y como se realizó [Discriminantes Lineales](/AprendizajeComputacional/capitulos/09Lineal/#sec:multiples-clases). De manera concisa se puede definir a $$g: \mathbb R^d \rightarrow \mathbb R^K$$, es decir, $$g(\mathbf x)=W \mathbf x + \mathbf w_0$$ tal y como se realizó en [Regresión Logística Multinomial](/AprendizajeComputacional/capitulos/11RedesNeuronales/#sec:regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $$g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$$ y en el caso multiclase $$g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$$
 
-$$
-\begin{eqnarray*}
-    f_i &=& w_i \cdot x \\ 
-    \hat y_i &=& \frac{\exp f_i}{\sum_{j=1}^K \exp f_k}
-\end{eqnarray*}
-$$
+## Composición de Perceptrones Lineales
 
-En el siguiente video se describe con mas detalle la función
-softmax y el procedimiento para obtener las derivadas
-con respecto a $$f_i$$ y $$f_k$$, lo cual ayudará mas adelante
-para estimar $$w_i$$ utilizando la regla de la cadena.  
+Se puede realizar una composición de perceptrones de la siguiente manera, sea $$g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$$ 
+y $$g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$$ es decir $$g = g_2 \circ g_1.$$ 
+Realizando está composición en las ecuaciones descritas anteriormente se tiene 
 
-{%include softmax.html %}
+$$\begin{eqnarray*}
+\hat{\mathbf{y}}_1 &=& g_1(\mathbf x) \\
+\hat{\mathbf y} &=& g_2(\hat{\mathbf{y}}_1)
+\end{eqnarray*}$$
 
-Continuando con la descripción de softmax en el siguiente
-video se describe el procedimiento para  
-calcular $$\frac{\partial}{\partial f_i} E$$, siendo $$E$$ la función de 
-Entropía cruzada:
 
-$$E = -\sum_{(x, y) \in \mathcal X} \sum_{i=1}^K y_i \log s_i(x),$$
+Expandiendo las ecuaciones anteriores se tiene 
 
-donde la función de softmax es $$s_i(x) = \frac{\exp f_i(x)}{\sum_{k=1}^K \exp f_k(x)}$$.
+$$\begin{eqnarray}
+\hat{\mathbf{y}}_1 &=& W_1 \mathbf x + \mathbf w_{1_0}\\
+\hat{\mathbf y} &=& W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0}\\
+&=& W_2 (W_1 \mathbf x + \mathbf w_{1_0}) + \mathbf w_{2_0}\\
+&=& W_2 W_1 \mathbf x + W_2 \mathbf w_{1_0} + \mathbf w_{2_0}\\
+&=& W \mathbf x + \mathbf w_0
+\end{eqnarray}$$
 
-{%include softmax_entropia.html %}
-
-Utilizando la regla de la cadena, se calcula la derivada del error con 
-respecto al parámetro $$w_i$$ como:
-
-$$
-\begin{eqnarray*}
-\frac{\partial}{\partial w_i} E &=& \frac{\partial}{\partial f_i} E \frac{\partial}{\partial w_i} f_i \\
-               &=& -\sum_{(x, y) \in \mathcal X} (y_i - s_i(x)) \frac{\partial}{\partial w_i} f_i(x) \\
-               &=& -\sum_{(x, y) \in \mathcal X} (y_i - s_i(x)) x
-\end{eqnarray*}
-$$
-
-quedando que el(los) parámetro(s) se actualiza(n) como: $$w_i = w_i + \eta \sum_{(x, y) \in \mathcal X} (y_i - s_i(x)) x$$
-
-Finalizando la introducción es importante resaltar la relación que existe entre
-un algoritmo de Regresión Logística de $$K$$ clases con un perceptrón de
-$$K$$ salidas, lo cual se describe a continuación. 
-
-{%include perceptron_reg_log.html %}
+como se puede observar la composición realizada da como resultado una 
+red donde se tienen que identificar $$W \in \mathbb R^{K \times d}$$ y $$\mathbf w_0 \in \mathbb R^d,$$ es decir, 
+son $$K$$ perceptrones equivalentes al modelado de Regresión Logística Multinomial. Esto es porque la composición fue con funciones lineales.
 
 # Perceptrón Multicapa
 
-En el caso de combinar dos ($$m$$) perceptrones 
-utilizando el siguiente procedimiento: 
-$$o = W_o x$$ y la salida sea la entrada de $$\hat y = W_y o$$;
-se puede observar que es equivalente al uso de un solo perceptrón, es decir,
-$$\hat y = W_y o = W_y W_o x = W x$$, es en este caso donde
-cobra importancia el incluir una función no lineal que haga 
-la diferencia. Por ejemplo, se podrían apilar las siguientes dos
-capas:
+Para evitar que la composición de perceptrones colapsen a una función equivalente, es necesario incluir una función no lineal, sea $$\phi$$ esta función no lineal, (a esta función se le conoce como **función de activación**) entonces se puede observar que la composición $$g=g_2 \circ g_1$$ donde $$g_1 = \phi(W_1 \mathbf x + \mathbf w_{1_0})$$ resulta en
 
-$$
-\begin{eqnarray*}
-    h &=& \textsf{sigmoid}(W_hx) \\
-    \hat y &=& W_y h
-\end{eqnarray*}
-$$
+$$\begin{eqnarray*}
+\hat{\mathbf{y}}_1 &=& \phi(W_1 \mathbf x + \mathbf w_{1_0}) \\
+\hat{\mathbf y} &=& W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0}
+\end{eqnarray*}.$$
 
-de esta manera se tendrían que estimar las matrices $$W_h$$ y $$W_y$$. En el 
-siguiente video se describe esta red neuronal de manera gráfica
-incluyendo sus componentes. 
+A la estructura anterior se le conoce como una red neuronal de una capa oculta, la salida de la capa oculta está en $$\hat{\mathbf{y}}_1$$ y la salida de la red es $$\hat{\mathbf y}.$$ Siguiendo la notación anterior se puede definir una red neuronal con dos capas ocultas de la siguiente manera
 
-{%include RNN.html %}
+$$\begin{eqnarray*}
+\hat{\mathbf{y}}_1 &=& \phi(W_1 \mathbf x + \mathbf w_{1_0}) \\
+\hat{\mathbf y}_2 &=& \phi_2(W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0})\\
+\hat{\mathbf y} &=& (W_3 \hat{\mathbf{y}}_2 + \mathbf w_{3_0})
+\end{eqnarray*},$$
 
-# Estimación de parámetros
+donde la salida de la primera capa oculta ($$\hat{\mathbf{y}}_1$$) es la entrada de la segunda capa oculta y su salida ($$\hat{\mathbf{y}}_2$$) se convierte en la entrada de la capa de salida. 
 
-Para obtener los parámetros de la red neuronal se utiliza propagación hacia
-atrás y descenso de gradiente. Hasta el momento se ha descrito descenso de 
-gradiente utilizando toda la información del conjunto de entrenamiento. Es
-decir, $$E = -\sum_{(x,y) \in \mathcal X} L(y, f(x))$$, donde $$L$$ es una
-función de perdida. Esto tiene la desventaja de que se requiere
-evaluar todo el conjunto entrenamiento para hacer solamente una actualización
-de los parámetros, esto se le conoce como _full-batch learning_. Otro camino
-es seleccionar una subconjunto de 
-$$\mathcal X$$, i.e., $$\mathcal M \subset \mathcal X$$, 
-y calcular el error en ese conjunto, a esto se le conoce como 
-_min-batch learning_ y en el caso que la cardinalidad de $$\mathcal M$$
-sea 1, entonces se le conoce como _on-line learning_. Completar una 
-actualización de los parámetros se denomina una iteración, y pasar
-por todas las instancias de $$\mathcal X$$ en alguna iteración se le
-denomina 1 época (_epoch_). Finalmente, $$\mathcal M$$ puede ser seleccionado
-de manera determinista de tal manera que se pueda saber cuando ocurrió
-una época o se puede seleccionar de manera aleatoria, si se hace de manera
-aleatoria se le conoce como _Stochastic Gradient Descent_.
+## Desvanecimiento del Gradiente
 
-Hasta el momento solo se ha mencionado la función $$\textsf{sigmoid}$$ como
-función de activación, es importante mencionar que aunque
-está función tuvo mucho auge, actualmente no está siendo
-tan utilizada por el problema que se ilustra en el siguiente video. 
+Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función $$\phi$$ es la función $$\textsf{sigmoid},$$ aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones $$g_1(x) = w_1 x + 1.0$$ 
+y $$g_1(x) = w_2 x + 1.0;$$ haciéndose la composición de estas dos funciones $$g=g_2 \circ g_1.$$ 
 
-{%include gradiente.html %}
-
-Una función de activación que no representa el problema de 
-desvanecimiento del gradiente y que además tiene una implementación
-muy eficiente es: $$\textsf{ReLU}(x) = \max(0, x)$$. Donde la derivada es:
-
-$$\textsf{ReLU'}(x) = 
-\begin{cases}
-    0 \text{ } x \leq 0 \\
-    1 \text{ } x > 0
-\end{cases}
-$$
-
-# Ejemplo
-
-Finalmente veremos un ejemplo utilizando la implementación de
-redes neuronales de la librería _sklearn_. En la siguiente líneas
-se carga la librería y los datos del problema del Iris. 
+Las siguientes instrucciones implementan las funciones anteriores utilizando la librería [JAX](https://jax.readthedocs.io).
 
 ```python
-import numpy as np
-from sklearn.neural_network import MLPClassifier
-from sklearn.datasets import load_iris
-X, y = load_iris(return_X_y=True)
-``` 
+@jax.jit
+def g_1(params, x):
+    return jax.nn.sigmoid(params['w1'] * x + 1.0)
 
-Una vez que se tienen los datos cargados se puede usar entrenar una
-red neuronal con los parámetros por defecto y predecir en el mismo conjunto
-entrenado. 
+@jax.jit
+def g_2(params, x):
+    return jax.nn.sigmoid(params['w2'] * x + 1.0)
 
-```python
-ann = MLPClassifier().fit(X, y)
-ann.predict(X)
+@jax.jit
+def g(params, x):
+    return g_2(params, g_1(params, x))
 ```
+
+Utilizando unos parámetros aleatorios generados con el siguiente código 
+
+```python
+key = jax.random.PRNGKey(0)
+key, subkey1, subkey2 = jax.random.split(key, num=3)
+params = dict(w1=jax.random.normal(subkey1),
+              w2=jax.random.normal(subkey2))
+```
+
+se tiene que la derivada de $$g_1$$ con respecto a $$w_1$$ (i.e., `jax.grad(g_1)(params, 1.0)`) y $$g_2$$ con respecto a $$w_2$$ (i.e., `jax.grad(g_2)(params, 1.0)`) es $$0.1417$$ y $$0.1171,$$ respectivamente. El problema viene cuando se calcula $$\frac{\partial g}{\partial w_1}$$ en este caso se obsevar que el gradiente es pequeño comparado con el gradiente obtenido en $$\frac{d g}{d w_1},$$ i.e., `jax.grad(g)(params, 1.0)`, donde se observa que el gradiente 
+para $$w_1$$ corresponde a $$0.0157$$, el gradiente de $$w_2$$ sigue en la misma mágnitud teniendo un valor de $$0.1077.$$ 
+
+El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de manera exponencial, entonces los pesos asociados a las capas alejadas de la capa de salida reciben un gradiente equivalente a cero y no se cuenta con información para actualizar sus pesos. Por este motivo es recomendable utilizar funciones de activación que no presenten esta característica, una muy utilizada es $$\textsf{ReLU}(x) = \max(0, x)$$.
+
+# Ejemplo: Dígitos
+
+Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones. 
+
+```python
+X, y = load_digits(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase `StandardScaler` se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (`T`) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba `G`. 
+
+```python
+normalize = StandardScaler().fit(T)
+T = normalize.transform(T)
+G = normalize.transform(G)
+```
+
+Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor $$1$$ representa la clase, esto se realiza con las siguientes instrucciones. 
+
+```python
+n_labels = np.unique(y).shape[0]
+yt_oh = jax.nn.one_hot(y_t, n_labels)
+```
+
+Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en esta caso corresponde a 64 (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso $$10$$ (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que la dimensiones sean coherentes con la operación que se va a realizar. 
+
+La red que se va a implementar es la siguiente, como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
+
+$$\begin{eqnarray}
+\hat{\mathbf{y}}_1^{32} &=& \phi(W^{32\times 64} \mathbf x^{64} + \mathbf w_{1_0}^{32})\\
+\hat{\mathbf{y}}_2^{16} &=& \phi(W^{16\times 32} \hat{\mathbf{y}}_1^{32} + \mathbf w_{2_0}^{16})\\
+\hat{\mathbf{y}}^{10} &=& W^{10\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{10}\end{eqnarray}$$
+
+Considerando que las entradas se encuentran en una matrix $$X^{N\times64},$$ entonces se puede definir esta estructura en términos de múltiplicación de matrices, lo cual queda como
+
+$$\begin{eqnarray}
+\hat{Y}_1^{N\times 32} &=& \phi(X^{N\times 64} W^{64\times 32} + \mathbf w_{1_0}^{32})\\
+\hat{Y}_2^{N\times 16} &=& \phi(\hat{Y}_1^{N\times 32} W^{32\times 16} + \mathbf w_{2_0}^{16})\\
+\hat{Y}^{N\times 10} &=& \hat{Y}_2^{N\times 16} W^{16\times 10} + \mathbf w_{3_0}^{10}\\
+\end{eqnarray},$$
+
+donde la suma con el término $$\mathbf w_0$$ se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación. 
+
+```python
+d = [64, 32, 16, 10]
+```
+
+Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de `d` creando pares, para generar las dimensiones adecuadas para las matrices $$W.$$
+
+```python
+def parametros_iniciales(d, key=0):
+    key = jax.random.PRNGKey(key)
+    params = []
+    for init, end in zip(d, d[1:]):
+        key, subkey1, subkey2 = jax.random.split(key, num=3)
+        _ = dict(w=jax.random.normal(subkey1, (init, end)) * jnp.sqrt(2 / (init * end)),
+                 w0=jax.random.normal(subkey2, (end, )) * jnp.sqrt(2 / end))
+        params.append(_)
+    return params
+```
+
+Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación $$\phi$$ seleccionada fue $$\textsf{ReLU}$$ que está implementada en la función `jax.nn.relu`.
+
+```python
+@jax.jit
+def ann(params, D):
+    y1 = jax.nn.relu(D @ params[0]['w'] + params[0]['w0'])
+    y2 = jax.nn.relu(y1 @ params[1]['w'] + params[1]['w0'])
+    return y2 @ params[2]['w'] + params[2]['w0']
+```
+
+Como medida de error se usa la [Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada) tal y como se implementa a continuación. El caso $$0 \log 0$$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa `jnp.nansum` que trata los valores no definidos como ceros. 
+
+```python
+@jax.jit
+def media_entropia_cruzada(params, D, y_oh):
+    hy = jax.nn.softmax(ann(params, D), axis=1)
+    return - jnp.nansum(y_oh * jnp.log(hy), axis=1).mean()
+```
+
+En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función `update_finite` que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior. 
+
+```python
+def adam(optimizer, params, epocas=500):
+    @jax.jit
+    def update_finite(a, b):
+        m = jnp.isfinite(b)
+        return jnp.where(m, b, a)
+    
+    @jax.jit
+    def update(params, opt_state, X, y_oh):
+        loss_value, grads = error_grad(params, X, y_oh)
+        updates, opt_state = optimizer.update(grads, opt_state, params)
+        params = optax.apply_updates(params, updates)
+        return params, opt_state, loss_value
+    
+    opt_state = optimizer.init(params)
+    error_grad  = jax.value_and_grad(media_entropia_cruzada)    
+    error = []
+    for i in range(epocas):
+        p, opt_state, loss_value = update(params, opt_state, T, yt_oh)
+        params = jax.tree_map(update_finite, params, p)
+        error.append(loss_value)
+    return params, error
+```
+
+Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.
+
+```python
+params = parametros_iniciales(d)
+optimizer = optax.adam(learning_rate=1e-2)
+p, error = adam(optimizer, params, epocas=500)
+```
+
+El resultado de esta red, es que el error en el conjunto de prueba es $$0.03056$$ calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. 
