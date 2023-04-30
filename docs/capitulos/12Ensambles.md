@@ -19,11 +19,14 @@ El **objetivo** de la unidad es conocer y aplicar diferentes técnicas para real
 
 # Introducción
 
-Una manera de reducir la varianza de un clasificador o regresor es mediante 
-el uso de ensambles. Los ensambles combinan algoritmos de aprendizaje que 
-presentan algunas diferencias, es decir, estos pueden ser entrenados con 
-diferentes particiones del conjunto de entrenamiento, o tienen diferentes 
-parámetros o son diferentes algoritmos. 
+Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gausiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesga mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
+
+# Fundamentos
+
+
+
+$$\hat y_i = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x_i + \epsilon, \sigma^2)]$$
+$$\mathbb V() = \sum_i^N (y_i - \hat y_i)^2$$
 
 # Bagging
 
