@@ -29,8 +29,12 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme()
 ```
+
 ---
 
+{%include 11RedesNeuronales.html %}
+
+---
 # Introducción
 
 Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de [Regresión Logística](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.
