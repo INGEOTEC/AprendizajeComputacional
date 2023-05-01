@@ -28,8 +28,12 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme()
 ```
+
 ---
 
+{%include 09Lineal.html %}
+
+---
 # Introducción
 
 En unidades anteriores se han visto diferentes técnicas para discriminar entre clases;
