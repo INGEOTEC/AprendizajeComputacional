@@ -31,11 +31,11 @@ import pandas as pd
 import seaborn as sns
 sns.set_theme()
 ```
-<!--
 
 ---
+
 {%include 10Optimizacion.html %}
--->
+
 ---
 
 # Introducción
