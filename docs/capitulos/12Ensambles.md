@@ -99,10 +99,16 @@ Siguiendo con la idea de combinar $$M$$ instancias independientes de un tipo de 
 
 ## Ejemplo: Dígitos
 
+Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($$\mathbb T$$) y prueba ($$\mathbb G $$) con las siguientes instrucciones.
+
 ```python
 X, y = load_digits(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
+
+Los algoritmos que se utilizarán de base son [Máquinas de Soporte Vectorial Lineal](/AprendizajeComputacional/capitulos/09Lineal/#sec:svm) y [Árboles de Decisión](/AprendizajeComputacional/capitulos/08Arboles). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging. 
+
+La siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el [macro-recall](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:macro). El rendimiento se presenta en una tabla para facilitar la comparación. 
 
 ```python
 svc = LinearSVC(dual=False).fit(T, y_t)
