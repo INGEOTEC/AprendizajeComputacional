@@ -19,6 +19,13 @@ El **objetivo** de la unidad es conocer y aplicar diferentes técnicas para real
 {: .no_toc .text-delta }
 ```python
 from scipy.stats import binom
+from sklearn.datasets import load_diabetes, load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC, LinearSVR
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.metrics import recall_score, mean_absolute_percentage_error
+from collections import Counter
+from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -38,8 +45,8 @@ parámetros $$k=\lfloor \frac{M}{2}\rfloor,$$ $$n=M$$ y $$p=0.51$$
 indica seleccionar la clase $$0$$ y $$1 - \textsf{cdf}$$ corresponde a la probabilidad
 de seleccionar la clase $$1$$. 
 
-La siguiente figura muestra como cambia el accuracy, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene un accuracy de $$p=0.51,$$ se puede observar que cuando se 
-tienen $$10,000$$ clasificadores independientes, se tiene un accuracy de $$0.977.$$
+La siguiente figura muestra como cambia el accuracy, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene un accuracy de $$p=0.51,$$ se puede observar que 
+cuando $$M=501$$ el accuracy es $$0.673$$ y con $$9,999$$ clasificadores se tiene un accuracy de $$0.977.$$
 
 ![1 - CDF Binomial](/AprendizajeComputacional/assets/images/ensamble-binomial.png)
 <details markdown="block">
@@ -59,27 +66,158 @@ plt.tight_layout()
 plt.savefig('ensamble-binomial.png', dpi=300)
 -->
 
+En el caso de regresión, en particular cuando se usa como función de error el cuadrado del error, i.e., $$(\hat y - y)^2$$ se tiene el intercambio entre varianza y sesgo, el cual se deriva de la siguiente manera. 
 
-$$\hat y_i = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x_i + \epsilon, \sigma^2)]$$
-$$\mathbb V() = \sum_i^N (y_i - \hat y_i)^2$$
+$$\begin{eqnarray}
+\mathbb E[(\hat y - y)^2] &=&\\
+&=&\mathbb E[(\hat y - \mathbb E[\hat y] + \mathbb E[\hat y] - y)^2]\\
+&=&\underbrace{\mathbb E[(\hat y - \mathbb E[\hat y])^2]}_{\mathbb V(\hat y)} + \mathbb E[(\mathbb E[\hat y] - y)^2] + 2 \mathbb E[(\hat y - \mathbb E[\hat y])(\mathbb E[\hat y] - y)]\\
+&=&\mathbb V(\hat y) + (\underbrace{\mathbb E[\hat y] - y}_{\text{sesgo}})^2 + 2 \underbrace{\mathbb E[(\hat y - \mathbb E[\hat y])]}_{\mathbf E[\hat y] - \mathbb E[\hat y] = 0}(\mathbb E[\hat y] - y)\\
+&=&\mathbb V(\hat y) + (\mathbb E[\hat y] - y)^2
+\end{eqnarray}$$
+
+
+Se observa que el cuadrado del error está definido por la varianza de $$\hat y$$ (i.e., $$\mathbb V(\hat y)$$), la cual es independiente de la 
+salida $$y$$ y el sesgo al cuadrado del algoritmo (i.e., $$(\mathbb E[\hat y] - y)^2$$).
+
+En el contexto de ensamble, asumiendo que se tienen $$M$$ regresores independientes donde la predicción está dada por $$\bar y = \frac{1}{M}\sum_{i=1}^M \hat y^i$$, se tiene que el sesgo de cada predictor individual es igual al sesgo de su promedio (i.e., $$(\mathbb E[\bar y] - y) = (\mathbb E[\hat y^i] - y)$$) como se puede observar a continuación. 
+
+$$\begin{eqnarray}
+\mathbb E[\bar y] &=& \mathbb E[\frac{1}{M} \sum_{i=1}^M \hat y^i]\\
+&=&\frac{1}{M} \sum_{i=1}^M \underbrace{\mathbb E[\hat y^i]}_{\mathbb E[\hat y]} =\frac{1}{M} M \mathbb E[\hat y] =\mathbb E[\hat y]
+\end{eqnarray}$$
+
+Por otro lado la varianza del promedio (i.e., $$\mathbb V(\bar y)$$) está dada por $$\mathbb V(\bar y)=\frac{1}{M} \mathbb V(\hat y)$$, que se deriva siguiendo los pasos del [error estandar de la media.](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media)
+
+Esto quiere decir que si se tienen $$M$$ regresores independientes, entonces el error cuadrado de su promedio es menor que el error de cada regresor individual, esto es porque su la varianza se reduce tal y como se mostró. 
+
+Tanto en el caso de clasificación como en el caso del error cuadrado, es poco probable contar con clasificadores y regresores que sean completamente independientes, entonces sus predicciones van a estar relacionadas en algún grado y no se podrá llegar a las reducciones obtenidas en el procedimiento presentado. 
 
 # Bagging
 
-Bagging es un método sencillo para la creación de un ensamble, la idea 
-original es hacer un muestreo con repetición y así generar un nuevo conjunto 
-de entrenamiento. 
+Siguiendo con la idea de combinar $$M$$ instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa la técnica de [Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap) para generar $$M$$ instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.
 
-Se ha probado que en promedio bagging es equivalente al seleccionar el 50% de 
-los datos sin reemplazo y entrenar con este subconjunto, en el siguiente 
-video vemos los efectos de bagging utilizando una máquina de soporte 
-vectorial lineal.
+## Ejemplo: Dígitos
 
-{%include bagging.html %}
+```python
+X, y = load_digits(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
 
-Bagging es una técnica que es muy utilizada en Árboles de Decisión, estos
-algoritmos se les conoce como bosques, dado que son un conjunto de árboles. 
-En particular Random Forest utiliza bagging y además una selección aleatoria
-de las entradas para realizar los árboles que componen al ensamble. 
+```python
+svc = LinearSVC(dual=False).fit(T, y_t)
+recall_score(y_g, svc.predict(G), average="macro")
+```
+
+```python
+tree = DecisionTreeClassifier(criterion='entropy',
+                              min_samples_split=9).fit(T, y_t)
+recall_score(y_g, tree.predict(G), average="macro")
+```
+
+```python
+B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
+```
+
+```python
+svc_ins = [LinearSVC(dual=False).fit(T[b], y_t[b]) for b in B]
+hys = np.array([m.predict(G) for m in svc_ins])
+hy = np.array([Counter(x).most_common(n=1)[0][0] for x in hys.T])
+recall_score(y_g, hy, average="macro")
+```
+
+```python
+tree_ins = [DecisionTreeClassifier(criterion='entropy',
+                                   min_samples_split=9).fit(T[b], y_t[b])
+            for b in B]
+hys = np.array([m.predict(G) for m in tree_ins])
+hy = np.array([Counter(x).most_common(n=1)[0][0] for x in hys.T])
+recall_score(y_g, hy, average="macro")
+```
+
+```python
+hys = np.array([m.decision_function(G) for m in svc_ins])
+hys = np.where(hys > 1, 1, hys)
+hys = np.where(hys < -1, -1, hys)
+hys = hys.sum(axis=0)
+recall_score(y_g, hys.argmax(axis=1), average="macro")
+```
+
+```python
+hys = np.array([m.predict_proba(G) for m in tree_ins])
+recall_score(y_g, hys.sum(axis=0).argmax(axis=1), average="macro")
+```
+
+|                   |M.S.V. Lineal|Árboles de Decisión|
+|-------------------|-------------|-------------------|
+|Único              |$$0.9435$$   |$$0.8527$$         |
+|Votación ($$M=11$$)|$$0.9423$$   |$$0.9553$$         |
+|Suma ($$M=11$$)    |$$0.9519$$   |$$0.9574$$         |
+
+
+## Ejemplo: Diabetes
+
+```python
+X, y = load_diabetes(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+```
+
+```python
+svr = LinearSVR().fit(T, y_t)
+mean_absolute_percentage_error(y_g, svr.predict(G))
+```
+
+```python
+tree = DecisionTreeRegressor(min_samples_split=9).fit(T, y_t)
+mean_absolute_percentage_error(y_g, tree.predict(G)
+```
+
+```python
+B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
+```
+
+```python
+svr_ins = [LinearSVR().fit(T[b], y_t[b]) for b in B]
+hys = np.array([m.predict(G) for m in svr_ins])
+mean_absolute_percentage_error(y_g, hys.mean(axis=0))
+```
+
+```python
+tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b]) for b in B]
+hys = np.array([m.predict(G) for m in tree_ins])
+mean_absolute_percentage_error(y_g, hys.mean(axis=0))
+```
+
+|                   |M.S.V. Lineal|Árboles de Decisión|
+|-------------------|-------------|-------------------|
+|Único              |$$0.4228$$   |$$0.4910$$         |
+|Suma ($$M=11$$)    |$$0.4211$$   |$$0.3918$$         |
+
+
+![Ensamble Diabetes](/AprendizajeComputacional/assets/images/ensamble-diabetes.png)
+<details markdown="block">
+  <summary>
+    Código de la figura
+  </summary>
+
+```python
+B = np.random.randint(T.shape[0], size=(500, T.shape[0]))
+tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b]) for b in B]
+hys = np.array([m.predict(G) for m in tree_ins])
+
+M = range(2, len(tree_ins) + 1)
+p = [mean_absolute_percentage_error(y_g, 
+                                    hys[:i].mean(axis=0))
+     for i in M]
+df = pd.DataFrame(dict(error=p, ensamble=M))
+sns.relplot(data=df, x='ensamble', y='error', kind='line')
+
+```  
+</details>
+<!--
+plt.tight_layout()
+plt.savefig('ensamble-diabetes.png', dpi=300)
+-->
 
 # Stack Generalization
 
