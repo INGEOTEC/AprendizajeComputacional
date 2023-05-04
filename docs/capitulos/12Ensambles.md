@@ -115,15 +115,21 @@ svc = LinearSVC(dual=False).fit(T, y_t)
 recall_score(y_g, svc.predict(G), average="macro")
 ```
 
+Complementando las instrucciones anteriores, en el siguiente código se entrena un Árbol de Decisión. 
+
 ```python
 tree = DecisionTreeClassifier(criterion='entropy',
                               min_samples_split=9).fit(T, y_t)
 recall_score(y_g, tree.predict(G), average="macro")
 ```
 
+El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del [error estándar de la media](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap-ejemplo); el siguiente código genera las muestras, en particular el ensamble sería de $$M=11$$ elementos. 
+
 ```python
 B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
 ```
+
+Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entra los máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.
 
 ```python
 svc_ins = [LinearSVC(dual=False).fit(T[b], y_t[b]) for b in B]
@@ -131,6 +137,8 @@ hys = np.array([m.predict(G) for m in svc_ins])
 hy = np.array([Counter(x).most_common(n=1)[0][0] for x in hys.T])
 recall_score(y_g, hy, average="macro")
 ```
+
+El siguiente algoritmo son los Árboles de Decisión; la única diferencia con respecto a las instrucciones anteriores es la primera línea donde se entrenan los árboles. 
 
 ```python
 tree_ins = [DecisionTreeClassifier(criterion='entropy',
@@ -141,6 +149,8 @@ hy = np.array([Counter(x).most_common(n=1)[0][0] for x in hys.T])
 recall_score(y_g, hy, average="macro")
 ```
 
+Como se mencionó, la predicción final se puede realizar de dos manera en clasificación una es usando votación, como se vió en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculas las probabilidad de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa está información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que $$1$$ y menor que $$-1$$ y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo. 
+
 ```python
 hys = np.array([m.decision_function(G) for m in svc_ins])
 hys = np.where(hys > 1, 1, hys)
@@ -149,10 +159,16 @@ hys = hys.sum(axis=0)
 recall_score(y_g, hys.argmax(axis=1), average="macro")
 ```
 
+El procedimiento anterior se puede adaptar a los Árboles de Decisión utilizando el siguiente código. 
+
 ```python
 hys = np.array([m.predict_proba(G) for m in tree_ins])
 recall_score(y_g, hys.sum(axis=0).argmax(axis=1), average="macro")
 ```
+
+Finalmente, la siguiente tabla muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma. 
+
+Comparando los diferentes rendimientos, se puede observar que no existe mucha diferencia en rendimiento en las M.S.V Lineal y que la mayor mejora se presentó en los Árboles de Decisión. Este comportamiento es esperado dado que para que Bagging funciones adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo. 
 
 |                   |M.S.V. Lineal|Árboles de Decisión|
 |-------------------|-------------|-------------------|
@@ -163,24 +179,34 @@ recall_score(y_g, hys.sum(axis=0).argmax(axis=1), average="macro")
 
 ## Ejemplo: Diabetes
 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($$\mathbb T$$) y prueba ($$\mathbb G $$) se muestra a continuación. 
+
 ```python
 X, y = load_diabetes(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
+
+Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como mediada de rendimiento el porcentaje del error absoluto; tal y como se muestran en las siguientes instrucciones. 
 
 ```python
 svr = LinearSVR().fit(T, y_t)
 mean_absolute_percentage_error(y_g, svr.predict(G))
 ```
 
+El árbol de decisión y su rendimiento se implementa con el siguiente código. 
+
 ```python
 tree = DecisionTreeRegressor(min_samples_split=9).fit(T, y_t)
 mean_absolute_percentage_error(y_g, tree.predict(G)
 ```
 
+Al igual que en el caso de clasificación, la siguiente instrucción genera los índices para generar las muestras. Se hace un ensamble de $$M=11$$ elementos. 
+
 ```python
 B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
 ```
+
+En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrena las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y se en la tercera se realiza el promedio y se mide el rendimiento. 
 
 ```python
 svr_ins = [LinearSVR().fit(T[b], y_t[b]) for b in B]
@@ -188,18 +214,25 @@ hys = np.array([m.predict(G) for m in svr_ins])
 mean_absolute_percentage_error(y_g, hys.mean(axis=0))
 ```
 
+De manera equivalente se entrenan los Árboles de Decisión, como se muestra a continuación. 
+
 ```python
 tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b]) for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
 mean_absolute_percentage_error(y_g, hys.mean(axis=0))
 ```
 
-|                   |M.S.V. Lineal|Árboles de Decisión|
-|-------------------|-------------|-------------------|
-|Único              |$$0.4228$$   |$$0.4910$$         |
-|Suma ($$M=11$$)    |$$0.4211$$   |$$0.3918$$         |
+La siguiente tabla muestra el rendimiento de los algoritmos de regresión utilizados, al igual que en el caso de clasificación, la M.S.V. no se ve beneficiada con el uso de Bagging. Por otro lado los Árboles de Decisión tienen un incremento en rendimiento considerable al usar Bagging. 
 
+|                       |M.S.V. Lineal|Árboles de Decisión|
+|-----------------------|-------------|-------------------|
+|Único                  |$$0.4228$$   |$$0.4910$$         |
+|Promedio ($$M=11$$)    |$$0.4211$$   |$$0.3918$$         |
 
+Hasta este momento los ensambles han sido de $$M=11$$ elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La siguiente figura muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $$M=2,\ldots,500.$$ Se observa que alrededor 
+de $$M=200$$ y $$M=300$$ el error está estable y después hay una pequeña disminución en $$M=500.$$ Por otro lado 
+de $$M=50$$ a $$M=100$$ hay un incremento en el error. 
+ 
 ![Ensamble Diabetes](/AprendizajeComputacional/assets/images/ensamble-diabetes.png)
 <details markdown="block">
   <summary>
