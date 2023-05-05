@@ -102,7 +102,7 @@ Siguiendo con la idea de combinar $$M$$ instancias independientes de un tipo de 
 
 ## Ejemplo: Dígitos
 
-Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($$\mathbb T$$) y prueba ($$\mathbb G $$) con las siguientes instrucciones.
+Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($$\mathcal T$$) y prueba ($$\mathcal G $$) con las siguientes instrucciones.
 
 ```python
 X, y = load_digits(return_X_y=True)
@@ -182,7 +182,7 @@ Comparando los diferentes rendimientos, se puede observar que no existe mucha di
 
 ## Ejemplo: Diabetes
 
-Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($$\mathbb T$$) y prueba ($$\mathbb G $$) se muestra a continuación. 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($$\mathcal T$$) y prueba ($$\mathcal G $$) se muestra a continuación. 
 
 ```python
 X, y = load_diabetes(return_X_y=True)
