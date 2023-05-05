@@ -192,6 +192,7 @@ estima $$\mathbb V(\theta)$$ con la siguiente ecuación
 $$\mathbb V(\hat \theta) = \frac{1}{B} \sum_{j=1}^B (\hat \theta_j - \frac{1}{B} \sum_k^B \hat \theta_k)^2.$$
 
 ## Ejemplo
+{: #sec:bootstrap-ejemplo }
 
 Utilizando los datos generados en el [ejemplo anterior](#sec:ejemplo-normal-1d)
 se puede calcular el error estándar de la mediana. El primer paso 

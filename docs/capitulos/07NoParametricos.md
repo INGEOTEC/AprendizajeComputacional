@@ -445,6 +445,7 @@ hy = kcl.predict(G)
 ```
 
 # Regresión
+{: #sec:regresion }
 
 La idea de utilizar vecinos cercanos no es solamente para problemas de clasificación, en problemas de regresión se puede seguir un razonamiento equivalente, el único cambio
 es en la función $$N_c(x)$$ donde en lugar de calcular la frecuencia de las

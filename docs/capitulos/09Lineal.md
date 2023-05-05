@@ -382,6 +382,7 @@ plt.tight_layout()
 plt.savefig('clases3.png', dpi=300)
 -->
 # Máquinas de Soporte Vectorial
+{: #sec:svm }
 
 Es momento de describir algunos algoritmos para estimar los parámetros $$\mathbf w$$,
 y $$w_0$$ empezando por las máquinas de soporte vectorial. En este clasificador se asume un problema binario y las clases están representadas por $$-1$$ y $$1$$, 
