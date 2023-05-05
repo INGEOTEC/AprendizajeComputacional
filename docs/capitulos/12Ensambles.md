@@ -21,8 +21,10 @@ El **objetivo** de la unidad es conocer y aplicar diferentes técnicas para real
 from scipy.stats import binom
 from sklearn.datasets import load_diabetes, load_digits
 from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC, LinearSVR
+from sklearn.svm import LinearSVC, LinearSVR, SVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.ensemble import BaggingRegressor
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import recall_score, mean_absolute_percentage_error
 from collections import Counter
 from matplotlib import pylab as plt
@@ -226,12 +228,11 @@ La siguiente tabla muestra el rendimiento de los algoritmos de regresión utiliz
 
 |                       |M.S.V. Lineal|Árboles de Decisión|
 |-----------------------|-------------|-------------------|
-|Único                  |$$0.4228$$   |$$0.4910$$         |
-|Promedio ($$M=11$$)    |$$0.4211$$   |$$0.3918$$         |
+|Único                  |$$0.4995$$   |$$0.5009$$         |
+|Promedio ($$M=11$$)    |$$0.4964$$   |$$0.4191$$         |
 
-Hasta este momento los ensambles han sido de $$M=11$$ elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La siguiente figura muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $$M=2,\ldots,500.$$ Se observa que alrededor 
-de $$M=200$$ y $$M=300$$ el error está estable y después hay una pequeña disminución en $$M=500.$$ Por otro lado 
-de $$M=50$$ a $$M=100$$ hay un incremento en el error. 
+Hasta este momento los ensambles han sido de $$M=11$$ elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La siguiente figura muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $$M=2,\ldots,500.$$ Se observa que alrededor que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor 
+de $$M=100.$$ Finalmente se ve que el rendimiento es estable cuando $$M>200.$$
  
 ![Ensamble Diabetes](/AprendizajeComputacional/assets/images/ensamble-diabetes.png)
 <details markdown="block">
@@ -260,17 +261,46 @@ plt.savefig('ensamble-diabetes.png', dpi=300)
 
 # Stack Generalization
 
-Este tipo de ensamble es una generalización a todos los ensambles, la idea es 
-utilizar las predicciones de varios clasificadores para generar la predicción 
-final. 
+Continuando con la descripción de ensambles, se puede observar que Bagging en el caso de la media se puede representar como $$\sum_i^M \frac{1}{M} \hat y^i,$$ donde el factor $$\frac{1}{M}$$ se puede observar como un parámetro a identificar. Entonces la idea siguiente sería como se podría estimar parámetros para cada uno de los estimadores bases, e.g., $$\sum_i^M w_i \hat y^i$$ donde $$w_i$$ para bagging corresponde a $$\frac{1}{M}.$$ Se podría ir más allá y pensar que las predicciones $$\mathbf y=(\hat y^1, \ldots, \hat y^M)$$ podrían ser la entrada a otro estimador. 
 
-En bagging la función que se utilizó fue simplemente utilizar la media de las 
-predicciones hecha por los clasificadores base, pero la media podría no ser 
-la mejor función que una esta información. 
+Esa es la idea detrás de Stack Generalization, la idea es utilizar las predicciones de los estimadores bases como las entradas de otro estimador. Para poder llevar este proceso es necesario contar con un conjunto independiente del conjunto de entrenamiento para encontrar los parámetros del estimador que combina las predicciones. 
 
-Por otro lado en Stack Generalization se entrena otro clasificador sobre las 
-predicciones para tomar la decisión final. 
+## Ejemplo: Diabetes
 
-En el siguiente video se muestra este procedimiento. 
+Para ejemplificar el uso de Stack Generalization, se usa el conjunto de datos de Diabetes. Como se acaba de describir es necesario contar con un conjunto independiente para estimar los parámetros del estimador del stack. Entonces el primer paso es dividir el conjunto de entrenamiento en un conjunto de entrenamiento y validación ($$\mathcal V,$$) tal y como se muestra en la siguiente instrucción. 
 
-{%include stack_generalization.html %}
+```python
+T1, V, y_t1, y_v = train_test_split(T, y_t, test_size=0.3)
+```
+
+Para este ejemplo se usará como regresores bases el algoritmo de [Vecinos Cercanos](/AprendizajeComputacional/capitulos/07NoParametricos/#sec:regresion) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación ($$\mathcal V$$) y prueba ($$\mathcal G$$), esto se observa en la segunda y tercera línea del siguiente código. 
+
+```python
+models = [KNeighborsRegressor(n_neighbors=n).fit(T1, y_t1) for n in [7, 9]]
+V_stack = np.array([m.predict(V) for m in models]).T
+G_stack = np.array([m.predict(G) for m in models]).T
+```
+
+El porcentaje del error absoluto de los estimadores bases en el conjunto de prueba es $$0.4173$$ y $$0.4232$$, respectivamente. Estos errores se calculan utilizando el siguiente código. 
+
+```python
+for hy in G_stack.T:
+     print(f'{mean_absolute_percentage_error(y_g, hy):0.4f}')
+```
+
+Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una [Máquina de Soporte Vectorial](/AprendizajeComputacional/capitulos/09Lineal/#sec:svm) con kernel polinomial de grado $$2$$. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba y se mide el error. El error que tiene el procedimiento de stacking implementado es $$0.3894.$$
+
+```python
+stacking = SVR(kernel='poly', degree=2).fit(V_stack, y_v)
+hy = stacking.predict(np.vstack(G_stack))
+mean_absolute_percentage_error(y_g, hy)
+```
+
+Cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases, por ejemplo, en las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial, el rendimiento de este cambio es $$0.4455,$$ lo cual es considerablemente mayor que el error obtenido por los estimadores bases. 
+
+```python
+st_trees = BaggingRegressor(estimator=DecisionTreeRegressor(min_samples_split=9),
+                            n_estimators=200).fit(V_stack, y_v)
+hy = st_trees.predict(np.vstack(G_stack))
+print(f'{mean_absolute_percentage_error(y_g, hy):0.4f}')
+```
