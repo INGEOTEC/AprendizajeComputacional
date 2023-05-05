@@ -41,6 +41,7 @@ sns.set_theme()
 Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gausiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesga mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
 
 # Fundamentos
+{: #sec:fundamentos }
 
 La descripción de ensambles se empieza observando el siguiente comportamiento. Suponiendo que se cuenta con $$M$$ algoritmos de clasificación binaria cada uno tiene un accuracy de $$p=0.51$$ y estos son completamente independientes. El proceso de clasificar un elemento corresponde a preguntar la clase a los $$M$$ clasificadores y la clase que se recibe mayor votos es la clase seleccionada, esta votación se comporta como una variable aleatoria que tiene una distribución Binomial. Suponiendo con la clase del elemento es $$1$$, en esta condición la función cumulativa de distribución ($$\textsf{cdf}$$) con 
 parámetros $$k=\lfloor \frac{M}{2}\rfloor,$$ $$n=M$$ y $$p=0.51$$ 
