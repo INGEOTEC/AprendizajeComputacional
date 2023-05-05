@@ -36,6 +36,10 @@ sns.set_theme()
 
 ---
 
+{%include 12Ensambles.html %}
+
+---
+
 # Introducción
 
 Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gausiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesga mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
@@ -102,7 +106,7 @@ Siguiendo con la idea de combinar $$M$$ instancias independientes de un tipo de 
 
 ## Ejemplo: Dígitos
 
-Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($$\mathbb T$$) y prueba ($$\mathbb G $$) con las siguientes instrucciones.
+Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($$\mathcal T$$) y prueba ($$\mathcal G $$) con las siguientes instrucciones.
 
 ```python
 X, y = load_digits(return_X_y=True)
@@ -182,7 +186,7 @@ Comparando los diferentes rendimientos, se puede observar que no existe mucha di
 
 ## Ejemplo: Diabetes
 
-Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($$\mathbb T$$) y prueba ($$\mathbb G $$) se muestra a continuación. 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($$\mathcal T$$) y prueba ($$\mathcal G $$) se muestra a continuación. 
 
 ```python
 X, y = load_diabetes(return_X_y=True)
