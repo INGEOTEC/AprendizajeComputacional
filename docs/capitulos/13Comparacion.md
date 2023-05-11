@@ -59,7 +59,7 @@ donde $$z_{\frac{\alpha}{2}} = \Phi^{-1}(1 - \frac{\alpha}{2})$$ y $$\Phi$$ es l
 Recordado que dado una entrada el clasificador puede acertar la clase a la que pertenece esa entrada, entonces el resultado se puede representar como $$1$$ si la respuesta es correcta y $$0$$ de lo contrario. En este caso la respuesta es una variable aleatoria con una distribución de Bernoulli. Recordando que la distribución Bernoulli está definida por un parámetro $$p$$, estimado como $$\hat p = \frac{1}{N} \sum_{i=1}^N \mathcal X_i$$ donde $$\mathcal X_i$$ corresponde al resultado del algoritmo en el $$i$$-ésimo ejemplo. La varianza de una distribución Bernoulli es $$p(1-p)$$ por lo que el error estándar 
 es: $$se=\sqrt{\frac{p(1-p)}{N}}$$ dando como resultado el siguiente intervalo:
 
-$$C_N = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).$$
+$$C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).$$
 
 Suponiendo $$N=100$$ y $$p=0.85$$ el siguiente código calcula el intervalo usando $$\alpha=0.05$$
 
@@ -71,7 +71,7 @@ N = 100
 Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
-$$C_n = (0.78, 0.92)$$.
+$$C = (0.78, 0.92)$$.
 
 En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema del Iris. 
 
@@ -111,7 +111,7 @@ for tr, ts in kf.split(X, y):
     hy[ts] = model.predict(X[ts])
 ```
 
-El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza $$C_N = (0.9196, 0.9871).$$
+El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza $$C = (0.9196, 0.9871).$$
 
 ```python
 X = np.where(y == hy, 1, 0)
@@ -166,7 +166,7 @@ for tr, ts in kf.split(X, y):
 X = np.where(y == hy, 1, 0)
 ```
 
-Realizando la selección con remplazo y calculando el intervalo se obtiene un intervalo de $$C_N=(0.9215, 0.9852)$$. Se puede observar que previamente se había obtenido un intervalo de $$(0.9196, 0.9871)$$. 
+Realizando la selección con remplazo y calculando el intervalo se obtiene un intervalo de $$C=(0.9215, 0.9852)$$. Se puede observar que previamente se había obtenido un intervalo de $$(0.9196, 0.9871)$$. 
 
 ```python
 S = np.random.randint(X.shape[0],
@@ -178,7 +178,7 @@ Cn = (p - z * se, p + z * se)
 
 ## Método: Percentil
 
-Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $$\hat \theta$$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, obteniendo un intervalo de $$C_N=(0.9263, 0.9800).$$
+Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $$\hat \theta$$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, obteniendo un intervalo de $$C=(0.9263, 0.9800).$$
 
 ```python
 C = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
@@ -206,7 +206,7 @@ B = [recall_score(y[s], hy[s], average="macro")
      for s in S]
 ```
 
-El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones; obteniendo un intervalo de $$C_N=(0.9098, 0.9855).$$
+El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones; obteniendo un intervalo de $$C=(0.9098, 0.9855).$$
 
 ```python
 p = np.mean(B)
@@ -214,7 +214,7 @@ se = np.sqrt(np.var(B))
 Cn = (p - z * se, p + z * se)
 ``` 
 
-Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, como se muestra a continuación, estimando un intervalo de $$C_N=(0.9167, 0.9765).$$
+Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, como se muestra a continuación, estimando un intervalo de $$C=(0.9167, 0.9765).$$
 
 ```python
 Cn = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
