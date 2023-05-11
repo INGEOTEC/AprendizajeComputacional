@@ -65,7 +65,7 @@ Suponiendo $$N=100$$ y $$p=0.85$$ el siguiente código calcula el intervalo usan
 
 ```python
 alpha = 0.05
-z = norm().ppf( 1 - alpha / 2)
+z = norm().ppf(1 - alpha / 2)
 p = 0.85
 N = 100
 Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
@@ -95,7 +95,7 @@ Con las predicciones se estima el accuracy y se siguen los pasos para calcular e
 X = np.where(y_g == hy, 1, 0)
 p = X.mean()
 N = X.shape[0]
-Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
 El intervalo de confianza obtenido es $$C = (0.8953, 1.0158),$$ se puede observar que el límite superior es mayor 
@@ -117,7 +117,7 @@ El resto del código es equivalente al usado previamente obteniendo el siguiente
 X = np.where(y == hy, 1, 0)
 p = X.mean()
 N = X.shape[0]
-Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
 ## Método: Bootstrap del error estándar
@@ -129,13 +129,12 @@ Es más sencillo entender este método mediante un ejemplo. Usando el ejercicio 
 ```python
 alpha = 0.05
 N = 100
-z = norm().ppf( 1 - alpha / 2)
+z = norm().ppf(1 - alpha / 2)
 X = np.zeros(N)
 X[:85] = 1
 ```
 
-`X` es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener $$\hat \theta$$ para cada muestra, en este caso $$\hat \theta$$ corresponde a la media. El resultado se guarda en una lista $$B$$ y se repite el experimento
-$$500$$ veces.
+`X` es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener $$\hat \theta$$ para cada muestra, en este caso $$\hat \theta$$ corresponde a la media. El resultado se guarda en una lista $$B$$ y se repite el experimento $$500$$ veces.
 
 ```python
 S = np.random.randint(X.shape[0],
@@ -173,7 +172,7 @@ S = np.random.randint(X.shape[0],
                       size=(500, X.shape[0]))
 B = [X[s].mean() for s in S]
 se = np.sqrt(np.var(B))
-Cn = (p - z * se, p + z * se)
+C = (p - z * se, p + z * se)
 ```
 
 ## Método: Percentil
@@ -181,6 +180,7 @@ Cn = (p - z * se, p + z * se)
 Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $$\hat \theta$$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, obteniendo un intervalo de $$C=(0.9263, 0.9800).$$
 
 ```python
+alpha = 0.05 / 2
 C = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
 ```
 
@@ -190,7 +190,7 @@ Hasta el momento se ha usado una medida de rendimiento para la cual se puede con
 
 ```python
 alpha = 0.05
-z = norm().ppf( 1 - alpha / 2)
+z = norm().ppf(1 - alpha / 2)
 
 X, y = load_iris(return_X_y=True)
 kf = StratifiedKFold(n_splits=10, shuffle=True)
@@ -211,13 +211,14 @@ El siguiente paso es calcular el intervalo asumiendo que este se comporta como u
 ```python
 p = np.mean(B)
 se = np.sqrt(np.var(B))
-Cn = (p - z * se, p + z * se)
+C = (p - z * se, p + z * se)
 ``` 
 
 Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, como se muestra a continuación, estimando un intervalo de $$C=(0.9167, 0.9765).$$
 
 ```python
-Cn = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
+alpha = 0.05 / 2
+C = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
 ```
 
 # Comparación de Algoritmos
@@ -235,7 +236,6 @@ y $$S^2$$ es la media varianza estimada.
 En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de Breast Cancer. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. 
 
 ```python
-alpha = 0.05
 K = 30
 kf = StratifiedKFold(n_splits=K, shuffle=True, random_state=0)
 X, y = datasets.load_breast_cancer(return_X_y=True)
