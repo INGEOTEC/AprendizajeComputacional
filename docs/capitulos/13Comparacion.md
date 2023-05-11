@@ -59,19 +59,19 @@ donde $$z_{\frac{\alpha}{2}} = \Phi^{-1}(1 - \frac{\alpha}{2})$$ y $$\Phi$$ es l
 Recordado que dado una entrada el clasificador puede acertar la clase a la que pertenece esa entrada, entonces el resultado se puede representar como $$1$$ si la respuesta es correcta y $$0$$ de lo contrario. En este caso la respuesta es una variable aleatoria con una distribución de Bernoulli. Recordando que la distribución Bernoulli está definida por un parámetro $$p$$, estimado como $$\hat p = \frac{1}{N} \sum_{i=1}^N \mathcal X_i$$ donde $$\mathcal X_i$$ corresponde al resultado del algoritmo en el $$i$$-ésimo ejemplo. La varianza de una distribución Bernoulli es $$p(1-p)$$ por lo que el error estándar 
 es: $$se=\sqrt{\frac{p(1-p)}{N}}$$ dando como resultado el siguiente intervalo:
 
-$$C_N = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).$$
+$$C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).$$
 
 Suponiendo $$N=100$$ y $$p=0.85$$ el siguiente código calcula el intervalo usando $$\alpha=0.05$$
 
 ```python
 alpha = 0.05
-z = norm().ppf( 1 - alpha / 2)
+z = norm().ppf(1 - alpha / 2)
 p = 0.85
 N = 100
 Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
-$$C_n = (0.78, 0.92)$$.
+$$C = (0.78, 0.92)$$.
 
 En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema del Iris. 
 
@@ -95,7 +95,7 @@ Con las predicciones se estima el accuracy y se siguen los pasos para calcular e
 X = np.where(y_g == hy, 1, 0)
 p = X.mean()
 N = X.shape[0]
-Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
 El intervalo de confianza obtenido es $$C = (0.8953, 1.0158),$$ se puede observar que el límite superior es mayor 
@@ -111,13 +111,13 @@ for tr, ts in kf.split(X, y):
     hy[ts] = model.predict(X[ts])
 ```
 
-El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza $$C_N = (0.9196, 0.9871).$$
+El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza $$C = (0.9196, 0.9871).$$
 
 ```python
 X = np.where(y == hy, 1, 0)
 p = X.mean()
 N = X.shape[0]
-Cn = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
 ## Método: Bootstrap del error estándar
@@ -129,13 +129,12 @@ Es más sencillo entender este método mediante un ejemplo. Usando el ejercicio 
 ```python
 alpha = 0.05
 N = 100
-z = norm().ppf( 1 - alpha / 2)
+z = norm().ppf(1 - alpha / 2)
 X = np.zeros(N)
 X[:85] = 1
 ```
 
-`X` es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener $$\hat \theta$$ para cada muestra, en este caso $$\hat \theta$$ corresponde a la media. El resultado se guarda en una lista $$B$$ y se repite el experimento
-$$500$$ veces.
+`X` es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener $$\hat \theta$$ para cada muestra, en este caso $$\hat \theta$$ corresponde a la media. El resultado se guarda en una lista $$B$$ y se repite el experimento $$500$$ veces.
 
 ```python
 S = np.random.randint(X.shape[0],
@@ -166,21 +165,22 @@ for tr, ts in kf.split(X, y):
 X = np.where(y == hy, 1, 0)
 ```
 
-Realizando la selección con remplazo y calculando el intervalo se obtiene un intervalo de $$C_N=(0.9215, 0.9852)$$. Se puede observar que previamente se había obtenido un intervalo de $$(0.9196, 0.9871)$$. 
+Realizando la selección con remplazo y calculando el intervalo se obtiene un intervalo de $$C=(0.9215, 0.9852)$$. Se puede observar que previamente se había obtenido un intervalo de $$(0.9196, 0.9871)$$. 
 
 ```python
 S = np.random.randint(X.shape[0],
                       size=(500, X.shape[0]))
 B = [X[s].mean() for s in S]
 se = np.sqrt(np.var(B))
-Cn = (p - z * se, p + z * se)
+C = (p - z * se, p + z * se)
 ```
 
 ## Método: Percentil
 
-Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $$\hat \theta$$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, obteniendo un intervalo de $$C_N=(0.9263, 0.9800).$$
+Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $$\hat \theta$$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, obteniendo un intervalo de $$C=(0.9263, 0.9800).$$
 
 ```python
+alpha = 0.05 / 2
 C = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
 ```
 
@@ -190,7 +190,7 @@ Hasta el momento se ha usado una medida de rendimiento para la cual se puede con
 
 ```python
 alpha = 0.05
-z = norm().ppf( 1 - alpha / 2)
+z = norm().ppf(1 - alpha / 2)
 
 X, y = load_iris(return_X_y=True)
 kf = StratifiedKFold(n_splits=10, shuffle=True)
@@ -206,18 +206,19 @@ B = [recall_score(y[s], hy[s], average="macro")
      for s in S]
 ```
 
-El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones; obteniendo un intervalo de $$C_N=(0.9098, 0.9855).$$
+El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones; obteniendo un intervalo de $$C=(0.9098, 0.9855).$$
 
 ```python
 p = np.mean(B)
 se = np.sqrt(np.var(B))
-Cn = (p - z * se, p + z * se)
+C = (p - z * se, p + z * se)
 ``` 
 
-Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, como se muestra a continuación, estimando un intervalo de $$C_N=(0.9167, 0.9765).$$
+Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, como se muestra a continuación, estimando un intervalo de $$C=(0.9167, 0.9765).$$
 
 ```python
-Cn = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
+alpha = 0.05 / 2
+C = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
 ```
 
 # Comparación de Algoritmos
@@ -235,7 +236,6 @@ y $$S^2$$ es la media varianza estimada.
 En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de Breast Cancer. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. 
 
 ```python
-alpha = 0.05
 K = 30
 kf = StratifiedKFold(n_splits=K, shuffle=True, random_state=0)
 X, y = datasets.load_breast_cancer(return_X_y=True)
