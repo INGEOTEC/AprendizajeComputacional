@@ -24,12 +24,12 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import recall_score
-from matplotlib import pylab as plt
 import numpy as np
-import pandas as pd
-import seaborn as sns
-sns.set_theme()
 ```
+
+---
+
+{%include 13Comparacion.html %}
 
 ---
 
