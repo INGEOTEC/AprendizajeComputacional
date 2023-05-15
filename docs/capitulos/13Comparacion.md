@@ -92,9 +92,9 @@ hy = model.predict(G)
 Con las predicciones se estima el accuracy y se siguen los pasos para calcular el intervalo de confianza como se ilustra en el siguiente código.
  
 ```python
-X = np.where(y_g == hy, 1, 0)
-p = X.mean()
-N = X.shape[0]
+_ = np.where(y_g == hy, 1, 0)
+p = _.mean()
+N = _.shape[0]
 C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
