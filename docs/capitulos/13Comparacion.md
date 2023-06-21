@@ -121,6 +121,7 @@ C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
 ## Método: Bootstrap del error estándar
+{: #sec:bootstrap-error-estandar }
 
 Existen ocasiones donde no es sencillo identificar el error estándar ($$\textsf{se}$$) y por lo mismo no se puede calcular el intervalo de confianza. En estos casos se emplea la técnica de [Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap) para estimar $$\mathbb V(\hat \theta).$$ Un ejemplo donde no es sencillo encontrar analíticamente el error estándar es en el $$recall.$$
 
