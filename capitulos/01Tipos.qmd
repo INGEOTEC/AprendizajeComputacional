@@ -18,14 +18,7 @@ En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pare
 
 **Aprendizaje no-supervisado** es aquel donde se tiene un conjunto de entradas y se busca aprender alguna relación de estas entradas, por ejemplo, generando grupos o utilizando estas entradas para hacer una transformación o encontrar un patrón. 
 
-Finalmente **aprendizaje por refuerzo** es aquel donde se tiene un agente que tiene que aprender
-como interactuar con un ambiente. La interacción es tomando una acción en cada diferente 
-estado del ambiente. Por ejemplo, el agente puede ser un jugador virtual en un 
-juego de ajedrez entonces la acción es identificar y mover una pieza en el tablero, 
-el objetivo de ganar la partida. La característica de aprendizaje por refuerzo 
-es que el agente va a recibir una recompensa al final de la interacción con el ambiente, 
-e.g., final del juego y el objetivo es optimizar las acciones para que la recompensa sea
-la mayor posible. 
+Finalmente **aprendizaje por refuerzo** es aquel donde se tiene un agente que tiene que aprender como interactuar con un ambiente. La interacción es tomando una acción en cada diferente estado del ambiente. Por ejemplo, el agente puede ser un jugador virtual en un juego de ajedrez entonces la acción es identificar y mover una pieza en el tablero, el objetivo de ganar la partida. La característica de aprendizaje por refuerzo es que el agente va a recibir una recompensa al final de la interacción con el ambiente, e.g., final del juego y el objetivo es optimizar las acciones para que la recompensa sea la mayor posible. 
 
 ### Aplicaciones de Aprendizaje Computacional
 
@@ -39,9 +32,7 @@ En el ámbito científico también se han generado este tipo de plataformas aunq
 
 ## Metodología General en Aprendizaje Supervisado y No Supervisado {#sec-metodologia-general }
 
-Antes de continuar con la descripción de los diferentes tipos 
-de aprendizaje es importante mencionar la metodología que se sigue en los problemas de aprendizaje 
-supervisado y no supervidado
+Antes de continuar con la descripción de los diferentes tipos de aprendizaje es importante mencionar la metodología que se sigue en los problemas de aprendizaje supervisado y no supervidado
 
 1. Todo empieza con un conjunto de datos $\mathcal D$ que tiene la información del fenómeno de interés.
 2. Se selecciona el conjunto de entrenamiento $\mathcal T \subseteq \mathcal D$.
@@ -60,7 +51,6 @@ Regresando a la representación vectorial, existen casos donde se pueden visuali
 ```{python}
 #| label: fig-puntos-iris
 #| fig-cap: "Proyección de los datos del Iris en dos dimensiones"
-#| echo: true
 #| code-fold: true
 from sklearn import decomposition
 from sklearn.datasets import load_iris
@@ -74,7 +64,7 @@ D, y = load_iris(return_X_y=True)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
 Dn = np.concatenate((Dn, np.atleast_2d(y).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'clase'])
+df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase'])
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y')
 fig.tick_params(axis='both', which='both', bottom=False,
@@ -89,7 +79,6 @@ En la @fig-puntos-iris se pueden observar dos o tres grupos de puntos, entonces 
 ```{python}
 #| label: fig-kmeans-iris
 #| fig-cap: "Proyección de agrupar los datos del Iris usando K-medias"
-#| echo: true
 #| code-fold: true
 from sklearn.cluster import KMeans
 from sklearn import decomposition
@@ -123,31 +112,125 @@ Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los
 
 Aprendizaje supervisado es un problema donde el componente inicial es un conjunto de pares, entrada y salida. Es decir se cuenta con $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada. Tomando en cuenta estas condiciones iniciales podemos definir el *objetivo* de aprendizaje supervisado como encontrar un algoritmo capaz de regresar la salida $y$ dada una entrada $x$.
 
-Existe una gran variedad de problemas que se puede categorizar como tareas de aprendizaje supervisado, solamente hay que recordar que en todos los casos se inicia con un conjunto $\mathcal D$ de pares entrada y salida. En ocasiones la construcción del conjunto es directa, por ejemplo en el caso de que se quiera identificar si una persona será sujeta a un crédito, entonces el 
-conjunto a crear esta compuesto por las características de las personas que se les ha otorgado un crédito y el estado final de crédito, es decir, si el crédito fue pagado o no fue pagado. En otro ejemplo, suponiendo que se quiere crear un algoritmo capaz de identificar si un texto dado tiene una polaridad positiva o negativa, entonces el conjunto se crea recolectando textos y a cada texto un conjunto de personas decide si el texto dado es positivo o negativo y la polaridad final es el consenso de varias opiniones; a este problema en general se le conoce como análisis de sentimientos.
+Existe una gran variedad de problemas que se puede categorizar como tareas de aprendizaje supervisado, solamente hay que recordar que en todos los casos se inicia con un conjunto $\mathcal D$ de pares entrada y salida. En ocasiones la construcción del conjunto es directa, por ejemplo en el caso de que se quiera identificar si una persona será sujeta a un crédito, entonces el conjunto a crear esta compuesto por las características de las personas que se les ha otorgado un crédito y el estado final de crédito, es decir, si el crédito fue pagado o no fue pagado. En otro ejemplo, suponiendo que se quiere crear un algoritmo capaz de identificar si un texto dado tiene una polaridad positiva o negativa, entonces el conjunto se crea recolectando textos y a cada texto un conjunto de personas decide si el texto dado es positivo o negativo y la polaridad final es el consenso de varias opiniones; a este problema en general se le conoce como análisis de sentimientos.
 
 La cantidad de problema que se pueden poner en términos de aprendizaje supervisado es amplia, un problema tangible en esta época y relacionado a la pandemia del COVID-19 sería el crear un algoritmo que pudiera predecir cuántos serán los casos positivos el día de mañana dando como entradas las restricciones en las actividades; por ejemplo escuelas cerradas, restaurantes al 30% de capacidad entre otras. 
 
 Los ejemplos anteriores corresponden a dos de las clases de problemas que se resuelven en aprendizaje supervisado estas son problemas de clasificación y regresión. Definamos de manera formal estos dos problemas. Cuando  $y \in \{0, 1\}$ se dice que es un problema de **clasificación binaria**, por otro lado cuando  $y \in \{0, 1\}^K$ se encuentra uno en clasificación **multi-clase** o **multi-etiqueta** y finalmente si  $y \in \mathbb R$ entonces es un problema de **regresión**.
 
-Haciendo la liga entre los ejemplos y las definiciones anteriores, podemos observar que el asignar un crédito o la polaridad a un texto es un problema de clasificación binaria, dado que se puede asociar 0 y 1 a la clase positivo y negativo; y en el otro caso a pagar o no pagar el crédito. Si el problema tiene mas categorías, supongamos que se desea identificar positivo, negativo o neutro, entonces se estaría en el problema de clasificación multi-clase. Por otro lado el problema de predecir el número de casos positivos se puede considerar como un problema de regresión, dado que el valor a predecir 
-difícilmente se podría considerar como una categoría.
+Haciendo la liga entre los ejemplos y las definiciones anteriores, podemos observar que el asignar un crédito o la polaridad a un texto es un problema de clasificación binaria, dado que se puede asociar 0 y 1 a la clase positivo y negativo; y en el otro caso a pagar o no pagar el crédito. Si el problema tiene mas categorías, supongamos que se desea identificar positivo, negativo o neutro, entonces se estaría en el problema de clasificación multi-clase. Por otro lado el problema de predecir el número de casos positivos se puede considerar como un problema de regresión, dado que el valor a predecir difícilmente se podría considerar como una categoría.
 
-Al igual que en aprendizaje no supervisado, en algunos casos es posible visualizar los elementos de  $\mathcal D$, el detalle adicional es que cada objeto tiene asociado una clase, entonces se selecciona un color para representar cada clase. En la siguiente figura se muestra el resultado donde los elementos de  $\mathcal D$ se encuentra en $\mathbb R^2$ y el color representa cada una de la clases de este problema de clasificación binaria.
+Al igual que en aprendizaje no supervisado, en algunos casos es posible visualizar los elementos de  $\mathcal D$, el detalle adicional es que cada objeto tiene asociado una clase, entonces se selecciona un color para representar cada clase. En la @fig-iris-2clases se muestra el resultado donde los elementos de  $\mathcal D$ se encuentra en $\mathbb R^2$ y el color representa cada una de la clases de este problema de clasificación binaria.
 
-![Conjunto de entrenamiento](/AprendizajeComputacional/assets/images/clases.png)
+```{python}
+#| label: fig-iris-2clases
+#| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
+#| code-fold: true
+from sklearn.cluster import KMeans
+from sklearn import decomposition
+from sklearn.datasets import load_iris
+from matplotlib import pylab as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
 
-Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple línea recta podría separar estos puntos. La siguiente figura muestra un ejemplo de lo que haría un clasificador representado por la línea verde; la clase es dada por el signo de  $ax + by + c $, donde  $a$, $b$ y  $c$ son parámetros identificados a partir de  $\mathcal D$.
 
-![Clasificación](/AprendizajeComputacional/assets/images/clases2.png)
+D, y = load_iris(return_X_y=True)
+mask = y <= 1
+D = D[mask]
+y = y[mask]
+pca = decomposition.PCA(n_components=2).fit(D)
+Dn = pca.transform(D)
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = ['P' if i else 'N' for i in y]
+fig = sns.relplot(data=df, kind='scatter',
+                  x='x', y='y', hue='Clase')
+fig.tick_params(axis="both", which="both", bottom=False,
+                top=False, left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)
+plt.grid()
+```
 
-Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x$, y el otro eje es la salida, i.e. $y$. La siguiente figura muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
+Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple línea recta podría separar estos puntos. La @fig-iris-2clases-df muestra un ejemplo de lo que haría un clasificador representado por la línea; la clase es dada por el signo de  $ax + by + c$, donde  $a$, $b$ y $c$ son parámetros identificados a partir de  $\mathcal D$.
 
-![Regresión](/AprendizajeComputacional/assets/images/regresion.png)
+```{python}
+#| label: fig-iris-2clases-df
+#| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
+#| code-fold: true
+from sklearn.cluster import KMeans
+from sklearn.svm import LinearSVC
+from sklearn import decomposition
+from sklearn.datasets import load_iris
+from matplotlib import pylab as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
 
-El problema de regresión es muy conocido y seguramente ya se imaginaron que la respuesta sería encontrar los parámetros de una parábola. La siguiente figura muestra una visualización del regresor, mostrado en color naranja y los datos de entrenamiento en color azul
 
-![Regresión](/AprendizajeComputacional/assets/images/regresion2.png)
+D, y = load_iris(return_X_y=True)
+mask = y <= 1
+D = D[mask]
+y = y[mask]
+pca = decomposition.PCA(n_components=2).fit(D)
+Dn = pca.transform(D)
+linear = LinearSVC(dual=False).fit(Dn, y)
+w_1, w_2 = linear.coef_[0]
+w_0 = linear.intercept_[0]
+df = pd.DataFrame(Dn, columns=['x1', 'x2'])
+df['Clase'] = ['N' if i else 'P' for i in y]
+g_0 = [dict(x1=x, x2=y, tipo='g(x)=0')
+       for x, y in zip(Dn[:, 0], (-w_0 - w_1 * Dn[:, 0]) / w_2)]
+g = pd.DataFrame(g_0)
+g['Tipo'] = 'g(x)=0'
+df = pd.concat((df, g))
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='Clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='Tipo', palette=['k'], legend=True)
+ax.tick_params(axis="both", which="both", bottom=False,
+                top=False, left=False, right=False,
+                labelbottom=False, labelleft=False)
+ax.set(xlabel=None, ylabel=None)
+plt.grid()
+```
+
+Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x$, y el otro eje es la salida, i.e. $y$. La @fig-regresion muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
+
+```{python}
+#| label: fig-regresion
+#| fig-cap: "Problema de regresión"
+#| code-fold: true
+from matplotlib import pylab as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+
+x = np.linspace(-1, 1, 100)
+y = 12.3 * x**2 - 3.2 * x + 1.2
+ym = np.random.normal(loc=0, scale=0.2, size=x.shape[0]) + y
+df = pd.DataFrame(dict(x=x, y=y, ym=ym))
+# sns.lineplot(data=df, x='x', y='y', legend=False, color='k')
+fig = sns.scatterplot(data=df, x='x', y='ym', legend=False)
+fig.tick_params(axis="both", which="both", bottom=False,
+                top=False, left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel='x', ylabel='y')
+plt.grid()
+```
+
+El problema de regresión es muy conocido y seguramente ya se imaginaron que la respuesta sería encontrar los parámetros de una parábola. La @fig-regresion-2 muestra una visualización del regresor, mostrado en color negro y los datos de entrenamiento en color azul.
+
+```{python}
+#| label: fig-regresion-2
+#| fig-cap: "Problema de regresión con función con función estimada"
+#| code-fold: true
+sns.lineplot(data=df, x='x', y='y', legend=False, color='k')
+fig = sns.scatterplot(data=df, x='x', y='ym', legend=False)
+fig.tick_params(axis="both", which="both", bottom=False,
+                top=False, left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel='x', ylabel='y')
+plt.grid()
+```
 
 Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, pero si permite ganar intuición sobre la forma en que trabajan estos algoritmos.
 
@@ -159,27 +242,27 @@ Se puede asumir que existe una función $f$ que genera la relación entrada sali
 
 Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funciones), $\mathcal H$, que se considera puede aproximar $f$; una función de error, $L$; y el error empírico $E(h \mid \mathcal T) = \sum_{(x, y) \in \mathcal T} L(y, h(x))$. Utilizando estos elementos la función buscada es: $h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal T)$.
 
-El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G) $.
+El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
 
 ### Características de la hipótesis
 
 Continuando con algunas definiciones, en la búsqueda de encontrar $h^*$ uno puede elegir por aquella que captura todos los datos de entrenamiento siendo muy específica. Para poder explicar mejor este concepto usemos la siguiente figura que representa un ejemplo sintético.
 
-![Hipótesis mas específica](/AprendizajeComputacional/assets/images/clases-sh.png)
+![Hipótesis mas específica](/docs/assets/images/clases-sh.png)
 
 Los puntos naranja representan una clase y los puntos azules son la otra clase, el clasificador es mostrado en el rectángulo. Para completar el funcionamiento de este clasificador falta mencionar que cualquier nuevo punto que esté dentro del rectángulo será calificado como clase azul y naranja si se encuentra fuera del rectángulo. Como se puede observar, el rectángulo contiene todos los elementos de una clase y en alguno de sus lados toca con uno de los puntos del conjunto de entrenamiento de la clase data.
 
 En este momento, es posible visualizar que el complemento de ser muy específico es ser lo mas general posible. La siguiente siguiente figura muestra un clasificador que es lo mas general. Se observa que el rectángulo casi toca uno de los puntos del conjunto de entrenamiento de la clase contraria, esto lo hace del lado exterior y el procedimiento para clasificar continua siendo el que se mencionó anteriormente.
 
-![Hipótesis más general](/AprendizajeComputacional/assets/images/clases-gh.png)
+![Hipótesis más general](/docs/assets/images/clases-gh.png)
 
 Uno puede elegir una hipótesis que se encuentre entre la hipótesis mas general y la más específica, esto también se puede visualizar en la siguiente figura. Donde todas las hipótesis se encuentran representadas en gris.
 
-![Clase de hipótesis](/AprendizajeComputacional/assets/images/clases-ch.png)
+![Clase de hipótesis](/docs/assets/images/clases-ch.png)
 
 Finalmente, para poder describir mejor el comportamiento de un clasificador se hace uso de la distancia que hay entre la hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la siguiente figura, donde la hipótesis más general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
 
-![Marger](/AprendizajeComputacional/assets/images/clases-margen.png)
+![Marger](/docs/assets/images/clases-margen.png)
 
 ### Estilos de Aprendizaje
 
@@ -195,14 +278,42 @@ $$h^*(x) = \begin{cases} y & \text{si} (x, y) \in \mathcal T\\ 0 & \end{cases}$$
 
 Es fácil observar que este algoritmo tiene $E(h^* \mid \mathcal T) = 0$ dado que se aprende todo el conjunto de entrenamiento.
 
-La siguiente figura muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la línea naranja, la línea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento no se muestran; pero se pueden visualizar dado que son datos generados por una parábola mas un error gaussiano. Entonces podemos ver que la línea naranja pasa de manera exacta por todos los datos de entrenamiento y da como resultado la línea naranja que claramente tiene un comportamiento mas complejo que el comportamiento de la parábola que generó los datos.
+La @fig-sobre-aprendizaje muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la línea naranja, la línea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento no se muestran; pero se pueden visualizar dado que son datos generados por una parábola mas un error gaussiano. Entonces podemos ver que la línea naranja pasa de manera exacta por todos los datos de entrenamiento y da como resultado la línea naranja que claramente tiene un comportamiento mas complejo que el comportamiento de la parábola que generó los datos.
 
-![Sobre-entrenamiento](/AprendizajeComputacional/assets/images/overfitting-2.png)
+```{python}
+#| label: fig-sobre-aprendizaje
+#| fig-cap: "Sobre-aprendizaje en un problema de regresión"
+#| code-fold: true
+from sklearn import tree
+arbol = tree.DecisionTreeRegressor().fit(np.atleast_2d(x).T, ym)
+hy = arbol.predict(np.atleast_2d(x).T)
+df['arbol'] = hy
+sns.lineplot(data=df, x='x', y='arbol', legend=False, color='k')
+fig = sns.scatterplot(data=df, x='x', y='y', legend=False)
+fig.tick_params(axis="both", which="both", bottom=False,
+                top=False, left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel='x', ylabel='y')
+plt.grid()
+```
 
 ### Sub-aprendizaje
 
-Por otro lado existen problemas donde el conjunto de algoritmos $\mathcal H $ no tienen los grados de libertad necesarios para aprender, dependiendo de la medida de error esto se refleja como $E(h^* \mid \mathcal T) \gg 0$.
+Por otro lado existen problemas donde el conjunto de algoritmos $\mathcal H$ no tienen los grados de libertad necesarios para aprender, dependiendo de la medida de error esto se refleja como $E(h^* \mid \mathcal T) \gg 0$. La @fig-sub-aprendizaje muestra un problema de regresión donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. 
 
-La siguiente figura muestra un problema de clasificación donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. El problema de clasificación es encontrar una función que logre separar las dos clases, las cuales están representadas por los puntos en color azul y verde, el algoritmo de aprendizaje intenta separar estas clases mediante una línea (dibujada en rojo) y como se puede observar una línea no tiene los suficientes grados de libertad para separar las clases.
-
-![Sub-entrenamiento](/AprendizajeComputacional/assets/images/sub-aprendizaje.png)
+```{python}
+#| label: fig-sub-aprendizaje
+#| fig-cap: "Sub-aprendizaje en un problema de regresión"
+#| code-fold: true
+from sklearn import tree
+arbol = tree.DecisionTreeRegressor(max_depth=2).fit(np.atleast_2d(x).T, ym)
+hy = arbol.predict(np.atleast_2d(x).T)
+df['arbol'] = hy
+sns.lineplot(data=df, x='x', y='arbol', legend=False, color='k')
+fig = sns.scatterplot(data=df, x='x', y='y', legend=False)
+fig.tick_params(axis="both", which="both", bottom=False,
+                top=False, left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel='x', ylabel='y')
+plt.grid()
+```
