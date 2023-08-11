@@ -45,14 +45,18 @@ El problema se convierte en cómo calcular $\mathbb P(\mathcal Y \mid \mathcal X
 
 La probabilidad conjunta se puede expresar como $\mathbb P(\mathcal X, \mathcal Y)$, esta probabilidad es conmutativa por lo que $\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).$ En este momento se puede utilizar la definición de **probabilidad condicional** que es $\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$ Utilizando estas ecuaciones el **Teorema de Bayes** queda como
 
-$$\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},$$ {#eq-teorema-bayes}
+$$
+\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},
+$$ {#eq-teorema-bayes}
 
 donde al término $\mathbb P(\mathcal X \mid \mathcal Y)$ se le conoce como **verosimilitud**, $\mathbb P(\mathcal Y)$ es la probabilidad **a priori** y $\mathbb P(\mathcal X)$ es la **evidencia**. 
 
 Es importante mencionar que la evidencia se puede calcular mediante la probabilidad
 total, es decir:
 
-$$\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).$$ {#eq-evidencia}
+$$
+\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).
+$$ {#eq-evidencia}
 
 ### Problema Sintético {#sec-tres-normales}
 
@@ -172,7 +176,7 @@ La @fig-gaussian_3classes-error muestra todos los datos generados, en color azul
 
 Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la @fig-gaussian_3classes.
 
-El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver @sec-metodologia-general)de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código
+El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código
 
 ```{python}
 #| echo: true
@@ -187,7 +191,7 @@ Markdown(f"donde el `error` es ${error:0.4f}$.")
 
 La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer esta variabilidad de la medición del error es calculando su **error estándar**. 
 
-El [error estándar](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar) está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde $\hat \theta$ es el valor estimado, en este caso el `error`. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores $1$ que indica que en ese ejemplo el clasificador se equivocó y $0$ cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, $p$, se estima como la media entonces el error estandar de $p$ corresponde al [error estándar de la media](/AprendizajeComputacional/capitulos/14Estadistica/#sec:error-estandar-media), i.e., $\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$ dado que la varianza $\sigma^2$ de una distribución Bernoulli con parámetro $p$ es $p (1 - p)$.  Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción
+El error estándar (ver @sec-error-estandar) está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde $\hat \theta$ es el valor estimado, en este caso el `error`. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores $1$ que indica que en ese ejemplo el clasificador se equivocó y $0$ cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, $p$, se estima como la media entonces el error estandar de $p$ corresponde al error estándar de la media (ver @sec-error-estandar-media), i.e., $\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$ dado que la varianza $\sigma^2$ de una distribución Bernoulli con parámetro $p$ es $p (1 - p)$.  Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción
 
 ```{python}
 #| echo: true
@@ -200,7 +204,7 @@ from IPython.display import Markdown
 Markdown(f"teniendo un valor de ${se_formula:0.4f}$.")
 ```
 
-Aunque el error estándar del parámetro $p$ de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de [Bootstrap](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar $B$ muestras de $N$ elementos con remplazo de los datos. En este caso los datos son los errores entre `y` y `prediccion`. Siguiendo el método presentado en el [apéndice](/AprendizajeComputacional/capitulos/14Estadistica/#sec:bootstrap) se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las $B$ repeticiones las cuales consisten en calcular $\hat p$. Se puede observar como se usa directamente `y` y `prediccion` junto con el arreglo de índices `s` para calcular la media del error. Finalmente se calcula la desviación estándar de `B` (tercera línea) y ese valor corresponde al error estándar. 
+Aunque el error estándar del parámetro $p$ de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver @sec-bootstrap) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar $B$ muestras de $N$ elementos con remplazo de los datos. En este caso los datos son los errores entre `y` y `prediccion`. Siguiendo el método presentado en la @sec-bootstrap se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las $B$ repeticiones las cuales consisten en calcular $\hat p$. Se puede observar como se usa directamente `y` y `prediccion` junto con el arreglo de índices `s` para calcular la media del error. Finalmente se calcula la desviación estándar de `B` (tercera línea) y ese valor corresponde al error estándar. 
 
 
 ```{python}
@@ -242,11 +246,21 @@ donde $\lambda_{ik}$ es el costo de tomar la acción $i$ en la clase $k$.
 
 Suponiendo una función de costo $0/1$, donde el escoger la clase correcta tiene un costo $0$ y el equivocarse en cualquier caso tiene un costo $1$ se define como:
 
-$$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ de lo contrario} \end{cases} $$.
+$$
+\lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ de lo contrario} \end{cases}.
+$$
 
-Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: $R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x)$. Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$.
+Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: 
 
-Por lo tanto en el caso de costo $0/1$ se puede observar que mínimo riesgo corresponde a la clase más probable.
+$$
+\begin{split}
+R(\alpha_i \mid x) &= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
+&= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
+&= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).
+\end{split}
+$$ 
+
+Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que mínimo riesgo corresponde a la clase más probable.
 
 ### Acción nula
 
@@ -256,11 +270,20 @@ La primera idea podría ser incrementar el número de clases y asociar una clase
 
 La extensión del costo $0,1$ para este caso estaría definida como:
 
-$$ \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases},$$
+$$
+\lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases},
+$$
 
 donde $0 < \lambda < 1$.
 
-Usando la definición de riesgo, el riesgo de tomar la acción $\alpha_{K+1}$ es $R(\alpha_{K+1} \mid x) = \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.$
+Usando la definición de riesgo, el riesgo de tomar la acción $\alpha_{K+1}$ es 
+
+$$
+\begin{split}
+R(\alpha_{K+1} \mid x) &= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\ &= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\ 
+&= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.
+\end{split}
+$$
 
 ## Seleccionando la acción
 
