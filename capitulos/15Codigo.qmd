@@ -1,0 +1,109 @@
+# Código
+
+El **objetivo** de este apéndice es describir algunas de las clases y métodos
+de Python utilizadas en el curso. 
+
+## Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+from scipy.stats import multivariate_normal
+from scipy.special import logsumexp
+import numpy as np
+```
+
+## Clasificador Bayesiano Gausiano
+
+```python
+class GaussianBayes(object):
+    def __init__(self, naive=False) -> None:
+        self._naive = naive
+
+    @property
+    def naive(self):
+        return self._naive
+    
+    @property
+    def labels(self):
+        return self._labels
+
+    @labels.setter
+    def labels(self, labels):
+        self._labels = labels        
+```
+
+### Estimación de Parámetros
+
+```python
+    def fit(self, X, y):
+        self.prior = y
+        self.likelihood = (X, y)
+        return self
+```
+
+```python
+    @property
+    def prior(self):
+        return self._prior
+
+    @prior.setter
+    def prior(self, y):
+        labels, counts = np.unique(y, return_counts=True)
+        prior = counts / counts.sum()        
+        self.labels = labels
+        self._prior = np.log(prior)
+```
+
+
+```python
+    @property
+    def likelihood(self):
+        return self._likelihood
+
+    @likelihood.setter
+    def likelihood(self, D):
+        X, y = D
+        likelihood = []
+        for k in self.labels:
+            mask = y == k
+            mu = np.mean(X[mask], axis=0)
+            if self.naive:
+                cov = np.var(X[mask], axis=0, ddof=1)
+            else:
+                cov = np.cov(X[mask], rowvar=False)
+            _ = multivariate_normal(mean=mu, cov=cov, allow_singular=True)
+            likelihood.append(_)
+        self._likelihood = likelihood
+```
+
+### Predicción
+
+```python
+    def predict(self, X):
+        hy = self.predict_log_proba(X)
+        _ = np.argmax(hy, axis=1)
+        return self.labels[_]
+```
+
+```python
+    def predict_proba(self, X):
+        _ = self.predict_log_proba(X)
+        return np.exp(_)
+```
+
+```python
+    def predict_log_proba(self, X):
+        log_likelihood = np.vstack([m.logpdf(X) 
+                                    for m in self.likelihood]).T
+        prior = self.prior
+        posterior = log_likelihood + prior
+        evidence = np.atleast_2d(logsumexp(posterior, axis=1)).T
+        return posterior - evidence
+```
+
+### Uso
+
+```python
+bayes = GaussianBayes().fit(T, y_t)
+hy = bayes.predict(G)
+```
