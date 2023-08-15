@@ -191,7 +191,8 @@ En la @sec-estimacion-distribucion-gausiana se había utilizado a $\mathcal D$ e
 
 En consecuencia, se requieren contar con datos para medir el rendimiento, a este conjunto de datos se le conoce como el conjunto de prueba, $\mathcal G$. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir la generación de estos conjuntos a partir de $\mathcal D.$
 
-```python
+```{python}
+#| echo: true
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
 
@@ -199,25 +200,27 @@ El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathca
 
 ### Modelo {#sec-model-clasificacion}
 
-El inicio de métodos paramétricos es el [Teorema de Bayes](/AprendizajeComputacional/capitulos/02Teoria_Decision/#teorema-de-bayes) $\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$ donde se usa la verosimilitud $\mathbb P(\mathcal X \mid \mathcal Y)$ y el prior $\mathbb P(\mathcal Y)$ para definir la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$. En métodos paramétricos se asume que se puede modelar la verosimilitud con una distribución particular, que por lo generar es una distribución Gausiana multivariada. Es decir, la variable aleatoria $\mathcal X$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde se observa que los parámetros de la distribución Gausiana dependen de la variable aleatoria $\mathcal Y$ y estos pueden ser identificados cuando $\mathcal Y$ tiene un valor específico. 
+El inicio de métodos paramétricos es el Teorema de Bayes (@eq-teorema-bayes) $\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$ donde se usa la verosimilitud $\mathbb P(\mathcal X \mid \mathcal Y)$ y el prior $\mathbb P(\mathcal Y)$ para definir la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$. En métodos paramétricos se asume que se puede modelar la verosimilitud con una distribución particular, que por lo generar es una distribución Gausiana multivariada. Es decir, la variable aleatoria $\mathcal X$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde se observa que los parámetros de la distribución Gausiana dependen de la variable aleatoria $\mathcal Y$ y estos pueden ser identificados cuando $\mathcal Y$ tiene un valor específico. 
 
 ### Estimación de Parámetros {#sec-estimacion-parametros}
 
-Dado que por [definición del problema](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales) se conoce que la verosimilitud para cada clase proviene de una Gausiana, i.e., $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ en esta sección se estimarán los parámetros utilizando este conocimiento. 
+Dado que por definición del problema (ver @sec-tres-normales) se conoce que la verosimilitud para cada clase proviene de una Gausiana, i.e., $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ en esta sección se estimarán los parámetros utilizando este conocimiento. 
 
 El primer paso en la estimación de parámetros es calcular el prior $\mathbb P(\mathcal Y)$, el cual corresponde a clasificar el evento sin observar el valor de $\mathcal X.$ Esto se puede modelar mediante una distribución Categórica con parámetros $p_i$ donde $\sum_i^K p_i = 1$. Estos parámetros se pueden estimar utilizando la función `np.unique` de la siguiente manera
 
-```python
+```{python}
+#| echo: true
 labels, counts = np.unique(y_t, return_counts=True)
 prior = counts / counts.sum()
 ```
 
 La variable `prior` contiene en el primer elemento $\mathbb P(\mathcal Y=1) = 0.3292,$ en el segundo $\mathbb P(\mathcal Y=2) = 0.3412$ y en el tercero $\mathbb P(\mathcal Y=3) = 0.3296$ que es aproximadamente $\frac{1}{3}$ el cual es el valor real del prior. 
 
-Siguiendo los pasos en [estimación de parámetros de una Gausiana](/AprendizajeComputacional/capitulos/03Parametricos/#sec:estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gausiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3$. Esto se puede realizar iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en el slice de la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal` para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista `likelihood`.
+Siguiendo los pasos en estimación de parámetros de una Gausiana(@sec-estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gausiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3$. Esto se puede realizar iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en el slice de la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal` para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista `likelihood`.
 
 
-```python
+```{python}
+#| echo: true
 likelihood = []
 for k in labels:
     mask = y_t == k
@@ -227,15 +230,28 @@ for k in labels:
     likelihood.append(likelihood_k)
 ```
 
-Los valores estimados para la media, en cada clase son: $\hat \mu_1 = [5.1234, 5.0177]^\intercal,$ $\hat \mu_2 = [1.5229, -1.5553]^\intercal$ y $\hat \mu_3 = [12.5064, -3.4501]^\intercal$. Para las  matrices de covarianza, los valores estimados corresponden a $\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0409 \\ 0.0409 & 1.9562 \\ \end{pmatrix},$ $\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 1.0034 \\ 1.0034 & 2.8304 \\ \end{pmatrix}$ y $\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 3.0328 \\ 3.0328 & 6.8235 \\ \end{pmatrix}.$ Estas estimaciones se pueden comparar con los [parámetros reales.](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:tres-normales) También se puede calcular su error estándar para identificar si el parámetro real, $\theta$, se encuentra en el intervalo definido por $\hat \theta - 2\hat{se} \leq \hat \theta \leq \hat \theta + 2 \hat{se}$ que corresponde aproximadamente al 95% de confianza asumiendo que la distribución de la estimación del parámetro es Gausiana. 
+```{python}
+#| echo: false
+from IPython.display import Markdown
+mus = [', '.join([f'{v:0.4f}' for v in li.mean]) for li in likelihood]
+mm = []
+for cov in likelihood:
+    _ = [' & '.join([f'{v:0.4f}' for v in reg]) for reg in cov.cov]
+    _ = '\\\\'.join(_)
+    mm.append(_)
+Markdown(f"Los valores estimados para la media, en cada clase son: $\\hat \\mu_1 = [{mus[0]}]^\\intercal,$ $\\hat \\mu_2 = [{mus[1]}]^\\intercal$ y $\\hat \\mu_3 = [{mus[2]}]^\\intercal$. Para las matrices de covarianza, los valores estimados corresponden a $\\hat \\Sigma_1 = \\begin{{pmatrix}} {mm[0]} \\\\ \\end{{pmatrix}},$ $\\hat \\Sigma_2 = \\begin{{pmatrix}} {mm[1]} \\\\ \\end{{pmatrix}}$ y $\\hat \\Sigma_3 = \\begin{{pmatrix}} {mm[2]} \\\\ \\end{{pmatrix}}.$")
+```
+
+Estas estimaciones se pueden comparar con los parámetros reales (@sec-tres-normales). También se puede calcular su error estándar para identificar si el parámetro real, $\theta$, se encuentra en el intervalo definido por $\hat \theta - 2\hat{se} \leq \hat \theta \leq \hat \theta + 2 \hat{se}$ que corresponde aproximadamente al 95% de confianza asumiendo que la distribución de la estimación del parámetro es Gausiana.
 
 ### Predicción {#sec-prediccion}
 
-Una vez que se tiene la función que modela los datos, se está en condiciones de utilizarla para [predecir](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:prediccion-normal) nuevos datos. 
+Una vez que se tiene la función que modela los datos, se está en condiciones de utilizarla para predecir(ver @sec-prediccion-normal) nuevos datos. 
 
 En esta ocasión se organiza el procedimiento de predicción en diferentes funciones, la primera función recibe los datos a predecir `X` y los componentes del modelo, que son la verosimilitud (`likelihood`) y el `prior`. La función calcula $\mathbb P(\mathcal Y=y \mid \mathcal X=x)$ que es la probabilidad de cada clase dada la entrada $x$. Se puede observar en la primera línea que se usa la función de densidad de probabilidad (`pdf`) para cada clase y esta se multiplica por el `prior` y en la tercera línea se calcula la evidencia. Finalmente, se regresa el a posteriori.  
 
-```python
+```{python}
+#| echo: true
 def predict_prob(X, likelihood, prior):
     likelihood = [m.pdf(X) for m in likelihood]
     posterior = np.vstack(likelihood).T * prior
@@ -245,35 +261,49 @@ def predict_prob(X, likelihood, prior):
 
 La función `predict_proba` se utiliza como base para predecir la clase, para la cual se requiere el mapa entre índices y clases que se encuentra en la variable `labels`. Se observa que se llama a la función `predict_proba` y después se calcula el argumento que tiene la máxima probabilidad regresando la etiqueta asociada. 
 
-```python
+```{python}
+#| echo: true
 def predict(X, likelihood, prior, labels):
     _ = predict_prob(X, likelihood, prior)
     return labels[np.argmax(_, axis=1)]
 ```
 ### Rendimiento {#sec-rendimiento}
 
-El rendimiento del algoritmo se mide en el conjunto de prueba `G`, utilizando como medida el [error de clasificación.](/AprendizajeComputacional/capitulos/02Teoria_Decision/#sec:error-clasificacion) El primer paso es predecir las clases de los elementos en `G`, utilizando la función `predict` que fue diseñada anteriormente. Después se mide el error, con la instrucción de la segunda línea. El error que tiene el algoritmo en el conjunto de prueba es $0.01,$ el cual es ligeramente superior al encontrado con el modelo ideal.  
+El rendimiento del algoritmo se mide en el conjunto de prueba `G`, utilizando como medida el error de clasificación (@sec-error-clasificacion). El primer paso es predecir las clases de los elementos en `G`, utilizando la función `predict` que fue diseñada anteriormente. Después se mide el error, con la instrucción de la segunda línea.  
 
-```python
+```{python}
+#| echo: true
 hy = predict(G, likelihood, prior, labels)
 error = (y_g != hy).mean()
 ```
 
-El error estándar se calcula con la siguiente instrucción el cual tiene un valor de $0.0041.$
+```{python}
+#| echo: false
+from IPython.display import Markdown
+Markdown(f"El error que tiene el algoritmo en el conjunto de prueba es ${error:0.2f},$ el cual es ligeramente superior al encontrado con el modelo ideal.")
+```
 
-```python
+```{python}
+#| echo: false
+from IPython.display import Markdown
+Markdown(f"El error estándar se calcula con la siguiente instrucción el cual tiene un valor de ${np.sqrt(error * (1 - error) / y_g.shape[0]):0.4f}.$")
+```
+
+```{python}
+#| echo: true
 se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
 ```
 
 ## Clasificador Bayesiano Ingenuo
 
-Uno de los clasificadores mas utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. [Anteriormente](/AprendizajeComputacional/capitulos/03Parametricos/#sec:model-clasificacion) se asumió que la variable aleatoria $\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde $\mu_{\mathcal Y} \in \mathbb R^d$, $\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}$ y $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ es la función de densidad de probabilidad conjunta.
+Uno de los clasificadores mas utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. En la @sec-model-clasificacion se asumió que la variable aleatoria $\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde $\mu_{\mathcal Y} \in \mathbb R^d$, $\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}$ y $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ es la función de densidad de probabilidad conjunta.
 
 En el clasificador Bayesiano Ingenuo se asume que las variables $\mathcal X_i$ y $\mathcal X_j$ para $i \neq j$ son independientes, esto trae como consecuencia que $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).$ Esto quiere decir que cada variable está definida como una Gausina donde se tiene que identificar $\mu$ y $\sigma^2.$
 
-La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que en se calcula $\sigma^2$ de cada variable en lugar de la covarianza $\Sigma$, esto se puede observar en la quinta línea donde se usa la función `np.var` en el primer eje. El resto del código es equivalente al usado en la [estimación de parámetros.](/AprendizajeComputacional/capitulos/03Parametricos/#sec:estimacion-parametros)
+La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que en se calcula $\sigma^2$ de cada variable en lugar de la covarianza $\Sigma$, esto se puede observar en la quinta línea donde se usa la función `np.var` en el primer eje. El resto del código es equivalente al usado en la @sec-estimacion-parametros.
 
-```python
+```{python}
+#| echo: true
 likelihood = []
 for k in labels:
     mask = y_t == k
@@ -283,15 +313,27 @@ for k in labels:
     likelihood.append(likelihood_k)
 ```
 
-Los parámetros estimados en la versión ingenua son equivalentes con respecto a las medias, i.e., $\hat \mu_1 = [5.1234, 5.0177]^\intercal$, $\hat \mu_2 = [1.5229, -1.5553] ^\intercal$ y $\hat \mu_3 = [12.5064, -3.4501]^\intercal$. La diferencia se puede observar en las varianzas, que a continuación se muestran como matrices de covarianza para resaltar la diferencia, i.e., $\hat \Sigma_1 = \begin{pmatrix} 4.0896 & 0.0 \\ 0.0 & 1.9562 \\ \end{pmatrix}$, $\hat \Sigma_2 = \begin{pmatrix} 1.9533 & 0.0 \\ 0.0 & 2.8304 \\ \end{pmatrix}$ y $\hat \Sigma_3 = \begin{pmatrix} 2.0451 & 0.0 \\ 0.0 & 6.8235 \\ \end{pmatrix}$ se observa como los elementos fuera de la diagonal son ceros, lo cual indica la independencia entra las variables de entrada. 
 
-Finalmente, el código para [predecir](/AprendizajeComputacional/capitulos/03Parametricos/#sec:prediccion) no se tiene que modificar dado que el modelo está dado en las variables `likelihood` y `prior`.
+```{python}
+#| echo: false
+from IPython.display import Markdown
+mus = [', '.join([f'{v:0.4f}' for v in li.mean]) for li in likelihood]
+mm = []
+for cov in likelihood:
+    _ = [' & '.join([f'{v:0.4f}' for v in reg]) for reg in cov.cov]
+    _ = '\\\\'.join(_)
+    mm.append(_)
+Markdown(f"Los parámetros estimados en la versión ingenua son equivalentes con respecto a las medias, i.e., $\\hat \\mu_1 = [{mus[0]}]^\\intercal$, $\\hat \\mu_2 = [{mus[1]}] ^\\intercal$ y $\\hat \\mu_3 = [{mus[2]}]^\\intercal$. La diferencia se puede observar en las varianzas, que a continuación se muestran como matrices de covarianza para resaltar la diferencia, i.e., $\\hat \\Sigma_1 = \\begin{{pmatrix}} {mm[0]} \\\\ \\end{{pmatrix}}$, $\\hat \\Sigma_2 = \\begin{{pmatrix}} {mm[1]} \\\\ \\end{{pmatrix}}$ y $\\hat \\Sigma_3 = \\begin{{pmatrix}} {mm[2]} \\\\ \end{{pmatrix}}$ se observa como los elementos fuera de la diagonal son ceros, lo cual indica la independencia entra las variables de entrada.")
+```
 
-El `error` del clasificador Bayesiano Ingenuo, en el conjunto de prueba, es de $0.0133$ y su error estándar (`se_formula`) es $0.0047.$ Lo cual se calculó utilizando las siguientes dos instrucciones. 
+Finalmente, el código para predecir se utiliza el código descrito en la @sec-prediccion dado que el modelo está dado en las variables `likelihood` y `prior`.
 
-```python
+```{python}
+#| echo: false
+from IPython.display import Markdown
+hy_ingenuo = predict(G, likelihood, prior, labels)
 error = (y_g != hy_ingenuo).mean()
-se_formula = np.sqrt(error * (1 - error) / y_g.shape[0])
+Markdown(f"El `error` del clasificador Bayesiano Ingenuo, en el conjunto de prueba, es de ${(y_g != hy_ingenuo).mean():0.2f}$ y su error estándar (`se_formula`) es ${np.sqrt(error * (1 - error) / y_g.shape[0]):0.4f}.$")
 ```
 
 ## Ejemplo: Breast Cancer Wisconsin
