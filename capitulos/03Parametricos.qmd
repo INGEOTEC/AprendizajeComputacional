@@ -9,7 +9,8 @@ El **objetivo** de la unidad es conocer las características de los modelos para
 from EvoMSA.model import GaussianBayes
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer, load_diabetes
+from sklearn.datasets import load_breast_cancer,\
+                             load_diabetes
 from scipy.stats import norm, multivariate_normal
 from scipy.special import logsumexp
 from matplotlib import pylab as plt
@@ -406,10 +407,12 @@ que tiene un valor de `{python} diff_f`. De la misma manera que se ha utilizado 
 S = np.random.randint(y_g.shape[0],
                       size=(500, y_g.shape[0]))
 if naive > completo:
-    difference = lambda s: (y_g[s] != hy_naive[s]).mean() -  (y_g[s] != hy_gaussian[s]).mean()
+    diff_f = lambda s: (y_g[s] != hy_naive[s]).mean() -\
+                       (y_g[s] != hy_gaussian[s]).mean()
 else:
-    difference = lambda s: (y_g[s] != hy_gaussian[s]).mean() - (y_g[s] != hy_naive[s]).mean()
-B = [difference(s) for s in S]
+    diff_f = lambda s: (y_g[s] != hy_gaussian[s]).mean() -\
+                       (y_g[s] != hy_naive[s]).mean()
+B = [diff_f(s) for s in S]
 se = np.std(B, axis=0)
 ```
 
@@ -521,11 +524,11 @@ m = LinearRegression().fit(T, y_t)
 ```
 
 ```{python}
-w_f = ', '.join([f'{v:0.2f}' for v in m.coef_])
-w_f = Markdown(f'$\\mathbf w=[{w_f}]$')
+w_f = ', '.join([f'{v:0.2f}' for v in m.coef_[:3]])
+w_f = Markdown(f'$\\mathbf w=[{w_f}, \ldots]$')
 w_0 = Markdown(f'$w_0={m.intercept_:0.2f}$')
 ```
-Los coeficientes de la regresión lineal son `{python} w_f` y `{python} w_0` lo cual se encuentran en las siguientes variables
+Los primeros tres coeficientes de la regresión lineal son `{python} w_f` y `{python} w_0` lo cual se encuentran en las siguientes variables
 
 ```{python}
 #| echo: true
@@ -552,11 +555,11 @@ se = std_error * _
 
 ```{python}
 #| echo: false
-se_f = ', '.join([f'{v:0.2f}' for v in w / se])
-se_f = Markdown(f'$[{se_f}]$')
+se_f = ', '.join([f'{v:0.2f}' for v in (w / se)[:3]])
+se_f = Markdown(f'$[{se_f}, \ldots]$')
 ```
 
-y para saber si los coeficientes son significativamente diferente de cero se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes valores `{python} se_f`. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tiene un coeficiente que estadísticamente no es diferente de cero. 
+y para saber si los coeficientes son significativamente diferente de cero se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes valores `{python} se_f`, para las tres primeras componentes. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tiene un coeficiente que estadísticamente no es diferente de cero. 
 
 La predicción del conjunto de prueba se puede realizar con la siguiente instrucción
 
@@ -611,7 +614,8 @@ Para comprobar si esta diferencia es significativa se calcula el error estándar
 #| echo: true
 S = np.random.randint(y_g.shape[0],
                       size=(500, y_g.shape[0]))
-B = [((y_g[s] - hy2[s])**2).mean() -  ((y_g[s] - hy[s])**2).mean()
+B = [((y_g[s] - hy2[s])**2).mean() -
+      ((y_g[s] - hy[s])**2).mean()
      for s in S]
 se = np.std(B, axis=0)
 ```

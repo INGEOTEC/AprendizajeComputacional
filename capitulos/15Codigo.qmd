@@ -71,7 +71,9 @@ class GaussianBayes(object):
                 cov = np.var(X[mask], axis=0, ddof=1)
             else:
                 cov = np.cov(X[mask], rowvar=False)
-            _ = multivariate_normal(mean=mu, cov=cov, allow_singular=True)
+            _ = multivariate_normal(mean=mu,
+                                    cov=cov,
+                                    allow_singular=True)
             likelihood.append(_)
         self._likelihood = likelihood
 ```
@@ -93,11 +95,12 @@ class GaussianBayes(object):
 
 ```python
     def predict_log_proba(self, X):
-        log_likelihood = np.vstack([m.logpdf(X) 
-                                    for m in self.likelihood]).T
+        log_ll = np.vstack([m.logpdf(X) 
+                            for m in self.likelihood]).T
         prior = self.prior
-        posterior = log_likelihood + prior
-        evidence = np.atleast_2d(logsumexp(posterior, axis=1)).T
+        posterior = log_ll + prior
+        evidence = np.atleast_2d(logsumexp(posterior,
+                                           axis=1)).T
         return posterior - evidence
 ```
 
