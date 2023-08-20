@@ -178,7 +178,7 @@ El clasificador Gausiano tiene un `accuracy` de `{python} acc_f`, el cual se pue
 accuracy = metrics.accuracy_score(y_g, hy_gaussian)
 ```
 
-Las medidas de `recall`, `precision` y `f1` se presentan en la siguiente tabla, en la última columna se presenta el macro de cada una de las medidas. 
+Las medidas de `recall`, `precision` y `f1` se presentan en la @tbl-performance, en la última columna se presenta el macro de cada una de las medidas. 
 
 ```{python}
 #| echo: true
@@ -190,40 +190,54 @@ f1 = metrics.f1_score(y_g, hy_gaussian,
                       average=None)
 ```
 
-|           |$\mathcal Y=0$|$\mathcal Y=1$|Macro     |
-|-----------|----------------|----------------|----------|
-|`recall`   |$0.8723$      |$1$           |$0.9362$|
-|`precision`|$1$           |$0.9178$      |$0.9589$|
-|`f1`       |$0.9318$      |$0.9571$      |$0.9445$|
+```{python}
+#| label: tbl-performance
+#| tbl-cap: Rendimiento
+#| echo: false
+headers = '|        |$\mathcal Y=0$ | $\mathcal Y=1$|Macro|'
+linea =   '|--------|---------------|---------------|-----|'
+recall_f = ' | '.join([f'${x:0.4f}$' for x in recall.tolist() + [np.mean(recall)]])
+precision_f = ' | '.join([f'${x:0.4f}$' for x in precision.tolist() + [np.mean(precision)]])
+f1_f = ' | '.join([f'${x:0.4f}$' for x in f1.tolist() + [np.mean(f1)]])
+tab = '\n'.join(([headers, linea,
+                  f'|`recall`|{recall_f}|',
+                  f'|`precision`|{precision_f}|',
+                  f'|`f1`|{f1_f}|']))
+Markdown(tab)
+```
 
-Por otro lado la `entropia` cruzada es $0.8637,$
-que se puede calcular con el siguiente código.
+```{python}
+#| echo: false
+prob = gaussian.predict_proba(G)
+entropia = metrics.log_loss(y_g, prob)
+entropia_f = Markdown(f'${entropia:0.4f}$')
+```
 
-```python
+Por otro lado la `entropia` cruzada es `{python} entropia_f` que se puede calcular con el siguiente código.
+
+```{python}
+#| echo: true
 prob = gaussian.predict_proba(G)
 entropia = metrics.log_loss(y_g, prob)
 ```
 
-Complementando la información de las medidas que se calculan
-mediante la a posteriori se encuentra la curva ROC, la cual se
-puede calcular con el siguiente código  
+Complementando la información de las medidas que se calculan mediante la posteriori se encuentra la curva ROC, la cual se puede calcular con el siguiente código y se muestra en la @fig-roc-curve
 
-```python
+```{python}
+#| label: fig-roc-curve
+#| fig-cap: ROC
+#| echo: true
 fpr, tpr, thresholds = metrics.roc_curve(y_g, prob[:, 1])
 df = pd.DataFrame(dict(FPR=fpr, TPR=tpr))
-sns.lineplot(df, x='FPR', y='TPR')
+fig = sns.lineplot(df, x='FPR', y='TPR')
 ```
 
-<!--
-plt.savefig('roc_curve.png', dpi=300)
--->
+```{python}
+#| echo: false
+auc_score_f = Markdown(f'${metrics.roc_auc_score(y_g, prob[:, 1]):0.4f}$')
+```
 
-La siguiente figura presenta la curva ROC para el problema analizado. 
-
-![Curva ROC](/AprendizajeComputacional/assets/images/roc_curve.png)
-
-Teniendo un valor de área bajo la curva (`auc_score`) de $0.9927$
-que se obtuvo de la siguiente manera.
+Teniendo un valor de área bajo la curva (`auc_score`) de `{python} auc_score_f` que se obtuvo de la siguiente manera.
 
 ```python
 auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
@@ -233,24 +247,21 @@ auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 
 Con respecto a regresión las siguientes funciones son utilizadas como medidas de rendimiento.
 
-Error cuadrático medio (Mean Square Error): $\textsf{mse}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2 $
+Error cuadrático medio (Mean Square Error): $\textsf{mse}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2.$
 
-Error absoluto medio (Mean Absolute Error): $\textsf{mae}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid $
+Error absoluto medio (Mean Absolute Error): $\textsf{mae}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid.$
 
-Media del porcentaje de error absoluto: $\textsf{mape}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid $
+Media del porcentaje de error absoluto: $\textsf{mape}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid.$
 
-La proporción de la varianza explicada por el modelo: $R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)} $
+La proporción de la varianza explicada por el modelo: $R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)}.$
 
 ### Ejemplo
 
-Las medidas anteriores se ejemplifican utilizando el ejemplo
-de [diabetes](/AprendizajeComputacional/capitulos/03Parametricos/#sec:diabetes)
-que se puede descargar y modelar 
-[OLS](/AprendizajeComputacional/capitulos/03Parametricos/#sec:regresion-ols)
-de la siguiente manera.
+Las medidas anteriores se ejemplifican utilizando el ejemplo de diabetes(#sec-diabetes) que se puede descargar y modelar mediante OLS (@sec-regresion-ols) de la siguiente manera.
 
 
-```python
+```{python}
+#| echo: true
 X, y = load_diabetes(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 m = LinearRegression().fit(T, y_t) 
@@ -258,36 +269,43 @@ m = LinearRegression().fit(T, y_t)
 
 La predicción en el conjunto de prueba sería:
 
-```python
+```{python}
+#| echo: true
 hy = m.predict(G)
 ```
 
-Las diferentes medidas de rendimiento para problemas de regresión se 
-puede calcular de la siguiente manera. 
+Las diferentes medidas de rendimiento para problemas de regresión se puede calcular de la siguiente manera. 
 
 El error cuadrático medio, `mse` corresponde a
 
-```python
+```{python}
+#| echo: true
 mse = metrics.mean_squared_error(y_g, hy)
 ```
 
-y tienen un valor de $3533.5256.$
+```{python}
+#| echo: false 
+mse_f = Markdown(f'${mse:0.4f}$')
+mae_f = Markdown(f'${metrics.mean_absolute_error(y_g, hy):0.4f}$')
+mape_f = Markdown(f'${metrics.mean_absolute_percentage_error(y_g, hy):0.4f}$')
+r2_f = Markdown(f'${metrics.r2_score(y_g, hy):0.4f}$')
+```
 
-El error absoluto medio, `mae`, tiene un valor de $49.1105,$
-calculado de la siguiente manera
+y tienen un valor de `{python} mse_f`.
+
+El error absoluto medio, `mae`, tiene un valor de `{python} mae_f` calculado de la siguiente manera
 
 ```python
 mae = metrics.mean_absolute_error(y_g, hy)
 ```
 
-La media del porcentaje de error absoluto, `mape`, es $0.4739$
-obtenido con el siguiente código 
+La media del porcentaje de error absoluto, `mape`, es `{python} mape_f` obtenido con el siguiente código 
 
 ```python
 mape = metrics.mean_absolute_percentage_error(y_g, hy)
 ```
 
-Finalmente, la varianza explicada por el modelo $R^2$, `r2`, es $0.3925$
+Finalmente, la varianza explicada por el modelo $R^2$, `r2`, es `{python} r2_f`
 
 ```python
 r2 = metrics.r2_score(y_g, hy)
