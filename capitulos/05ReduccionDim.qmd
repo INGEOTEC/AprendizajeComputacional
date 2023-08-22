@@ -325,46 +325,18 @@ np.mean(perf, axis=0)
 
 ## Selección hacia Adelante
 
-Un procedimiento que pone en el centro del proceso de selección al algoritmo
-de aprendizaje utilizado es **Selección hacia Adelante** y su complemento
-que sería **Selección hacia Atrás.** El algoritmo de selección hacia 
-adelante es un procedimiento iterativo que selecciona una variable a la 
-vez guiada por el rendimiento de esta variable cuando es usada en el algoritmo
-de aprendizaje. Al igual que los procedimientos anteriores este no modifica
-las características del problema, solamente selecciona las que se consideran 
-relevantes.
+Un procedimiento que pone en el centro del proceso de selección al algoritmo de aprendizaje utilizado es **Selección hacia Adelante** y su complemento que sería **Selección hacia Atrás.** El algoritmo de selección hacia adelante es un procedimiento iterativo que selecciona una variable a la vez guiada por el rendimiento de esta variable cuando es usada en el algoritmo de aprendizaje. Al igual que los procedimientos anteriores este no modifica las características del problema, solamente selecciona las que se consideran relevantes.
 
-En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = \{(x_i, y_i)\},$ 
-con una función $L$ que mide el rendimiento del algoritmo de 
-aprendizaje $\mathcal H.$
-La idea es ir seleccionando de manera iterativa aquellas variables que generan un 
-modelo con mejores capacidades de generalización. Para medir la generalización 
-del algoritmo se pueden realizar de diferentes maneras, una es mediante la 
-división de $\mathcal X$ en dos conjuntos: entrenamiento y validación; y la 
-segunda manera corresponde a utilizar $k$-iteraciones de validación cruzada.  
+En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = \{(x_i, y_i)\},$ con una función $L$ que mide el rendimiento del algoritmo de aprendizaje $\mathcal H.$ La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización del algoritmo se pueden realizar de diferentes maneras, una es mediante la división de $\mathcal X$ en dos conjuntos: entrenamiento y validación; y la segunda manera corresponde a utilizar $k$-iteraciones de validación cruzada.  
 
-Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ 
-de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando está notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset $, 
-en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento
-del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la 
-función de rendimiento $L$. Este proceso continua si $\mathcal P^{j+1} > \mathcal P^j $ donde $\mathcal P^0 = 0$.
+Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando está notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset $, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continua si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
 
 Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.
 
-Ilustrando estos pasos en el conjunto de Breast Cancer Wisconsin
-utilizado previamente. El primer paso es medir el rendimiento cuando
-solamente una variable interviene en el proceso. Como 
-inicialmente $\pi^0 = \emptyset $ entonces solo es necesario generar 
-un clasificador cuando sola una variable está involucrada.
-El rendimiento de cada variable se guarda en la variable `perf`, 
-se puede observar que el primer ciclo (línea 3) itera por todas las 
-variables en la representación, para cada una se seleccionan 
-los datos solo con esa variable `T1 = T[:, np.array([var])]`
-después se hacen $k$-iteraciones de validación cruzada y finalmente
-se guarda el rendimiento. El rendimiento que se está calculando
-es macro-recall. 
+Ilustrando estos pasos en el conjunto de Breast Cancer Wisconsin utilizado previamente. El primer paso es medir el rendimiento cuando solamente una variable interviene en el proceso. Como inicialmente $\pi^0 = \emptyset $ entonces solo es necesario generar un clasificador cuando sola una variable está involucrada. El rendimiento de cada variable se guarda en la variable `perf`, se puede observar que el primer ciclo (línea 3) itera por todas las variables en la representación, para cada una se seleccionan los datos solo con esa variable `T1 = T[:, np.array([var])]` después se hacen $k$-iteraciones de validación cruzada y finalmente se guarda el rendimiento. El rendimiento que se está calculando es macro-recall. 
 
-```python
+```{python}
+#| echo: true
 perf = []
 kfold = KFold(shuffle=True)
 for var in range(T.shape[1]):
@@ -373,83 +345,72 @@ for var in range(T.shape[1]):
     for ts, vs in kfold.split(T1):
         gaussian = GaussianNB().fit(T1[ts], y_t[ts])
         hy_gaussian = gaussian.predict(T1[vs])
-        _ = recall_score(y_t[vs], hy_gaussian, average='macro')    
+        _ = recall_score(y_t[vs], hy_gaussian,
+                         average='macro')    
         perf_inner.append(_)
     perf.append(np.mean(perf_inner))
 ```
 
-La siguiente figura muestra el rendimiento de las 30 variables, 
-se observa como una gran parte de las variables proporcionan 
-un rendimiento superior al $0.8$ y la variable que tiene el mejor
-rendimiento es la que corresponde al índice $27$ y valor $0.9057.$
+```{python}
+#| echo: false
+perf_f = Markdown(f'{perf[27]:0.4f}')
+```
 
-![Selección hacia Adelante](/AprendizajeComputacional/assets/images/var-forward-sel.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
+La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa como una gran parte de las variables proporcionan un rendimiento superior al $0.8$ y la variable que tiene el mejor rendimiento es la que corresponde al índice $27$ y valor `{python} perf_f`.
 
-```python
+```{python}
+#| fig-cap: Rendimiento de las Variables
+#| label: fig-rendimiento-sel
+#| code-fold: true
 sns.barplot(x=list(range(len(perf))), y=perf)
 plt.grid()
 plt.xlabel('Variable')
-plt.ylabel('Macro-Recall')
+fig = plt.ylabel('Macro-Recall')
 ```
-</details>
-<!--
-plt.savefig('var-forward-sel.png', dpi=300)
--->
 
 El algoritmo de selección hacia atrás y adelante se implementa en 
 la clase `SequentialFeatureSelector` y su uso se observa en las siguientes
 instrucciones. 
 
-```python
+```{python}
+#| echo: true
 kfolds = list(KFold(shuffle=True).split(T))
-scoring = make_scorer(lambda y, hy: recall_score(y, hy, average='macro'))
+scoring = make_scorer(lambda y, hy: recall_score(y, hy,
+                                         average='macro'))
 seq = SequentialFeatureSelector(estimator=GaussianNB(),
                                 scoring=scoring,
                                 n_features_to_select='auto',
                                 cv=kfolds).fit(T, y_t)
 ```
 
-Al igual que en el algoritmo de `SelectKBest` las variables 
-seleccionadas se pueden observar con la función `get_support`.
-En este caso las variables seleccionadas 
-son: $[1, 4, 8, 9, 11, 14, 16, 18, 19, 20, 21, 22, 23, 27, 28].$
+```{python}
+#| echo: false
+index = seq.get_support()
+index = ', '.join([str(x) for x in np.where(index)[0]])
+index = Markdown(f'$[{index}]$')
+seq = SequentialFeatureSelector(estimator=GaussianNB(),
+                                scoring=scoring,
+                                direction='backward',
+                                n_features_to_select='auto',
+                                cv=kfolds).fit(T, y_t)
+index2 = seq.get_support()
+index2 = ', '.join([str(x) for x in np.where(index2)[0]])
+index2 = Markdown(f'$[{index2}]$')
+```
 
-Utilizando el parámetro `direction='backward'` para utilizar
-selección hacia atrás en el mismo conjunto de datos, 
-da como resultado la siguiente
-selección $[2, 3, 10, 12, 15, 16, 20, 21, 22, 23, 24, 25, 27, 28, 29].$
-Se puede observar que las variables seleccionadas por los métodos 
-son diferentes. Esto es factible porque los algoritmos solo aseguran
-llegar a un máximo local y no está garantizado que el máximo local
-corresponda al máximo global. 
+Al igual que en el algoritmo de `SelectKBest` las variables seleccionadas se pueden observar con la función `get_support`. En este caso las variables seleccionadas son: `{python} index`.
+
+Utilizando el parámetro `direction='backward'` para utilizar selección hacia atrás en el mismo conjunto de datos, da como resultado la siguiente selección `{python} index2`. Se puede observar que las variables seleccionadas por los métodos son diferentes. Esto es factible porque los algoritmos solo aseguran llegar a un máximo local y no está garantizado que el máximo local corresponda al máximo global. 
 
 ### Ventajas y Limitaciones
 
-Una de las ventajas de la selección hacia atrás y adelante es que el 
-algoritmo termina a lo más cuando se han analizado todas las variables, 
-esto eso para un problema en $\mathbb R^d$ se analizarán un máximo
-de $d$ variables. La principal desventaja es que estos algoritmos 
-son voraces, es decir, toman la mejor decisión en el momento, lo cual 
-tiene como consecuencia que sean capaces de garantizar llegar a un
-máximo local y en ocasiones este máximo local no corresponde al máximo
-global. Con el fin de complementar esta idea, en un problema $\mathbb R^d$
-se tiene un espacio de búsqueda de $2^d - 1$, es decir, se tiene esa 
-cantidad de diferentes configuraciones que se pueden explorar. En 
-los algoritmos de vistos se observa un máximo de $d$ elementos de
-ese total.
+Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto eso para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que sean capaces de garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Con el fin de complementar esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$, es decir, se tiene esa cantidad de diferentes configuraciones que se pueden explorar. En los algoritmos de vistos se observa un máximo de $d$ elementos de ese total.
 
 ## Análisis de Componentes Principales {#sec-pca}
 
-Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m $ donde $m < d $
+Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m < d$
 
-La idea de PCA es buscar una matriz de 
-proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos 
-de $\mathcal D = \{x_i\}$ sea transformados utilizando $z = W^\intercal x$
-donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
+La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = \{x_i\}$ sea transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
 
 Si suponemos que $\mathbf x \sim \mathcal N_d(\mu, \Sigma)$ y $\mathbf w \in \mathbb R^d$ entonces $\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)$ y por lo tanto $\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.$
 
@@ -461,31 +422,27 @@ Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemp
 
 Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción.
 
-```python
+```{python}
+#| echo: true
 D, y = load_iris(return_X_y=True)
 ```
 
 Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $\mathbb R^2$ los datos, entonces el ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
 
-```python
+```{python}
+#| echo: true
 pca = decomposition.PCA(n_components=2).fit(D)
 Xn = pca.transform(D)
 ```
 
-El siguiente código se utiliza para visualizar los datos. El 
-resultado se muestra en la figura contigua, donde se observa
-en diferente color cada una de las clases.
+El siguiente código se utiliza para visualizar los datos. El resultado se muestra en la @fig-pca-iris, donde se observa en diferente color cada una de las clases.
 
-```python
+```{python}
+#| fig-cap: Proyección mediante PCA del problema del Iris
+#| label: fig-pca-iris
+#| code-fold: true
 data = pd.DataFrame([dict(x=x, y=y, clase=c)
                      for (x, y), c in zip(Xn, y)])
-sns.relplot(data, kind='scatter',
-            x='x', y='y', hue='clase')
+fig = sns.relplot(data, kind='scatter',
+                  x='x', y='y', hue='clase')
 ```
-
-<!--
-plt.savefig('pca.png', dpi=300)
--->
-
-
-![PCA](/AprendizajeComputacional/assets/images/pca.png)
