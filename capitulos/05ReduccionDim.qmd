@@ -254,39 +254,52 @@ score = recall_score(y_g, hy_gaussian, average=None)
 
 Cuando se cuenta con pocos datos para medir el rendimiento del algoritmo es común utilizar la técnica de _k-fold cross-validation_ la cual consiste en partir $k$ veces el conjunto de entrenamiento para generar $k$ conjuntos de entrenamiento y validación. 
 
-La idea se ilustra con la siguiente tabla, donde se asume que los datos son divididos en 5 bloques ($k=5$), cada columna de la tabla ilustra los datos de ese bloque. Si los datos se dividen en $k=5$ bloques, entonces existen $k$ iteraciones que son representadas por cada renglón de la siguiente tabla, quitando el encabezado de la misma. La letra en cada celda identifica el uso que se le dará a esos datos en la respectiva iteración, es decir, `T` representa que se usará como conjunto de entrenamiento y V se usa para identificar aquellos datos que se usarán como conjunto de validación.
+La idea se ilustra con la siguiente tabla, donde se asume que los datos son divididos en 5 bloques ($k=5$), cada columna de la tabla ilustra los datos de ese bloque. Si los datos se dividen en $k=5$ bloques, entonces existen $k$ iteraciones que son representadas por cada renglón de la siguiente tabla, quitando el encabezado de la misma. La letra en cada celda identifica el uso que se le dará a esos datos en la respectiva iteración, es decir, $\mathcal T$ representa que se usará como conjunto de entrenamiento y $\mathcal V$ se usa para identificar aquellos datos que se usarán como conjunto de validación.
 
 La idea es entrenar y probar el rendimiento del algoritmo $k$ veces usando las particiones en cada renglón. Es decir, la primera vez se usan los datos de la primera columna como el conjunto de validación, y el resto de columnas, $[2, 3, 4, 5]$, como conjunto de entrenamiento para estimar los parámetros del algoritmo. En la segunda iteración se usan los datos del segundo renglón donde se observa que los datos en la cuarta columna corresponden al conjunto de validación y los datos en las columnas $[1, 2, 3, 5]$ son usados como conjunto de prueba. Las iteraciones siguen hasta que todos los datos fueron utilizados en una ocasión como conjunto de validación. 
 
 |  1 |  2 |  3 |  4 |  5 |
 |----|----|----|----|----|
-|V   |T   |T   |T   |T   |
-|T   |T   |T   |V   |T   |
-|T   |T   |V   |T   |T   |
-|T   |T   |T   |T   |V   |
-|T   |V   |T   |T   |T   |
+|$\mathcal V$   |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |
+|$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |$\mathcal V$   |$\mathcal T$   |
+|$\mathcal T$   |$\mathcal T$   |$\mathcal V$   |$\mathcal T$   |$\mathcal T$   |
+|$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |$\mathcal V$   |
+|$\mathcal T$   |$\mathcal V$   |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |
 
 Se utiliza el mismo problema para medir el rendimiento del hiperparámetro del clasificador Gausiano. Lo primero es seleccionar el conjunto de prueba ($\mathcal G$) que se realiza con el siguiente código. 
 
-```python
+```{python}
+#| echo: true
 T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
 ```
 
-La validación cruzada con k-iteraciones se puede realizar
-con la clase `KFold` de la siguiente manera. La primera
-línea crear una variable para guardar el rendimiento. En la 
-segunda línea se inicializa el procedimiento indicando que los 
-datos sean tomados al azar. Después se realiza el ciclo con 
-las $k$ iteraciones, para cada iteración se genera un índice
-`ts` que indica cuales son los datos del conjunto de entrenamiento
-y `vs` que corresponde a los datos de validación. Se estiman 
-los parámetros usando `ts` tal y como se observa en la cuarta línea.
-Habiendo estimado los parámetros se predicen los datos del conjunto
-de validación (5 línea), se mide el recall en todas las clases y se 
-guarda en la lista `perf.` Al final se calcula la media de 
-los $k$ rendimientos medidos, teniendo un valor de $[0.8943, 0.9818].$
+```{python}
+#| echo: false
+perf = []
+perf2 = []
+kfold = KFold(shuffle=True)
+for ts, vs in kfold.split(T):
+    gaussian = GaussianBayes().fit(T[ts], y_t[ts])
+    hy_gaussian = gaussian.predict(T[vs])
+    _ = recall_score(y_t[vs], hy_gaussian, average=None)    
+    perf.append(_)
+    gaussian = GaussianBayes(naive=True).fit(T[ts], y_t[ts])
+    hy_gaussian = gaussian.predict(T[vs])
+    _ = recall_score(y_t[vs], hy_gaussian, average=None)    
+    perf2.append(_)
 
-```python
+score = np.mean(perf, axis=0)    
+score = [f'{x:0.4f}' for x in score]
+score = Markdown(f'[{", ".join(score)}]')
+score2 = np.mean(perf2, axis=0)    
+score2 = [f'{x:0.4f}' for x in score2]
+score2 = Markdown(f'[{", ".join(score2)}]')
+```
+
+La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` de la siguiente manera. La primera línea crear una variable para guardar el rendimiento. En la segunda línea se inicializa el procedimiento indicando que los datos sean tomados al azar. Después se realiza el ciclo con las $k$ iteraciones, para cada iteración se genera un índice `ts` que indica cuales son los datos del conjunto de entrenamiento y `vs` que corresponde a los datos de validación. Se estiman los parámetros usando `ts` tal y como se observa en la cuarta línea. Habiendo estimado los parámetros se predicen los datos del conjunto de validación (5 línea), se mide el recall en todas las clases y se guarda en la lista `perf.` Al final se calcula la media de los $k$ rendimientos medidos, teniendo un valor de `{python} score`.
+
+```{python}
+#| echo: true
 perf = []
 kfold = KFold(shuffle=True)
 for ts, vs in kfold.split(T):
@@ -294,16 +307,10 @@ for ts, vs in kfold.split(T):
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf.append(_)
-np.mean(perf, axis=0)    
+perf = np.mean(perf, axis=0)    
 ```
 
-Un procedimiento equivalente se realiza para el caso 
-del clasificador Bayesiano Ingenuo tal y como se muestra a continuación.
-La media del recall en las clases es $[0.828 , 0.9717].$ 
-Se observa que el clasificador Bayesiano con la matriz de covarianza
-tiene un mejor rendimiento en validación que el clasificador 
-Bayesiano Ingenuo. El último paso sería calcular el rendimiento 
-en el conjunto $\mathcal G$ lo cual fue presentado anteriormente.  
+Un procedimiento equivalente se realiza para el caso del clasificador Bayesiano Ingenuo tal y como se muestra a continuación. La media del recall en las clases es `{python} score2` Se observa que el clasificador Bayesiano con la matriz de covarianza tiene un mejor rendimiento en validación que el clasificador Bayesiano Ingenuo. El último paso sería calcular el rendimiento en el conjunto $\mathcal G$ lo cual fue presentado anteriormente.  
 
 ```python
 perf = []
