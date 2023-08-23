@@ -147,7 +147,10 @@ Una función de costo que ha sido muy utilizada en redes neuronales y en particu
 Para cada ejemplo $x$ se tiene $\mathbb P(\mathcal Y=k \mid \mathcal X=x)$ y el clasificador predice $\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$ Utilizando estas definiciones se puede decir que $P=\mathbb P$ y $Q=\mathbb{\hat P}$ en la definición de entropía cruzada; entonces
 
 $$
-H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) = -\sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).
+\begin{split}
+H(\mathbb P(\mathcal Y \mid \mathcal X=x) &, \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)) =\\ 
+&-\sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) \log \mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).
+\end{split}
 $$
 
 Finalmente la medida de rendimiento quedaría como $\sum_x H(\mathbb P(\mathcal Y \mid \mathcal X=x), \mathbb{\hat P}(\mathcal Y \mid \mathcal X=x)).$ 
@@ -233,6 +236,7 @@ Complementando la información de las medidas que se calculan mediante la poster
 fpr, tpr, thresholds = metrics.roc_curve(y_g, prob[:, 1])
 df = pd.DataFrame(dict(FPR=fpr, TPR=tpr))
 fig = sns.lineplot(df, x='FPR', y='TPR')
+plt.grid()
 ```
 
 ```{python}
@@ -246,7 +250,7 @@ Teniendo un valor de área bajo la curva (`auc_score`) de `{python} auc_score_f`
 auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 ```
 
-## Regresión
+## Regresión {#sec-rendimiento-regresion}
 
 Con respecto a regresión las siguientes funciones son utilizadas como medidas de rendimiento.
 
@@ -404,7 +408,7 @@ hy_gaussian = gaussian.predict(G)
 score = recall_score(y_g, hy_gaussian, average=None)
 ```
 
-### k-Iteraciones de Validación Cruzada
+### k-Iteraciones de Validación Cruzada {#sec-kfold-cross-validation}
 
 Cuando se cuenta con pocos datos para medir el rendimiento del algoritmo es común utilizar la técnica de _k-fold cross-validation_ la cual consiste en partir $k$ veces el conjunto de entrenamiento para generar $k$ conjuntos de entrenamiento y validación. 
 

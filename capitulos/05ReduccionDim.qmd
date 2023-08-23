@@ -6,23 +6,30 @@ El **objetivo** de la unidad es aplicar técnicas de reducción de dimensionalid
 
 ```{python}
 #| echo: true
+#| warning: false
 from scipy.stats import multivariate_normal, norm, kruskal
 from sklearn.datasets import load_diabetes,\
                              load_breast_cancer,\
-                             load_iris
+                             load_iris,\
+                             load_wine,\
+                             load_digits
 from sklearn.feature_selection import f_regression,\
                                       SelectKBest,\
+                                      SelectFromModel,\
                                       SequentialFeatureSelector
 from sklearn.model_selection import KFold, train_test_split
-from sklearn.metrics import recall_score, make_scorer
+from sklearn.metrics import recall_score, make_scorer, r2_score
+from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import StandardScaler
 from sklearn import decomposition
 from EvoMSA.model import GaussianBayes
+import umap
 import numpy as np
 import pandas as pd
 from matplotlib import pylab as plt
+import matplotlib as mpl
 import seaborn as sns
-
 ```
 
 ```{python}
@@ -211,6 +218,7 @@ sns.barplot(x=list(range(len(perf))), y=perf)
 plt.grid()
 plt.xlabel('Variable')
 fig = plt.ylabel('Macro-Recall')
+plt.grid()
 ```
 
 El algoritmo de selección hacia atrás y adelante se implementa en 
@@ -251,6 +259,62 @@ Utilizando el parámetro `direction='backward'` para utilizar selección hacia a
 
 Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto eso para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que sean capaces de garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Con el fin de complementar esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$, es decir, se tiene esa cantidad de diferentes configuraciones que se pueden explorar. En los algoritmos de vistos se observa un máximo de $d$ elementos de ese total.
 
+
+## Selección mediante Modelo {#sec-seleccion-por-modelo}
+
+Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Para ejemplificar esto se utilizará el problema de Diabetes que fue utilizado en la @sec-diabetes. Los datos se obtienen con la siguiente instrucción, adicionalmente se normalizan las características para tener una media $0$ y desviación estándar $1$. 
+
+```{python}
+#| echo: true
+D, y = load_diabetes(return_X_y=True)
+D = StandardScaler().fit_transform(D)
+```
+
+El siguiente paso se estiman los parámetros de una regresión lineal (@sec-regresion-ols), también se muestran los valores de los primeros tres coeficientes de la regresión. Se puede observar que el valor absoluto de estos coeficientes está en diferentes rangos, el primer coeficiente es cercano a cero, el segundo está alrededor de 10 y el tercero es superior a 20. Considerando que los datos están normalizados, entonces el valor absoluto indica el efecto que tiene esa variable en el resultado final, en estos tres datos es puede concluir que el tercer coeficiente tiene una mayor contribución que los otros dos coeficientes. 
+
+```{python}
+#| echo: true
+reg = LinearRegression().fit(D, y)
+reg.coef_[:3]
+```
+
+La clase `SelectFromModel` permite seleccionar las $d$ características que el modelo considera más importante. En el siguiente ejemplo se selecciona las $d=4$ características más importantes; dentro de estas características se encuentra la tercera (i.e., índice 2) cuyo coeficiente se había presentado previamente. 
+
+```{python}
+#| echo: true
+sel = SelectFromModel(reg, max_features=4,
+                      threshold=-np.inf, prefit=True)
+np.where(sel.get_support())[0]
+```
+
+Habiendo descrito el procedimiento para seleccionar aquellas características más importantes, es necesario encontrar cuál es el número de características que producen el mejor rendimiento. Para realizar esto, se realiza $k$-iteraciones de validación cruzada (@sec-kfold-cross-validation), donde se varía el número de características y en cada caso se mide el rendimiento utilizando la medida $R^2$ (@sec-rendimiento-regresion). 
+
+```{python}
+folds = [x for x in KFold(shuffle=True).split(D, y)]
+perf = []
+dims = range(2, D.shape[1] + 1)
+for dim in dims:
+    model = SelectFromModel(reg, max_features=dim,
+                            threshold=-np.inf, prefit=True)
+    hy = np.empty_like(y)
+    for tr, vs in folds:
+        Dt = model.transform(D)
+        m = LinearRegression().fit(Dt[tr], y[tr])
+        hy[vs] = m.predict(Dt[vs])
+    perf.append(dict(r2=r2_score(y, hy), numero=dim))
+```
+
+La @fig-seleccion-por-modelo muestra el rendimiento ($R^2$) para cada modelo generado, empezando cuando se usan las $2$ características más importantes y terminando con el modelo que tiene todas las características. En la figura se puede observar que el rendimiento mejora considerablemente de $2$ a $3$ características, este sigue mejorando y llega un punto donde incluir más características tiene un impacto negativo en el rendimiento. 
+
+```{python}
+#| fig-cap: Rendimiento variando el número de características
+#| label: fig-seleccion-por-modelo
+#| code-fold: true
+df = pd.DataFrame(perf)
+ax = sns.relplot(df, x='numero', y='r2', kind='line')
+plt.grid()
+```
+
 ## Análisis de Componentes Principales {#sec-pca}
 
 Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m < d$
@@ -265,11 +329,12 @@ Utilizando esta información se puede describir el problema como encontrar $\mat
 
 Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemplos se encuetran en $\mathbb R^4$ entonces para poderlos graficar en $\mathbb R^2$ se requiere realizar una transformación como podría ser Análisis de Componentes Principales.
 
-Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción.
+Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción, en la segunda linea se normalizan los datos para tener una media $0$ y desviación estándar $1$, este procedimiento es necesario cuando los valores de las características se encuentran en diferentes escalas. 
 
 ```{python}
 #| echo: true
 D, y = load_iris(return_X_y=True)
+D = StandardScaler().fit_transform(D)
 ```
 
 Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $\mathbb R^2$ los datos, entonces el ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
@@ -280,7 +345,7 @@ pca = decomposition.PCA(n_components=2).fit(D)
 Xn = pca.transform(D)
 ```
 
-El siguiente código se utiliza para visualizar los datos. El resultado se muestra en la @fig-pca-iris, donde se observa en diferente color cada una de las clases.
+El siguiente código se utiliza para visualizar los datos. El resultado se muestra en la @fig-pca-iris, donde se observa en diferente color cada una de las clases. 
 
 ```{python}
 #| fig-cap: Proyección mediante PCA del problema del Iris
@@ -290,4 +355,86 @@ data = pd.DataFrame([dict(x=x, y=y, clase=c)
                      for (x, y), c in zip(Xn, y)])
 fig = sns.relplot(data, kind='scatter',
                   x='x', y='y', hue='clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)
+plt.grid()                
+```
+
+## UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction {#sec-umap-visualizacion}
+
+En esta sección se presenta el uso de UMAP propuesto por @UMAP. UMAP es una técnica no lineal para reducir la dimensión y que con dimensiones bajas ($d=2$) permite tener una visualización de los datos. El ejemplo que se realizará es visualizar mediante UMAP los datos del problema de Dígitos, estos datos se pueden obtener con la siguiente instrucción; en estas instrucciones también se normalizan los datos para tener una media $0$ y desviación estándar $1.$ 
+
+```{python}
+#| echo: true
+D, y = load_digits(return_X_y=True)
+D = StandardScaler().fit_transform(D)
+```
+
+Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la @fig-pca-digits presenta la proyección del conjunto de Dígitos utilizando PCA. Como se puede observar en la figura, esta proyección no da una separación clara entre grupos, aunque si se puede identificar una estructura, donde algunos números se encuentran en la perifería de la figura. 
+
+```{python}
+#| fig-cap: Proyección mediante PCA del problema de Dígitos
+#| label: fig-pca-digits
+#| code-fold: true
+pal = mpl.cm.Paired
+pca = decomposition.PCA(n_components=2).fit(D)
+Xn = pca.transform(D)
+df = pd.DataFrame(Xn, columns=['x', 'y'])
+df['Clase'] = y
+fig = sns.relplot(df, kind='scatter',
+                  legend='full', palette=pal,
+                  x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)
+plt.grid()
+```
+
+UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los $K$ vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que se tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para $K=[2, 4, 8, 16].$ El código que realiza está exploración se muestra en las siguientes instrucciones. 
+
+```{python}
+#| echo: true
+#| warning: false
+df = pd.DataFrame()
+for K in [2, 4, 8, 16]:
+    reducer = umap.UMAP(n_neighbors=K)
+    low_dim = reducer.fit_transform(D)
+    _ = pd.DataFrame(low_dim, columns=['x', 'y'])
+    _['Clase'] = y
+    _['K'] = K
+    df = pd.concat((df, _))
+```
+
+La @fig-umap-digits-k muestra las diferentes visualizaciones cuando el número de vecinos de cambia en UMAP, se puede observar como para $K=2$ la visualización no muestra ninguna estructura, pero partiendo de $K=4$ se puede visualizar grupos que corresponden a los diferentes dígitos. 
+
+```{python}
+#| fig-cap: Proyección mediante UMAP del problema de Dígitos variando el número de vecinos
+#| label: fig-umap-digits-k
+#| code-fold: true
+fig = sns.relplot(df, kind='scatter', x='x', y='y',
+                  legend='full', palette=pal,
+                  hue='Clase', col='K')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)            
+```
+
+Con el objetivo de mostrar con mayor detalle los grupos encontrados, la @fig-umap-digits-k8 muestra la visualización de $K=8$ en ella se puede observar como los ejemplos se agrupan de acuerdo al dígito que representan, también se puede ver la similitud entre los diferentes dígitos y como algunos ejemplos están muy cerca a un grupo al cual no pertenecen. 
+
+```{python}
+#| fig-cap: Proyección mediante UMAP del problema de dígitos con ocho vecinos
+#| label: fig-umap-digits-k8
+#| code-fold: true
+fig = sns.relplot(df[df.K==8], kind='scatter', 
+                  legend='full', palette=pal,
+                  x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)
+plt.grid()
 ```
