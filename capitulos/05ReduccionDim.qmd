@@ -214,11 +214,10 @@ La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa c
 #| fig-cap: Rendimiento de las Variables
 #| label: fig-rendimiento-sel
 #| code-fold: true
+sns.set_style('whitegrid')
 sns.barplot(x=list(range(len(perf))), y=perf)
-plt.grid()
 plt.xlabel('Variable')
 fig = plt.ylabel('Macro-Recall')
-plt.grid()
 ```
 
 El algoritmo de selección hacia atrás y adelante se implementa en 
@@ -311,8 +310,8 @@ La @fig-seleccion-por-modelo muestra el rendimiento ($R^2$) para cada modelo gen
 #| label: fig-seleccion-por-modelo
 #| code-fold: true
 df = pd.DataFrame(perf)
+sns.set_style('whitegrid')
 ax = sns.relplot(df, x='numero', y='r2', kind='line')
-plt.grid()
 ```
 
 ## Análisis de Componentes Principales {#sec-pca}
@@ -353,13 +352,13 @@ El siguiente código se utiliza para visualizar los datos. El resultado se muest
 #| code-fold: true
 data = pd.DataFrame([dict(x=x, y=y, clase=c)
                      for (x, y), c in zip(Xn, y)])
+sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter',
                   x='x', y='y', hue='clase')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()                
 ```
 
 ## UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction {#sec-umap-visualizacion}
@@ -383,6 +382,7 @@ pca = decomposition.PCA(n_components=2).fit(D)
 Xn = pca.transform(D)
 df = pd.DataFrame(Xn, columns=['x', 'y'])
 df['Clase'] = y
+sns.set_style('whitegrid')
 fig = sns.relplot(df, kind='scatter',
                   legend='full', palette=pal,
                   x='x', y='y', hue='Clase')
@@ -390,7 +390,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los $K$ vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que se tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para $K=[2, 4, 8, 16].$ El código que realiza está exploración se muestra en las siguientes instrucciones. 
@@ -429,6 +428,7 @@ Con el objetivo de mostrar con mayor detalle los grupos encontrados, la @fig-uma
 #| fig-cap: Proyección mediante UMAP del problema de dígitos con ocho vecinos
 #| label: fig-umap-digits-k8
 #| code-fold: true
+sns.set_style('whitegrid')
 fig = sns.relplot(df[df.K==8], kind='scatter', 
                   legend='full', palette=pal,
                   x='x', y='y', hue='Clase')
@@ -436,5 +436,4 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```

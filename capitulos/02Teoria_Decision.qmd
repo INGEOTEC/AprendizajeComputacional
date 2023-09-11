@@ -108,9 +108,10 @@ D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
+sns.set_style('whitegrid')
 sns.relplot(data=df, kind='scatter', x='x',
             y='y', hue='clase')
-plt.grid()
+         
 ```               
 
 El resultado del código anterior se muestra en la @fig-gaussian_3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
@@ -172,9 +173,9 @@ Teniendo las predicciones y los valores de reales de las clases, lo que se busca
 _ = [dict(x=x, y=y, error=error) 
      for (x, y), error in zip(X, y != prediccion)]
 df_error = pd.DataFrame(_)
+sns.set_style('whitegrid')
 sns.relplot(data=df_error, kind='scatter',
             x='x', y='y', hue='error')
-plt.grid()
 ```
 
 La @fig-gaussian_3classes-error muestra todos los datos generados, en color azul se muestran aquellos datos que fueron correctamente clasificados y en color naranja (error igual a True) se muestran aquellos ejemplos donde el proceso de clasificación cometió un error. 
@@ -235,8 +236,8 @@ en la lista `B`.
 #| label: fig-gaussian_3classes-distribucion
 #| fig-cap: "Distribución del error de clasificación"
 #| echo: true
+sns.set_style('whitegrid')
 sns.displot(B, kde=True)
-plt.grid()
 ```
 
 La @fig-gaussian_3classes-distribucion muestra el histograma de la estimación del error en el ejemplo analizado.

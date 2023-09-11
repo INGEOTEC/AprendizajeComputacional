@@ -12,9 +12,9 @@ from sklearn import decomposition
 from sklearn import metrics
 from scipy import linalg
 from itertools import permutations
+from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
-from matplotlib import pylab as plt
 import seaborn as sns
 ```
 
@@ -82,12 +82,12 @@ Xn = pca.transform(G_1)
 mu = pca.transform(np.atleast_2d(G_1.mean(axis=0)))[0]
 data = pd.DataFrame(dict(x=Xn[:, 0], y=Xn[:, 1], tipo=['G_1'] * Xn.shape[0]))
 data.loc[Xn.shape[0]] = dict(x=mu[0], y=mu[1], tipo='mu_1')
+sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 
@@ -133,12 +133,12 @@ mu_data = pd.DataFrame(dict(x=mu[:, 0],
                             y=mu[:, 1],
                             tipo=['mu'] * mu.shape[0]))
 data = pd.concat((data, mu_data))
+sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 ### Algoritmo
@@ -178,12 +178,12 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          y=D_pca[:, 1],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
+sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 Un procedimiento equivalente se puede realizar para generar 
@@ -213,12 +213,12 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          y=D_pca[:, 1],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
+sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 ## Rendimiento
@@ -306,14 +306,9 @@ Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En 
 data = pd.DataFrame([{'Calinski-Harabasz': b,  'Silhouette': a, 'K': k + 2} 
                      for k, (a, b) in enumerate(zip(S1, S2))])
 data.set_index('K', inplace=True)
-
+sns.set_style('whitegrid')
 sns.lineplot(data=data.Silhouette, color=sns.color_palette()[0])
 ax2 = plt.twinx()
 fig = sns.lineplot(data=data['Calinski-Harabasz'], 
                    color=sns.color_palette()[1], ax=ax2)
-fig.tick_params(bottom=False, top=False, 
-                left=False, right=False,
-                labelbottom=False, labelleft=False)
-fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
