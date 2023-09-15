@@ -40,15 +40,12 @@ El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una re
 
 ## Clasificación { #sec-clasificacion }
 
-Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
+Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
 
-![Tres Distribuciones Gausianas](/docs/assets/images/clases3-arboles.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
+```{python}
+#| code-fold: true
+#| fig-cap: Tres distribuciones Gausianas
+#| label: fig-arboles-tres-distribuciones
 X_1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
 X_2 = multivariate_normal(mean=[-5, -10], cov=[[2, 1], [1, 3]]).rvs(1000)
 X_3 = multivariate_normal(mean=[15, -6], cov=[[2, 3], [3, 7]]).rvs(1000)
@@ -58,39 +55,21 @@ df = pd.DataFrame([dict(x=x, y=y, clase=1) for x, y in X_1] + \
 sns.relplot(data=df, kind='scatter',
             x='x', y='y', hue='clase')
 ```
-</details>
-<!--
-plt.savefig('clases3-arboles.png', dpi=300)
--->
 
-Con estas tres poblaciones, donde cada distribución genera una clase
-se crea un árbol de decisión. El árbol se muestra en la siguiente
-figura, donde se observa, en cada nodo interno, la siguiente información. La 
-primera línea muestra el identificador del nodo, la segunda corresponde
-a la función de corte, la tercera línea es la entropía 
-($H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$), 
-la cuarta es el número de elementos que llegaron al nodo y 
-la última la frecuencia de cada clase en ese nodo. Por ejemplo, 
-la raíz (#0) tiene la función de corte $x \leq 10.517$, tiene una entropía 
-de $1.585$, recibió $3000$ elementos y cada clase tiene $1000$ ejemplos.
 
-![Árbol](/AprendizajeComputacional/assets/images/tree.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
+Con estas tres poblaciones, donde cada distribución genera una clase se crea un árbol de decisión. El árbol se muestra en la @fig-arboles-arbol-decision, donde se observa, en cada nodo interno, la siguiente información. La primera línea muestra el identificador del nodo, la segunda corresponde a la función de corte, la tercera línea es la entropía ($H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$), la cuarta es el número de elementos que llegaron al nodo y la última la frecuencia de cada clase en ese nodo. Por ejemplo, la raíz (#0) tiene la función de corte $x \leq 10.517$, tiene una entropía de $1.585$, recibió $3000$ elementos y cada clase tiene $1000$ ejemplos. 
 
-```python
+```{python}
+#| code-fold: true
+#| fig-cap: Árbol de decisión
+#| label: fig-arboles-arbol-decision
 X = np.concatenate((X_1, X_2, X_3), axis=0)
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(X, y)
 _ = tree.plot_tree(arbol, node_ids=True,
                    feature_names=['x', 'y'], label='root')
 ```
-</details>
-<!--
-plt.savefig('tree.png', dpi=300)
--->
+
 
 Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, 
 dado que son la parte final del árbol. En el árbol mostrado se observa
