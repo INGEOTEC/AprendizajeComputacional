@@ -57,7 +57,7 @@ sns.relplot(data=df, kind='scatter',
 ```
 
 
-Con estas tres poblaciones, donde cada distribución genera una clase se crea un árbol de decisión. El árbol se muestra en la @fig-arboles-arbol-decision, donde se observa, en cada nodo interno, la siguiente información. La primera línea muestra el identificador del nodo, la segunda corresponde a la función de corte, la tercera línea es la entropía ($H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$), la cuarta es el número de elementos que llegaron al nodo y la última la frecuencia de cada clase en ese nodo. Por ejemplo, la raíz (#0) tiene la función de corte $x \leq 10.517$, tiene una entropía de $1.585$, recibió $3000$ elementos y cada clase tiene $1000$ ejemplos. 
+Con estas tres poblaciones, donde cada distribución genera una clase se crea un árbol de decisión. El árbol se muestra en la @fig-arboles-arbol-decision, donde se observa, en cada nodo interno, la siguiente información. La primera línea muestra el identificador del nodo, la segunda corresponde a la función de corte, la tercera línea es la entropía ($H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$), la cuarta es el número de elementos que llegaron al nodo y la última la frecuencia de cada clase en ese nodo. 
 
 ```{python}
 #| code-fold: true
@@ -70,35 +70,41 @@ _ = tree.plot_tree(arbol, node_ids=True,
                    feature_names=['x', 'y'], label='root')
 ```
 
+```{python}
+#| echo: false
+entropia_raiz = Markdown(f'${arbol.tree_.impurity[0]:0.4f}$')
+if arbol.tree_.feature[0] == 0:
+  funcion_decision = Markdown(f'$x \leq {arbol.tree_.threshold[0]:0.4f}$')
+  componente = Markdown('$x$')
+else:
+  funcion_decision = Markdown(f'$y \leq {arbol.tree_.threshold[0]:0.4f}$')    
+  componente = Markdown('$y$')
+hojas = np.where(arbol.tree_.feature == -2)[0]
+hojas_f = ', '.join([f'#{x}' for x in hojas[:-1]])
+hojas_f = f'{hojas_f}, y #{hojas[-1]}'
+```
 
-Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, 
-dado que son la parte final del árbol. En el árbol mostrado se observa
-que la entropía en todos los casos es $0$, lo cual indica que todos los 
-elementos que llegaron a ese nodo son de la misma clase. No en todos los 
-casos las hojas tienen entropía cero y existen parámetros en la creación
-del árbol que permiten crear árboles más simples. Por ejemplo, la hoja #6
-tiene solamente un ejemplo, uno se podría preguntar ¿qué pasaría si esa
-hoja se elimina? El resultado es tener un árbol más simple. 
+Por ejemplo el nodo raíz del árbol tiene una entropía de `{python} entropia_raiz`, la función de decisión es `{python} funcion_decision` que indica que todos los elementos con un valor en `{python} componente` menor o igual del valor calculado están del lado izquierdo. Los hojas (nodos `{python} hojas_f`) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es $0$, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple. 
 
-La siguiente figura muestra el árbol generado cuando el nodo #6 se quita. Se observa
-un árbol con menos nodos, aunque la entropía es diferente de cero en la hoja #4. 
-La segunda parte de la figura muestra la función de decisión que genera el árbol 
-de decisión. Se observa que cada regla divide el espacio en dos. La raíz (#0)
-divide los datos utilizando $x \leq 10.517$, donde todos los elementos para los cuales
-la función es verdadera se envían al nodo izquierdo (#1), de lo contrario se envían a la 
-hoja derecha (#4). Al nodo #1 llegan $1999$ los cuales se divide en
-utilizando $y \leq -1.812$, dando como resultado $1000$ en su hoja izquierda (#2)
-y $999$ en su hoja derecha (#3). 
+```{python}
+#| echo: false
+nodos = np.where(arbol.tree_.n_node_samples < 3)[0]
+if nodos.shape[0] == 1:
+  desc = Markdown(f'el nodo #{nodos[0]}')
+else:
+  nodos = ', '.join([f'#{x}' for x in nodos])
+  desc = Markdown(f'los nodos [{nodos}]')
+```
 
-![Árbol de Decisión y su Función de Decisión](/AprendizajeComputacional/assets/images/tree-funcion-decision.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
+La siguiente @fig-arboles-arbol-decision-funcion muestra el árbol generado cuando se remueven `{python} desc`. Se observa un árbol con menos nodos, aunque la entropía en es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo. 
 
-```python
+```{python}
+#| code-fold: true
+#| warning: false
+#| fig-cap: Árbol de decisión y función
+#| label: fig-arboles-arbol-decision-funcion
 ax = plt.subplot(2, 1, 1)
-arbol = tree.DecisionTreeClassifier(criterion='entropy', min_samples_split=1002).fit(X, y)
+arbol = tree.DecisionTreeClassifier(criterion='entropy', min_samples_split=1003).fit(X, y)
 _ = tree.plot_tree(arbol, node_ids=True,
                    feature_names=['x', 'y'], label='root')
 ax = plt.subplot(2, 1, 2)
@@ -106,51 +112,21 @@ DecisionBoundaryDisplay.from_estimator(arbol, X, cmap=plt.cm.RdYlBu,
                                        response_method='predict',
                                        ax=ax, xlabel='x', ylabel='y')
 for i, color in enumerate('ryb'):
-    mask = y == (i + 1)
-    plt.scatter(X[mask, 0], X[mask, 1], c=color,
-        label=f'{i+1}', cmap=plt.cm.RdYlBu, edgecolor='black')
+  mask = y == (i + 1)
+  plt.scatter(X[mask, 0], X[mask, 1], c=color,
+              label=f'{i+1}', cmap=plt.cm.RdYlBu, edgecolor='black')
 ```
-</details>
-<!--
-plt.savefig('tree-funcion-decision.png', dpi=300)
--->
 
 ### Predicción { #sec-prediccion }
 
-Utilizando el árbol mostrado en la figura anterior, se puede explicar el proceso
-de clasificar un nuevo elemento. Por ejemplo, el 
-elemento $\mathbf u=(x=-3, y=0.5)$ (que se muestra en la siguiente 
-figura como un punto negro) se clasifica de la siguiente manera. La función de 
-corte ($x \leq 10.517$) de la raíz (#0) indica $\mathbf u$ pasa al nodo izquierdo #1.
-La función de corte ($y \leq -1.812$) del nodo #1 indica que $\mathbf u$ se
-envía a la hoja #3. La clase mayoritaria ($999$ elementos) en la hoja #3 
-es la clase $1$, entonces $\mathbf u$ pertenece a la clase $1$ de acuerdo 
-al árbol de decisión generado. 
-
-![Predicción](/AprendizajeComputacional/assets/images/tree-prediccion.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
-DecisionBoundaryDisplay.from_estimator(arbol, X, cmap=plt.cm.RdYlBu,
-                                       response_method='predict',
-                                       xlabel='x', ylabel='y')
-for i, color in enumerate('ryb'):
-    mask = y == (i + 1)
-    plt.scatter(X[mask, 0], X[mask, 1], c=color,
-                label=f'{i+1}', cmap=plt.cm.RdYlBu,
-                edgecolor='black')
-
-plt.scatter([-3], [0.5], c='k',
-            label=f'{i+1}', cmap=plt.cm.RdYlBu, 
-            edgecolor='black')
+```{python}
+#| echo: false
+camino = arbol.decision_path([[-3, 0.5]]).toarray()[0]
+camino = np.where(camino)[0]
+camino_f = ', '.join([f'#{x}' for x in camino[:-1]])
 ```
-</details>
-<!--
-plt.savefig('tree-prediccion.png', dpi=300)
--->
+
+Utilizando el árbol y la función de decisión mostrada en @fig-arboles-arbol-decision-funcion, se puede explicar el proceso de clasificar un nuevo elemento. Por ejemplo, el elemento $\mathbf u=(x=-3, y=0.5)$ pasaría por los nodos `{python} camino_f` y `{python} f'#{camino[-1]}'` para llegar a la clase correspondiente. 
 
 ### Entrenamiento { #sec-clasificacion-entrenamiento }
 
