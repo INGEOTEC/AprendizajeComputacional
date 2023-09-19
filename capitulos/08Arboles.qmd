@@ -130,47 +130,29 @@ Utilizando el árbol y la función de decisión mostrada en @fig-arboles-arbol-d
 
 ### Entrenamiento { #sec-clasificacion-entrenamiento }
 
-La construcción un árbol se realiza mediante un procedimiento recursivo en donde 
-se aplica la función de corte $f_m(\mathbf x) = x_i \leq a$ en el nodo $m$, donde 
-el parámetro $a$ y la componente $x_i$ se identifican utilizando los datos
-que llegan al nodo $m$ de tal manera que se maximice una función de costo.
+Existen diferentes sistemas para la generación de un árbol de decisión (e.g., @Quinlan1986) la mayoría de ellos comparten las siguiente estructura general. La construcción un árbol se realiza mediante un procedimiento recursivo en donde se aplica la función de corte $f_m(\mathbf x) = x_i \leq a$ en el nodo $m$, donde el parámetro $a$ y la componente $x_i$ se identifican utilizando los datos que llegan al nodo $m$ de tal manera que se maximice una función de costo.
 
-Una función de costo podría estar basada en la entropía, es decir, para cada 
-posible corte se mide la entropía en los nodos generados y se calcula la esperanza
-de la entropía de la siguiente manera. 
+Una función de costo podría estar basada en la entropía, es decir, para cada posible corte se mide la entropía en los nodos generados y se calcula la esperanza de la entropía de la siguiente manera. 
 
-$L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),$
+$$
+L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),
+$$
 
-donde $H(\mathcal D_h)$ es la entropía de las etiquetas del conjunto $\mathcal D_h$,
-la entropía se puede calcular con la siguiente función. La función recibe un 
-arreglo con las clases, está protegida para calcular $0 \log 0 = 0$ y 
-finalmente regresa la entropía de `arr`.
+donde $H(\mathcal D_h)$ es la entropía de las etiquetas del conjunto $\mathcal D_h$, la entropía se puede calcular con la siguiente función. La función recibe un arreglo con las clases, está protegida para calcular $0 \log 0 = 0$ y finalmente regresa la entropía de `arr`.
 
-```python
+```{python}
+#| echo: true
 def H(arr):
     a, b = np.unique(arr, return_counts=True)
     b = b / b.sum()
     return - (b * np.log2(b, where=b != 0)).sum()
 ```
 
-La función que optimiza $L(x_i, a),$ para encontrar $a$ 
-se implementa en el procedimiento `corte_var`. Este procedimiento 
-asume que las etiquetas (`labels`) están ordenadas por la variable $x_i$, es decir
-la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor 
-máximo. Considerando esto, el valor de $a$ es el índice con el menor costo.
-En la primera línea se inicializa la variable `mejor` para guardar el valor
-de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$,
-en la tercera línea se identifican los diferentes valores de $a$ que se tiene
-que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia 
-con respecto al elemento adyacente, esto se calcula con la función `np.diff`; 
-dado que está quita el primer elemento entonces es necesario incrementar $1.$
-El ciclo es por todos los puntos de corte, se calculan el costo para 
-los elementos que están a la izquierda y derecha del corte y se compara el resultado
-con el costo con menor valor encontrado hasta el momento. La última línea regresa
-el costo mejor así como el índice donde se encontró. 
+La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento `corte_var`. Este procedimiento asume que las etiquetas (`labels`) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable `mejor` para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función `np.diff`; dado que está quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calculan el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. 
 
-{: #func:corte }
-```python
+
+```{python}
+#| echo: true
 def corte_var(labels):
     mejor = (np.inf, None)
     D_m = labels.shape[0]
@@ -186,29 +168,24 @@ def corte_var(labels):
     return mejor
 ```
 
-En el siguiente ejemplo se usa la función `corte_var`; la función regresa
-un costo de $0.459$ y el punto de corte es el elemento $3$, se puede observar
-que es el mejor punto de corte en el arreglo dado. 
-
-```python
-corte_var(np.array([0, 0, 1, 0, 0, 0]))
+```{python}
+#| echo: false
+perf, index = corte_var(np.array([0, 0, 1, 0, 0, 0]))
+perf_f = Markdown(f'${perf:0.4}$')
+index_f = Markdown(f'${index}$')
 ```
 
-Con la función `corte_var` se optimiza el valor $a$ de $L(x_i, a)$, ahora
-es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento
-`corte` encuentra el mínimo con respecto de $x_i$, está función recibe los índices
-(`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $0$
-al número de elemento del conjunto $\mathcal D$ menos uno. La primera línea 
-define la variable donde se guarda el menor costo, en la segunda línea se ordenan 
-las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo
-va por todas las variables $x_i$. Dentro del ciclo se llama a la función 
-`corte_var` donde se observa como las etiquetas van ordenadas de acuerdo a la variable
-que se está analizando; la función regresa el corte con menor costo y se compara
-con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. 
-Finalmente, se regresa `mejor` y los índices ordenados para poder identificar
-los elementos del hijo izquierdo y derecho.  
+En el siguiente ejemplo se usa la función `corte_var`; la función regresa un costo de `{python} perf_f` y el punto de corte es el elemento `{python} index_f`, se puede observar que es el mejor punto de corte en el arreglo dado. 
 
-```python
+```{python}
+#| echo: true
+costo, indice = corte_var(np.array([0, 0, 1, 0, 0, 0]))
+```
+
+Con la función `corte_var` se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento `corte` encuentra el mínimo con respecto de $x_i$, está función recibe los índices (`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $0$ al número de elemento del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función `corte_var` donde se observa como las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. Finalmente, se regresa `mejor` y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  
+
+```{python}
+#| echo: true
 def corte(idx):
     mejor = (np.inf, None, None)
     orden = np.argsort(X[idx], axis=0)
@@ -220,63 +197,46 @@ def corte(idx):
     return mejor, idx[orden[:, mejor[1]]]
 ```    
 
-Con la función `corte` se puede encontrar los parámetros de la función de
-corte $f_m(\mathbf x) = x_i \leq a$ para cada nodo del árbol completo 
-del ejemplo anterior. Por ejemplo, la función para la raíz (#0) que se observa
-en la figura es $f_{\#0}(\mathbf x) = x \leq 10.517$, el siguiente código
-siguiente se utiliza para encontrar estos parámetros. 
+Con la función `corte` se puede encontrar los parámetros de la función de corte $f_m(\mathbf x) = x_i \leq a$ para cada nodo del árbol completo del ejemplo anterior. Por ejemplo, los parámetros de la función de decisión para la raíz (#0) que se observa en la @fig-arboles-arbol-decision-funcion se puede obtener con el siguiente código. 
 
-```python
+```{python}
+#| echo: true
 best, orden = corte(np.arange(X.shape[0]))
 perf, i, j = best
 (X[orden[j], i] + X[orden[j-1], i]) / 2
 ```
 
-La variable `orden` tiene la información para dividir el conjunto dado,
-lo cual se realiza en las siguientes instrucciones, donde `idx_i` corresponde
-a los elementos a la izquierda y `idx_d` son los de la derecha. 
+La variable `orden` tiene la información para dividir el conjunto dado, lo cual se realiza en las siguientes instrucciones, donde `idx_i` corresponde a los elementos a la izquierda y `idx_d` son los de la derecha. 
 
-```python
+```{python}
+#| echo: true
 idx_i = orden[:j]
 idx_d = orden[j:]
 ```
 
-Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros
-de la función de corte del nodo #1 que son $f_{\#1}(\mathbf x) = y \leq -1.812$,
-esto se puede verificar con el siguiente código.
+Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros de la función de corte del nodo #1 los cuales se pueden calcular con las siguientes instrucciones. 
 
-```python
+```{python}
+#| echo: true
 best, orden = corte(idx_i)
-perf, i, j = best
-(X[orden[j], i] + X[orden[j-1], i]) / 2
-```
-
-Equivalentemente, para $f_{\#4}(\mathbf x) = y \leq 3.488$ se tiene 
-
-```python
-best, orden = corte(idx_d)
 perf, i, j = best
 (X[orden[j], i] + X[orden[j-1], i]) / 2
 ```
 
 ### Ejemplo: Breast Cancer Wisconsin
 
-Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar
-el algoritmo de Árboles de Decisión. Las siguientes instrucciones se
-descargan los datos y se dividen en los conjuntos de entrenamiento
-y prueba.  
+Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.
 
-```python
+```{python}
+#| echo: true
 X, y = load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
 
-La siguiente instrucción entrena un árbol de decisión utilizando 
-como función de costo la entropía. En la librería se encuentran 
-implementadas otras funciones como el coeficiente Gini y 
-[Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada) (_Log-loss_). 
+La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada @sec-entropia-cruzada (_Log-loss_). 
 
-```python
+```{python}
+#| echo: true
 arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(T, y_t)
 ```
 
