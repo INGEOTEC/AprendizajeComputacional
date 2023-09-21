@@ -40,7 +40,7 @@ El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una re
 
 ## Clasificación { #sec-clasificacion }
 
-Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
+Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
 
 ```{python}
 #| code-fold: true
@@ -223,6 +223,10 @@ perf, i, j = best
 (X[orden[j], i] + X[orden[j-1], i]) / 2
 ```
 
+::: {.callout-note}
+La función `corte` no verifica que se esté en una hoja, entonces si se hace el corte en una hora regresará `(np.inf, none, None)`
+:::
+
 ### Ejemplo: Breast Cancer Wisconsin
 
 Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.
@@ -240,150 +244,97 @@ La siguiente instrucción entrena un árbol de decisión utilizando como funció
 arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(T, y_t)
 ```
 
-Como es de esperarse la predicción se realiza con el método `predict`
-como se ve a continuación. 
+Como es de esperarse la predicción se realiza con el método `predict` como se ve a continuación. 
 
-```python
+```{python}
+#| echo: true
 hy = arbol.predict(G)
 ```
 
-El error en el conjunto de prueba $\mathcal G$ es $0.0351$,
-se puede comparar este error con otros algoritmos utilizados
-en este conjunto como clasificadores paramétricos basados en 
-distribuciones [Gausianas](/AprendizajeComputacional/capitulos/03Parametricos/#sec:gaussina-perf-breast_cancer). La siguiente instrucción
-muestra el cálculo del error. 
-
-```python
-(y_g != hy).mean()
+```{python}
+#| echo: false
+error_f = Markdown(f'${(y_g != hy).mean():0.4f}$')
 ```
 
-Un dato interesante, considerando los parámetros con los que se inicializó
-el árbol, entonces este hizo que todas las hojas fueran puras, es decir,
-con entropía cero. Por lo tanto el error de clasificación en el conjunto 
-de entrenamiento $\mathcal T$ es cero, como se puede verificar con
-el siguiente código. 
+El error en el conjunto de prueba $\mathcal G$ es `{python} error_f`, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (@sec-gaussina-perf-breast_cancer). La siguiente instrucción muestra el cálculo del error. 
 
-```python
+```{python}
+#| echo: true
+error = (y_g != hy).mean()
+```
+
+Un dato interesante, considerando los parámetros con los que se inicializó el árbol, entonces este hizo que todas las hojas fueran puras, es decir, con entropía cero. Por lo tanto el error de clasificación en el conjunto de entrenamiento $\mathcal T$ es cero, como se puede verificar con el siguiente código. 
+
+```{python}
+#| echo: true
 (y_t != arbol.predict(T)).mean()
 ```
 
 
 ## Regresión
 
-Los árboles de decisión aplicados a problemas de regresión siguen una 
-idea equivalente a los desarrollados en problemas de clasificación. Para
-ejemplificar las diferencias se utiliza el siguiente problema sintético;
-el cual corresponde a la suma de un seno y un coseno como se 
-muestra a continuación. 
+Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético; el cual corresponde a la suma de un seno y un coseno como se muestra a continuación. 
 
-```python
+```{python}
+#| echo: true
 X = np.linspace(-5, 5, 100)
-y = np.sin(x) + 0.3 * np.cos(x * 3.)
+y = np.sin(X) + 0.3 * np.cos(X * 3.)
 ```
 
-Con este problema se genera un árbol de decisión utilizando la 
-siguiente instrucción. El método `fit` espera recibir un arreglo
-en dos dimensiones por eso se usa la función `np.atleast_2d` y 
-se calcula la transpuesta siguiendo el formato esperado. Se 
-observa el uso del parámetro `max_depth` para limitar la profundidad
-del árbol de decisión. 
+Con este problema se genera un árbol de decisión utilizando la siguiente instrucción. El método `fit` espera recibir un arreglo en dos dimensiones por eso se usa la función `np.atleast_2d` y se calcula la transpuesta siguiendo el formato esperado. Se observa el uso del parámetro `max_depth` para limitar la profundidad del árbol de decisión. 
 
-```python
+```{python}
+#| echo: true
 arbol = tree.DecisionTreeRegressor(max_depth=3).fit(np.atleast_2d(X).T, y)
 ```
 
-El árbol de decisión obtenido se muestra en la siguiente figura. La 
-información que se muestra en cada nodo interno es equivalente a la 
-mostrada en los árboles de clasificación. La diferencia es que en los 
-árboles de regresión se muestra el promedio (`value`) de las salidas
-que llegan a ese nodo y en regresión es la frecuencia de clases. 
-Se observa que si la entrada es $x=-4.5$ entonces la respuesta
-la da el nodo #4 con un valor de $1.088.$
+El árbol de decisión obtenido se muestra en la @fig-arboles-regresion. La información que se muestra en cada nodo interno es equivalente a la mostrada en los árboles de clasificación. La diferencia es que en los árboles de regresión se muestra el promedio (`value`) de las salidas que llegan a ese nodo y en regresión es la frecuencia de clases. Se observa que si la entrada es $x=-4.5$ entonces la respuesta la da el nodo #4 con un valor de $1.088.$
 
-
-![Árbol de Regresión](/AprendizajeComputacional/assets/images/tree-regresion.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
+```{python}
+#| code-fold: true
+#| fig-cap: Árbol de Regresión
+#| label: fig-arboles-regresion
 _ = tree.plot_tree(arbol, node_ids=True,
                    feature_names=['x'], label='root')
 ```
-</details>
-<!--
-plt.savefig('tree-regresion.png', dpi=300)
--->
 
-## Predicción
+### Predicción
 
-El árbol anterior se usa para predecir todos los puntos del conjunto
-de entrenamiento, el resultado se muestra en la siguiente figura. Se 
-observa que la predicción es discreta, son escalones y esto es porque
-las hojas predicen el promedio de los valores que llegaron hasta ahí,
-en este caso el árbol tiene 8 hojas entonces a lo más ese árbol 
-puede predecir 8 valores distintos. 
+El árbol anterior se usa para predecir todos los puntos del conjunto de entrenamiento, el resultado se muestra en la @fig-arboles-regresion-func. Se observa que la predicción es discreta, son escalones y esto es porque las hojas predicen el promedio de los valores que llegaron hasta ahí, en este caso el árbol tiene 8 hojas entonces a lo más ese árbol puede predecir 8 valores distintos. 
 
-![Árbol de Regresión Predicción](/AprendizajeComputacional/assets/images/tree-regresion-prediccion.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
+```{python}
+#| code-fold: true
+#| fig-cap: Problema de regresión
+#| label: fig-arboles-regresion-func
 df = pd.DataFrame(dict(X=X, y=y, 
                        predicción=arbol.predict(np.atleast_2d(X).T)))
 df.set_index('X', inplace=True)
 sns.relplot(df, kind='line')
 ```
-</details>
-<!--
-plt.savefig('tree-regresion-prediccion.png', dpi=300)
--->
 
-## Entrenamiento
+### Entrenamiento
 
-Con respecto al proceso de entrenamiento la diferencia entre clasificación y
-regresión se encuentra en la función de costo que guía el proceso de 
-optimización. En el caso de clasificación la función de costo era
-la esperanza de la entropía. Por otro lado, en regresión una función 
-de costo utilizada es la varianza que es el error cuadrático
-que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran 
-en las siguientes instrucciones. 
+Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran en las siguientes instrucciones. 
 
-```python
+```{python}
+#| echo: true
 X, y = load_diabetes(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
 
-Con los datos de entrenamiento se genera el siguiente árbol de decisión
-para regresión. Solamente se muestran la información de la raíz y sus 
-dos hijos. En la raíz se observa los parámetros de la función de corte, 
-se selecciona la variable con índice 8 y se envían 235 elementos al hijo
-izquierdo y el resto al hijo derecho. 
+Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestran la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho. 
 
-![Predicción](/AprendizajeComputacional/assets/images/tree-regression.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
+```{python}
+#| echo: true
 arbol = tree.DecisionTreeRegressor().fit(T, y_t)
-tree.plot_tree(arbol, max_depth=1)
+_ = tree.plot_tree(arbol, max_depth=1)
 ```
-</details>
-<!--
-plt.savefig('tree-regression.png', dpi=300)
--->
 
-El siguiente método implementa la función de corte para regresión se puede 
-observar que la única diferente con la función `corte_var` 
-definida en [clasificación](/AprendizajeComputacional/capitulos/08Arboles/#func:corte) 
-es que la entropía `H` se cambia por la varianza `np.var`. 
 
-```python
+El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función `corte_var` definida en clasificación (@sec-clasificacion) es que la entropía `H` se cambia por la varianza `np.var`. 
+
+```{python}
+#| echo: true
 def corte_var(response):
     mejor = (np.inf, None)
     D_m = response.shape[0]
@@ -399,32 +350,14 @@ def corte_var(response):
     return mejor    
 ```
 
-La función `corte_var` de regresión se utiliza para encontrar 
-el punto de corte en los datos del conjunto de entrenamiento de 
-la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables
-independientes para calcular el corte con costo mínimo. 
+La función `corte_var` de regresión se utiliza para encontrar el punto de corte en los datos del conjunto de entrenamiento de la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables independientes para calcular el corte con costo mínimo. 
 
-```python
+```{python}
+#| echo: true
 orden = T.argsort(axis=0)
-[corte_var(y_t[orden[:, x]]) for x in range(10)]
+res = [corte_var(y_t[orden[:, x]]) for x in range(10)]
+res
 ```
 
-El resultado de ejecutar el código anterior se muestra a continuación;
-donde se observa que el costo mínimo corresponde a la variable con 
-índice 8 y se corta en 235 elementos, tal y como se muestra en la 
-figura anterior nodo derecho de la raíz. 
-
-```python
-[(5449.789764562434, 163),
- (5632.407130716309, 3),
- (4105.070662138225, 216),
- (4783.219062677263, 262),
- (5438.874320806805, 213),
- (5478.920350629145, 235),
- (4768.01945466938, 133),
- (4460.273924735048, 156),
- (4058.1609926353785, 235),
- (4975.506628234843, 275)]
-```
-
+El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice `{python} np.argmin(res, axis=0)[0]` tal y como se muestra en la figura anterior nodo derecho de la raíz. 
 
