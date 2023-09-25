@@ -205,13 +205,15 @@ for var in range(T.shape[1]):
 
 ```{python}
 #| echo: false
-perf_f = Markdown(f'{perf[27]:0.4f}')
+index = np.argmax(perf)
+perf_f = Markdown(f'${perf[index]:0.4f}$')
+index_f = Markdown(f'${index}$')
 ```
 
-La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa como una gran parte de las variables proporcionan un rendimiento superior al $0.8$ y la variable que tiene el mejor rendimiento es la que corresponde al índice $27$ y valor `{python} perf_f`.
+La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa como una gran parte de las variables proporcionan un rendimiento superior al $0.8$ y la variable que tiene el mejor rendimiento es la que corresponde al índice `{python} index_f` y valor `{python} perf_f`.
 
 ```{python}
-#| fig-cap: Rendimiento de las Variables
+#| fig-cap: Rendimiento de las variables en la primera iteración del selección hacia adelante
 #| label: fig-rendimiento-sel
 #| code-fold: true
 sns.set_style('whitegrid')
