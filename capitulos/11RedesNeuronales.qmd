@@ -10,8 +10,9 @@ import jax
 import jax.lax as lax
 import jax.numpy as jnp
 import optax
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_iris, load_digits
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -33,7 +34,7 @@ sns.set_style('whitegrid')
 
 ## Introducción
 
-Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de [Regresión Logística](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.
+Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.
 
 ## Regresión Logística Multinomial {#sec-regresion-logistica-multinomial}
 
@@ -48,16 +49,17 @@ $$
 
 La función `jax.nn.softmax` implementa $\textsf{softmax}$; en el siguiente ejemplo se calcula para el vector `[2, 1, 3]` 
 
-```python
+```{python}
+#| echo: true
 jax.nn.softmax(np.array([2, 1, 3]))
 ```
 
-dando como resultado `Array([0.24472848, 0.09003057, 0.66524094], dtype=float32)`. 
 Se puede observar que $\textsf{softmax}$ transforma los valores del vector $\mathbf v$ en probabilidades. 
 
 Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno. 
 
-```python
+```{python}
+#| echo: true
 D, y = load_iris(return_X_y=True)
 normalize = StandardScaler().fit(D)
 D = normalize.transform(D)
@@ -65,15 +67,18 @@ D = normalize.transform(D)
 
 El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d.$ Los parámetros iniciales se puede generar con la función `parametros_iniciales` tal y como se muestra a continuación.
 
-```python
+```{python}
+#|  echo: true
 n_labels = np.unique(y).shape[0]
 def parametros_iniciales(key=0):
     key = jax.random.PRNGKey(key)
     d = D.shape[1]
     params = []
+    normal = jax.random.normal
+    sqrt = jnp.sqrt
     for _ in range(n_labels):
         key, subkey = jax.random.split(key)
-        _ = dict(w=jax.random.normal(subkey, (d, )) * jnp.sqrt(2 / d),
+        _ = dict(w=normal(subkey, (d, )) * sqrt(2 / d),
                  w0=jnp.ones(1))
         params.append(_)
     return params
@@ -81,7 +86,8 @@ def parametros_iniciales(key=0):
 
 Utilizando los parámetros en el formato anterior, hace que el modelo se pueda implementar con las siguientes instrucciones. Donde el ciclo es por cada uno de los parámetros de las $K$ clases y la última línea calcula el $\textsf{softmax}.$
 
-```python
+```{python}
+#| echo: true
 @jax.jit
 def modelo(params, X):
     o = []
@@ -90,15 +96,17 @@ def modelo(params, X):
     return jax.nn.softmax(jnp.array(o), axis=0).T
 ```
 
-Una característica importante es que la función de perdida, en este caso, a la [Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad $1$ corresponde a la clase, esto se puede realizar con el siguiente código. 
+Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (@sec-entropia-cruzada), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad $1$ corresponde a la clase, esto se puede realizar con el siguiente código. 
 
-```python
+```{python}
+#| echo: true
 y_oh = jax.nn.one_hot(y, n_labels)
 ```
 
 Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento. 
 
-```python
+```{python}
+#| echo: true
 @jax.jit
 def media_entropia_cruzada(params, X, y_oh):
     hy = modelo(params, X)
@@ -108,16 +116,18 @@ def media_entropia_cruzada(params, X, y_oh):
 
 ### Optimización
 
-El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en [Regresión Logística](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion) con algunos ajustes. Lo primero es que se desarrolla todo en una función `fit` que recibe el parámetro $\eta$, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento. 
+El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( @sec-regresion-logistica-optimizacion) con algunos ajustes. Lo primero es que se desarrolla todo en una función `fit` que recibe el parámetro $\eta$, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento. 
 
 Dentro de la función `fit`se observa la función `update` que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función `update` genera la función que calculará el valor y el gradiente de la función `media_entropia_cruzada`. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época. 
 
-```python
+```{python}
+#| echo: true
 def fit(eta, params, epocas=500):
     @jax.jit
     def update(params, eta, X, y_oh):
         _ , gs = error_grad(params, X, y_oh)
-        return _, jax.tree_map(lambda p, g: p - eta * g, params, gs)
+        return _, jax.tree_map(lambda p, g: p - eta * g,
+                               params, gs)
 
     error_grad  = jax.value_and_grad(media_entropia_cruzada)
     error = []
@@ -129,16 +139,22 @@ def fit(eta, params, epocas=500):
 
 ### Optimización Método Adam {#sec-adam}
 
-Como se había visto en [previamente](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:actualizacion-parametros) existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería [optax](https://optax.readthedocs.io)) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales. 
+Como se había visto en la @sec-actualizacion-parametros existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería [optax](https://optax.readthedocs.io)) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales. 
 
 Siguiendo la misma estructura que la función `fit`, la función `adam` recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función `update` (que se encuentra en `adam`) calcula el valor de la función de error y su gradiente, estos son utilizados por `optimizer.update` para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de `update` inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función `media_entropia_cruzada`. El ciclo llama la función `update` y guarda el error encontrado en cada época. 
 
-```python
+```{python}
+#| echo: true
+
 def adam(optimizer, params, epocas=500):
     @jax.jit
     def update(params, opt_state, X, y_oh):
-        loss_value, grads = error_grad(params, X, y_oh)
-        updates, opt_state = optimizer.update(grads, opt_state, params)
+        loss_value, grads = error_grad(params,
+                                       X,
+                                       y_oh)
+        updates, opt_state = optimizer.update(grads,
+                                              opt_state,
+                                              params)
         params = optax.apply_updates(params, updates)
         return params, opt_state, loss_value
     
@@ -146,7 +162,10 @@ def adam(optimizer, params, epocas=500):
     error_grad  = jax.value_and_grad(media_entropia_cruzada)    
     error = []
     for i in range(epocas):
-        params, opt_state, loss_value = update(params, opt_state, D, y_oh)
+        params, opt_state, loss_value = update(params,
+                                               opt_state,
+                                               D,
+                                               y_oh)
         error.append(loss_value)
     return params, error
 ```
@@ -155,22 +174,21 @@ def adam(optimizer, params, epocas=500):
 
 Los optimizadores descritos anteriormente se pueden utilizar con el siguiente código, donde la primera línea calcula los parámetros iniciales, después se llama a la función `fit` para encontrar los parámetros con el primer método. La tercera línea genera una instancia del optimizador Adam; el cual se pasa a la función `adam` para encontrar los parámetros con este método. 
 
-```python
+```{python}
+#| echo: true
+
 params = parametros_iniciales()
 p1, error1 = fit(1e-2, params)
 optimizer = optax.adam(learning_rate=1e-2)
 p2, error2 = adam(optimizer, params)
 ```
 
-La siguiente figura muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método `adam` converge más rápido y llega a un valor menor de Entropía Cruzada. 
+La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método `adam` converge más rápido y llega a un valor menor de Entropía Cruzada. 
 
-![Comparación Métodos](/AprendizajeComputacional/assets/images/comp-gd-adam.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
+```{python}
+#| code-fold: true
+#| fig-cap: Comparación de diferentes optimizadores.
+#| label: fig-redes-neuronales-adam
 df = pd.DataFrame(dict(entropia=np.array(error1),
                        optimizador='fit',
                        epoca=np.arange(1, 501)))
@@ -178,31 +196,27 @@ df = pd.DataFrame(dict(entropia=np.array(error1),
 df = pd.concat((df, pd.DataFrame(dict(entropia=np.array(error2),
                                       optimizador='adam',
                                       epoca=np.arange(1, 501)))))
-
-sns.relplot(data=df, x='epoca', y='entropia', hue='optimizador', kind='line')
+_ = sns.relplot(data=df, x='epoca', y='entropia', hue='optimizador', kind='line')
 ```  
-</details>
-<!--
-plt.tight_layout()
-plt.savefig('comp-gd-adam.png', dpi=300)
--->
 
-Finalmente el accuracy en el conjunto de entrenamiento del modelo estimado con `fit` es $0.8867$ (`(y == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es $0.9667.$
+```{python}
+#| echo: false
+_ = (y == modelo(p1, D).argmax(axis=1)).mean()
+acc_fit_f = Markdown(f'${_:0.4f}$')
+_ = (y == modelo(p2, D).argmax(axis=1)).mean()
+acc_adam_f = Markdown(f'${_:0.4f}$')
+```
+Finalmente el accuracy en el conjunto de entrenamiento del modelo estimado con `fit` es `{python} acc_fit_f` (i.e., `(y == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es `{python} acc_adam_f`.
 
 ## Perceptrón {#sec-preceptron}
 
-La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de [Discriminantes Lineales](/AprendizajeComputacional/capitulos/09Lineal), es decir,  $g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.$ En problemas de clasificación binaria se encuentran los parámetros 
-de $g(\mathbf x)$ de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de [Regresión](/AprendizajeComputacional/capitulos/03Parametricos/#sec:regresion-ols) los parámetros 
-de $g(\mathbf x)$ se encuentran utilizando mínimos cuadrados. 
+La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de Discriminantes Lineales (@sec-discriminantes-lineales), es decir,  $g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.$ En problemas de clasificación binaria se encuentran los parámetros de $g(\mathbf x)$ de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de Regresión (@sec-regresion-ols) los parámetros de $g(\mathbf x)$ se encuentran utilizando mínimos cuadrados. 
 
-En el case de tener $K>2$ clases entonces el problema se puede afrontar entrenando $g_k(\mathbf x)$ 
-perceptrones ($k=1, \ldots, K$) tal y como se realizó [Discriminantes Lineales](/AprendizajeComputacional/capitulos/09Lineal/#sec:multiples-clases). De manera concisa se puede definir a $g: \mathbb R^d \rightarrow \mathbb R^K$, es decir, $g(\mathbf x)=W \mathbf x + \mathbf w_0$ tal y como se realizó en [Regresión Logística Multinomial](/AprendizajeComputacional/capitulos/11RedesNeuronales/#sec:regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$ y en el caso multiclase $g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$
+En el case de tener $K>2$ clases entonces el problema se puede afrontar entrenando $g_k(\mathbf x)$ perceptrones ($k=1, \ldots, K$) tal y como se realizó Discriminantes Lineales (@sec-multiples-clases). De manera concisa se puede definir a $g: \mathbb R^d \rightarrow \mathbb R^K$, es decir, $g(\mathbf x)=W \mathbf x + \mathbf w_0$ tal y como se realizó en Regresión Logística Multinomial (@sec-regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$ y en el caso multiclase $g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$
 
 ### Composición de Perceptrones Lineales
 
-Se puede realizar una composición de perceptrones de la siguiente manera, sea $g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$ 
-y $g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$ es decir $g = g_2 \circ g_1.$ 
-Realizando está composición en las ecuaciones descritas anteriormente se tiene 
+Se puede realizar una composición de perceptrones de la siguiente manera, sea $g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$ y $g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$ es decir $g = g_2 \circ g_1.$ Realizando está composición en las ecuaciones descritas anteriormente se tiene 
 
 $$
 \begin{split}
@@ -210,7 +224,6 @@ $$
 \hat{\mathbf y} &= g_2(\hat{\mathbf{y}}_1)
 \end{split}
 $$
-
 
 Expandiendo las ecuaciones anteriores se tiene 
 
@@ -224,9 +237,7 @@ $$
 \end{split}
 $$
 
-como se puede observar la composición realizada da como resultado una 
-red donde se tienen que identificar $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d,$ es decir, 
-son $K$ perceptrones equivalentes al modelado de Regresión Logística Multinomial. Esto es porque la composición fue con funciones lineales.
+como se puede observar la composición realizada da como resultado una red donde se tienen que identificar $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d,$ es decir, son $K$ perceptrones equivalentes al modelado de Regresión Logística Multinomial. Esto es porque la composición fue con funciones lineales.
 
 ## Perceptrón Multicapa
 
@@ -253,12 +264,12 @@ donde la salida de la primera capa oculta ($\hat{\mathbf{y}}_1$) es la entrada d
 
 ### Desvanecimiento del Gradiente
 
-Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función $\phi$ es la función $\textsf{sigmoid},$ aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones $g_1(x) = w_1 x + 1.0$ 
-y $g_1(x) = w_2 x + 1.0;$ haciéndose la composición de estas dos funciones $g=g_2 \circ g_1.$ 
+Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función $\phi$ es la función $\textsf{sigmoid},$ aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones $g_1(x) = w_1 x + 1.0$ y $g_1(x) = w_2 x + 1.0;$ haciéndose la composición de estas dos funciones $g=g_2 \circ g_1.$ 
 
 Las siguientes instrucciones implementan las funciones anteriores utilizando la librería [JAX](https://jax.readthedocs.io).
 
-```python
+```{python}
+#| echo: true
 @jax.jit
 def g_1(params, x):
     return jax.nn.sigmoid(params['w1'] * x + 1.0)
@@ -274,15 +285,27 @@ def g(params, x):
 
 Utilizando unos parámetros aleatorios generados con el siguiente código 
 
-```python
+```{python}
+#| echo: true
 key = jax.random.PRNGKey(0)
 key, subkey1, subkey2 = jax.random.split(key, num=3)
 params = dict(w1=jax.random.normal(subkey1),
               w2=jax.random.normal(subkey2))
 ```
 
-se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., `jax.grad(g_1)(params, 1.0)`) y $g_2$ con respecto a $w_2$ (i.e., `jax.grad(g_2)(params, 1.0)`) es $0.1417$ y $0.1171,$ respectivamente. El problema viene cuando se calcula $\frac{\partial g}{\partial w_1}$ en este caso se obsevar que el gradiente es pequeño comparado con el gradiente obtenido en $\frac{d g}{d w_1},$ i.e., `jax.grad(g)(params, 1.0)`, donde se observa que el gradiente 
-para $w_1$ corresponde a $0.0157$, el gradiente de $w_2$ sigue en la misma mágnitud teniendo un valor de $0.1077.$ 
+
+```{python}
+#| echo: false
+_ = jax.grad(g_1)(params, 1.0)
+g1_f = Markdown(f'{_["w1"]:0.4f}')
+_ = jax.grad(g_2)(params, 1.0)
+g2_f = Markdown(f'{_["w2"]:0.4f}')
+tot = jax.grad(g)(params, 1.0)
+g12_f = Markdown(f'{tot["w1"]:0.4f}')
+g22_f = Markdown(f'{tot["w2"]:0.4f}')
+```
+
+se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., `jax.grad(g_1)(params, 1.0)`) y $g_2$ con respecto a $w_2$ (i.e., `jax.grad(g_2)(params, 1.0)`) es `{python} g1_f` y `{python} g2_f`, respectivamente. El problema viene cuando se calcula $\frac{\partial g}{\partial w_1}$ en este caso se obsevar que el gradiente es pequeño comparado con el gradiente obtenido en $\frac{d g}{d w_1},$ i.e., `jax.grad(g)(params, 1.0)`, donde se observa que el gradiente para $w_1$ corresponde a `{python} g12_f`, el gradiente de $w_2$ sigue en la misma mágnitud teniendo un valor de `{python} g22_f`. 
 
 El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de manera exponencial, entonces los pesos asociados a las capas alejadas de la capa de salida reciben un gradiente equivalente a cero y no se cuenta con información para actualizar sus pesos. Por este motivo es recomendable utilizar funciones de activación que no presenten esta característica, una muy utilizada es $\textsf{ReLU}(x) = \max(0, x)$.
 
@@ -290,14 +313,16 @@ El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de 
 
 Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones. 
 
-```python
+```{python}
+#| echo: true
 X, y = load_digits(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
 
 Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase `StandardScaler` se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (`T`) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba `G`. 
 
-```python
+```{python}
+#| echo: true
 normalize = StandardScaler().fit(T)
 T = normalize.transform(T)
 G = normalize.transform(G)
@@ -305,12 +330,19 @@ G = normalize.transform(G)
 
 Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor $1$ representa la clase, esto se realiza con las siguientes instrucciones. 
 
-```python
+```{python}
+#| echo: true
 n_labels = np.unique(y).shape[0]
 yt_oh = jax.nn.one_hot(y_t, n_labels)
 ```
 
-Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en esta caso corresponde a 64 (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso $10$ (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que la dimensiones sean coherentes con la operación que se va a realizar. 
+```{python}
+#| echo: false
+t_shape_f = Markdown(f'${T.shape[1]}$')
+n_labels_f = Markdown(f'${n_labels}$')
+```
+
+Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en esta caso corresponde a `{python} t_shape_f` (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso `{python} n_labels_f` (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que la dimensiones sean coherentes con la operación que se va a realizar. 
 
 La red que se va a implementar es la siguiente, como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
 
@@ -334,13 +366,15 @@ $$
 
 donde la suma con el término $\mathbf w_0$ se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación. 
 
-```python
+```{python}
+#| echo: true
 d = [64, 32, 16, 10]
 ```
 
 Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de `d` creando pares, para generar las dimensiones adecuadas para las matrices $W.$
 
-```python
+```{python}
+#| echo: true
 def parametros_iniciales(d, key=0):
     key = jax.random.PRNGKey(key)
     params = []
@@ -354,7 +388,8 @@ def parametros_iniciales(d, key=0):
 
 Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación $\phi$ seleccionada fue $\textsf{ReLU}$ que está implementada en la función `jax.nn.relu`.
 
-```python
+```{python}
+#| echo: true
 @jax.jit
 def ann(params, D):
     y1 = jax.nn.relu(D @ params[0]['w'] + params[0]['w0'])
@@ -362,9 +397,10 @@ def ann(params, D):
     return y2 @ params[2]['w'] + params[2]['w0']
 ```
 
-Como medida de error se usa la [Entropía Cruzada](/AprendizajeComputacional/capitulos/04Rendimiento/#sec:entropia-cruzada) tal y como se implementa a continuación. El caso $0 \log 0$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa `jnp.nansum` que trata los valores no definidos como ceros. 
+Como medida de error se usa la Entropía Cruzada (@sec-entropia-cruzada) tal y como se implementa a continuación. El caso $0 \log 0$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa `jnp.nansum` que trata los valores no definidos como ceros. 
 
-```python
+```{python}
+#| echo: true
 @jax.jit
 def media_entropia_cruzada(params, D, y_oh):
     hy = jax.nn.softmax(ann(params, D), axis=1)
@@ -373,7 +409,8 @@ def media_entropia_cruzada(params, D, y_oh):
 
 En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función `update_finite` que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior. 
 
-```python
+```{python}
+#| echo: true
 def adam(optimizer, params, epocas=500):
     @jax.jit
     def update_finite(a, b):
@@ -399,10 +436,17 @@ def adam(optimizer, params, epocas=500):
 
 Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.
 
-```python
+```{python}
+#| echo: true
 params = parametros_iniciales(d)
 optimizer = optax.adam(learning_rate=1e-2)
 p, error = adam(optimizer, params, epocas=500)
 ```
 
-El resultado de esta red, es que el error en el conjunto de prueba es $0.03056$ calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. 
+```{python}
+#| echo: false
+error_f = (ann(p, G).argmax(axis=1) != y_g).mean()
+error_f = Markdown(f'${error_f:0.4f}$')
+```
+
+El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. 
