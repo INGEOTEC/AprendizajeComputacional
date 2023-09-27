@@ -137,39 +137,51 @@ B = np.random.randint(T.shape[0],
 
 Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entra los máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.
 
-```python
-svc_ins = [LinearSVC(dual=False).fit(T[b], y_t[b]) for b in B]
+```{python}
+#| echo: true
+svc_ins = [LinearSVC(dual=False).fit(T[b], y_t[b])
+           for b in B]
 hys = np.array([m.predict(G) for m in svc_ins])
-hy = np.array([Counter(x).most_common(n=1)[0][0] for x in hys.T])
-recall_score(y_g, hy, average="macro")
+hy = np.array([Counter(x).most_common(n=1)[0][0]
+               for x in hys.T])
+bsvc_recall = recall_score(y_g, hy, average="macro")
 ```
 
 El siguiente algoritmo son los Árboles de Decisión; la única diferencia con respecto a las instrucciones anteriores es la primera línea donde se entrenan los árboles. 
 
-```python
+```{python}
+#| echo: true
 tree_ins = [DecisionTreeClassifier(criterion='entropy',
                                    min_samples_split=9).fit(T[b], y_t[b])
             for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
-hy = np.array([Counter(x).most_common(n=1)[0][0] for x in hys.T])
-recall_score(y_g, hy, average="macro")
+hy = np.array([Counter(x).most_common(n=1)[0][0]
+               for x in hys.T])
+btree_recall = recall_score(y_g, hy,
+                            average="macro")
 ```
 
 Como se mencionó, la predicción final se puede realizar de dos manera en clasificación una es usando votación, como se vió en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculas las probabilidad de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa está información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que $1$ y menor que $-1$ y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo. 
 
-```python
+```{python}
+#| echo: true
 hys = np.array([m.decision_function(G) for m in svc_ins])
 hys = np.where(hys > 1, 1, hys)
 hys = np.where(hys < -1, -1, hys)
 hys = hys.sum(axis=0)
-recall_score(y_g, hys.argmax(axis=1), average="macro")
+csvc_recall = recall_score(y_g, hys.argmax(axis=1),
+                           average="macro")
 ```
 
 El procedimiento anterior se puede adaptar a los Árboles de Decisión utilizando el siguiente código. 
 
-```python
-hys = np.array([m.predict_proba(G) for m in tree_ins])
-recall_score(y_g, hys.sum(axis=0).argmax(axis=1), average="macro")
+```{python}
+#| echo: true
+hys = np.array([m.predict_proba(G)
+                for m in tree_ins])
+ctree_recall = recall_score(y_g,
+                            hys.sum(axis=0).argmax(axis=1),
+                            average="macro")
 ```
 
 Finalmente, la siguiente tabla muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma. 
