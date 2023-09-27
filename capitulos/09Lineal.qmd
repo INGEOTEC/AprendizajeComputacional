@@ -83,10 +83,15 @@ En la @fig-lineal-discriminante se observa el plano (linea) que divide las dos c
 
 ```{python}
 #| code-fold: true
+#| warning: false
 #| fig-cap: Función Discriminante
 #| label: fig-lineal-discriminante
-X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]]).rvs(1000)
-X_2 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
+X_1 = multivariate_normal(mean=[15, 20],
+                          seed=0,
+                          cov=[[3, -3], [-3, 8]]).rvs(1000)
+X_2 = multivariate_normal(mean=[5, 5],
+                          seed=0,
+                          cov=[[4, 0], [0, 2]]).rvs(1000)
 T = np.concatenate((X_1, X_2))
 y_t = np.array(['P'] * X_1.shape[0] + ['N'] * X_2.shape[0])
 linear = LinearSVC(dual=False).fit(T, y_t)
@@ -110,6 +115,7 @@ La función discriminante $g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$ tiene
 ```{python}
 #| code-fold: true
 #| fig-cap: Función discriminante
+#| warning: false
 #| label: fig-lineal-repr-df
 _ = pd.DataFrame([dict(x1=w_1, x2=w_2, clase='w')])
 df = pd.concat((df, _), axis=0)
@@ -133,6 +139,7 @@ donde el vector $\mathbf x_a -  \mathbf x_b$ es paralelo a $g(\mathbf x)=0$, ort
 ```{python}
 #| code-fold: true
 #| fig-cap: Visualizando que $\mathbf w$ y la función discriminante son ortogonales.
+#| warning: false
 #| label: fig-lineal-ort
 w = np.array([w_1, w_2]) / np.linalg.norm([w_1, w_2])
 len_0 = w_0 / np.linalg.norm([w_1, w_2])
@@ -155,6 +162,7 @@ La @fig-lineal-dist-hyp muestra en rojo la línea generada por $\mathbf w \cdot 
 
 ```{python}
 #| code-fold: true
+#| warning: false
 #| fig-cap: Geometría de la función discriminante.
 #| label: fig-lineal-dist-hyp
 vec = np.array([1, (- w_1 * 1) / w_2])
@@ -206,6 +214,7 @@ Como ya se había visto la distancia del origen al hiperplano está dada por $\e
 
 ```{python}
 #| code-fold: true
+#| warning: false
 #| fig-cap: Distancia ($\ell_{\mathbf x} = x$) de un elemento al hiperplano
 #| label: fig-lineal-dis-ele
 point = X_2[X_2.argmax(axis=0)[1]]
@@ -238,11 +247,19 @@ La @fig-lineal-multiclase ejemplifica el comportamiento de esta técnica en un p
 
 ```{python}
 #| code-fold: true
+#| warning: false
 #| fig-cap: Problema multiclase
 #| label: fig-lineal-multiclase
-X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]]).rvs(1000)
-X_2 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
-X_3 = multivariate_normal(mean=[-5, 20], cov=[[2, 1], [1, 2]]).rvs(1000)
+seed = 3
+X_1 = multivariate_normal(mean=[15, 20],
+                          seed=seed,
+                          cov=[[3, -3], [-3, 8]]).rvs(1000)
+X_2 = multivariate_normal(mean=[5, 5],
+                          seed=seed,
+                          cov=[[4, 0], [0, 2]]).rvs(1000)
+X_3 = multivariate_normal(mean=[-5, 20],
+                          seed=seed,
+                          cov=[[2, 1], [1, 2]]).rvs(1000)
 
 T = np.concatenate((X_1, X_2, X_3))
 y_t = np.array(['1'] * X_1.shape[0] + ['2'] * X_2.shape[0] + ['3'] * X_3.shape[0])
@@ -324,6 +341,7 @@ donde $\xi$ captura los errores empezando por aquellos elementos que están del 
 ```{python}
 #| code-fold: true
 #| fig-cap: Hiperplanos
+#| warning: false
 #| label: fig-lineal-xi
 seed = 2
 X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]], seed=seed).rvs(1000)
@@ -363,6 +381,7 @@ Se observa que el parámetro $C$ controla la penalización que se hace a los ele
 
 ```{python}
 #| code-fold: true
+#| warning: false
 #| fig-cap: Hiperplanos para diferentes valores de $C$. Se observa que en $C=0.01$ se clasifica incorrectamente un elemento positivo.
 #| label: fig-lineal-hip-c
 for k, (C, legend) in enumerate(zip([1, 0.01], [False, True])):
@@ -515,6 +534,7 @@ Es momento de comparar el comportamiento de los dos métodos de discriminantes l
 ```{python}
 #| code-fold: true
 #| fig-cap: Comparación de dos métodos lineales
+#| warning: false
 #| label: fig-lineal-comparacion
 svm = LinearSVC(dual=False).fit(T, y_t)
 lr = LogisticRegression().fit(T, y_t)
@@ -544,7 +564,9 @@ Complementando la comparación anterior con los datos del iris que se pueden obt
 ```{python}
 #| echo: true
 D, y = load_iris(return_X_y=True)
-T, G, y_t, y_g = train_test_split(D, y, test_size=0.4, random_state=3)
+T, G, y_t, y_g = train_test_split(D, y,
+                                  test_size=0.4,
+                                  random_state=3)
 ```
 
 Los clasificadores a comparar son una máquina de soporte vectorial lineal, una máquina de soporte vectorial usando un kernel polinomial de grado $1$ y una regresión logística, tal y como se muestra en el siguiente código. 
