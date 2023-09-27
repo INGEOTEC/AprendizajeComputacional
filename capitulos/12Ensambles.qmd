@@ -41,9 +41,9 @@ Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión
 
 ## Fundamentos {#sec-fundamentos}
 
-La descripción de ensambles se empieza observando el siguiente comportamiento. Suponiendo que se cuenta con $M$ algoritmos de clasificación binaria cada uno tiene un accuracy de $p=0.51$ y estos son completamente independientes. El proceso de clasificar un elemento corresponde a preguntar la clase a los $M$ clasificadores y la clase que se recibe mayor votos es la clase seleccionada, esta votación se comporta como una variable aleatoria que tiene una distribución Binomial. Suponiendo con la clase del elemento es $1$, en esta condición la función cumulativa de distribución ($\textsf{cdf}$) con parámetros $k=\lfloor \frac{M}{2}\rfloor,$ $n=M$ y $p=0.51$ indica seleccionar la clase $0$ y $1 - \textsf{cdf}$ corresponde a la probabilidad de seleccionar la clase $1$. 
+La descripción de ensambles se empieza observando el siguiente comportamiento. Suponiendo que se cuenta con $M$ algoritmos de clasificación binaria cada uno tiene una exactitud de $p=0.51$ y estos son completamente independientes. El proceso de clasificar un elemento corresponde a preguntar la clase a los $M$ clasificadores y la clase que se recibe mayor votos es la clase seleccionada, esta votación se comporta como una variable aleatoria que tiene una distribución Binomial. Suponiendo con la clase del elemento es $1$, en esta condición la función cumulativa de distribución ($\textsf{cdf}$) con parámetros $k=\lfloor \frac{M}{2}\rfloor,$ $n=M$ y $p=0.51$ indica seleccionar la clase $0$ y $1 - \textsf{cdf}$ corresponde a la probabilidad de seleccionar la clase $1$. 
 
-La @fig-ensambles-acc-bin muestra como cambia el accuracy, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene un accuracy de $p=0.51,$ se puede observar que cuando $M=501$ el accuracy es $0.673$ y con $9,999$ clasificadores se tiene un accuracy de $0.977.$
+La @fig-ensambles-acc-bin muestra como cambia la exactitud, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene una exactitud de $p=0.51,$ se puede observar que cuando $M=501$ el rendimiento es $0.673$ y con $9,999$ clasificadores se tiene un valor de $0.977.$
 
 
 ```{python}
@@ -96,7 +96,7 @@ Siguiendo con la idea de combinar $M$ instancias independientes de un tipo de al
 
 ### Ejemplo: Dígitos
 
-Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G $) con las siguientes instrucciones.
+Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) con las siguientes instrucciones.
 
 ```{python}
 #| echo: true
@@ -184,12 +184,14 @@ ctree_recall = recall_score(y_g,
                             average="macro")
 ```
 
-Finalmente, la siguiente tabla muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma. 
+Finalmente, la @tbl-ensambles-perf-cl muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma. 
 
 Comparando los diferentes rendimientos, se puede observar que no existe mucha diferencia en rendimiento en las M.S.V Lineal y que la mayor mejora se presentó en los Árboles de Decisión. Este comportamiento es esperado dado que para que Bagging funciones adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo. 
 
 ```{python}
 #| echo: false
+#| tbl-cap: Rendimiento (macro-recall) de bagging y estimadores base.
+#| label: tbl-ensambles-perf-cl
 
 txt = '|                   |M.S.V. Lineal|Árboles de Decisión|\n'
 txt += '|-------------------|-------------|-------------------|\n'
@@ -204,66 +206,86 @@ Markdown(txt)
 
 ### Ejemplo: Diabetes
 
-Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G $) se muestra a continuación. 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestra a continuación. 
 
-```python
+```{python}
+#| echo: true
 X, y = load_diabetes(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+T, G, y_t, y_g = train_test_split(X, y,
+                                  random_state=0,
+                                  test_size=0.2)
 ```
 
-Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como mediada de rendimiento el porcentaje del error absoluto; tal y como se muestran en las siguientes instrucciones. 
+Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como mediada de rendimiento el porcentaje del error absoluto (@eq-mape); tal y como se muestran en las siguientes instrucciones. 
 
-```python
-svr = LinearSVR().fit(T, y_t)
-mean_absolute_percentage_error(y_g, svr.predict(G))
+```{python}
+#| echo: true
+svr = LinearSVR(dual='auto').fit(T, y_t)
+svr_mape = mean_absolute_percentage_error(y_g,
+                                          svr.predict(G))
 ```
 
 El árbol de decisión y su rendimiento se implementa con el siguiente código. 
 
-```python
-tree = DecisionTreeRegressor(min_samples_split=9).fit(T, y_t)
-mean_absolute_percentage_error(y_g, tree.predict(G)
+```{python}
+#| echo: true
+tree = DecisionTreeRegressor(min_samples_split=9).fit(T,
+                                                      y_t)
+tree_mape = mean_absolute_percentage_error(y_g,
+                                           tree.predict(G))
 ```
 
 Al igual que en el caso de clasificación, la siguiente instrucción genera los índices para generar las muestras. Se hace un ensamble de $M=11$ elementos. 
 
-```python
+```{python}
+#| echo: true
 B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
 ```
 
 En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrena las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y se en la tercera se realiza el promedio y se mide el rendimiento. 
 
-```python
-svr_ins = [LinearSVR().fit(T[b], y_t[b]) for b in B]
+```{python}
+#| echo: true
+svr_ins = [LinearSVR(dual='auto').fit(T[b], y_t[b])
+           for b in B]
 hys = np.array([m.predict(G) for m in svr_ins])
-mean_absolute_percentage_error(y_g, hys.mean(axis=0))
+bsvr_mape = mean_absolute_percentage_error(y_g,
+                                           hys.mean(axis=0))
 ```
 
 De manera equivalente se entrenan los Árboles de Decisión, como se muestra a continuación. 
 
-```python
-tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b]) for b in B]
+```{python}
+#| echo: true
+tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b])
+            for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
-mean_absolute_percentage_error(y_g, hys.mean(axis=0))
+btree_mape = mean_absolute_percentage_error(y_g,
+                                            hys.mean(axis=0))
 ```
 
-La siguiente tabla muestra el rendimiento de los algoritmos de regresión utilizados, al igual que en el caso de clasificación, la M.S.V. no se ve beneficiada con el uso de Bagging. Por otro lado los Árboles de Decisión tienen un incremento en rendimiento considerable al usar Bagging. 
+La @tbl-ensambles-perf-reg muestra el rendimiento de los algoritmos de regresión utilizados, al igual que en el caso de clasificación, la M.S.V. no se ve beneficiada con el uso de Bagging. Por otro lado los Árboles de Decisión tienen un incremento en rendimiento considerable al usar Bagging. 
 
-|                       |M.S.V. Lineal|Árboles de Decisión|
-|-----------------------|-------------|-------------------|
-|Único                  |$0.4995$   |$0.5009$         |
-|Promedio ($M=11$)    |$0.4964$   |$0.4191$         |
+```{python}
+#| echo: false
+#| tbl-cap: Rendimiento (MAPE) de bagging y estimadores base.
+#| label: tbl-ensambles-perf-reg
 
-Hasta este momento los ensambles han sido de $M=11$ elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La siguiente figura muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $M=2,\ldots,500.$ Se observa que alrededor que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor 
-de $M=100.$ Finalmente se ve que el rendimiento es estable cuando $M>200.$
+txt = '|                   |M.S.V. Lineal|Árboles de Decisión|\n'
+txt += '|-------------------|-------------|-------------------|\n'
+_ = ' | '.join([f'${x:0.4f}$' for x in [svr_mape, tree_mape]])
+txt += f'|Único|{_}|\n'
+_ = ' | '.join([f'${x:0.4f}$' for x in [bsvr_mape, btree_mape]])
+txt += f'|Promedio ($M=11$)|{_}|\n'
+Markdown(txt)
+```
+
+Hasta este momento los ensambles han sido de $M=11$ elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La @fig-ensamble-variacion muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $M=2,\ldots,500.$ Se observa que alrededor que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor de $M=100.$ Finalmente se ve que el rendimiento es estable cuando $M>200.$
  
-![Ensamble Diabetes](/AprendizajeComputacional/assets/images/ensamble-diabetes.png)
-<details markdown="block">
-  <summary>
-    Código de la figura
-  </summary>
-
-```python
+```{python}
+#| code-fold: true
+#| fig-cap: Variación del rendimiento con respecto al tamaño del ensamble ($M$).
+#| label: fig-ensamble-variacion
 B = np.random.randint(T.shape[0], size=(500, T.shape[0]))
 tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b]) for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
@@ -275,12 +297,7 @@ p = [mean_absolute_percentage_error(y_g,
 df = pd.DataFrame(dict(error=p, ensamble=M))
 sns.relplot(data=df, x='ensamble', y='error', kind='line')
 
-```  
-</details>
-<!--
-plt.tight_layout()
-plt.savefig('ensamble-diabetes.png', dpi=300)
--->
+``` 
 
 ## Stack Generalization
 
@@ -292,38 +309,62 @@ Esa es la idea detrás de Stack Generalization, la idea es utilizar las predicci
 
 Para ejemplificar el uso de Stack Generalization, se usa el conjunto de datos de Diabetes. Como se acaba de describir es necesario contar con un conjunto independiente para estimar los parámetros del estimador del stack. Entonces el primer paso es dividir el conjunto de entrenamiento en un conjunto de entrenamiento y validación ($\mathcal V,$) tal y como se muestra en la siguiente instrucción. 
 
-```python
-T1, V, y_t1, y_v = train_test_split(T, y_t, test_size=0.3)
+```{python}
+#| echo: true
+T1, V, y_t1, y_v = train_test_split(T, y_t,
+                                    test_size=0.3)
 ```
 
-Para este ejemplo se usará como regresores bases el algoritmo de [Vecinos Cercanos](/AprendizajeComputacional/capitulos/07NoParametricos/#sec:regresion) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación ($\mathcal V$) y prueba ($\mathcal G$), esto se observa en la segunda y tercera línea del siguiente código. 
+Para este ejemplo se usará como regresores bases el algoritmo de Vecinos Cercanos (@sec-regresion) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación ($\mathcal V$) y prueba ($\mathcal G$), esto se observa en la segunda y tercera línea del siguiente código. 
 
-```python
-models = [KNeighborsRegressor(n_neighbors=n).fit(T1, y_t1) for n in [7, 9]]
+```{python}
+#| echo: true
+models = [KNeighborsRegressor(n_neighbors=n).fit(T1, y_t1)
+          for n in [7, 9]]
 V_stack = np.array([m.predict(V) for m in models]).T
 G_stack = np.array([m.predict(G) for m in models]).T
 ```
 
-El porcentaje del error absoluto de los estimadores bases en el conjunto de prueba es $0.4173$ y $0.4232$, respectivamente. Estos errores se calculan utilizando el siguiente código. 
+El porcentaje del error absoluto (@eq-mape) de los estimadores bases en el conjunto de prueba se puede calcular con el siguiente código
 
-```python
+```{python}
+#| echo: true
+mape_test = []
 for hy in G_stack.T:
-     print(f'{mean_absolute_percentage_error(y_g, hy):0.4f}')
+  mape = mean_absolute_percentage_error(y_g, hy)
+  mape_test.append(mape)
 ```
 
-Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una [Máquina de Soporte Vectorial](/AprendizajeComputacional/capitulos/09Lineal/#sec:svm) con kernel polinomial de grado $2$. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba y se mide el error. El error que tiene el procedimiento de stacking implementado es $0.3894.$
+```{python}
+#| echo: false
+mape1_f = Markdown(f'${mape_test[0]:0.4f}$')
+mape2_f = Markdown(f'${mape_test[1]:0.4f}$')
+```
 
-```python
+teniendo los siguientes valores `{python} mape1_f` y `{python} mape2_f`, respectivamente.
+
+Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una Máquina de Soporte Vectorial (@sec-svm) con kernel polinomial de grado $2$. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba. 
+
+```{python}
+#| echo: true
 stacking = SVR(kernel='poly', degree=2).fit(V_stack, y_v)
 hy = stacking.predict(np.vstack(G_stack))
-mean_absolute_percentage_error(y_g, hy)
 ```
 
-Cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases, por ejemplo, en las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial, el rendimiento de este cambio es $0.4455,$ lo cual es considerablemente mayor que el error obtenido por los estimadores bases. 
+```{python}
+#| echo: false
+_ = mean_absolute_percentage_error(y_g, hy)
+mape3_f = Markdown(f'${_:0.4f}$')
+```
 
-```python
+El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases, por ejemplo, en las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
+
+```{python}
+#| echo: true
 st_trees = BaggingRegressor(estimator=DecisionTreeRegressor(min_samples_split=9),
                             n_estimators=200).fit(V_stack, y_v)
 hy = st_trees.predict(np.vstack(G_stack))
-print(f'{mean_absolute_percentage_error(y_g, hy):0.4f}')
+mape = mean_absolute_percentage_error(y_g, hy)
 ```
+
+El rendimiento de este cambio es `{python} Markdown(f"${mape:0.4f}$")` lo cual es mayor que el error obtenido por los estimadores base. 

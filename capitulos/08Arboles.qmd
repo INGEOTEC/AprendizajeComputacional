@@ -45,10 +45,18 @@ Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tre
 ```{python}
 #| code-fold: true
 #| fig-cap: Tres distribuciones Gausianas
+#| warning: false
 #| label: fig-arboles-tres-distribuciones
-X_1 = multivariate_normal(mean=[5, 5], cov=[[4, 0], [0, 2]]).rvs(1000)
-X_2 = multivariate_normal(mean=[-5, -10], cov=[[2, 1], [1, 3]]).rvs(1000)
-X_3 = multivariate_normal(mean=[15, -6], cov=[[2, 3], [3, 7]]).rvs(1000)
+seed = 1
+X_1 = multivariate_normal(mean=[5, 5],
+                          seed=seed,
+                          cov=[[4, 0], [0, 2]]).rvs(1000)
+X_2 = multivariate_normal(mean=[-5, -10],
+                          seed=seed,
+                          cov=[[2, 1], [1, 3]]).rvs(1000)
+X_3 = multivariate_normal(mean=[15, -6],
+                          seed=seed,
+                          cov=[[2, 3], [3, 7]]).rvs(1000)
 df = pd.DataFrame([dict(x=x, y=y, clase=1) for x, y in X_1] + \
                   [dict(x=x, y=y, clase=2) for x, y in X_2] + \
                   [dict(x=x, y=y, clase=3) for x, y in X_3])

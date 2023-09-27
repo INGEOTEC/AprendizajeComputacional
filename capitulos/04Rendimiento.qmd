@@ -38,7 +38,7 @@ Es importante conocer el rendimiento del algoritmo de aprendizaje computacional 
 
 ## Clasificación {#sec-clasificacion}
 
-En clasificación existen diferentes medidas de rendimiento, algunas de ellas son accuracy, precision, recall, y $F_1$, entre otras. En [esta publicación](http://nmis.isti.cnr.it/sebastiani/Publications/ICTIR2015.pdf) se describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores. 
+En clasificación existen diferentes medidas de rendimiento, algunas de ellas son exactitud (*accuracy*), precisión (*precision*), recall, y $F_1$, entre otras. @10.1145/2808194.2809449 describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores. 
 
 Varias de las medidas de rendimiento toman como insume la **Tabla de Confusión** (@tbl-confusion), la cual contiene la información del proceso de clasificación. La siguiente tabla muestra la estructura de esta tabla para un problema binario, donde se tiene una clase positiva identificada con $p$ y una clase negativa ($n$). La variable $\mathcal Y$ indica las clases reales y la variable $\mathcal{\hat Y}$ representa la estimación (predicción) hecha por el clasificador. Adicionalmente, la tabla se puede extender a $K$ clases siguiendo la misma estructura; la diagonal contienen los elementos correctamente identificados y los elementos fuera de la diagonal muestra los errores. 
 
@@ -70,15 +70,15 @@ $$
 \textsf{error}(\mathcal Y, \mathcal{\hat Y}) = 1 -  \textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}).
 $$
 
-### Accuracy {#sec-accuracy}
+### Exactitud (*Accuracy*) {#sec-accuracy}
 
-El error se define mediante el accuracy. El accuracy es la proporción de ejemplos correctamente clasificados, utilizando la notación de la tabla de confusión quedaría como:
+El error se define mediante la exactitud. La exactitud es la proporción de ejemplos correctamente clasificados, utilizando la notación de la tabla de confusión quedaría como:
 
 $$
 \textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}) = \mathbb P(\mathcal Y=p, \mathcal{\hat Y}=p) + \mathbb P(\mathcal Y=n, \mathcal{\hat Y}=n).
 $$
 
-Una manera equivalente de ver el accuracy es utilizando la probabilidad condicional, es decir, 
+Una manera equivalente de ver la exactitud es utilizando la probabilidad condicional, es decir, 
 
 $$
 \begin{split}
@@ -87,7 +87,7 @@ $$
 \end{split}
 $$
 
-Esta manera ayuda a entender el caso cuando se tiene una clase con muchos ejemplos, e.g., $\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),$ en ese caso se ve que el accuracy está dominado por el primer término, i.e., $\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).$ En este caso, la manera trivial de optimizar el accuracy es crear un clasificador que siempre regrese la clase $p.$ Por esta razón el accuracy no es una medida adecuada cuando las clases son desbalanciadas, es buena medida cuando $\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$
+Esta manera ayuda a entender el caso cuando se tiene una clase con muchos ejemplos, e.g., $\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),$ en ese caso se ve que la exactitud está dominado por el primer término, i.e., $\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).$ En este caso, la manera trivial de optimizar la exactitud es crear un clasificador que siempre regrese la clase $p.$ Por esta razón la exactitud no es una medida adecuada cuando las clases son desbalanciadas, es buena medida cuando $\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$
 
 ### Recall {#sec-recall}
 
@@ -102,9 +102,9 @@ $$
 \end{split}
 $$ {#eq-recall}
 
-### Precision {#sec-precision}
+### Precisión (*Precision*) {#sec-precision}
 
-La precision complementa el recall, al calcular la probabilidad de los ejemplos correctamente clasificados como $p$ dadas las predicciones de los ejemplos. Es decir, en la probabilidad condicional se observa que se conocen las predicciones positivas y de esas predicciones se mide si estas son correctamente clasificadas. Basándose en esto, se puede ver que una manera de generar un algoritmo competitivo en esta media corresponde a predecir la clase solo cuando exista una gran seguridad de la clase. 
+La precisión complementa el recall, al calcular la probabilidad de los ejemplos correctamente clasificados como $p$ dadas las predicciones de los ejemplos. Es decir, en la probabilidad condicional se observa que se conocen las predicciones positivas y de esas predicciones se mide si estas son correctamente clasificadas. Basándose en esto, se puede ver que una manera de generar un algoritmo competitivo en esta media corresponde a predecir la clase solo cuando exista una gran seguridad de la clase. 
 
 $$
 \begin{split}
@@ -115,7 +115,7 @@ $$ {#eq-precision}
 
 ### $F_\beta$ {#sec-f1}
 
-Finalmente, una manera de combinar el recall (@eq-recall) con la precision (@eq-precision) es la medida $F_\beta$, es probable que esta medida se reconozca más cuando $\beta=1$. La idea de $\beta$ es ponderar el peso que se le quiere dar a la precision con respecto al recall.
+Finalmente, una manera de combinar el recall (@eq-recall) con la precisión (@eq-precision) es la medida $F_\beta$, es probable que esta medida se reconozca más cuando $\beta=1$. La idea de $\beta$ es ponderar el peso que se le quiere dar a la precisión con respecto al recall.
 
 $$
 F^p_\beta(\mathcal Y, \mathcal{\hat Y}) = (1 + \beta^2) \frac{\textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) \cdot \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}{\beta^2 \cdot \textsf{precision}_p(\mathcal Y, \mathcal{\hat Y}) + \textsf{recall}_p(\mathcal Y, \mathcal{\hat Y})}
@@ -123,9 +123,9 @@ $$ {#eq-f1}
 
 ### Medidas Macro {#sec-macro}
 
-En las definiciones de precision (@eq-precision), recall (@eq-recall) y $F_\beta$ (@eq-f1) se ha usado un subíndice y superíndice con la letra $p$ esto es para indicar que la medida se está realizando con respecto a la clase $p$. Esto ayuda también a ilustrar que en un problema de $K$ clases se tendrán $K$ diferentes medidas de precision, recall y $F_\beta;$ cada una de esas medidas corresponde a cada clase. 
+En las definiciones de precisión (@eq-precision), recall (@eq-recall) y $F_\beta$ (@eq-f1) se ha usado un subíndice y superíndice con la letra $p$ esto es para indicar que la medida se está realizando con respecto a la clase $p$. Esto ayuda también a ilustrar que en un problema de $K$ clases se tendrán $K$ diferentes medidas de precisión, recall y $F_\beta;$ cada una de esas medidas corresponde a cada clase. 
 
-En ocasiones es importante tener solamente una medida que englobe el rendimiento en el caso de los tres rendimientos que se han mencionado, se puede calcular su versión macro que es la media de la medida. Esto es para un problema de $K$ clases la precision, recall y $F_\beta$ se definen de la siguiente manera.
+En ocasiones es importante tener solamente una medida que englobe el rendimiento en el caso de los tres rendimientos que se han mencionado, se puede calcular su versión macro que es la media de la medida. Esto es para un problema de $K$ clases la precisión, recall y $F_\beta$ se definen de la siguiente manera.
 
 $$
 \textsf{macro-precision}(\mathcal Y, \mathcal{\hat Y}) =  \frac{1}{K}\sum_{k} \textsf{precision}_k(\mathcal Y, \mathcal{\hat Y}),
@@ -168,12 +168,15 @@ El ejemplo de Breast Cancer Wisconsin (@sec-ejemplo-breast-cancer-wisconsin) se 
 ```{python}
 #| echo: true
 D, y = load_breast_cancer(return_X_y=True)
-T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
+T, G, y_t, y_g = train_test_split(D, y, 
+                                  random_state=0,  
+                                  test_size=0.2)
 gaussian = GaussianBayes().fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 ```
 
 ```{python}
+#| echo: false
 acc_f = Markdown(f'${metrics.accuracy_score(y_g, hy_gaussian):0.4f}$')
 ```
 
@@ -254,13 +257,28 @@ auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 
 Con respecto a regresión las siguientes funciones son utilizadas como medidas de rendimiento.
 
-Error cuadrático medio (Mean Square Error): $\textsf{mse}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2.$
+Error cuadrático medio (Mean Square Error): 
 
-Error absoluto medio (Mean Absolute Error): $\textsf{mae}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid.$
+$$
+\textsf{mse}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2.
+$$ {#eq-mse}
 
-Media del porcentaje de error absoluto: $\textsf{mape}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid.$
+Error absoluto medio (Mean Absolute Error):
 
-La proporción de la varianza explicada por el modelo: $R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)}.$
+$$
+\textsf{mae}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \mathcal Y_i - \mathcal{\hat Y}_i \mid.
+$$ {#eq-mae}
+
+Media del porcentaje de error absoluto: 
+$$
+\textsf{mape}(\mathcal Y, \mathcal{\hat Y}) = \frac{1}{N} \sum_{i=1}^N \mid \frac{\mathcal Y_i - \mathcal{\hat Y}_i}{\mathcal Y_i}\mid.
+$$ {#eq-mape}
+
+La proporción de la varianza explicada por el modelo: 
+
+$$
+R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\hat Y}_i)^2)}{\sum_{i=1}^N (\mathcal Y_i - \mathcal{\bar Y}_i)^2)}.
+$$ {#eq-r2}
 
 ### Ejemplo
 
@@ -270,7 +288,9 @@ Las medidas anteriores se ejemplifican utilizando el ejemplo de diabetes(#sec-di
 ```{python}
 #| echo: true
 X, y = load_diabetes(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+T, G, y_t, y_g = train_test_split(X, y,
+                                  random_state=0,  
+                                  test_size=0.2)
 m = LinearRegression().fit(T, y_t) 
 ```
 
@@ -283,7 +303,7 @@ hy = m.predict(G)
 
 Las diferentes medidas de rendimiento para problemas de regresión se puede calcular de la siguiente manera. 
 
-El error cuadrático medio, `mse` corresponde a
+El error cuadrático medio (@eq-mse), `mse` corresponde a
 
 ```{python}
 #| echo: true
@@ -300,19 +320,19 @@ r2_f = Markdown(f'${metrics.r2_score(y_g, hy):0.4f}$')
 
 y tienen un valor de `{python} mse_f`.
 
-El error absoluto medio, `mae`, tiene un valor de `{python} mae_f` calculado de la siguiente manera
+El error absoluto medio (@eq-mae), `mae`, tiene un valor de `{python} mae_f` calculado de la siguiente manera
 
 ```python
 mae = metrics.mean_absolute_error(y_g, hy)
 ```
 
-La media del porcentaje de error absoluto, `mape`, es `{python} mape_f` obtenido con el siguiente código 
+La media del porcentaje de error absoluto (@eq-mape), `mape`, es `{python} mape_f` obtenido con el siguiente código 
 
 ```python
 mape = metrics.mean_absolute_percentage_error(y_g, hy)
 ```
 
-Finalmente, la varianza explicada por el modelo $R^2$, `r2`, es `{python} r2_f`
+Finalmente, la varianza explicada por el modelo $R^2$ (@eq-r2), `r2`, es `{python} r2_f`
 
 ```python
 r2 = metrics.r2_score(y_g, hy)
@@ -341,14 +361,18 @@ Con los datos $\mathcal D$ se genera el conjunto de prueba $\mathcal G$ y los da
 
 ```{python}
 #| echo: true
-T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
+T, G, y_t, y_g = train_test_split(D, y,
+                                  random_state=0,
+                                  test_size=0.2)
 ```
 
 Los datos de entrenamiento y validación se generan de manera equivalente tal como se muestra en la siguiente instrucción. El conjunto de validación ($\mathcal V$) se encuentra en la variable `V` y la variable dependiente en `y_v.`
 
 ```{python}
 #| echo: true
-T, V, y_t, y_v = train_test_split(T, y_t, test_size=0.3)
+T, V, y_t, y_v = train_test_split(T, y_t,
+                                  random_state=0,
+                                  test_size=0.3)
 ```
 
 ```{python}
@@ -428,14 +452,17 @@ Se utiliza el mismo problema para medir el rendimiento del hiperparámetro del c
 
 ```{python}
 #| echo: true
-T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
+T, G, y_t, y_g = train_test_split(D, y,
+                                  random_state=0,  
+                                  test_size=0.2)
 ```
 
 ```{python}
 #| echo: false
+#| warning: false
 perf = []
 perf2 = []
-kfold = KFold(shuffle=True)
+kfold = KFold(shuffle=True, random_state=0)
 for ts, vs in kfold.split(T):
     gaussian = GaussianBayes().fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
@@ -458,8 +485,9 @@ La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` 
 
 ```{python}
 #| echo: true
+#| warning: false
 perf = []
-kfold = KFold(shuffle=True)
+kfold = KFold(shuffle=True, random_state=0)
 for ts, vs in kfold.split(T):
     gaussian = GaussianBayes().fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
@@ -470,7 +498,8 @@ perf = np.mean(perf, axis=0)
 
 Un procedimiento equivalente se realiza para el caso del clasificador Bayesiano Ingenuo tal y como se muestra a continuación. La media del recall en las clases es `{python} score2` Se observa que el clasificador Bayesiano con la matriz de covarianza tiene un mejor rendimiento en validación que el clasificador Bayesiano Ingenuo. El último paso sería calcular el rendimiento en el conjunto $\mathcal G$ lo cual fue presentado anteriormente.  
 
-```python
+```{python}
+#| echo: true
 perf = []
 kfold = KFold(shuffle=True)
 for ts, vs in kfold.split(T):
@@ -478,5 +507,5 @@ for ts, vs in kfold.split(T):
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf.append(_)
-np.mean(perf, axis=0)  
+perf = np.mean(perf, axis=0)  
 ```
