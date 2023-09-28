@@ -101,7 +101,8 @@ X_3 = p3.rvs(size=1000)
 Para graficar estas tres nubes de puntos se puede hacer uso del siguiente código, donde se hace uso de la librería `pandas` y `seaborn` para la generar la gráfica.
 
 ```{python}
-#| label: fig-gaussian_3classes
+#| label: fig-gaussian-3classes
+#| warning: false
 #| fig-cap: "Muestras de 3 distribuciones gausianas"
 #| echo: true
 D = np.concatenate((X_1, X_2, X_3))
@@ -109,12 +110,11 @@ clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
 sns.set_style('whitegrid')
-sns.relplot(data=df, kind='scatter', x='x',
-            y='y', hue='clase')
-         
+_ = sns.relplot(data=df, kind='scatter', x='x',
+                y='y', hue='clase')     
 ```               
 
-El resultado del código anterior se muestra en la @fig-gaussian_3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
+El resultado del código anterior se muestra en la @fig-gaussian-3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
 
 ### Predicción {#sec-prediccion-normal}
 
@@ -167,22 +167,23 @@ y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 Teniendo las predicciones y los valores de reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.  
 
 ```{python}
-#| label: fig-gaussian_3classes-error
+#| label: fig-gaussian-3classes-error
+#| warning: false
 #| fig-cap: "Error en problema de clasificación"
 #| echo: true
 _ = [dict(x=x, y=y, error=error) 
      for (x, y), error in zip(X, y != prediccion)]
 df_error = pd.DataFrame(_)
 sns.set_style('whitegrid')
-sns.relplot(data=df_error, kind='scatter',
-            x='x', y='y', hue='error')
+_ = sns.relplot(data=df_error, kind='scatter',
+                x='x', y='y', hue='error')
 ```
 
-La @fig-gaussian_3classes-error muestra todos los datos generados, en color azul se muestran aquellos datos que fueron correctamente clasificados y en color naranja (error igual a True) se muestran aquellos ejemplos donde el proceso de clasificación cometió un error. 
+La @fig-gaussian-3classes-error muestra todos los datos generados, en color azul se muestran aquellos datos que fueron correctamente clasificados y en color naranja (error igual a True) se muestran aquellos ejemplos donde el proceso de clasificación cometió un error. 
 
 ## Error de Clasificación {#sec-error-clasificacion}
 
-Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la @fig-gaussian_3classes.
+Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la @fig-gaussian-3classes.
 
 ```{python}
 #| echo: false
@@ -233,14 +234,15 @@ código se puede observar su histograma, donde los datos estimados se encuentran
 en la lista `B`.
 
 ```{python}
-#| label: fig-gaussian_3classes-distribucion
+#| label: fig-gaussian-3classes-distribucion
 #| fig-cap: "Distribución del error de clasificación"
+#| warning: false
 #| echo: true
 sns.set_style('whitegrid')
-sns.displot(B, kde=True)
+_ = sns.displot(B, kde=True)
 ```
 
-La @fig-gaussian_3classes-distribucion muestra el histograma de la estimación del error en el ejemplo analizado.
+La @fig-gaussian-3classes-distribucion muestra el histograma de la estimación del error en el ejemplo analizado.
 
 ## Riesgo
 
