@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.320">
+<meta name="generator" content="quarto-1.4.388">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -106,6 +107,7 @@ div.csl-indent {
     "/",
     "s"
   ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "Sin resultados",
     "search-matching-documents-text": "documentos encontrados",
@@ -338,6 +340,7 @@ div.csl-indent {
 
 </header>
 
+
 <p>El <strong>objetivo</strong> es contrastar las características de diferentes medidas de rendimiento en aprendizaje supervisado así como simular un procedimiento de aprendizaje supervisado.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
@@ -368,8 +371,12 @@ div.csl-indent {
 <p>En clasificación existen diferentes medidas de rendimiento, algunas de ellas son exactitud (<em>accuracy</em>), precisión (<em>precision</em>), recall, y <span class="math inline">\(F_1\)</span>, entre otras. <span class="citation" data-cites="10.1145/2808194.2809449">Sebastiani (<a href="17Referencias.html#ref-10.1145/2808194.2809449" role="doc-biblioref">2015</a>)</span> describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores.</p>
 <p>Varias de las medidas de rendimiento toman como insume la <strong>Tabla de Confusión</strong> (<a href="#tbl-confusion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a>), la cual contiene la información del proceso de clasificación. La siguiente tabla muestra la estructura de esta tabla para un problema binario, donde se tiene una clase positiva identificada con <span class="math inline">\(p\)</span> y una clase negativa (<span class="math inline">\(n\)</span>). La variable <span class="math inline">\(\mathcal Y\)</span> indica las clases reales y la variable <span class="math inline">\(\mathcal{\hat Y}\)</span> representa la estimación (predicción) hecha por el clasificador. Adicionalmente, la tabla se puede extender a <span class="math inline">\(K\)</span> clases siguiendo la misma estructura; la diagonal contienen los elementos correctamente identificados y los elementos fuera de la diagonal muestra los errores.</p>
 <div id="tbl-confusion" class="anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;4.1: Tabla de Confusión
+</figcaption>
+<div aria-describedby="tbl-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
-<caption>Tabla&nbsp;4.1: Tabla de Confusión</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -391,11 +398,17 @@ div.csl-indent {
 </tbody>
 </table>
 </div>
+</figure>
+</div>
 <p>La tabla se puede ver como valores nominales, es decir contar el número de ejemplos clasificados como verdaderos positivos o como proporción de tal manera que las cuatro celdas sumen <span class="math inline">\(1\)</span>. En esta descripción se asume que son proporcionen, esto porque se seguirá una interpretación probabilística descrita en <a href="https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25">este artículo</a> para presentar las diferentes medidas de rendimiento.</p>
 <p>Viendo la <a href="#tbl-confusion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a> como una proporción y combinando con la interpretación probabilística la tabla quedaría de la siguiente manera.</p>
 <div id="tbl-confusion-prob" class="anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-confusion-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;4.2: Tabla de Confusión como Proporción
+</figcaption>
+<div aria-describedby="tbl-confusion-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
-<caption>Tabla&nbsp;4.2: Tabla de Confusión como Proporción</caption>
 <colgroup>
 <col style="width: 26%">
 <col style="width: 36%">
@@ -421,6 +434,8 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
+</div>
+</figure>
 </div>
 <p>Partiendo de la <a href="#tbl-confusion-prob" class="quarto-xref">Tabla&nbsp;<span>4.2</span></a> se puede calcular la probabilidad marginal de cualquier variable y también las probabilidades condicionales, por ejemplo <span class="math inline">\(\mathbb P(\mathcal Y=p) = \sum_k \mathbb P(\mathcal Y=p, \mathcal{\hat Y=k})\)</span> que es la suma de los elementos del primer renglón de la tabla anterior.</p>
 <section id="sec-error" class="level3" data-number="4.2.1">
@@ -529,10 +544,14 @@ H(\mathbb P(\mathcal Y \mid \mathcal X=x) &amp;, \mathbb{\hat P}(\mathcal Y \mid
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                      average<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="7">
+<div id="tbl-performance" class="cell anchored" data-execution_count="7">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-performance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;4.3: Rendimiento
+</figcaption>
+<div aria-describedby="tbl-performance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="7">
-<div id="tbl-performance" class="anchored">
 <table class="table table-sm table-striped small">
-<caption>Tabla&nbsp;4.3: Rendimiento</caption>
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -570,6 +589,8 @@ H(\mathbb P(\mathcal Y \mid \mathcal X=x) &amp;, \mathbb{\hat P}(\mathcal Y \mid
 </table>
 </div>
 </div>
+</figure>
+</div>
 </div>
 <p>Por otro lado la <code>entropia</code> cruzada es <span class="math inline">\(2.1071\)</span> que se puede calcular con el siguiente código.</p>
 <div id="1d9ff77a" class="cell" data-execution_count="9">
@@ -583,10 +604,14 @@ H(\mathbb P(\mathcal Y \mid \mathcal X=x) &amp;, \mathbb{\hat P}(\mathcal Y \mid
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.lineplot(df, x<span class="op">=</span><span class="st">'FPR'</span>, y<span class="op">=</span><span class="st">'TPR'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-roc-curve" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="04Rendimiento_files/figure-html/fig-roc-curve-output-1.png" width="585" height="427" class="figure-img"></p>
-<figcaption class="figure-caption">Figura&nbsp;4.1: ROC</figcaption>
+<div id="fig-roc-curve" class="quarto-figure quarto-figure-center anchored" height="427" width="585">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="04Rendimiento_files/figure-html/fig-roc-curve-output-1.png" width="585" height="427" class="figure-img">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4.1: ROC
+</figcaption>
 </figure>
 </div>
 </div>
@@ -775,7 +800,7 @@ R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \math
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-10.1145/2808194.2809449" class="csl-entry" role="listitem">
 Sebastiani, Fabrizio. 2015. <span>«An Axiomatically Derived Measure for the Evaluation of Classification Algorithms»</span>. En <em>Proceedings of the 2015 International Conference on The Theory of Information Retrieval</em>, 11-20. ICTIR ’15. New York, NY, USA: Association for Computing Machinery. <a href="https://doi.org/10.1145/2808194.2809449">https://doi.org/10.1145/2808194.2809449</a>.
 </div>
@@ -963,15 +988,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    if (id.startsWith('sec-')) {
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
         for (let i = 0; i < 2; i++) {
           container.appendChild(note.children[i].cloneNode(true));
         }
+        typesetMath(container);
         return container.innerHTML
       } else {
+        typesetMath(note);
         return note.innerHTML;
       }
     } else {
@@ -980,6 +1028,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
+      typesetMath(note);
       return note.innerHTML;
     }
   }
@@ -1022,6 +1071,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
       }
     }, function(instance) {
     });
@@ -1097,7 +1169,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
-        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);
