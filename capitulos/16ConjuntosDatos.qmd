@@ -39,15 +39,16 @@ X_3 = p3.rvs(size=1000)
 @fig-gaussian_3classes-app muestra estas tres distribuciones. 
 
 ```{python}
-#| label: fig-gaussian_3classes-app
-#| fig-cap: "Muestras de 3 distribuciones gausianas"
 #| code-fold: true
+#| warning: false
+#| fig-cap: "Muestras de 3 distribuciones gausianas"
+#| label: fig-gaussian_3classes-app 
 D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
-sns.relplot(data=df, kind='scatter', x='x',
-            y='y', hue='clase')
+_ = sns.relplot(data=df, kind='scatter', x='x',
+                y='y', hue='clase')
 ```               
 
 
@@ -66,15 +67,16 @@ X_3 = multivariate_normal(mean=[15, -6],
 Este problema se muestra en la @fig-gaussian_3classes-app-sep. 
 
 ```{python}
-#| label: fig-gaussian_3classes-app-sep
-#| fig-cap: "Muestras de 3 distribuciones gausianas"
 #| code-fold: true
+#| warning: false
+#| fig-cap: "Muestras de 3 distribuciones gausianas"
+#| label: fig-gaussian_3classes-app-sep
 D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
-sns.relplot(data=df, kind='scatter', x='x',
-            y='y', hue='clase')
+_ = sns.relplot(data=df, kind='scatter', x='x',
+                y='y', hue='clase')
 ```   
 
 
@@ -136,9 +138,10 @@ La @fig-regresion-trascendental muestra este problema sintético.
 
 
 ```{python}
-#| label: fig-regresion-trascendental
-#| fig-cap: "Problema de Regresión"
 #| code-fold: true
+#| warning: false
+#| fig-cap: "Problema de Regresión"
+#| label: fig-regresion-trascendental
 df = pd.DataFrame(dict(X=X, y=y))
 df.set_index('X', inplace=True)
 fig = sns.relplot(df, kind='line')
