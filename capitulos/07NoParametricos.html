@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.320">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Aprendizaje Computacional - 7&nbsp; Métodos No Paramétricos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../capitulos/08Arboles.html" rel="next">
+<link href="../capitulos/06Agrupamiento.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/07NoParametricos.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Aprendizaje Computacional</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/02Teoria_Decision.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03Parametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/04Rendimiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Rendimiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/05ReduccionDim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/06Agrupamiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/07NoParametricos.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/08Arboles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/09Lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/10Optimizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Optimización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/11RedesNeuronales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/12Ensambles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ensambles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/13Comparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/17Referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/14Estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/15Codigo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Código</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/16ConjuntosDatos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Conjunto de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados"><span class="header-section-number">7.1</span> Paquetes usados</a></li>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">7.2</span> Introducción</a></li>
+  <li><a href="#sec-no-parametricos-histogramas" id="toc-sec-no-parametricos-histogramas" class="nav-link" data-scroll-target="#sec-no-parametricos-histogramas"><span class="header-section-number">7.3</span> Histogramas</a>
+  <ul class="collapse">
+  <li><a href="#selección-del-tamaño-del-bin" id="toc-selección-del-tamaño-del-bin" class="nav-link" data-scroll-target="#selección-del-tamaño-del-bin"><span class="header-section-number">7.3.1</span> Selección del tamaño del bin</a></li>
+  </ul></li>
+  <li><a href="#estimador-de-densidad-por-kernel" id="toc-estimador-de-densidad-por-kernel" class="nav-link" data-scroll-target="#estimador-de-densidad-por-kernel"><span class="header-section-number">7.4</span> Estimador de Densidad por Kernel</a>
+  <ul class="collapse">
+  <li><a href="#caso-multidimensional" id="toc-caso-multidimensional" class="nav-link" data-scroll-target="#caso-multidimensional"><span class="header-section-number">7.4.1</span> Caso multidimensional</a></li>
+  </ul></li>
+  <li><a href="#estimador-de-densidad-por-vecinos-cercanos" id="toc-estimador-de-densidad-por-vecinos-cercanos" class="nav-link" data-scroll-target="#estimador-de-densidad-por-vecinos-cercanos"><span class="header-section-number">7.5</span> Estimador de Densidad por Vecinos Cercanos</a></li>
+  <li><a href="#clasificador-de-vecinos-cercanos" id="toc-clasificador-de-vecinos-cercanos" class="nav-link" data-scroll-target="#clasificador-de-vecinos-cercanos"><span class="header-section-number">7.6</span> Clasificador de vecinos cercanos</a>
+  <ul class="collapse">
+  <li><a href="#implementación" id="toc-implementación" class="nav-link" data-scroll-target="#implementación"><span class="header-section-number">7.6.1</span> Implementación</a></li>
+  </ul></li>
+  <li><a href="#sec-regresion" id="toc-sec-regresion" class="nav-link" data-scroll-target="#sec-regresion"><span class="header-section-number">7.7</span> Regresión</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-metodos-no-parametricos" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Código</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Mostrar todo el código</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Ocultar todo el código</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">Ver el código fuente</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+<p>El <strong>objetivo</strong> de la unidad es conocer las características de diferentes métodos no paramétricos y aplicarlos para resolver problemas de regresión y clasificación.</p>
+<section id="paquetes-usados" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">7.1</span> Paquetes usados</h2>
+<div id="1257e573" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> NearestNeighbors,<span class="op">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                              KNeighborsClassifier,<span class="op">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                              KNeighborsRegressor</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> pairwise_distances</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_digits, load_diabetes</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/Mn5SweqYZWE" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<hr>
+</section>
+<section id="introducción" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="introducción"><span class="header-section-number">7.2</span> Introducción</h2>
+<p>Los métodos paramétricos asumen que los datos provienen de un modelo común, esto da la ventaja de que el problema de estimar el modelo se limita a encontrar los parámetros del mismo, por ejemplo los parámetros de una distribución Gausiana. Por otro lado en los métodos no paramétricos asumen que datos similares se comportan de manera similar, estos algoritmos también se les conoces como algoritmos de memoria o basados en instancias.</p>
+</section>
+<section id="sec-no-parametricos-histogramas" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-no-parametricos-histogramas"><span class="header-section-number">7.3</span> Histogramas</h2>
+<p>El primer problema que estudiaremos será la estimación no paramétrica de una función de densidad, <span class="math inline">\(f\)</span>, recordando que se cuenta con un conjunto <span class="math inline">\(\mathcal D = \{x_i\}\)</span> que es tomado de <span class="math inline">\(f\)</span> y el objetivo es usar <span class="math inline">\(\mathcal D\)</span> para estimar la función de densidad <span class="math inline">\(\hat f\)</span>.</p>
+<p>El <strong>histograma</strong> es una manera para estimar la función de densidad. Para formar un histograma se divide la línea en <span class="math inline">\(h\)</span> segmentos disjuntos, los cuales se denominan <em>bins</em>. El histograma corresponde a una función constante por partes, donde la altura es la proporción de elementos de <span class="math inline">\(\mathcal D\)</span> que caen en el bin analizado.</p>
+<p>Suponiendo que todos los valores en <span class="math inline">\(\mathcal D\)</span> están en el rango <span class="math inline">\([0, 1]\)</span>, los bins se pueden definir como:</p>
+<p><span class="math display">\[
+B_1 = [0, \frac{1}{m}), B_2=[\frac{1}{m}, \frac{2}{m}), \ldots, B_m=[\frac{m-1}{m}, 1],
+\]</span></p>
+<p>donde <span class="math inline">\(m\)</span> es el número de bins y <span class="math inline">\(h=\frac{1}{m}\)</span>. Se puede definir a <span class="math inline">\(\hat p_j = \frac{1}{N} \sum_{x \in \mathcal D} 1( x \in B_j )\)</span> y <span class="math inline">\(p_j = \int_{B_j} f(u) du\)</span>, donde <span class="math inline">\(p_j\)</span> es la probabilidad del <span class="math inline">\(j\)</span>-ésimo bin y <span class="math inline">\(\hat p_j\)</span> es su estimación. Usando está definición se puede definir la estimación de <span class="math inline">\(f\)</span> como:</p>
+<p><span class="math display">\[
+\hat f(x) = \sum_{j=1}^N \frac{\hat p_j}{h} 1(x \in B_j).
+\]</span></p>
+<p>Con esta formulación se puede ver la motivación de usar histogramas como estimador de <span class="math inline">\(f\)</span> véase:</p>
+<p><span class="math display">\[
+\mathbb E(\hat f(x)) = \frac{\mathbb E(\hat p_j)}{h} = \frac{p_j}{h} = \frac{\int_{B_j} f(u) du}{h} \approx \frac{hf(x)}{h} = f(x).
+\]</span></p>
+<section id="selección-del-tamaño-del-bin" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="selección-del-tamaño-del-bin"><span class="header-section-number">7.3.1</span> Selección del tamaño del bin</h3>
+<p>Una parte crítica para usar un histograma es la selección de <span class="math inline">\(h\)</span> o equivalente el número de bins del estimador. Utilizando el método descrito en <span class="citation" data-cites="Wasserman2004">Wasserman (<a href="17Referencias.html#ref-Wasserman2004" role="doc-biblioref">2004</a>)</span>, el cual se basa en minimizar el riesgo haciendo una validación cruzada, obteniendo la siguiente ecuación:</p>
+<p><span class="math display">\[
+\hat J(h) = \frac{2}{(N-1) h} - \frac{N+1}{(N-1) h} \sum_{j=1}^N {\hat p}^2_j.
+\]</span></p>
+<p>Para ilustrar el uso de la ecuación de minimización del riesgo se utilizará en el ejemplo utilizado en <span class="citation" data-cites="Wasserman2004">Wasserman (<a href="17Referencias.html#ref-Wasserman2004" role="doc-biblioref">2004</a>)</span>. Los datos se pueden descargar de <a href="http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat">http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat</a>.</p>
+<p>El primer paso es leer el conjunto de datos, dentro del ejemplo usado en <span class="citation" data-cites="Wasserman2004">Wasserman (<a href="17Referencias.html#ref-Wasserman2004" role="doc-biblioref">2004</a>)</span> se eliminaron todos los datos menores a <span class="math inline">\(0.2\)</span>, esto se refleja en la última línea.</p>
+<div id="a9eea2d1" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.r_[[<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">float</span>, x.strip().split())) </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">open</span>(<span class="st">"a1882_25.dat"</span>).readlines()]]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[:, <span class="dv">2</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[D <span class="op">&lt;=</span> <span class="fl">0.2</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Haciendo un paréntesis en el ejemplo, para poder calcular <span class="math inline">\(\hat p_j\)</span> es necesario calcular el histograma; dado que los valores están normalizados podemos realizar el histograma utilizando algunas funciones de <code>numpy</code> y librerías tradicionales.</p>
+<p>Para el ilustrar el método para generar el histograma se genera un histograma con 100 bins (primera línea). El siguiente paso (segunda línea) es encontrar los límites de los bins, para este proceso se usa la función <code>np.linspace</code>. En la tercera línea se encuentra el bin de cada elemento, con la característica que <code>np.searchsorted</code> regresa <span class="math inline">\(0\)</span> si el valor es menor que el límite inferior y el tamaño del arreglo si es mayor. Entonces las líneas <span class="math inline">\(4\)</span> y <span class="math inline">\(5\)</span> se encargan de arreglar estas dos características. Finalmente se cuenta el número de elementos que pertenecen a cada bin con la ayuda de la clase <code>Counter</code>.</p>
+<div id="1750ddc9" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>limits <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), m <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.searchsorted(limits, D, side<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>_[_ <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>_[_ <span class="op">==</span> m <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> m</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>p_j <span class="op">=</span> Counter(_)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Realizando el procedimiento anterior se obtiene el histograma presentado en la <a href="#fig-no-param-hist" class="quarto-xref">Figura&nbsp;<span>7.1</span></a></p>
+<div id="cell-fig-no-param-hist" class="cell" data-execution_count="6">
+<details>
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> <span class="bu">sorted</span>(p_j.keys())</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pj <span class="op">=</span> [p_j[x] <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(keys[<span class="dv">0</span>], m <span class="op">+</span> <span class="dv">1</span>)]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">10</span>, m, <span class="dv">10</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.barplot(x<span class="op">=</span><span class="bu">list</span>(<span class="bu">range</span>(keys[<span class="dv">0</span>], m <span class="op">+</span> <span class="dv">1</span>)), y<span class="op">=</span>pj)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig.set_xticks(ticks<span class="op">=</span>pos, labels<span class="op">=</span>[<span class="ss">f'</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> pos])</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fig.set_xlabel(<span class="st">'Número de bin'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> fig.set_ylabel(<span class="st">'Cantidad de elementos'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-no-param-hist" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="07NoParametricos_files/figure-html/fig-no-param-hist-output-1.png" width="582" height="427" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;7.1: Histograma</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Uniendo estos elementos se puede definir una función de riesgo de la siguiente manera</p>
+<div id="98f717a8" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> riesgo(D, m<span class="op">=</span><span class="dv">10</span>):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Riesgo de validación cruzada de histograma"""</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    limits <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), m <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> limits[<span class="dv">1</span>] <span class="op">-</span> limits[<span class="dv">0</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> np.searchsorted(limits, D, side<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    _[_ <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    _[_ <span class="op">==</span> m <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> m</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    p_j <span class="op">=</span> Counter(_)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    cuadrado <span class="op">=</span> <span class="bu">sum</span>([(x <span class="op">/</span> N)<span class="op">**</span><span class="dv">2</span> <span class="cf">for</span> x <span class="kw">in</span> p_j.values()])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">2</span> <span class="op">/</span> ((N <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> h)) <span class="op">-</span> ((N <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> cuadrado <span class="op">/</span> ((N <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> h))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>donde las partes que no han sido descritas solamente implementan la ecuación <span class="math inline">\(\hat J(h)\)</span>.</p>
+<p>Finalmente se busca el valor <span class="math inline">\(h\)</span> que minimiza la ecuación, iterando por diferentes valores de <span class="math inline">\(m\)</span> se obtiene la <a href="#fig-no-param-riesgo" class="quarto-xref">Figura&nbsp;<span>7.2</span></a> donde se observa la variación del riesgo con diferentes niveles de bin.</p>
+<div id="cell-fig-no-param-riesgo" class="cell" data-execution_count="8">
+<details>
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rr <span class="op">=</span> [riesgo(D, m<span class="op">=</span>i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">501</span>)]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({<span class="st">'Riesgo'</span>: rr, <span class="st">'Número de bins'</span>: <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">501</span>))})</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'Número de bins'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-no-param-riesgo" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="07NoParametricos_files/figure-html/fig-no-param-riesgo-output-1.png" width="539" height="470" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;7.2: Riesgo</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="estimador-de-densidad-por-kernel" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="estimador-de-densidad-por-kernel"><span class="header-section-number">7.4</span> Estimador de Densidad por Kernel</h2>
+<p>Como se puede observar el histograma es un estimador discreto, otro estimador muy utilizado que cuenta con la característica de ser suave es el estimador de densidad por kernel, <span class="math inline">\(K\)</span>, el cual está definido de la siguiente manera.</p>
+<p><span class="math display">\[
+\hat f(x) = \frac{1}{hN} \sum_{w \in \mathcal D} K(\frac{x - w}{h}),
+\]</span></p>
+<p>donde el kernel <span class="math inline">\(K\)</span> podría ser <span class="math inline">\(K(x) = \frac{1}{\sqrt{2\pi}} \exp [-\frac{x^2}{2}],\)</span> con parámetros <span class="math inline">\(\mu=0\)</span> y <span class="math inline">\(\sigma=1\)</span>. La <a href="#fig-no-param-kernel" class="quarto-xref">Figura&nbsp;<span>7.3</span></a> muestra la estimación obtenida, con <span class="math inline">\(h=0.003\)</span>, en los datos utilizados en el ejemplo del histograma.</p>
+<div id="cell-fig-no-param-kernel" class="cell" data-execution_count="9">
+<details>
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hat_f(x, D, h):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> norm.pdf((x <span class="op">-</span> D) <span class="op">/</span> h).<span class="bu">sum</span>() <span class="op">/</span> (h <span class="op">*</span> N)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), D.shape[<span class="dv">0</span>])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({<span class="st">'Estimación'</span>: [hat_f(_, D, <span class="fl">0.003</span>) <span class="cf">for</span> _ <span class="kw">in</span> x], <span class="st">'x'</span>: x})</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'x'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-no-param-kernel" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="07NoParametricos_files/figure-html/fig-no-param-kernel-output-1.png" width="558" height="470" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;7.3: Estimación por Kernel</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="caso-multidimensional" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="caso-multidimensional"><span class="header-section-number">7.4.1</span> Caso multidimensional</h3>
+<p>Para el caso multidimensional el estimador quedaría como</p>
+<p><span class="math display">\[
+\hat f(\mathbf x) = \frac{1}{h^dN} \sum_{\mathbf w \in \mathcal D} K(\frac{\mathbf x - \mathbf w}{h}),
+\]</span></p>
+<p>donde <span class="math inline">\(d\)</span> corresponde al número de dimensiones. Un kernel utilizado es:</p>
+<p><span class="math display">\[
+K(\mathbf x) = (\frac{1}{\sqrt{2\pi}})^d \exp [- \frac{\mid\mid \mathbf x \mid\mid ^2}{2}].
+\]</span></p>
+</section>
+</section>
+<section id="estimador-de-densidad-por-vecinos-cercanos" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="estimador-de-densidad-por-vecinos-cercanos"><span class="header-section-number">7.5</span> Estimador de Densidad por Vecinos Cercanos</h2>
+<p>Dado un conjunto <span class="math inline">\(\mathcal D=(x_1, \ldots, x_N)\)</span>, es decir, donde se conoce la posición de <span class="math inline">\(x\)</span> en <span class="math inline">\(\mathcal D\)</span> y una medida de distancia <span class="math inline">\(d\)</span>, los <span class="math inline">\(k\)</span> vecinos cercanos a <span class="math inline">\(x\)</span>, <span class="math inline">\(\textsf{kNN}(x)\)</span>, se puede calcular ordenando <span class="math inline">\(\mathcal D\)</span> de la siguiente manera. Sea <span class="math inline">\((\pi_1, \pi_2, \ldots, \pi_N)\)</span> la permutación tal que <span class="math inline">\(x_{\pi_1}=\textsf{arg min}_{w \in \mathcal D} d(x, w)\)</span>, donde <span class="math inline">\(w_{\pi_1} \in \mathcal D\)</span>, <span class="math inline">\(\pi_2\)</span> corresponde al segundo índice menor, y así sucesivamente. Usando esta notación los <span class="math inline">\(k\)</span> vecinos corresponden a <span class="math inline">\(\textsf{kNN}(x)=(x_{\pi_1}, x_{\pi_2}, \ldots, x_{\pi_k}).\)</span></p>
+<p>Una maneara intuitiva de definir <span class="math inline">\(h\)</span> sería en lugar de pensar en un valor constante para toda la función, utilizar la distancia que existe con el <span class="math inline">\(k\)</span> vecino mas cercano, es decir, <span class="math inline">\(h=d(w_{\pi_k}, x)=d_k(x)\)</span>, donde <span class="math inline">\(w_{\pi_k} \in \mathcal D\)</span>. Remplazando esto en el estimado de densidad por kernel se obtiene:</p>
+<p><span class="math display">\[
+\hat f(x) = \frac{1}{d_k(x) N} \sum_{w \in \mathcal D} K(\frac{x - w}{d_k(x)}).
+\]</span></p>
+<p>Utilizando los datos anteriores el estimador por vecinos cercanos, con <span class="math inline">\(k=50\)</span>, quedaría como:</p>
+<div id="cell-fig-no-param-vecinos" class="cell" data-execution_count="10">
+<details>
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hat_f_k(x, D, k):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> np.fabs(D <span class="op">-</span> x)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    _.sort()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> _[k]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> norm.pdf((x <span class="op">-</span> D) <span class="op">/</span> h).<span class="bu">sum</span>() <span class="op">/</span> (h <span class="op">*</span> N)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), D.shape[<span class="dv">0</span>])</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({<span class="st">'Estimación'</span>: [hat_f_k(_, D, <span class="dv">50</span>) <span class="cf">for</span> _ <span class="kw">in</span> x], <span class="st">'x'</span>: x})</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'x'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-no-param-vecinos" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="07NoParametricos_files/figure-html/fig-no-param-vecinos-output-1.png" width="561" height="470" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;7.4: Estimación por Vecinos Cercanos</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="clasificador-de-vecinos-cercanos" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="clasificador-de-vecinos-cercanos"><span class="header-section-number">7.6</span> Clasificador de vecinos cercanos</h2>
+<p>El clasificador de vecinos cercanos es un clasificador simple de entender, la idea es utilizar el conjunto de entrenamiento y una función de distancia para asignar la clase de acuerdo a los k-vecinos más cercanos al objeto deseado.</p>
+<p>Utilizando la notación <span class="math inline">\(kNN(x)\)</span> se define el volumen de <span class="math inline">\(kNN(x)\)</span> como <span class="math inline">\(V(x)\)</span> y <span class="math inline">\(N_c(x)=\sum_{x_{\pi} \in \textsf{kNN}(x)} 1(y_\pi=c)\)</span> donde <span class="math inline">\(y_\pi\)</span> es la salida asociada a <span class="math inline">\(x_\pi\)</span>. <span class="math inline">\(N_c(x)\)</span> corresponde al número de vecinos de <span class="math inline">\(x\)</span> que pertenecen a la clase <span class="math inline">\(c\)</span>. Con esta notación se define la verosimilitud como:</p>
+<p><span class="math display">\[
+\mathbb P(\mathcal X=x \mid \mathcal Y=c) = \frac{N_c(x)}{N_c V(x)},
+\]</span></p>
+<p>donde <span class="math inline">\(N_c\)</span> es el número de elementos en <span class="math inline">\(\mathcal D\)</span> de la clase <span class="math inline">\(c.\)</span></p>
+<p>Utilizando el Teorema de Bayes y sabiendo que <span class="math inline">\(\mathcal P(Y=c)=\frac{N_c}{N}\)</span> la probabilidad a posteriori queda como:</p>
+<p><span class="math display">\[
+\begin{split}
+\mathcal P(\mathcal Y=c \mid \mathcal X=x) &amp;= \frac{\frac{N_c(x)}{N_c V(x)} \frac{N_c}{N}}{\sum_u \frac{N_u(x)}{N_u V(x)} \frac{N_u}{N}} \\
+&amp;= \frac{N_c(x)}{\sum_u N_u(x)} \\
+&amp;= \frac{N_c(x)}{k},
+\end{split}
+\]</span></p>
+<p>donde <span class="math inline">\(\sum_u N_u(x)=k\)</span> porque <span class="math inline">\(N_u(x)\)</span> corresponde al número de elementos de <span class="math inline">\(\textsf{kNN}(x)\)</span> que pertenecen a la clase <span class="math inline">\(u\)</span> y en total se seleccionan <span class="math inline">\(k\)</span> elementos.</p>
+<section id="implementación" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="implementación"><span class="header-section-number">7.6.1</span> Implementación</h3>
+<p>El clasificador de vecinos cercanos tiene una implementación directa, aunque ineficiente, cuando el número de ejemplos en el conjunto de entrenamiento es grande. Esta implementación se ejemplifica con los datos de dígitos que se cargan y se dividen en el conjunto de entrenamiento y prueba de la siguiente manera.</p>
+<div id="71022efc" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="textsfknn" class="level4" data-number="7.6.1.1">
+<h4 data-number="7.6.1.1" class="anchored" data-anchor-id="textsfknn"><span class="header-section-number">7.6.1.1</span> <span class="math inline">\(\textsf{kNN}\)</span></h4>
+<p>Lo primero que se realiza es la función para calcular los <span class="math inline">\(\textsf{kNN}(x)\)</span> esto se puede generando una función <code>kNN</code> que recibe de parámetros <span class="math inline">\(x\)</span>, el conjunto <span class="math inline">\(\mathcal D\)</span>, la cantidad de vecinos (<span class="math inline">\(k\)</span>) y la distancia.</p>
+<p>El código de la función <code>kNN</code> se muestra a continuación, donde en la primera línea se convierte a <span class="math inline">\(x\)</span> en un arreglo de dos dimensiones. Esto tiene el objetivo de generar un código que pueda buscar los <span class="math inline">\(k\)</span> vecinos cercanos de un conjunto de puntos. Por ejemplo, se podría calcular los vecinos cercanos de todo el conjunto <span class="math inline">\(\mathcal G.\)</span></p>
+<p>La segunda línea calcula los vecinos cercanos usando la función <code>argsort</code> lo único que se tiene que conocer es el eje donde se va a realizar la operación que en este caso el <span class="math inline">\(0.\)</span> La transpuesta es para regresar el índice de los vecinos en cada renglón.</p>
+<div id="670b1bd8" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> kNN(x, D, k<span class="op">=</span><span class="dv">1</span>, d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.atleast_2d(x)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (d(D, x).argsort(axis<span class="op">=</span><span class="dv">0</span>))[:k].T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En este momento es importante mencionar que el problema de los <span class="math inline">\(k\)</span> vecinos cercanos tiene muchas aplicaciones además del los algoritmos de aprendizaje supervisado que se verán en esta unidad. Por ejemplo, cuando uno tiene una colección de objetos que podrían ser documentos, videos, fotografías o cualquier objeto, este problema permite encontrar los objetos más cercanos a un objeto dado. Lo que se desea es que el algoritmo regrese el resultado lo antes posible y por ese motivo no se puede utilizar el algoritmo que se acaba de mencionar dado que compara <span class="math inline">\(x\)</span> contra todos los elementos de <span class="math inline">\(\mathcal D.\)</span> El área que estudia este tipo de problemas es el área de Recuperación de Información.</p>
+<p>Por ejemplo, el siguiente código calcula los cinco vecinos más cercanos de los tres primeros elementos de <span class="math inline">\(\mathcal G.\)</span></p>
+<div id="df0b0f7a" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>kNN(G[:<span class="dv">3</span>], T, k<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>array([[ 613,   10,  735, 1129,  892],
+       [ 642,  137, 1167, 1038,  334],
+       [ 664,  662,   57, 1394, 1342]])</code></pre>
+</div>
+</div>
+<p>La manera más sencilla de crear el clasificador de vecinos cercanos es utilizando un método exhaustivo en el cálculo de distancia. Como se comentó, existen métodos más eficientes y la clase <code>NearestNeighbors</code> implementa dos de ellos adicionales al método exhaustivo. Por ejemplo, el siguiente código realiza el procedimiento equivalente al ejemplo visto previamente.</p>
+<div id="98ec5134" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> NearestNeighbors(n_neighbors<span class="op">=</span><span class="dv">5</span>).fit(T)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>knn.kneighbors(G[:<span class="dv">3</span>], return_distance<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>array([[ 613,   10,  735, 1129,  892],
+       [ 642,  137, 1167, 1038,  334],
+       [ 664,  662,   57, 1394, 1342]])</code></pre>
+</div>
+</div>
+</section>
+<section id="n_cx" class="level4" data-number="7.6.1.2">
+<h4 data-number="7.6.1.2" class="anchored" data-anchor-id="n_cx"><span class="header-section-number">7.6.1.2</span> <span class="math inline">\(N_c(x)\)</span></h4>
+<p>El clasificador se basa en la función <span class="math inline">\(N_c(x)\)</span>, esta función se implementa conociendo las etiquetas y <span class="math inline">\(\textsf{kNN}(x)\)</span>. Aunque <span class="math inline">\(N_c(x)\)</span> requiere el parámetro de la clase, la función calculará <span class="math inline">\(N_c(x)\)</span> para todas las clases. La función <code>N_c</code> recibe de parámetros todos los parámetros de <code>kNN</code> y además requiere la clases de cada elemento de <span class="math inline">\(\mathcal D\)</span> estas clases se dan como un arreglo adicional. El siguiente código muestra la función, donde en la primera línea se calcula los <span class="math inline">\(k\)</span> vecinos y después se transforman los índices a las clases correspondientes, el resultado es guardado en la variable <code>knn</code>. La segunda línea usa la clase <code>Counter</code> para contar la frecuencia de cada clase en cada ejemplo dado en <code>x</code>.</p>
+<div id="1135ef91" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> N_c(x, D, clases, k<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>        d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    knn <span class="op">=</span> clases[kNN(x, D, k<span class="op">=</span>k, d<span class="op">=</span>d)]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [Counter(x) <span class="cf">for</span> x <span class="kw">in</span> knn]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por ejemplo, la siguiente instrucción calcula <span class="math inline">\(N_c(x)\)</span> para todos los datos en <span class="math inline">\(\mathcal G\)</span> usando <span class="math inline">\(k=5.\)</span></p>
+<div id="52550cfc" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nc <span class="op">=</span> N_c(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El elemento en el índice 100, tiene el siguiente resultado Counter({5: 5}), que indica que la clase <span class="math inline">\(5\)</span>, fue vista <span class="math inline">\(5\)</span>. El error de este algoritmo en el conjunto de prueba es <span class="math inline">\(0.0111\)</span>, calculado con las siguientes instrucciones. Se observa que la primera línea genera las predicciones usando la función <code>most_common</code> y a continuación se calcula el error.</p>
+<div id="123c5768" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([x.most_common(n<span class="op">=</span><span class="dv">1</span>)[<span class="dv">0</span>][<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> nc])</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Una implementación del clasificador de vecinos cercanos usando métodos eficientes para calcular <span class="math inline">\(\textsf{kNN}\)</span> se encuentra en la clase <code>KNeighborsClassifier</code> la cual se puede utilizar de la siguiente manera.</p>
+<div id="5133e506" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>kcl <span class="op">=</span> KNeighborsClassifier().fit(T, y_t)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> kcl.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="sec-regresion" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="sec-regresion"><span class="header-section-number">7.7</span> Regresión</h2>
+<p>La idea de utilizar vecinos cercanos no es solamente para problemas de clasificación, en problemas de regresión se puede seguir un razonamiento equivalente, el único cambio es en la función <span class="math inline">\(N_c(x)\)</span> donde en lugar de calcular la frecuencia de las clases de los vecinos cercanos a <span class="math inline">\(x\)</span> se hace un promedio (pesado) de la respuesta de cada uno de los vecinos cercanos.</p>
+<p>Para ilustrar esta adecuación en problemas de regresión se utiliza el conjunto de datos de diabetes, estos datos y los conjuntos se obtienen con las siguientes instrucciones.</p>
+<div id="2ef620fd" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Se puede observar en la función <code>regresion</code> que la diferencia con clasificación es que se calcula el promedio, en lugar de contar la frecuencia de las clases.</p>
+<div id="a1805059" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> regresion(x, D, respuesta, k<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>              d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    knn <span class="op">=</span> respuesta[kNN(x, D, k<span class="op">=</span>k, d<span class="op">=</span>d)]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> knn.mean(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La media del error absoluto en el conjunto <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(43.3146\)</span> calculado con las siguientes instrucciones.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> regresion(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.fabs(y_g <span class="op">-</span> hy).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>La clase equivalente a <code>KNeighborsClassifier</code> para regresión es <code>KNeighborsRegressor</code> la cual se puede utilizar asi.</p>
+<div id="d71ba542" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>krg <span class="op">=</span> KNeighborsRegressor().fit(T, y_t)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> krg.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+<!-- -->
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-Wasserman2004" class="csl-entry" role="listitem">
+Wasserman, Larry. 2004. <em>All of Statistics : A Concise Course in Statistical Inference</em>. Springer. <a href="https://doi.org/10.1007/978-0-387-21736-9">https://doi.org/10.1007/978-0-387-21736-9</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        return container.innerHTML
+      } else {
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        console.log("RESIZE");
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../capitulos/06Agrupamiento.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../capitulos/08Arboles.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb23" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Métodos No Paramétricos {#sec-metodos-no-parametricos}</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer las características de diferentes métodos no paramétricos y aplicarlos para resolver problemas de regresión y clasificación.</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> NearestNeighbors,<span class="op">\</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                              KNeighborsClassifier,<span class="op">\</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>                              KNeighborsRegressor</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> pairwise_distances</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_digits, load_diabetes</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> os.path <span class="im">import</span> isfile, isdir</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA.utils <span class="im">import</span> Download</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA <span class="im">import</span> utils</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>utils.USE_TQDM <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> isfile(<span class="st">'a1882_25.dat.zip'</span>):</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>    Download(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/v2.0/a1882_25.dat.zip'</span>,</span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>             <span class="st">'a1882_25.dat.zip'</span>)</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> isfile(<span class="st">'a1882_25.dat'</span>):</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>    <span class="op">!</span>unzip <span class="op">-</span>Pingeotec a1882_25.dat.<span class="bu">zip</span></span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/Mn5SweqYZWE width="560" height="315" &gt;}}</span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a>Los métodos paramétricos asumen que los datos provienen de un modelo común, esto da la ventaja de que el problema de estimar el modelo se limita a encontrar los parámetros del mismo, por ejemplo los parámetros de una distribución Gausiana. Por otro lado en los métodos no paramétricos asumen que datos similares se comportan de manera similar, estos algoritmos también se les conoces como algoritmos de memoria o basados en instancias.</span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a><span class="fu">## Histogramas {#sec-no-parametricos-histogramas}</span></span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a>El primer problema que estudiaremos será la estimación no paramétrica de una función de densidad, $f$, recordando que se cuenta con un conjunto $\mathcal D = <span class="sc">\{</span>x_i<span class="sc">\}</span>$ que es tomado de $f$ y el objetivo es usar $\mathcal D$ para estimar la función de densidad $\hat f$. </span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>El **histograma** es una manera para estimar la función de densidad. Para formar un histograma se divide la línea en $h$ segmentos disjuntos, los cuales se denominan _bins_. El histograma corresponde a una función constante por partes, donde la altura es la proporción de elementos de $\mathcal D$ que caen en el bin analizado. </span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>Suponiendo que todos los valores en $\mathcal D$ están en el rango $<span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span>$, los bins se pueden definir como:</span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a>B_1 = <span class="co">[</span><span class="ot">0, \frac{1}{m}), B_2=[\frac{1}{m}, \frac{2}{m}), \ldots, B_m=[\frac{m-1}{m}, 1</span><span class="co">]</span>,</span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a>donde $m$ es el número de bins y $h=\frac{1}{m}$. Se puede definir a $\hat p_j = \frac{1}{N} \sum_{x \in \mathcal D} 1( x \in B_j )$ y $p_j = \int_{B_j} f(u) du$, donde $p_j$ es la probabilidad del $j$-ésimo bin y $\hat p_j$ es su estimación. Usando está definición se puede definir la estimación de $f$ como: </span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a>\hat f(x) = \sum_{j=1}^N \frac{\hat p_j}{h} 1(x \in B_j).</span>
+<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a>Con esta formulación se puede ver la motivación de usar histogramas como estimador de $f$ véase:</span>
+<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a>\mathbb E(\hat f(x)) = \frac{\mathbb E(\hat p_j)}{h} = \frac{p_j}{h} = \frac{\int_{B_j} f(u) du}{h} \approx \frac{hf(x)}{h} = f(x).</span>
+<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a><span class="fu">### Selección del tamaño del bin</span></span>
+<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a>Una parte crítica para usar un histograma es la selección de $h$ o equivalente el número de bins del estimador. Utilizando el método descrito en @Wasserman2004, el cual se basa en minimizar el riesgo haciendo una validación cruzada, obteniendo la siguiente ecuación:</span>
+<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a>\hat J(h) = \frac{2}{(N-1) h} - \frac{N+1}{(N-1) h} \sum_{j=1}^N {\hat p}^2_j.</span>
+<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a>Para ilustrar el uso de la ecuación de minimización del riesgo se utilizará en el ejemplo utilizado en @Wasserman2004. Los datos se pueden descargar de <span class="co">[</span><span class="ot">http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat</span><span class="co">](http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat)</span>.</span>
+<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a>El primer paso es leer el conjunto de datos, dentro del ejemplo usado en @Wasserman2004 se eliminaron todos los datos menores a $0.2$, esto se refleja en la última línea. </span>
+<span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-100"><a href="#cb23-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-101"><a href="#cb23-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-102"><a href="#cb23-102" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.r_[[<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">float</span>, x.strip().split())) </span>
+<span id="cb23-103"><a href="#cb23-103" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">open</span>(<span class="st">"a1882_25.dat"</span>).readlines()]]</span>
+<span id="cb23-104"><a href="#cb23-104" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[:, <span class="dv">2</span>]</span>
+<span id="cb23-105"><a href="#cb23-105" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[D <span class="op">&lt;=</span> <span class="fl">0.2</span>]</span>
+<span id="cb23-106"><a href="#cb23-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-107"><a href="#cb23-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-108"><a href="#cb23-108" aria-hidden="true" tabindex="-1"></a>Haciendo un paréntesis en el ejemplo, para poder calcular $\hat p_j$ es necesario calcular el histograma; dado que los valores están normalizados podemos realizar el histograma utilizando algunas funciones de <span class="in">`numpy`</span> y librerías tradicionales. </span>
+<span id="cb23-109"><a href="#cb23-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-110"><a href="#cb23-110" aria-hidden="true" tabindex="-1"></a>Para el ilustrar el método para generar el histograma se genera un histograma con 100 bins (primera línea). El siguiente paso (segunda línea) es encontrar los límites de los bins, para este proceso se usa la función <span class="in">`np.linspace`</span>. En la tercera línea se encuentra el bin de cada elemento, con la característica que <span class="in">`np.searchsorted`</span> regresa $0$ si el valor es menor que el límite inferior y el tamaño del arreglo si es mayor. Entonces las líneas $4$ y $5$ se encargan de arreglar estas dos características. Finalmente se cuenta el número de elementos que pertenecen a cada bin con la ayuda de la clase <span class="in">`Counter`</span>.</span>
+<span id="cb23-111"><a href="#cb23-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-114"><a href="#cb23-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-115"><a href="#cb23-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-116"><a href="#cb23-116" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb23-117"><a href="#cb23-117" aria-hidden="true" tabindex="-1"></a>limits <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), m <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb23-118"><a href="#cb23-118" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.searchsorted(limits, D, side<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb23-119"><a href="#cb23-119" aria-hidden="true" tabindex="-1"></a>_[_ <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb23-120"><a href="#cb23-120" aria-hidden="true" tabindex="-1"></a>_[_ <span class="op">==</span> m <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> m</span>
+<span id="cb23-121"><a href="#cb23-121" aria-hidden="true" tabindex="-1"></a>p_j <span class="op">=</span> Counter(_)</span>
+<span id="cb23-122"><a href="#cb23-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-123"><a href="#cb23-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-124"><a href="#cb23-124" aria-hidden="true" tabindex="-1"></a>Realizando el procedimiento anterior se obtiene el histograma presentado en la @fig-no-param-hist</span>
+<span id="cb23-125"><a href="#cb23-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-128"><a href="#cb23-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-129"><a href="#cb23-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb23-130"><a href="#cb23-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Histograma</span></span>
+<span id="cb23-131"><a href="#cb23-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-no-param-hist</span></span>
+<span id="cb23-132"><a href="#cb23-132" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> <span class="bu">sorted</span>(p_j.keys())</span>
+<span id="cb23-133"><a href="#cb23-133" aria-hidden="true" tabindex="-1"></a>pj <span class="op">=</span> [p_j[x] <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(keys[<span class="dv">0</span>], m <span class="op">+</span> <span class="dv">1</span>)]</span>
+<span id="cb23-134"><a href="#cb23-134" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">10</span>, m, <span class="dv">10</span>))</span>
+<span id="cb23-135"><a href="#cb23-135" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.barplot(x<span class="op">=</span><span class="bu">list</span>(<span class="bu">range</span>(keys[<span class="dv">0</span>], m <span class="op">+</span> <span class="dv">1</span>)), y<span class="op">=</span>pj)</span>
+<span id="cb23-136"><a href="#cb23-136" aria-hidden="true" tabindex="-1"></a>fig.set_xticks(ticks<span class="op">=</span>pos, labels<span class="op">=</span>[<span class="ss">f'</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> pos])</span>
+<span id="cb23-137"><a href="#cb23-137" aria-hidden="true" tabindex="-1"></a>fig.set_xlabel(<span class="st">'Número de bin'</span>)</span>
+<span id="cb23-138"><a href="#cb23-138" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> fig.set_ylabel(<span class="st">'Cantidad de elementos'</span>)</span>
+<span id="cb23-139"><a href="#cb23-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-140"><a href="#cb23-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-141"><a href="#cb23-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-142"><a href="#cb23-142" aria-hidden="true" tabindex="-1"></a>Uniendo estos elementos se puede definir una función de riesgo de la siguiente manera</span>
+<span id="cb23-143"><a href="#cb23-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-146"><a href="#cb23-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-147"><a href="#cb23-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-148"><a href="#cb23-148" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> riesgo(D, m<span class="op">=</span><span class="dv">10</span>):</span>
+<span id="cb23-149"><a href="#cb23-149" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Riesgo de validación cruzada de histograma"""</span></span>
+<span id="cb23-150"><a href="#cb23-150" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
+<span id="cb23-151"><a href="#cb23-151" aria-hidden="true" tabindex="-1"></a>    limits <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), m <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb23-152"><a href="#cb23-152" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> limits[<span class="dv">1</span>] <span class="op">-</span> limits[<span class="dv">0</span>]</span>
+<span id="cb23-153"><a href="#cb23-153" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> np.searchsorted(limits, D, side<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb23-154"><a href="#cb23-154" aria-hidden="true" tabindex="-1"></a>    _[_ <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb23-155"><a href="#cb23-155" aria-hidden="true" tabindex="-1"></a>    _[_ <span class="op">==</span> m <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> m</span>
+<span id="cb23-156"><a href="#cb23-156" aria-hidden="true" tabindex="-1"></a>    p_j <span class="op">=</span> Counter(_)</span>
+<span id="cb23-157"><a href="#cb23-157" aria-hidden="true" tabindex="-1"></a>    cuadrado <span class="op">=</span> <span class="bu">sum</span>([(x <span class="op">/</span> N)<span class="op">**</span><span class="dv">2</span> <span class="cf">for</span> x <span class="kw">in</span> p_j.values()])</span>
+<span id="cb23-158"><a href="#cb23-158" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">2</span> <span class="op">/</span> ((N <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> h)) <span class="op">-</span> ((N <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> cuadrado <span class="op">/</span> ((N <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> h))</span>
+<span id="cb23-159"><a href="#cb23-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-160"><a href="#cb23-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-161"><a href="#cb23-161" aria-hidden="true" tabindex="-1"></a>donde las partes que no han sido descritas solamente implementan la ecuación $\hat J(h)$.</span>
+<span id="cb23-162"><a href="#cb23-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-163"><a href="#cb23-163" aria-hidden="true" tabindex="-1"></a>Finalmente se busca el valor $h$ que minimiza la ecuación, iterando por diferentes valores de $m$ se obtiene la @fig-no-param-riesgo donde se observa la variación del riesgo con diferentes niveles de bin. </span>
+<span id="cb23-164"><a href="#cb23-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-167"><a href="#cb23-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-168"><a href="#cb23-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb23-169"><a href="#cb23-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Riesgo</span></span>
+<span id="cb23-170"><a href="#cb23-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-no-param-riesgo</span></span>
+<span id="cb23-171"><a href="#cb23-171" aria-hidden="true" tabindex="-1"></a>rr <span class="op">=</span> [riesgo(D, m<span class="op">=</span>i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">501</span>)]</span>
+<span id="cb23-172"><a href="#cb23-172" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({<span class="st">'Riesgo'</span>: rr, <span class="st">'Número de bins'</span>: <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">501</span>))})</span>
+<span id="cb23-173"><a href="#cb23-173" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'Número de bins'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-174"><a href="#cb23-174" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'line'</span>)</span>
+<span id="cb23-175"><a href="#cb23-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-176"><a href="#cb23-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-177"><a href="#cb23-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-178"><a href="#cb23-178" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimador de Densidad por Kernel</span></span>
+<span id="cb23-179"><a href="#cb23-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-180"><a href="#cb23-180" aria-hidden="true" tabindex="-1"></a>Como se puede observar el histograma es un estimador discreto, otro estimador muy utilizado que cuenta con la característica de ser suave es el estimador de densidad por kernel, $K$, el cual está definido de la siguiente manera.</span>
+<span id="cb23-181"><a href="#cb23-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-182"><a href="#cb23-182" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-183"><a href="#cb23-183" aria-hidden="true" tabindex="-1"></a>\hat f(x) = \frac{1}{hN} \sum_{w \in \mathcal D} K(\frac{x - w}{h}),</span>
+<span id="cb23-184"><a href="#cb23-184" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-185"><a href="#cb23-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-186"><a href="#cb23-186" aria-hidden="true" tabindex="-1"></a>donde el kernel $K$ podría ser $K(x) = \frac{1}{\sqrt{2\pi}} \exp <span class="co">[</span><span class="ot">-\frac{x^2}{2}</span><span class="co">]</span>,$ con parámetros $\mu=0$ y $\sigma=1$. La @fig-no-param-kernel muestra la estimación obtenida, con $h=0.003$, en los datos utilizados en el ejemplo del histograma. </span>
+<span id="cb23-187"><a href="#cb23-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-190"><a href="#cb23-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-191"><a href="#cb23-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb23-192"><a href="#cb23-192" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Estimación por Kernel</span></span>
+<span id="cb23-193"><a href="#cb23-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-no-param-kernel</span></span>
+<span id="cb23-194"><a href="#cb23-194" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hat_f(x, D, h):</span>
+<span id="cb23-195"><a href="#cb23-195" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
+<span id="cb23-196"><a href="#cb23-196" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> norm.pdf((x <span class="op">-</span> D) <span class="op">/</span> h).<span class="bu">sum</span>() <span class="op">/</span> (h <span class="op">*</span> N)</span>
+<span id="cb23-197"><a href="#cb23-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-198"><a href="#cb23-198" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), D.shape[<span class="dv">0</span>])</span>
+<span id="cb23-199"><a href="#cb23-199" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({<span class="st">'Estimación'</span>: [hat_f(_, D, <span class="fl">0.003</span>) <span class="cf">for</span> _ <span class="kw">in</span> x], <span class="st">'x'</span>: x})</span>
+<span id="cb23-200"><a href="#cb23-200" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'x'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-201"><a href="#cb23-201" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'line'</span>)</span>
+<span id="cb23-202"><a href="#cb23-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-203"><a href="#cb23-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-204"><a href="#cb23-204" aria-hidden="true" tabindex="-1"></a><span class="fu">### Caso multidimensional</span></span>
+<span id="cb23-205"><a href="#cb23-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-206"><a href="#cb23-206" aria-hidden="true" tabindex="-1"></a>Para el caso multidimensional el estimador quedaría como </span>
+<span id="cb23-207"><a href="#cb23-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-208"><a href="#cb23-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-209"><a href="#cb23-209" aria-hidden="true" tabindex="-1"></a>\hat f(\mathbf x) = \frac{1}{h^dN} \sum_{\mathbf w \in \mathcal D} K(\frac{\mathbf x - \mathbf w}{h}),</span>
+<span id="cb23-210"><a href="#cb23-210" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-211"><a href="#cb23-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-212"><a href="#cb23-212" aria-hidden="true" tabindex="-1"></a>donde $d$ corresponde al número de dimensiones. Un kernel utilizado es:</span>
+<span id="cb23-213"><a href="#cb23-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-214"><a href="#cb23-214" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-215"><a href="#cb23-215" aria-hidden="true" tabindex="-1"></a>K(\mathbf x) = (\frac{1}{\sqrt{2\pi}})^d \exp <span class="co">[</span><span class="ot">- \frac{\mid\mid \mathbf x \mid\mid ^2}{2}</span><span class="co">]</span>.</span>
+<span id="cb23-216"><a href="#cb23-216" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-217"><a href="#cb23-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-218"><a href="#cb23-218" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimador de Densidad por Vecinos Cercanos</span></span>
+<span id="cb23-219"><a href="#cb23-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-220"><a href="#cb23-220" aria-hidden="true" tabindex="-1"></a>Dado un conjunto $\mathcal D=(x_1, \ldots, x_N)$, es decir, donde se conoce la posición de $x$ en $\mathcal D$ y una medida de distancia $d$, los $k$ vecinos cercanos a $x$, $\textsf{kNN}(x)$, se puede calcular ordenando $\mathcal D$ de la siguiente manera. Sea $(\pi_1, \pi_2, \ldots, \pi_N)$ la permutación tal que $x_{\pi_1}=\textsf{arg min}_{w \in \mathcal D} d(x, w)$, donde $w_{\pi_1} \in \mathcal D$, $\pi_2$ corresponde al segundo índice menor, y así sucesivamente. Usando esta notación los $k$ vecinos corresponden a $\textsf{kNN}(x)=(x_{\pi_1}, x_{\pi_2}, \ldots, x_{\pi_k}).$ </span>
+<span id="cb23-221"><a href="#cb23-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-222"><a href="#cb23-222" aria-hidden="true" tabindex="-1"></a>Una maneara intuitiva de definir $h$ sería en lugar de pensar en un valor constante para toda la función, utilizar la distancia que existe con el $k$ vecino mas cercano, es decir, $h=d(w_{\pi_k}, x)=d_k(x)$, donde $w_{\pi_k} \in \mathcal D$. Remplazando esto en el estimado de densidad por kernel se obtiene:</span>
+<span id="cb23-223"><a href="#cb23-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-224"><a href="#cb23-224" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-225"><a href="#cb23-225" aria-hidden="true" tabindex="-1"></a>\hat f(x) = \frac{1}{d_k(x) N} \sum_{w \in \mathcal D} K(\frac{x - w}{d_k(x)}).</span>
+<span id="cb23-226"><a href="#cb23-226" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-227"><a href="#cb23-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-228"><a href="#cb23-228" aria-hidden="true" tabindex="-1"></a>Utilizando los datos anteriores el estimador por vecinos cercanos, con $k=50$, quedaría como:</span>
+<span id="cb23-229"><a href="#cb23-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-232"><a href="#cb23-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-233"><a href="#cb23-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb23-234"><a href="#cb23-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Estimación por Vecinos Cercanos</span></span>
+<span id="cb23-235"><a href="#cb23-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-no-param-vecinos</span></span>
+<span id="cb23-236"><a href="#cb23-236" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hat_f_k(x, D, k):</span>
+<span id="cb23-237"><a href="#cb23-237" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> np.fabs(D <span class="op">-</span> x)</span>
+<span id="cb23-238"><a href="#cb23-238" aria-hidden="true" tabindex="-1"></a>    _.sort()</span>
+<span id="cb23-239"><a href="#cb23-239" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> _[k]</span>
+<span id="cb23-240"><a href="#cb23-240" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
+<span id="cb23-241"><a href="#cb23-241" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> norm.pdf((x <span class="op">-</span> D) <span class="op">/</span> h).<span class="bu">sum</span>() <span class="op">/</span> (h <span class="op">*</span> N)</span>
+<span id="cb23-242"><a href="#cb23-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-243"><a href="#cb23-243" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), D.shape[<span class="dv">0</span>])</span>
+<span id="cb23-244"><a href="#cb23-244" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({<span class="st">'Estimación'</span>: [hat_f_k(_, D, <span class="dv">50</span>) <span class="cf">for</span> _ <span class="kw">in</span> x], <span class="st">'x'</span>: x})</span>
+<span id="cb23-245"><a href="#cb23-245" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'x'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-246"><a href="#cb23-246" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'line'</span>)</span>
+<span id="cb23-247"><a href="#cb23-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-248"><a href="#cb23-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-249"><a href="#cb23-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clasificador de vecinos cercanos</span></span>
+<span id="cb23-250"><a href="#cb23-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-251"><a href="#cb23-251" aria-hidden="true" tabindex="-1"></a>El clasificador de vecinos cercanos es un clasificador simple de entender, la idea es utilizar el conjunto de entrenamiento y una función de distancia para asignar la clase de acuerdo a los k-vecinos más cercanos al objeto deseado.</span>
+<span id="cb23-252"><a href="#cb23-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-253"><a href="#cb23-253" aria-hidden="true" tabindex="-1"></a>Utilizando la notación $kNN(x)$ se define el volumen de $kNN(x)$ como $V(x)$ y $N_c(x)=\sum_{x_{\pi} \in \textsf{kNN}(x)} 1(y_\pi=c)$ donde $y_\pi$ es la salida asociada a $x_\pi$. $N_c(x)$ corresponde al número de vecinos de $x$ que pertenecen a la clase $c$. Con esta notación se define la verosimilitud como:</span>
+<span id="cb23-254"><a href="#cb23-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-255"><a href="#cb23-255" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-256"><a href="#cb23-256" aria-hidden="true" tabindex="-1"></a>\mathbb P(\mathcal X=x \mid \mathcal Y=c) = \frac{N_c(x)}{N_c V(x)},</span>
+<span id="cb23-257"><a href="#cb23-257" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-258"><a href="#cb23-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-259"><a href="#cb23-259" aria-hidden="true" tabindex="-1"></a>donde $N_c$ es el número de elementos en $\mathcal D$ de la clase $c.$</span>
+<span id="cb23-260"><a href="#cb23-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-261"><a href="#cb23-261" aria-hidden="true" tabindex="-1"></a>Utilizando el Teorema de Bayes y sabiendo que $\mathcal P(Y=c)=\frac{N_c}{N}$ la probabilidad a posteriori queda como:</span>
+<span id="cb23-262"><a href="#cb23-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-263"><a href="#cb23-263" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-264"><a href="#cb23-264" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb23-265"><a href="#cb23-265" aria-hidden="true" tabindex="-1"></a>\mathcal P(\mathcal Y=c \mid \mathcal X=x) &amp;= \frac{\frac{N_c(x)}{N_c V(x)} \frac{N_c}{N}}{\sum_u \frac{N_u(x)}{N_u V(x)} \frac{N_u}{N}} <span class="sc">\\</span></span>
+<span id="cb23-266"><a href="#cb23-266" aria-hidden="true" tabindex="-1"></a>&amp;= \frac{N_c(x)}{\sum_u N_u(x)} <span class="sc">\\</span></span>
+<span id="cb23-267"><a href="#cb23-267" aria-hidden="true" tabindex="-1"></a>&amp;= \frac{N_c(x)}{k},</span>
+<span id="cb23-268"><a href="#cb23-268" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb23-269"><a href="#cb23-269" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb23-270"><a href="#cb23-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-271"><a href="#cb23-271" aria-hidden="true" tabindex="-1"></a>donde $\sum_u N_u(x)=k$ porque $N_u(x)$ corresponde al número de elementos de $\textsf{kNN}(x)$ que pertenecen a la clase $u$ y en total se seleccionan $k$ elementos. </span>
+<span id="cb23-272"><a href="#cb23-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-273"><a href="#cb23-273" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementación</span></span>
+<span id="cb23-274"><a href="#cb23-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-275"><a href="#cb23-275" aria-hidden="true" tabindex="-1"></a>El clasificador de vecinos cercanos tiene una implementación directa, aunque ineficiente, cuando el número de ejemplos en el conjunto de entrenamiento es grande. Esta implementación se ejemplifica con los datos de dígitos que se cargan y se dividen en el conjunto de entrenamiento y prueba de la siguiente manera. </span>
+<span id="cb23-276"><a href="#cb23-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-279"><a href="#cb23-279" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-280"><a href="#cb23-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-281"><a href="#cb23-281" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-282"><a href="#cb23-282" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb23-283"><a href="#cb23-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-284"><a href="#cb23-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-285"><a href="#cb23-285" aria-hidden="true" tabindex="-1"></a><span class="fu">#### $\textsf{kNN}$</span></span>
+<span id="cb23-286"><a href="#cb23-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-287"><a href="#cb23-287" aria-hidden="true" tabindex="-1"></a>Lo primero que se realiza es la función para calcular los $\textsf{kNN}(x)$ esto se puede generando una función <span class="in">`kNN`</span> que recibe de parámetros $x$, el conjunto $\mathcal D$, la cantidad de vecinos ($k$) y la distancia. </span>
+<span id="cb23-288"><a href="#cb23-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-289"><a href="#cb23-289" aria-hidden="true" tabindex="-1"></a>El código de la función <span class="in">`kNN`</span> se muestra a continuación, donde en la primera línea se convierte a $x$ en un arreglo de dos dimensiones. Esto tiene el objetivo de generar un código que pueda buscar los $k$ vecinos cercanos de un conjunto de puntos. Por ejemplo, se podría calcular los vecinos cercanos de todo el conjunto $\mathcal G.$</span>
+<span id="cb23-290"><a href="#cb23-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-291"><a href="#cb23-291" aria-hidden="true" tabindex="-1"></a>La segunda línea calcula los vecinos cercanos usando la función <span class="in">`argsort`</span> lo único que se tiene que conocer es el eje donde se va a realizar la operación que en este caso el $0.$ La transpuesta es para regresar el índice de los vecinos en cada renglón. </span>
+<span id="cb23-292"><a href="#cb23-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-295"><a href="#cb23-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-296"><a href="#cb23-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-297"><a href="#cb23-297" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> kNN(x, D, k<span class="op">=</span><span class="dv">1</span>, d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
+<span id="cb23-298"><a href="#cb23-298" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.atleast_2d(x)</span>
+<span id="cb23-299"><a href="#cb23-299" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (d(D, x).argsort(axis<span class="op">=</span><span class="dv">0</span>))[:k].T</span>
+<span id="cb23-300"><a href="#cb23-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb23-301"><a href="#cb23-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-302"><a href="#cb23-302" aria-hidden="true" tabindex="-1"></a>En este momento es importante mencionar que el problema de los $k$ vecinos cercanos tiene muchas aplicaciones además del los algoritmos de aprendizaje supervisado que se verán en esta unidad. Por ejemplo, cuando uno tiene una colección de objetos que podrían ser documentos, videos, fotografías o cualquier objeto, este problema permite encontrar los objetos más cercanos a un objeto dado. Lo que se desea es que el algoritmo regrese el resultado lo antes posible y por ese motivo no se puede utilizar el algoritmo que se acaba de mencionar dado que compara $x$ contra todos los elementos de $\mathcal D.$ El área que estudia este tipo de problemas es el área de Recuperación de Información.  </span>
+<span id="cb23-303"><a href="#cb23-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-304"><a href="#cb23-304" aria-hidden="true" tabindex="-1"></a>Por ejemplo, el siguiente código calcula los cinco vecinos más cercanos de los tres primeros elementos de $\mathcal G.$</span>
+<span id="cb23-305"><a href="#cb23-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-308"><a href="#cb23-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-309"><a href="#cb23-309" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-310"><a href="#cb23-310" aria-hidden="true" tabindex="-1"></a>kNN(G[:<span class="dv">3</span>], T, k<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb23-311"><a href="#cb23-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-312"><a href="#cb23-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-313"><a href="#cb23-313" aria-hidden="true" tabindex="-1"></a>La manera más sencilla de crear el clasificador de vecinos cercanos es utilizando un método exhaustivo en el cálculo de distancia. Como se comentó, existen métodos más eficientes y la clase <span class="in">`NearestNeighbors`</span> implementa dos de ellos adicionales al método exhaustivo. Por ejemplo, el siguiente código realiza el procedimiento equivalente al ejemplo visto previamente. </span>
+<span id="cb23-314"><a href="#cb23-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-317"><a href="#cb23-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-318"><a href="#cb23-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-319"><a href="#cb23-319" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> NearestNeighbors(n_neighbors<span class="op">=</span><span class="dv">5</span>).fit(T)</span>
+<span id="cb23-320"><a href="#cb23-320" aria-hidden="true" tabindex="-1"></a>knn.kneighbors(G[:<span class="dv">3</span>], return_distance<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb23-321"><a href="#cb23-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-322"><a href="#cb23-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-323"><a href="#cb23-323" aria-hidden="true" tabindex="-1"></a><span class="fu">#### $N_c(x)$</span></span>
+<span id="cb23-324"><a href="#cb23-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-325"><a href="#cb23-325" aria-hidden="true" tabindex="-1"></a>El clasificador se basa en la función $N_c(x)$, esta función se implementa conociendo las etiquetas y $\textsf{kNN}(x)$. Aunque $N_c(x)$ requiere el parámetro de la clase, la función calculará $N_c(x)$ para todas las clases. La función <span class="in">`N_c`</span> recibe de parámetros todos los parámetros de <span class="in">`kNN`</span> y además requiere la clases de cada elemento de $\mathcal D$ estas clases se dan como un arreglo adicional. El siguiente código muestra la función, donde en la primera línea se calcula los $k$ vecinos y después se transforman los índices a las clases correspondientes, el resultado es guardado en la variable <span class="in">`knn`</span>. La segunda línea usa la clase <span class="in">`Counter`</span> para contar la frecuencia de cada clase en cada ejemplo dado en <span class="in">`x`</span>. </span>
+<span id="cb23-326"><a href="#cb23-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-329"><a href="#cb23-329" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-330"><a href="#cb23-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-331"><a href="#cb23-331" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> N_c(x, D, clases, k<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb23-332"><a href="#cb23-332" aria-hidden="true" tabindex="-1"></a>        d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
+<span id="cb23-333"><a href="#cb23-333" aria-hidden="true" tabindex="-1"></a>    knn <span class="op">=</span> clases[kNN(x, D, k<span class="op">=</span>k, d<span class="op">=</span>d)]</span>
+<span id="cb23-334"><a href="#cb23-334" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [Counter(x) <span class="cf">for</span> x <span class="kw">in</span> knn]</span>
+<span id="cb23-335"><a href="#cb23-335" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-336"><a href="#cb23-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-337"><a href="#cb23-337" aria-hidden="true" tabindex="-1"></a>Por ejemplo, la siguiente instrucción calcula $N_c(x)$ para todos los datos en $\mathcal G$ usando $k=5.$</span>
+<span id="cb23-338"><a href="#cb23-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-341"><a href="#cb23-341" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-342"><a href="#cb23-342" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-343"><a href="#cb23-343" aria-hidden="true" tabindex="-1"></a>nc <span class="op">=</span> N_c(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb23-344"><a href="#cb23-344" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-345"><a href="#cb23-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-348"><a href="#cb23-348" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-349"><a href="#cb23-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb23-350"><a href="#cb23-350" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> <span class="bu">list</span>(nc[<span class="dv">100</span>].keys())</span>
+<span id="cb23-351"><a href="#cb23-351" aria-hidden="true" tabindex="-1"></a>key_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>keys[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb23-352"><a href="#cb23-352" aria-hidden="true" tabindex="-1"></a>value_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>nc[<span class="dv">100</span>][keys[<span class="dv">0</span>]]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb23-353"><a href="#cb23-353" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([x.most_common(n<span class="op">=</span><span class="dv">1</span>)[<span class="dv">0</span>][<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> nc])</span>
+<span id="cb23-354"><a href="#cb23-354" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>(y_g <span class="op">!=</span> hy)<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb23-355"><a href="#cb23-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-356"><a href="#cb23-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-357"><a href="#cb23-357" aria-hidden="true" tabindex="-1"></a>El elemento en el índice 100,  tiene el siguiente resultado <span class="in">`{python} nc[100]`</span>, que indica que la clase <span class="in">`{python} key_f`</span>, fue vista <span class="in">`{python} value_f`</span>. El error de este algoritmo en el conjunto de prueba es <span class="in">`{python} error_f`</span>, calculado con las siguientes instrucciones. Se observa que la primera línea genera las predicciones usando la función <span class="in">`most_common`</span> y a continuación se calcula el error.  </span>
+<span id="cb23-358"><a href="#cb23-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-361"><a href="#cb23-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-362"><a href="#cb23-362" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-363"><a href="#cb23-363" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([x.most_common(n<span class="op">=</span><span class="dv">1</span>)[<span class="dv">0</span>][<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> nc])</span>
+<span id="cb23-364"><a href="#cb23-364" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span>
+<span id="cb23-365"><a href="#cb23-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-366"><a href="#cb23-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-367"><a href="#cb23-367" aria-hidden="true" tabindex="-1"></a>Una implementación del clasificador de vecinos cercanos usando métodos eficientes para calcular $\textsf{kNN}$ se encuentra en la clase <span class="in">`KNeighborsClassifier`</span> la cual se puede utilizar de la siguiente manera. </span>
+<span id="cb23-368"><a href="#cb23-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-371"><a href="#cb23-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-372"><a href="#cb23-372" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-373"><a href="#cb23-373" aria-hidden="true" tabindex="-1"></a>kcl <span class="op">=</span> KNeighborsClassifier().fit(T, y_t)</span>
+<span id="cb23-374"><a href="#cb23-374" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> kcl.predict(G)</span>
+<span id="cb23-375"><a href="#cb23-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-376"><a href="#cb23-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-377"><a href="#cb23-377" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regresión {#sec-regresion}</span></span>
+<span id="cb23-378"><a href="#cb23-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-379"><a href="#cb23-379" aria-hidden="true" tabindex="-1"></a>La idea de utilizar vecinos cercanos no es solamente para problemas de clasificación, en problemas de regresión se puede seguir un razonamiento equivalente, el único cambio es en la función $N_c(x)$ donde en lugar de calcular la frecuencia de las clases de los vecinos cercanos a $x$ se hace un promedio (pesado) de la respuesta de cada uno de los vecinos cercanos. </span>
+<span id="cb23-380"><a href="#cb23-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-381"><a href="#cb23-381" aria-hidden="true" tabindex="-1"></a>Para ilustrar esta adecuación en problemas de regresión se utiliza el conjunto de datos de diabetes, estos datos y los conjuntos se obtienen con las siguientes instrucciones. </span>
+<span id="cb23-382"><a href="#cb23-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-385"><a href="#cb23-385" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-386"><a href="#cb23-386" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-387"><a href="#cb23-387" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-388"><a href="#cb23-388" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb23-389"><a href="#cb23-389" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-390"><a href="#cb23-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-391"><a href="#cb23-391" aria-hidden="true" tabindex="-1"></a>Se puede observar en la función <span class="in">`regresion`</span> que la diferencia con clasificación es que se calcula el promedio, en lugar de contar la frecuencia de las clases. </span>
+<span id="cb23-392"><a href="#cb23-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-395"><a href="#cb23-395" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-396"><a href="#cb23-396" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-397"><a href="#cb23-397" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> regresion(x, D, respuesta, k<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb23-398"><a href="#cb23-398" aria-hidden="true" tabindex="-1"></a>              d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
+<span id="cb23-399"><a href="#cb23-399" aria-hidden="true" tabindex="-1"></a>    knn <span class="op">=</span> respuesta[kNN(x, D, k<span class="op">=</span>k, d<span class="op">=</span>d)]</span>
+<span id="cb23-400"><a href="#cb23-400" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> knn.mean(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb23-401"><a href="#cb23-401" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-402"><a href="#cb23-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-405"><a href="#cb23-405" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-406"><a href="#cb23-406" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb23-407"><a href="#cb23-407" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> regresion(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb23-408"><a href="#cb23-408" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.fabs(y_g <span class="op">-</span> hy).mean()</span>
+<span id="cb23-409"><a href="#cb23-409" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>error<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb23-410"><a href="#cb23-410" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-411"><a href="#cb23-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-412"><a href="#cb23-412" aria-hidden="true" tabindex="-1"></a>La media del error absoluto en el conjunto $\mathcal G$ es <span class="in">`{python} error_f`</span> calculado con las siguientes instrucciones.</span>
+<span id="cb23-413"><a href="#cb23-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-414"><a href="#cb23-414" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb23-415"><a href="#cb23-415" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> regresion(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb23-416"><a href="#cb23-416" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.fabs(y_g <span class="op">-</span> hy).mean()</span>
+<span id="cb23-417"><a href="#cb23-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb23-418"><a href="#cb23-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-419"><a href="#cb23-419" aria-hidden="true" tabindex="-1"></a>La clase equivalente a <span class="in">`KNeighborsClassifier`</span> para regresión es <span class="in">`KNeighborsRegressor`</span> la cual se puede utilizar asi. </span>
+<span id="cb23-420"><a href="#cb23-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-423"><a href="#cb23-423" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb23-424"><a href="#cb23-424" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb23-425"><a href="#cb23-425" aria-hidden="true" tabindex="-1"></a>krg <span class="op">=</span> KNeighborsRegressor().fit(T, y_t)</span>
+<span id="cb23-426"><a href="#cb23-426" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> krg.predict(G)</span>
+<span id="cb23-427"><a href="#cb23-427" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" class="img-fluid"></a> <br> Esta obra está bajo una <a href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

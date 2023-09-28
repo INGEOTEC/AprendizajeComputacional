@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.320">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Aprendizaje Computacional - 2&nbsp; Teoría de Decisión Bayesiana</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../capitulos/03Parametricos.html" rel="next">
+<link href="../capitulos/01Tipos.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/02Teoria_Decision.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Aprendizaje Computacional</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/02Teoria_Decision.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03Parametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/04Rendimiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Rendimiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/05ReduccionDim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/06Agrupamiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/07NoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/08Arboles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/09Lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/10Optimizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Optimización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/11RedesNeuronales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/12Ensambles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ensambles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/13Comparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/17Referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/14Estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/15Codigo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Código</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/16ConjuntosDatos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Conjunto de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">2.1</span> Introducción</a></li>
+  <li><a href="#sec-teoria-decision-probabilidad" id="toc-sec-teoria-decision-probabilidad" class="nav-link" data-scroll-target="#sec-teoria-decision-probabilidad"><span class="header-section-number">2.2</span> Probabilidad</a>
+  <ul class="collapse">
+  <li><a href="#ejemplos" id="toc-ejemplos" class="nav-link" data-scroll-target="#ejemplos"><span class="header-section-number">2.2.1</span> Ejemplos</a></li>
+  </ul></li>
+  <li><a href="#teorema-de-bayes" id="toc-teorema-de-bayes" class="nav-link" data-scroll-target="#teorema-de-bayes"><span class="header-section-number">2.3</span> Teorema de Bayes</a>
+  <ul class="collapse">
+  <li><a href="#sec-tres-normales" id="toc-sec-tres-normales" class="nav-link" data-scroll-target="#sec-tres-normales"><span class="header-section-number">2.3.1</span> Problema Sintético</a></li>
+  <li><a href="#sec-prediccion-normal" id="toc-sec-prediccion-normal" class="nav-link" data-scroll-target="#sec-prediccion-normal"><span class="header-section-number">2.3.2</span> Predicción</a></li>
+  </ul></li>
+  <li><a href="#sec-error-clasificacion" id="toc-sec-error-clasificacion" class="nav-link" data-scroll-target="#sec-error-clasificacion"><span class="header-section-number">2.4</span> Error de Clasificación</a></li>
+  <li><a href="#riesgo" id="toc-riesgo" class="nav-link" data-scroll-target="#riesgo"><span class="header-section-number">2.5</span> Riesgo</a>
+  <ul class="collapse">
+  <li><a href="#acción-nula" id="toc-acción-nula" class="nav-link" data-scroll-target="#acción-nula"><span class="header-section-number">2.5.1</span> Acción nula</a></li>
+  </ul></li>
+  <li><a href="#seleccionando-la-acción" id="toc-seleccionando-la-acción" class="nav-link" data-scroll-target="#seleccionando-la-acción"><span class="header-section-number">2.6</span> Seleccionando la acción</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-teoria-decision-bayesianas" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+<p>El <strong>objetivo</strong> de la unidad es analizar el uso de la teoría de la probabilidad para la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas de clasificación y su uso para tomar la decisión que reduzca el riesgo.</p>
+<section id="paquetes-usados" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
+<div id="4e88a0ed" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/KvRuEdROo-s" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<hr>
+</section>
+<section id="introducción" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">2.1</span> Introducción</h2>
+<p>Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una certeza absoluta sobre la respuesta dada. Por ejemplo, si uno diseña un algoritmo que ordene un conjunto de números uno esperan que ese algoritmo siempre regrese el orden correcto independientemente de la entrada dada, es mas un algoritmo de ordenamiento que en ocasiones se equivoca se consideraría de manera estricta erróneo.</p>
+<p>Sin embargo, existen problemas cuyas características, como incertidumbre en la captura de los datos, variables que no se pueden medir, entre otros factores hacen que lo mejor que se puede esperar es un algoritmo exacto y preciso. Todos los problemas que trataremos en Aprendizaje Computacional caen dentro del segundo escenario. El lenguaje que nos permite describir de manera adecuada este tipo de ambiente, que se caracteriza por variables aleatorios es el de la probabilidad.</p>
+</section>
+<section id="sec-teoria-decision-probabilidad" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="sec-teoria-decision-probabilidad"><span class="header-section-number">2.2</span> Probabilidad</h2>
+<p>En <a href="01Tipos.html#sec-aprendizaje-supervisado" class="quarto-xref"><span>Sección&nbsp;1.4</span></a> se describió que el punto de inicio de aprendizaje supervisado es el conjunto <span class="math inline">\(\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}\)</span>, donde <span class="math inline">\(x_i \in \mathbb R^d\)</span> corresponde a la <span class="math inline">\(i\)</span>-ésima entrada y <span class="math inline">\(y_i\)</span> es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar una método que capture de la relación entre <span class="math inline">\(x\)</span> y <span class="math inline">\(y\)</span>.</p>
+<p>Se pueden tratar la variables <span class="math inline">\(x\)</span> y <span class="math inline">\(y\)</span> de <span class="math inline">\(\mathcal D\)</span> como dos variables aleatorías <span class="math inline">\(\mathcal X\)</span> y <span class="math inline">\(\mathcal Y\)</span>, respectivamente; en este dominio el problema de identificar la respuesta (<span class="math inline">\(\mathcal Y\)</span>) dada la entrada (<span class="math inline">\(\mathcal X\)</span>) se puede describir como encontrar la probabilidad de observar <span class="math inline">\(\mathcal Y\)</span> habiendo visto <span class="math inline">\(\mathcal X\)</span>, es decir, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span>.</p>
+<section id="ejemplos" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="ejemplos"><span class="header-section-number">2.2.1</span> Ejemplos</h3>
+<p>Por ejemplo, en un problema de clasificación binaria se tiene que la respuesta tiene dos posibles valores, e.g., <span class="math inline">\(\mathcal Y=\{0, 1\}\)</span>. Entonces el problema es saber si dada una entrada <span class="math inline">\(x\)</span> el valor de la respuesta es <span class="math inline">\(1\)</span> o <span class="math inline">\(0\)</span>. Utilizando probabilidad la pregunta quedaría como conocer la probabilidad de que <span class="math inline">\(\mathcal Y=1\)</span> o <span class="math inline">\(\mathcal Y=0\)</span> cuando se observa <span class="math inline">\(\mathcal X=x\)</span>, es decir, encontrar <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X=x)\)</span> y compararlo contra <span class="math inline">\(\mathbb P(\mathcal Y=0 \mid \mathcal X=x)\)</span>. Tomando en cuenta estos valores de probabilidad se puede concluir el valor de la salida dado que <span class="math inline">\(\mathcal X=x\)</span>. También está el caso que las probabilidades sean iguales, e.g., si <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X=x)=\mathbb P(\mathcal Y=0 \mid \mathcal X=x)=0.5\)</span> o que su diferencia sea muy pequeña y entonces se toma la decisión de desconocer el valor de la salida.</p>
+<p>Para el caso de regresión (<span class="math inline">\(y \in \mathbb R\)</span>), el problema se puede plantear asumiendo que <span class="math inline">\(\mathcal Y\)</span> proviene de una distribución particular cuyos parámetros están dados por la entrada <span class="math inline">\(\mathcal X\)</span>. Por ejemplo, en regresión lineal se asume que <span class="math inline">\(\mathcal Y\)</span> proviene de una distribución Gausiana con parámetros dados por <span class="math inline">\(\mathcal X\)</span>, es decir, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),\)</span> donde los parámetros de la función <span class="math inline">\(g\)</span> son identificados mediante <span class="math inline">\(\mathcal X\)</span> y <span class="math inline">\(\epsilon \sim \mathcal N(0, \sigma^2)\)</span> es el error con media cero y desviación estándar <span class="math inline">\(\sigma\)</span>. Con estas condiciones la salida <span class="math inline">\(y\)</span> es <span class="math inline">\(\mathbb E[\mathcal Y \mid \mathcal X=x];\)</span> asumiendo que se esa variable se distribuye como una normal entonces <span class="math inline">\(\mathbb E[\mathcal Y \mid \mathcal X=x]= \mathbb E[g(x) + \epsilon]=g(x) + \mathbb E[\epsilon]=g(x).\)</span></p>
+</section>
+</section>
+<section id="teorema-de-bayes" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="teorema-de-bayes"><span class="header-section-number">2.3</span> Teorema de Bayes</h2>
+<p>El problema se convierte en cómo calcular <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span>, lo cual se puede realizar mediante el Teorema de Bayes el cual se deriva a continuación.</p>
+<p>La probabilidad conjunta se puede expresar como <span class="math inline">\(\mathbb P(\mathcal X, \mathcal Y)\)</span>, esta probabilidad es conmutativa por lo que <span class="math inline">\(\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).\)</span> En este momento se puede utilizar la definición de <strong>probabilidad condicional</strong> que es <span class="math inline">\(\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).\)</span> Utilizando estas ecuaciones el <strong>Teorema de Bayes</strong> queda como</p>
+<p><span id="eq-teorema-bayes"><span class="math display">\[
+\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},
+\tag{2.1}\]</span></span></p>
+<p>donde al término <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span> se le conoce como <strong>verosimilitud</strong>, <span class="math inline">\(\mathbb P(\mathcal Y)\)</span> es la probabilidad <strong>a priori</strong> y <span class="math inline">\(\mathbb P(\mathcal X)\)</span> es la <strong>evidencia</strong>.</p>
+<p>Es importante mencionar que la evidencia se puede calcular mediante la probabilidad total, es decir:</p>
+<p><span id="eq-evidencia"><span class="math display">\[
+\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).
+\tag{2.2}\]</span></span></p>
+<section id="sec-tres-normales" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="sec-tres-normales"><span class="header-section-number">2.3.1</span> Problema Sintético</h3>
+<p>Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección presenta un problema sintético. El procedimiento es el siguiente, primero se generarán los datos, los cuales van a ser tres nubes de puntos generadas mediantes tres distribuciones gausianas multivariadas. Con estas tres nubes de puntos, se utilizará el Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) para clasificar todos los puntos generados.</p>
+<p>El primer paso es definir las tres distribuciones gausianas multivariadas, para este objetivo se usa la clase <code>multivariate_normal</code> como se muestra a continuación.</p>
+<div id="3184e6a0" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">1.5</span>, <span class="op">-</span><span class="fl">1.5</span>],</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">3</span>]])</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>p3 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">12.5</span>, <span class="op">-</span><span class="fl">3.5</span>], </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">3</span>, <span class="dv">7</span>]])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los parámetros de la distribución son el vector de medías y la matriz de covarianza, para la primera distribución estos corresponden a <span class="math inline">\(\mathbf \mu = [5, 5]^\intercal\)</span> y</p>
+<p><span class="math display">\[
+\Sigma = \begin{pmatrix}
+            4 &amp; 0 \\
+            0 &amp; 2 \\
+         \end{pmatrix}.
+\]</span></p>
+<p>Una vez definidas las distribuciones podemos generar números aleatoreos de las mismas, en el siguiente código se generar 1000 vectores aleatorios de las tres distribuciones.</p>
+<div id="09d69c3f" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> p3.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para graficar estas tres nubes de puntos se puede hacer uso del siguiente código, donde se hace uso de la librería <code>pandas</code> y <code>seaborn</code> para la generar la gráfica.</p>
+<div id="cell-fig-gaussian_3classes" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> [<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate((D, np.atleast_2d(clase).T), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(D, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>, <span class="st">'clase'</span>])</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-gaussian_3classes" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02Teoria_Decision_files/figure-html/fig-gaussian_3classes-output-1.png" width="536" height="470" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;2.1: Muestras de 3 distribuciones gausianas</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>El resultado del código anterior se muestra en la <a href="#fig-gaussian_3classes" class="quarto-xref">Figura&nbsp;<span>2.1</span></a>, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase.</p>
+</section>
+<section id="sec-prediccion-normal" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="sec-prediccion-normal"><span class="header-section-number">2.3.2</span> Predicción</h3>
+<p>En esta sección se describe el primer ejemplo del paso 4 de la metodología general (ver <a href="01Tipos.html#sec-metodologia-general" class="quarto-xref"><span>Sección&nbsp;1.2</span></a>) de los algoritmos de aprendizaje supervisado. El algoritmo <span class="math inline">\(f\)</span> mencionado en la metodología corresponde en este ejemplo al uso del Teorema de Bayes y las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code> y los correspondientes priors.</p>
+<p>Quitando la evidencia del Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) se observa que <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span>. En el ejemplo creado se observa que <span class="math inline">\(\mathbb P(\mathcal Y=1) = \frac{1000}{3000},\)</span> las otras probabilidades a priori tienen el mismo valor, es decir, <span class="math inline">\(\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.\)</span></p>
+<p>La verosimilitud está definida en las variables <code>p1</code>, <code>p2</code> y <code>p3</code>; en particular en la función <code>pdf</code>, es decir, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> es <code>p1.pdf</code>, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=2)\)</span> corresponde a <code>p2.pdf</code> y equivalentemente <code>p3.pdf</code> es la verosimilitud cuando <span class="math inline">\(\mathcal Y=3.\)</span></p>
+<p>Utilizando esta información <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> se calcula de la siguiente manera.</p>
+<div id="617c22b3" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> (np.vstack([p1.pdf(X),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        p2.pdf(X), </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        p3.pdf(X)]) <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La evidencia (<a href="#eq-evidencia" class="quarto-xref">Ecuación&nbsp;<span>2.2</span></a>) es un factor normalizador que hace que las probabilidad sume a uno, el siguiente código calcula la evidencia, <span class="math inline">\(\mathbb P(\mathcal X)\)</span></p>
+<div id="72d66d1f" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finalmente, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> se obtiene normalizando <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> que se puede realizar de la siguiente manera.</p>
+<div id="2fcff1ac" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.atleast_2d(evidencia).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X),\)</span> <span class="math inline">\(\mathbb P(\mathcal Y=2 \mid \mathcal X)\)</span> y <span class="math inline">\(\mathbb P(\mathcal Y=3 \mid \mathcal X)\)</span>; y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase.</p>
+<div id="0711e3cf" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>prediccion <span class="op">=</span> clase[indice]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En la variable <code>prediccion</code> se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó <code>X</code> se sabe que los primero 1000 elementos pertenecen a la clase <span class="math inline">\(1\)</span>, los siguientes 1000 a la clase <span class="math inline">\(2\)</span> y los restantes a la clase <span class="math inline">\(3\)</span>. A continuación se muestra el arreglo <code>y</code> que tiene esta estructura.</p>
+<div id="c6a10237" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Teniendo las predicciones y los valores de reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.</p>
+<div id="cell-fig-gaussian_3classes-error" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> [<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, error<span class="op">=</span>error) </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> (x, y), error <span class="kw">in</span> <span class="bu">zip</span>(X, y <span class="op">!=</span> prediccion)]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df_error <span class="op">=</span> pd.DataFrame(_)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df_error, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'error'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-gaussian_3classes-error" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02Teoria_Decision_files/figure-html/fig-gaussian_3classes-error-output-1.png" width="548" height="470" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;2.2: Error en problema de clasificación</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La <a href="#fig-gaussian_3classes-error" class="quarto-xref">Figura&nbsp;<span>2.2</span></a> muestra todos los datos generados, en color azul se muestran aquellos datos que fueron correctamente clasificados y en color naranja (error igual a True) se muestran aquellos ejemplos donde el proceso de clasificación cometió un error.</p>
+</section>
+</section>
+<section id="sec-error-clasificacion" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="sec-error-clasificacion"><span class="header-section-number">2.4</span> Error de Clasificación</h2>
+<p>Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la <a href="#fig-gaussian_3classes" class="quarto-xref">Figura&nbsp;<span>2.1</span></a>.</p>
+<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Tipos.html#sec-metodologia-general" class="quarto-xref"><span>Sección&nbsp;1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0093\)</span>.</p>
+<div id="a8548308" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> prediccion).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code>. Una manera de conocer esta variabilidad de la medición del error es calculando su <strong>error estándar</strong>.</p>
+<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección&nbsp;A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estandar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección&nbsp;A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0018\)</span>.</p>
+<div id="f8faf85b" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Aunque el error estándar del parámetro <span class="math inline">\(p\)</span> de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección&nbsp;A.2</span></a>) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar <span class="math inline">\(B\)</span> muestras de <span class="math inline">\(N\)</span> elementos con remplazo de los datos. En este caso los datos son los errores entre <code>y</code> y <code>prediccion</code>. Siguiendo el método presentado en la <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección&nbsp;A.2</span></a> se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las <span class="math inline">\(B\)</span> repeticiones las cuales consisten en calcular <span class="math inline">\(\hat p\)</span>. Se puede observar como se usa directamente <code>y</code> y <code>prediccion</code> junto con el arreglo de índices <code>s</code> para calcular la media del error. Finalmente se calcula la desviación estándar de <code>B</code> (tercera línea) y ese valor corresponde al error estándar.</p>
+<div id="56d47a56" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [(y[s] <span class="op">!=</span> prediccion[s]).mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0017\)</span>.</p>
+<p>El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés, mediante Boostrap se simulo está distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista <code>B</code>.</p>
+<div id="cell-fig-gaussian_3classes-distribucion" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-gaussian_3classes-distribucion" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02Teoria_Decision_files/figure-html/fig-gaussian_3classes-distribucion-output-1.png" width="471" height="471" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;2.3: Distribución del error de clasificación</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La <a href="#fig-gaussian_3classes-distribucion" class="quarto-xref">Figura&nbsp;<span>2.3</span></a> muestra el histograma de la estimación del error en el ejemplo analizado.</p>
+</section>
+<section id="riesgo" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="riesgo"><span class="header-section-number">2.5</span> Riesgo</h2>
+<p>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.</p>
+<p>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir <span class="math inline">\(\alpha_i\)</span> como la acción que se toma al seleccionar la clase <span class="math inline">\(\mathcal Y=i\)</span>. Entonces el riesgo esperado por tomar la acción <span class="math inline">\(\alpha_i\)</span> está definido por:</p>
+<p><span class="math display">\[R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),\]</span></p>
+<p>donde <span class="math inline">\(\lambda_{ik}\)</span> es el costo de tomar la acción <span class="math inline">\(i\)</span> en la clase <span class="math inline">\(k\)</span>.</p>
+<p>Suponiendo una función de costo <span class="math inline">\(0/1\)</span>, donde el escoger la clase correcta tiene un costo <span class="math inline">\(0\)</span> y el equivocarse en cualquier caso tiene un costo <span class="math inline">\(1\)</span> se define como:</p>
+<p><span class="math display">\[
+\lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ de lo contrario} \end{cases}.
+\]</span></p>
+<p>Usando la función de costo <span class="math inline">\(0/1\)</span> el riesgo se define de la siguiente manera:</p>
+<p><span class="math display">\[
+\begin{split}
+R(\alpha_i \mid x) &amp;= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
+&amp;= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
+&amp;= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).
+\end{split}
+\]</span></p>
+<p>Recordando que <span class="math inline">\(\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1\)</span>. Por lo tanto en el caso de costo <span class="math inline">\(0/1\)</span> se puede observar que mínimo riesgo corresponde a la clase más probable.</p>
+<section id="acción-nula" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="acción-nula"><span class="header-section-number">2.5.1</span> Acción nula</h3>
+<p>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</p>
+<p>La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento mas adecuado sería incrementar el número de acciones, <span class="math inline">\(\alpha\)</span> de tal manera que la acción <span class="math inline">\(\alpha_{K+1}\)</span> corresponda a la intervención esperada, esto para cualquier problema de <span class="math inline">\(K\)</span> clases.</p>
+<p>La extensión del costo <span class="math inline">\(0/1\)</span> para este caso estaría definida como:</p>
+<p><span class="math display">\[
+\lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases},
+\]</span></p>
+<p>donde <span class="math inline">\(0 &lt; \lambda &lt; 1\)</span>.</p>
+<p>Usando la definición de riesgo, el riesgo de tomar la acción <span class="math inline">\(\alpha_{K+1}\)</span> es</p>
+<p><span class="math display">\[
+\begin{split}
+R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\ &amp;= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\
+&amp;= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.
+\end{split}
+\]</span></p>
+</section>
+</section>
+<section id="seleccionando-la-acción" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="seleccionando-la-acción"><span class="header-section-number">2.6</span> Seleccionando la acción</h2>
+<p>Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo <span class="math inline">\(0/1\)</span> que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por <span class="math inline">\(R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)\)</span> y el riesgo de la acción nula es <span class="math inline">\(R(\alpha_{K+1} \mid x) = \lambda\)</span>.</p>
+<p>En esta circunstancias se selecciona la clase <span class="math inline">\(\hat y\)</span> si es la clase con la probabilidad máxima (i.e., <span class="math inline">\(\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)\)</span>) y además <span class="math inline">\(\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.\)</span></p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        return container.innerHTML
+      } else {
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        console.log("RESIZE");
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../capitulos/01Tipos.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../capitulos/03Parametricos.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Teoría de Decisión Bayesiana {#sec-teoria-decision-bayesianas}</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es analizar el uso de la teoría de la probabilidad para la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas de clasificación y su uso para tomar la decisión que reduzca el riesgo. </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/KvRuEdROo-s width="560" height="315" &gt;}}</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una certeza absoluta sobre la respuesta dada. Por ejemplo, si uno diseña un algoritmo que ordene un conjunto de números uno esperan que ese algoritmo siempre regrese el orden correcto independientemente de la entrada dada, es mas un algoritmo de ordenamiento que en ocasiones se equivoca se consideraría de manera estricta erróneo.</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>Sin embargo, existen problemas cuyas características, como incertidumbre en la captura de los datos, variables que no se pueden medir, entre otros factores hacen que lo mejor que se puede esperar es un algoritmo exacto y preciso. Todos los problemas que trataremos en Aprendizaje Computacional caen dentro del segundo escenario. El lenguaje que nos permite describir de manera adecuada este tipo de ambiente, que se caracteriza por variables aleatorios es el de la probabilidad.</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probabilidad {#sec-teoria-decision-probabilidad}</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>En @sec-aprendizaje-supervisado se describió que el punto de inicio de aprendizaje supervisado es el conjunto $\mathcal D = <span class="sc">\{</span> (x_1, y_1), \ldots, (x_N, y_N )<span class="sc">\}</span>$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar una método que capture de la relación entre $x$ y $y$.</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>Se pueden tratar la variables $x$ y $y$ de $\mathcal D$ como dos variables aleatorías $\mathcal X$ y $\mathcal Y$, respectivamente; en este dominio el problema de identificar la respuesta ($\mathcal Y$) dada la entrada ($\mathcal X$) se puede describir como encontrar la probabilidad de observar $\mathcal Y$ habiendo visto $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$.</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplos</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>Por ejemplo, en un problema de clasificación binaria se tiene que la respuesta tiene dos posibles valores, e.g., $\mathcal Y=<span class="sc">\{</span>0, 1<span class="sc">\}</span>$. Entonces el problema es saber si dada una entrada $x$ el valor de la respuesta es $1$ o $0$. Utilizando probabilidad la pregunta quedaría como conocer la probabilidad de que $\mathcal Y=1$ o $\mathcal Y=0$ cuando se observa $\mathcal X=x$, es decir, encontrar $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$ y compararlo contra $\mathbb P(\mathcal Y=0 \mid \mathcal X=x)$. Tomando en cuenta estos valores de probabilidad se puede concluir el valor de la salida dado que $\mathcal X=x$. También está el caso que las probabilidades sean iguales, e.g., si $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)=\mathbb P(\mathcal Y=0 \mid \mathcal X=x)=0.5$ o que su diferencia sea muy pequeña y entonces se toma la decisión de desconocer el valor de la salida.</span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>Para el caso de regresión ($y \in \mathbb R$), el problema se puede plantear asumiendo que $\mathcal Y$ proviene de una distribución particular cuyos parámetros están dados por la entrada $\mathcal X$. Por ejemplo, en regresión lineal se asume que $\mathcal Y$ proviene de una distribución Gausiana con parámetros dados por $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$ donde los parámetros de la función $g$ son identificados mediante $\mathcal X$ y $\epsilon \sim \mathcal N(0, \sigma^2)$ es el error con media cero y desviación estándar $\sigma$. Con estas condiciones la salida $y$ es $\mathbb E<span class="co">[</span><span class="ot">\mathcal Y \mid \mathcal X=x</span><span class="co">]</span>;$ asumiendo que se esa variable se distribuye como una normal entonces $\mathbb E<span class="co">[</span><span class="ot">\mathcal Y \mid \mathcal X=x</span><span class="co">]</span>= \mathbb E<span class="co">[</span><span class="ot">g(x) + \epsilon</span><span class="co">]</span>=g(x) + \mathbb E<span class="co">[</span><span class="ot">\epsilon</span><span class="co">]</span>=g(x).$</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Teorema de Bayes</span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>El problema se convierte en cómo calcular $\mathbb P(\mathcal Y \mid \mathcal X)$, lo cual se puede realizar mediante el Teorema de Bayes el cual se deriva a continuación.</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>La probabilidad conjunta se puede expresar como $\mathbb P(\mathcal X, \mathcal Y)$, esta probabilidad es conmutativa por lo que $\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).$ En este momento se puede utilizar la definición de **probabilidad condicional** que es $\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$ Utilizando estas ecuaciones el **Teorema de Bayes** queda como</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>$$ {#eq-teorema-bayes}</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>donde al término $\mathbb P(\mathcal X \mid \mathcal Y)$ se le conoce como **verosimilitud**, $\mathbb P(\mathcal Y)$ es la probabilidad **a priori** y $\mathbb P(\mathcal X)$ es la **evidencia**. </span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>Es importante mencionar que la evidencia se puede calcular mediante la probabilidad</span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>total, es decir:</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>$$ {#eq-evidencia}</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a><span class="fu">### Problema Sintético {#sec-tres-normales}</span></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección presenta un problema sintético. El procedimiento es el siguiente, primero se generarán los datos, los cuales van a ser tres nubes de puntos generadas mediantes tres distribuciones gausianas multivariadas. Con estas tres nubes de puntos, se utilizará el Teorema de Bayes (@eq-teorema-bayes) para clasificar todos los puntos generados. </span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>El primer paso es definir las tres distribuciones gausianas multivariadas, para este objetivo se usa la clase <span class="in">`multivariate_normal`</span> como se muestra a continuación. </span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">1.5</span>, <span class="op">-</span><span class="fl">1.5</span>],</span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">3</span>]])</span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>p3 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">12.5</span>, <span class="op">-</span><span class="fl">3.5</span>], </span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">3</span>, <span class="dv">7</span>]])</span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>Los parámetros de la distribución son el vector de medías y la matriz de covarianza, para la primera distribución estos corresponden a $\mathbf \mu = <span class="co">[</span><span class="ot">5, 5</span><span class="co">]</span>^\intercal$ y </span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>\Sigma = \begin{pmatrix} </span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>            4 &amp; 0 <span class="sc">\\</span></span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>            0 &amp; 2 <span class="sc">\\</span></span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>         \end{pmatrix}.</span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>Una vez definidas las distribuciones podemos generar números aleatoreos de las mismas, en el siguiente código se generar 1000 vectores aleatorios de las tres distribuciones. </span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> p3.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>Para graficar estas tres nubes de puntos se puede hacer uso del siguiente código, donde se hace uso de la librería <span class="in">`pandas`</span> y <span class="in">`seaborn`</span> para la generar la gráfica.</span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-gaussian_3classes</span></span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Muestras de 3 distribuciones gausianas"</span></span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> [<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span></span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate((D, np.atleast_2d(clase).T), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(D, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>, <span class="st">'clase'</span>])</span>
+<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>               </span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a>El resultado del código anterior se muestra en la @fig-gaussian_3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase. </span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### Predicción {#sec-prediccion-normal}</span></span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>En esta sección se describe el primer ejemplo del paso 4 de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado. El algoritmo $f$ mencionado en la metodología corresponde en este ejemplo al uso del Teorema de Bayes y las distribuciones <span class="in">`p1`</span>, <span class="in">`p2`</span> y <span class="in">`p3`</span> y los correspondientes priors. </span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a>Quitando la evidencia del Teorema de Bayes (@eq-teorema-bayes) se observa que $\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$. En el ejemplo creado se observa que $\mathbb P(\mathcal Y=1) = \frac{1000}{3000},$ las otras probabilidades a priori tienen el mismo valor, es decir, $\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.$ </span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a>La verosimilitud está definida en las variables <span class="in">`p1`</span>, <span class="in">`p2`</span> y <span class="in">`p3`</span>; en particular en la función <span class="in">`pdf`</span>, es decir, $\mathbb P(\mathcal X \mid \mathcal Y=1)$ es <span class="in">`p1.pdf`</span>, $\mathbb P(\mathcal X \mid \mathcal Y=2)$ corresponde a <span class="in">`p2.pdf`</span> y equivalentemente <span class="in">`p3.pdf`</span> es la verosimilitud cuando $\mathcal Y=3.$</span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>Utilizando esta información $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$ se calcula de la siguiente manera.</span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> (np.vstack([p1.pdf(X),</span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a>                        p2.pdf(X), </span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a>                        p3.pdf(X)]) <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>).T</span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a>La evidencia (@eq-evidencia) es un factor normalizador que hace que las probabilidad sume a uno, el siguiente código calcula la evidencia, $\mathbb P(\mathcal X)$ </span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>Finalmente, $\mathbb P(\mathcal Y \mid \mathcal X)$ se obtiene normalizando $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$ que se puede realizar de la siguiente manera. </span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.atleast_2d(evidencia).T</span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a>La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de $\mathbb P(\mathcal Y=1 \mid \mathcal X),$ $\mathbb P(\mathcal Y=2 \mid \mathcal X)$ y $\mathbb P(\mathcal Y=3 \mid \mathcal X)$; y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase. </span>
+<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a>prediccion <span class="op">=</span> clase[indice]</span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a>En la variable <span class="in">`prediccion`</span> se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó <span class="in">`X`</span> se sabe que los primero 1000 elementos pertenecen a la clase $1$, los siguientes 1000 a la clase $2$ y los restantes a la clase $3$. A continuación se muestra el arreglo <span class="in">`y`</span> que tiene esta estructura. </span>
+<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
+<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a>Teniendo las predicciones y los valores de reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.  </span>
+<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-gaussian_3classes-error</span></span>
+<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Error en problema de clasificación"</span></span>
+<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> [<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, error<span class="op">=</span>error) </span>
+<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> (x, y), error <span class="kw">in</span> <span class="bu">zip</span>(X, y <span class="op">!=</span> prediccion)]</span>
+<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a>df_error <span class="op">=</span> pd.DataFrame(_)</span>
+<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df_error, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
+<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'error'</span>)</span>
+<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a>La @fig-gaussian_3classes-error muestra todos los datos generados, en color azul se muestran aquellos datos que fueron correctamente clasificados y en color naranja (error igual a True) se muestran aquellos ejemplos donde el proceso de clasificación cometió un error. </span>
+<span id="cb15-204"><a href="#cb15-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-205"><a href="#cb15-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Error de Clasificación {#sec-error-clasificacion}</span></span>
+<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a>Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la @fig-gaussian_3classes.</span>
+<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>(y <span class="op">!=</span> prediccion)<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-216"><a href="#cb15-216" aria-hidden="true" tabindex="-1"></a>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <span class="in">`error`</span> es <span class="in">`{python} error_f`</span>.</span>
+<span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> prediccion).mean()</span>
+<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a>La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones <span class="in">`p1`</span>, <span class="in">`p2`</span> y <span class="in">`p3`</span>. Una manera de conocer esta variabilidad de la medición del error es calculando su **error estándar**. </span>
+<span id="cb15-226"><a href="#cb15-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-229"><a href="#cb15-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-230"><a href="#cb15-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-231"><a href="#cb15-231" aria-hidden="true" tabindex="-1"></a>se_formula_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>np<span class="sc">.</span>sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb15-232"><a href="#cb15-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-233"><a href="#cb15-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-234"><a href="#cb15-234" aria-hidden="true" tabindex="-1"></a>El error estándar (ver @sec-error-estandar) está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde $\hat \theta$ es el valor estimado, en este caso el <span class="in">`error`</span>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores $1$ que indica que en ese ejemplo el clasificador se equivocó y $0$ cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, $p$, se estima como la media entonces el error estandar de $p$ corresponde al error estándar de la media (ver @sec-error-estandar-media), i.e., $\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$ dado que la varianza $\sigma^2$ de una distribución Bernoulli con parámetro $p$ es $p (1 - p)$. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="in">`{python} se_formula_f`</span>.</span>
+<span id="cb15-235"><a href="#cb15-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-238"><a href="#cb15-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-239"><a href="#cb15-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-240"><a href="#cb15-240" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)</span>
+<span id="cb15-241"><a href="#cb15-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-242"><a href="#cb15-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-243"><a href="#cb15-243" aria-hidden="true" tabindex="-1"></a>Aunque el error estándar del parámetro $p$ de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver @sec-bootstrap) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar $B$ muestras de $N$ elementos con remplazo de los datos. En este caso los datos son los errores entre <span class="in">`y`</span> y <span class="in">`prediccion`</span>. Siguiendo el método presentado en la @sec-bootstrap se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las $B$ repeticiones las cuales consisten en calcular $\hat p$. Se puede observar como se usa directamente <span class="in">`y`</span> y <span class="in">`prediccion`</span> junto con el arreglo de índices <span class="in">`s`</span> para calcular la media del error. Finalmente se calcula la desviación estándar de <span class="in">`B`</span> (tercera línea) y ese valor corresponde al error estándar. </span>
+<span id="cb15-244"><a href="#cb15-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-245"><a href="#cb15-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-248"><a href="#cb15-248" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-249"><a href="#cb15-249" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-250"><a href="#cb15-250" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
+<span id="cb15-251"><a href="#cb15-251" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [(y[s] <span class="op">!=</span> prediccion[s]).mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb15-252"><a href="#cb15-252" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span>
+<span id="cb15-253"><a href="#cb15-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-254"><a href="#cb15-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-257"><a href="#cb15-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-258"><a href="#cb15-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-259"><a href="#cb15-259" aria-hidden="true" tabindex="-1"></a>se_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>se<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb15-260"><a href="#cb15-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-261"><a href="#cb15-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-262"><a href="#cb15-262" aria-hidden="true" tabindex="-1"></a>El error estándar, <span class="in">`se`</span>, calculado es <span class="in">`{python} se_f`</span>. </span>
+<span id="cb15-263"><a href="#cb15-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-264"><a href="#cb15-264" aria-hidden="true" tabindex="-1"></a>El error estándar corresponde a la distribución que tiene la estimación del parámetro</span>
+<span id="cb15-265"><a href="#cb15-265" aria-hidden="true" tabindex="-1"></a>de interés, mediante Boostrap se simulo está distribución y con el siguiente </span>
+<span id="cb15-266"><a href="#cb15-266" aria-hidden="true" tabindex="-1"></a>código se puede observar su histograma, donde los datos estimados se encuentran</span>
+<span id="cb15-267"><a href="#cb15-267" aria-hidden="true" tabindex="-1"></a>en la lista <span class="in">`B`</span>.</span>
+<span id="cb15-268"><a href="#cb15-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-271"><a href="#cb15-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-272"><a href="#cb15-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-gaussian_3classes-distribucion</span></span>
+<span id="cb15-273"><a href="#cb15-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribución del error de clasificación"</span></span>
+<span id="cb15-274"><a href="#cb15-274" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-275"><a href="#cb15-275" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb15-276"><a href="#cb15-276" aria-hidden="true" tabindex="-1"></a>sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-277"><a href="#cb15-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-278"><a href="#cb15-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-279"><a href="#cb15-279" aria-hidden="true" tabindex="-1"></a>La @fig-gaussian_3classes-distribucion muestra el histograma de la estimación del error en el ejemplo analizado.</span>
+<span id="cb15-280"><a href="#cb15-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-281"><a href="#cb15-281" aria-hidden="true" tabindex="-1"></a><span class="fu">## Riesgo</span></span>
+<span id="cb15-282"><a href="#cb15-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-283"><a href="#cb15-283" aria-hidden="true" tabindex="-1"></a>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.</span>
+<span id="cb15-284"><a href="#cb15-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-285"><a href="#cb15-285" aria-hidden="true" tabindex="-1"></a>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir $\alpha_i$ como la acción que se toma al seleccionar la clase $\mathcal Y=i$. Entonces el riesgo esperado por tomar la acción $\alpha_i$ está definido por:</span>
+<span id="cb15-286"><a href="#cb15-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-287"><a href="#cb15-287" aria-hidden="true" tabindex="-1"></a>$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$</span>
+<span id="cb15-288"><a href="#cb15-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-289"><a href="#cb15-289" aria-hidden="true" tabindex="-1"></a>donde $\lambda_{ik}$ es el costo de tomar la acción $i$ en la clase $k$.</span>
+<span id="cb15-290"><a href="#cb15-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-291"><a href="#cb15-291" aria-hidden="true" tabindex="-1"></a>Suponiendo una función de costo $0/1$, donde el escoger la clase correcta tiene un costo $0$ y el equivocarse en cualquier caso tiene un costo $1$ se define como:</span>
+<span id="cb15-292"><a href="#cb15-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-293"><a href="#cb15-293" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-294"><a href="#cb15-294" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases}.</span>
+<span id="cb15-295"><a href="#cb15-295" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-296"><a href="#cb15-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-297"><a href="#cb15-297" aria-hidden="true" tabindex="-1"></a>Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: </span>
+<span id="cb15-298"><a href="#cb15-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-299"><a href="#cb15-299" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-300"><a href="#cb15-300" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb15-301"><a href="#cb15-301" aria-hidden="true" tabindex="-1"></a>R(\alpha_i \mid x) &amp;= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
+<span id="cb15-302"><a href="#cb15-302" aria-hidden="true" tabindex="-1"></a>&amp;= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
+<span id="cb15-303"><a href="#cb15-303" aria-hidden="true" tabindex="-1"></a>&amp;= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).</span>
+<span id="cb15-304"><a href="#cb15-304" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb15-305"><a href="#cb15-305" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb15-306"><a href="#cb15-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-307"><a href="#cb15-307" aria-hidden="true" tabindex="-1"></a>Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que mínimo riesgo corresponde a la clase más probable.</span>
+<span id="cb15-308"><a href="#cb15-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-309"><a href="#cb15-309" aria-hidden="true" tabindex="-1"></a><span class="fu">### Acción nula</span></span>
+<span id="cb15-310"><a href="#cb15-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</span>
+<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a>La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento mas adecuado sería incrementar el número de acciones, $\alpha$ de tal manera que la acción $\alpha_{K+1}$ corresponda a la intervención esperada, esto para cualquier problema de $K$ clases.</span>
+<span id="cb15-314"><a href="#cb15-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-315"><a href="#cb15-315" aria-hidden="true" tabindex="-1"></a>La extensión del costo $0/1$ para este caso estaría definida como:</span>
+<span id="cb15-316"><a href="#cb15-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-317"><a href="#cb15-317" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-318"><a href="#cb15-318" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> \lambda \text{ si } i = K + 1 <span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases},</span>
+<span id="cb15-319"><a href="#cb15-319" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-320"><a href="#cb15-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-321"><a href="#cb15-321" aria-hidden="true" tabindex="-1"></a>donde $0 &lt; \lambda &lt; 1$.</span>
+<span id="cb15-322"><a href="#cb15-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-323"><a href="#cb15-323" aria-hidden="true" tabindex="-1"></a>Usando la definición de riesgo, el riesgo de tomar la acción $\alpha_{K+1}$ es </span>
+<span id="cb15-324"><a href="#cb15-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-325"><a href="#cb15-325" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-326"><a href="#cb15-326" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb15-327"><a href="#cb15-327" aria-hidden="true" tabindex="-1"></a>R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> &amp;= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> </span>
+<span id="cb15-328"><a href="#cb15-328" aria-hidden="true" tabindex="-1"></a>&amp;= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.</span>
+<span id="cb15-329"><a href="#cb15-329" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb15-330"><a href="#cb15-330" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-331"><a href="#cb15-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-332"><a href="#cb15-332" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seleccionando la acción</span></span>
+<span id="cb15-333"><a href="#cb15-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-334"><a href="#cb15-334" aria-hidden="true" tabindex="-1"></a>Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.</span>
+<span id="cb15-335"><a href="#cb15-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-336"><a href="#cb15-336" aria-hidden="true" tabindex="-1"></a>En esta circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.$</span>
+</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" class="img-fluid"></a> <br> Esta obra está bajo una <a href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

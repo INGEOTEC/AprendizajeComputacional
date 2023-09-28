@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.320">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Aprendizaje Computacional - Apéndice A — Estadística</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../capitulos/15Codigo.html" rel="next">
+<link href="../capitulos/17Referencias.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/14Estadistica.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../capitulos/14Estadistica.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Aprendizaje Computacional</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/02Teoria_Decision.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03Parametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/04Rendimiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Rendimiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/05ReduccionDim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/06Agrupamiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/07NoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/08Arboles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/09Lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/10Optimizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Optimización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/11RedesNeuronales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/12Ensambles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ensambles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/13Comparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/17Referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/14Estadistica.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/15Codigo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Código</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/16ConjuntosDatos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Conjunto de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
+  <li><a href="#sec-error-estandar" id="toc-sec-error-estandar" class="nav-link" data-scroll-target="#sec-error-estandar"><span class="header-section-number">A.1</span> Error estándar</a>
+  <ul class="collapse">
+  <li><a href="#sec-error-estandar-media" id="toc-sec-error-estandar-media" class="nav-link" data-scroll-target="#sec-error-estandar-media"><span class="header-section-number">A.1.1</span> Media</a></li>
+  <li><a href="#sec-ejemplo-normal-1d" id="toc-sec-ejemplo-normal-1d" class="nav-link" data-scroll-target="#sec-ejemplo-normal-1d"><span class="header-section-number">A.1.2</span> Ejemplo: Media</a></li>
+  <li><a href="#sec-error-estandar-ols" id="toc-sec-error-estandar-ols" class="nav-link" data-scroll-target="#sec-error-estandar-ols"><span class="header-section-number">A.1.3</span> Ejemplo: Coeficientes OLS</a></li>
+  </ul></li>
+  <li><a href="#sec-bootstrap" id="toc-sec-bootstrap" class="nav-link" data-scroll-target="#sec-bootstrap"><span class="header-section-number">A.2</span> Bootstrap</a>
+  <ul class="collapse">
+  <li><a href="#sec-bootstrap-ejemplo" id="toc-sec-bootstrap-ejemplo" class="nav-link" data-scroll-target="#sec-bootstrap-ejemplo"><span class="header-section-number">A.2.1</span> Ejemplo</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/14Estadistica.html">Apéndices</a></li><li class="breadcrumb-item"><a href="../capitulos/14Estadistica.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Apéndice A — Estadística</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+<p>El <strong>objetivo</strong> de este apéndice es complementar la información de algunos procedimientos estadísticos usados en el curso.</p>
+<section id="paquetes-usados" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
+<div id="e4e81587" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-error-estandar" class="level2" data-number="A.1">
+<h2 data-number="A.1" class="anchored" data-anchor-id="sec-error-estandar"><span class="header-section-number">A.1</span> Error estándar</h2>
+<p>El <strong>error estándar</strong> está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado. No para todas las estadísticas es posible tener una ecuación analítica para calcular <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> y en los casos donde el valor analítico no se puede calcular se puede usar la técnica de Bootstrap.</p>
+<section id="sec-error-estandar-media" class="level3" data-number="A.1.1">
+<h3 data-number="A.1.1" class="anchored" data-anchor-id="sec-error-estandar-media"><span class="header-section-number">A.1.1</span> Media</h3>
+<p>Una de las estadísticas donde si se puede calcular analíticamente <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> es la media, es decir, se tiene una muestra <span class="math inline">\(\mathcal D\)</span> con <span class="math inline">\(N\)</span> elementos independientes y idénticamente distribuidos, entonces la media corresponde a</p>
+<p><span class="math display">\[\bar x = \frac{1}{N} \sum_{x \in \mathcal D} x.\]</span></p>
+<p>El error estándar de <span class="math inline">\(\bar x\)</span> es <span class="math inline">\(\sqrt{\mathbb V(\bar x)}\)</span>. Para derivar el valor analítico de este error estándar es necesario utilizar la siguiente propiedad de la varianza:</p>
+<p><span class="math display">\[\mathbb V(\sum_i a_i \mathcal X_i) = \sum_i a_i^2 \mathbb V(\mathcal X_i),\]</span></p>
+<p>donde <span class="math inline">\(a_i\)</span> representa una constante y las variables aleatorias <span class="math inline">\(\mathcal X\)</span> son independientes. En lugar de utilizar la definición asumiendo la realización de las variables aleatorias, esto es, cuando <span class="math inline">\(\mathcal D\)</span> tiene valores, se define la media con respecto a <span class="math inline">\(N\)</span> variables aleatorias, i.e., <span class="math inline">\(\bar{\mathcal X} = \frac{1}{N} \sum_i^N \mathcal X_i.\)</span> En estas condiciones se observa que para el caso del error estándar de la media la constante es <span class="math inline">\(\frac{1}{N}\)</span> y las variables son independientes entonces</p>
+<p><span class="math display">\[
+\begin{split}
+\sqrt{\mathbb V(\bar{\mathcal X})} &amp;= \sqrt{\mathbb V(\frac{1}{N} \sum_i^N \mathcal X_i)}\\
+&amp;= \sqrt{\sum_i^N \frac{1}{N^2} \mathbb V(\mathcal X_i)}\\
+&amp;= \sqrt{\frac{1}{N^2} \sum_i^N \sigma^2}\\
+&amp;= \sqrt{\frac{N}{N^2} \sigma^2}\\
+&amp;= \sqrt{\frac{\sigma^2}{N}} = \frac{\sigma}{\sqrt{N}},
+\end{split}
+\]</span></p>
+<p>donde <span class="math inline">\(\sigma^2\)</span> es la varianza de la distribución. Es importante notar que <span class="math inline">\(\mathbb V(X_i)\)</span> es independiente de <span class="math inline">\(i\)</span> dado <span class="math inline">\(\mathcal X_i \sim F\)</span> para cualquier <span class="math inline">\(i\)</span>, donde la distribución <span class="math inline">\(F\)</span> tiene una varianza <span class="math inline">\(\sigma^2\)</span> por lo tanto <span class="math inline">\(\mathbb V(X_i)=\sigma^2.\)</span></p>
+</section>
+<section id="sec-ejemplo-normal-1d" class="level3" data-number="A.1.2">
+<h3 data-number="A.1.2" class="anchored" data-anchor-id="sec-ejemplo-normal-1d"><span class="header-section-number">A.1.2</span> Ejemplo: Media</h3>
+<p>El siguiente ejemplo complementa la información al presentar el error estándar de la media cuando los datos vienen de una distribución Gausiana. Suponiendo que se tiene <span class="math inline">\(1000\)</span> muestras de una distribución Gausiana <span class="math inline">\(\mathcal N(1, 4),\)</span> i.e., <span class="math inline">\(\mu=1\)</span> y <span class="math inline">\(\sigma=2\)</span>. La error estándar de estimar la media con esos datos está dado por <span class="math inline">\(\mathbb V(\hat \mu) = \frac{\sigma}{\sqrt{N}} = \frac{2}{\sqrt{1000}}=0.0632.\)</span></p>
+<p>Continuado con el ejemplo, se simula la generación de esta población de <span class="math inline">\(1000\)</span> elementos. El primer paso es iniciar la clase <code>norm</code> (que implementa una distribución Gausiana) para que se simule <span class="math inline">\(\mathcal N(1, 4).\)</span> Es importante notar que el parámetro <code>scale</code> de <code>norm</code> corresponde a la desviación estándar <span class="math inline">\(\sigma.\)</span></p>
+<div id="52a631a6" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> norm(loc<span class="op">=</span><span class="dv">1</span>, scale<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Usando <code>p1</code> se simulan 500 poblaciones de 1000 elementos cada una, y para cada una de esas poblaciones se calcula su media. La primera linea crea la muestra <span class="math inline">\(\mathcal D\)</span> y a continuación se calcula la media por cada población, renglón de <code>D</code>.</p>
+<div id="b4a8ec4e" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> p1.rvs(size<span class="op">=</span>(<span class="dv">500</span>, <span class="dv">1000</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> [x.mean() <span class="cf">for</span> x <span class="kw">in</span> D]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="650ebb8a" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="5">
+<p>El error estándar es la desviación estándar de <code>mu</code>, el cual se puede calcular con la siguiente instrucción. <code>se</code> tiene un valor de <span class="math inline">\(0.0665\)</span>, que es similar al obtenido mediante <span class="math inline">\(\mathbb V(\hat \mu).\)</span></p>
+</div>
+</div>
+<div id="2b3cee32" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(mu)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para complementar la información se presenta el histograma de <code>mu</code> donde se puede observar la distribución de estimar la media de una población.</p>
+<div id="fb245db3" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.histplot(mu)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="14Estadistica_files/figure-html/cell-8-output-1.png" width="582" height="410"></p>
+</div>
+</div>
+</section>
+<section id="sec-error-estandar-ols" class="level3" data-number="A.1.3">
+<h3 data-number="A.1.3" class="anchored" data-anchor-id="sec-error-estandar-ols"><span class="header-section-number">A.1.3</span> Ejemplo: Coeficientes OLS</h3>
+<p>El error estándar de los coeficientes estimados con mínimos cuadrados se puede calcular de la siguiente forma. El primer paso es utilizar la siguiente identidad</p>
+<p><span class="math display">\[\mathbb V(A \mathcal Y) = A \Sigma A^\intercal,\]</span></p>
+<p>donde <span class="math inline">\(A\)</span> es una matriz y <span class="math inline">\(\mathcal Y\)</span> es un vector de variables aleatorias. La matriz <span class="math inline">\(A\)</span> en OLS es</p>
+<p><span class="math display">\[A=(X^\intercal X)^{-1}X^\intercal.\]</span></p>
+<p>quedando la varianza como</p>
+<p><span class="math display">\[\mathbb V(\mathbf w) = A \Sigma A^\intercal,\]</span></p>
+<p>donde <span class="math inline">\(\Sigma\)</span> es la covarianza de <span class="math inline">\(\mathcal Y.\)</span> Dado que <span class="math inline">\(\mathcal Y\)</span> tiene una varianza constante entonces <span class="math inline">\(\Sigma=\sigma^2 I.\)</span> Usando esta información se puede derivar la varianza de <span class="math inline">\(\mathbf w\)</span> de la siguiente manera</p>
+<p><span class="math display">\[
+\begin{split}
+\mathbb V(\mathbf w) &amp;= A \sigma^2 I A^\intercal \\  
+&amp;= \sigma^2 A  A^\intercal \\
+&amp;= \sigma^2 (X^\intercal X)^{-1}X^\intercal ((X^\intercal X)^{-1}X^\intercal)^\intercal\\
+&amp;= \sigma^2 (X^\intercal X)^{-1}X^\intercal X (X^\intercal X)^{-1} \\
+&amp;= \sigma^2 (X^\intercal X)^{-1}\\
+\end{split}
+\]</span></p>
+<p>Por lo tanto el error estándar es: <span class="math inline">\(\textsf{se}(\mathbf w) = \sigma \sqrt{(X^\intercal X)^{-1}}.\)</span></p>
+</section>
+</section>
+<section id="sec-bootstrap" class="level2" data-number="A.2">
+<h2 data-number="A.2" class="anchored" data-anchor-id="sec-bootstrap"><span class="header-section-number">A.2</span> Bootstrap</h2>
+<p>Existen ocasiones donde no se cuenta con una ecuación cerrada para <span class="math inline">\(\mathbb V(\hat \theta)\)</span>, un ejemplo sería la mediana. En aquellas estadísticas donde no se tenga el error estándar no se pueda calcular analíticamente se puede utilizar Bootstrap.</p>
+<p>Bootstrap es un procedimiento que permite calcular el error estándar. Suponiendo que se la estadística se calcula mediante la realización de <span class="math inline">\(N\)</span> variables aleatorias, <span class="math inline">\(\mathcal X \sim F\)</span>, es decir, <span class="math inline">\(\theta = g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N).\)</span> Por ejemplo, la media es <span class="math inline">\(g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N) = \frac{1}{N} \sum_i^N \mathcal X_i.\)</span></p>
+<p>El Bootstrap simula la distribución <span class="math inline">\(\theta\)</span> mediante la selección con remplazo de <span class="math inline">\(N\)</span> elementos del conjunto de la muestra <span class="math inline">\(\mathcal D = (x_1, x_2, \ldots, x_n)\)</span> donde <span class="math inline">\(x_i \sim F\)</span>. Es decir, se genera un nuevo conjunto <span class="math inline">\(\mathcal D_j = (x_{j_1}, x_{j_2}, \ldots, x_{j_n})\)</span> donde <span class="math inline">\(x_{j_1}\)</span> podría ser <span class="math inline">\(x_4\)</span> de <span class="math inline">\(\mathcal D\)</span> y dado que se selecciona con reemplazo entonces <span class="math inline">\(x_4\)</span> podría aparecer otra vez en <span class="math inline">\(\mathcal D_j.\)</span> Utilizando <span class="math inline">\(\mathcal D_j\)</span> se puede estimar la estadística <span class="math inline">\(\hat \theta_j = g(x_{j_1}, x_{j_2}, \ldots, x_{j_n}).\)</span> Bootstrap repite el proceso anterior <span class="math inline">\(B\)</span> donde en cada iteración se selecciona con reemplazo <span class="math inline">\(N\)</span> veces <span class="math inline">\(\mathcal D\)</span>. Utilizando las <span class="math inline">\(\theta_j\)</span> calculadas se estima <span class="math inline">\(\mathbb V(\theta)\)</span> con la siguiente ecuación</p>
+<p><span class="math display">\[\mathbb V(\hat \theta) = \frac{1}{B} \sum_{j=1}^B (\hat \theta_j - \frac{1}{B} \sum_k^B \hat \theta_k)^2.\]</span></p>
+<section id="sec-bootstrap-ejemplo" class="level3" data-number="A.2.1">
+<h3 data-number="A.2.1" class="anchored" data-anchor-id="sec-bootstrap-ejemplo"><span class="header-section-number">A.2.1</span> Ejemplo</h3>
+<p>Utilizando los datos generados en la <a href="#sec-ejemplo-normal-1d" class="quarto-xref"><span>Sección&nbsp;A.1.2</span></a> se puede calcular el error estándar de la mediana. El primer paso es tener el conjunto <span class="math inline">\(\mathcal D\)</span> el cual puede ser cualquier renglón de los 500 de la variable <code>D</code>, por simplicidad se toma el primero como se muestra a continuación.</p>
+<div id="0907b406" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>D_mediana <span class="op">=</span> D[<span class="dv">0</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La variable <code>D_mediana</code> tiene la muestra <span class="math inline">\(\mathcal D\)</span> con la que se trabajará para estimar el error estándar de la mediana. Se tienen que generar <span class="math inline">\(B\)</span> repeticiones de muestrear <span class="math inline">\(\mathcal D\)</span> <span class="math inline">\(N\)</span> veces con reemplazo. Esto se puede implementar usando índices y números aleatorios de <span class="math inline">\([0, N)\)</span> considerando que en Python el primer índice es <span class="math inline">\(0\)</span>. Este procedimiento se muestra en la primera linea del siguiente código. El arreglo <code>S</code> contiene los índices para realizar las <span class="math inline">\(B\)</span> muestras, en la segunda linea se itera por los renglones de <code>S</code> y en cada operación se calcula la mediana. Es decir, en cada iteración se está calculando un <span class="math inline">\(\hat \theta_i\)</span> que corresponde a la mediana. Finalmente, se calcula la desviación estándar de la lista <code>B</code> y ese valor corresponde a error estándar de la mediana.</p>
+<div id="44048654" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(D_mediana.shape[<span class="dv">0</span>],</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, D_mediana.shape[<span class="dv">0</span>]))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [np.median(D_mediana[s]) <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f3cbcb77" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="10">
+<p><code>se</code> tiene un valor de <span class="math inline">\(0.0735.\)</span></p>
+</div>
+</div>
+<p>Considerando que se generaron <span class="math inline">\(500\)</span> poblaciones de <span class="math inline">\(1000\)</span> elementos que se encuentra en la variable <code>D</code> se puede visualizar el histograma de las medianas calculadas con <code>D</code> y aquellas obtenidas con Bootstrap. Se guardan estos dos valores en un <code>DataFrame</code> para posteriormente graficar el histograma, como se muestra en el siguiente código y en la <a href="#fig-histograma-mediana" class="quarto-xref">Figura&nbsp;<span>A.1</span></a>.</p>
+<div id="cell-fig-histograma-mediana" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(Bootstrap<span class="op">=</span>B, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                       Muestra<span class="op">=</span>[np.median(x) <span class="cf">for</span> x <span class="kw">in</span> D]))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.histplot(df)                       </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-histograma-mediana" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="14Estadistica_files/figure-html/fig-histograma-mediana-output-1.png" width="589" height="410" class="figure-img"></p>
+<figcaption class="figure-caption">Figura&nbsp;A.1: Histograma de la mediana</figcaption>
+</figure>
+</div>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        return container.innerHTML
+      } else {
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        console.log("RESIZE");
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../capitulos/17Referencias.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Referencias</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../capitulos/15Codigo.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Código</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estadística</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de este apéndice es complementar la información de algunos procedimientos estadísticos usados en el curso. </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Error estándar {#sec-error-estandar}</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>El **error estándar** está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde $\hat \theta$ es el valor estimado. No para todas las estadísticas es posible tener una ecuación analítica para calcular $\sqrt{\mathbb V(\hat \theta)}$ y en los casos donde el valor analítico no se puede calcular se puede usar la técnica de Bootstrap. </span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="fu">### Media {#sec-error-estandar-media}</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>Una de las estadísticas donde si se puede calcular analíticamente $\sqrt{\mathbb V(\hat \theta)}$ es la media, es decir, se tiene una muestra $\mathcal D$ con $N$ elementos independientes y idénticamente distribuidos, entonces la media corresponde a</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>$$\bar x = \frac{1}{N} \sum_{x \in \mathcal D} x.$$</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>El error estándar de $\bar x$ es $\sqrt{\mathbb V(\bar x)}$. Para derivar el valor analítico de este error estándar es necesario utilizar la siguiente propiedad de la varianza:</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>$$\mathbb V(\sum_i a_i \mathcal X_i) = \sum_i a_i^2 \mathbb V(\mathcal X_i),$$</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>donde $a_i$ representa una constante y las variables aleatorias $\mathcal X$ son independientes. En lugar de utilizar la definición asumiendo la realización de las variables aleatorias, esto es, cuando $\mathcal D$ tiene valores, se define la media con respecto a $N$ variables aleatorias, i.e., $\bar{\mathcal X} = \frac{1}{N} \sum_i^N \mathcal X_i.$ En estas condiciones se observa que para el caso del error estándar de la media la constante es $\frac{1}{N}$ y las variables son independientes entonces</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>\sqrt{\mathbb V(\bar{\mathcal X})} &amp;= \sqrt{\mathbb V(\frac{1}{N} \sum_i^N \mathcal X_i)}<span class="sc">\\</span> </span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>&amp;= \sqrt{\sum_i^N \frac{1}{N^2} \mathbb V(\mathcal X_i)}<span class="sc">\\</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>&amp;= \sqrt{\frac{1}{N^2} \sum_i^N \sigma^2}<span class="sc">\\</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>&amp;= \sqrt{\frac{N}{N^2} \sigma^2}<span class="sc">\\</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>&amp;= \sqrt{\frac{\sigma^2}{N}} = \frac{\sigma}{\sqrt{N}},</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>donde $\sigma^2$ es la varianza de la distribución. Es importante notar que $\mathbb V(X_i)$ es independiente de $i$ dado $\mathcal X_i \sim F$ para cualquier $i$, donde la distribución $F$ tiene una varianza $\sigma^2$ por lo tanto $\mathbb V(X_i)=\sigma^2.$ </span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Media {#sec-ejemplo-normal-1d}</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>El siguiente ejemplo complementa la información al presentar el error estándar de la media cuando los datos vienen de una distribución Gausiana. Suponiendo que se tiene $1000$ muestras de una distribución Gausiana $\mathcal N(1, 4),$ i.e., $\mu=1$ y $\sigma=2$. La error estándar de estimar la media con esos datos está dado por $\mathbb V(\hat \mu) = \frac{\sigma}{\sqrt{N}} = \frac{2}{\sqrt{1000}}=0.0632.$ </span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>Continuado con el ejemplo, se simula la generación de esta población de $1000$ elementos. El primer paso es iniciar la clase <span class="in">`norm`</span> (que implementa una distribución Gausiana) para que se simule $\mathcal N(1, 4).$ Es importante notar que el parámetro <span class="in">`scale`</span> de <span class="in">`norm`</span> corresponde a la desviación estándar $\sigma.$</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> norm(loc<span class="op">=</span><span class="dv">1</span>, scale<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>Usando <span class="in">`p1`</span> se simulan 500 poblaciones de 1000 elementos cada una, y para cada una de esas poblaciones se calcula su media. La primera linea crea la muestra $\mathcal D$ y a continuación se calcula la media por cada población, renglón de <span class="in">`D`</span>.</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> p1.rvs(size<span class="op">=</span>(<span class="dv">500</span>, <span class="dv">1000</span>))</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> [x.mean() <span class="cf">for</span> x <span class="kw">in</span> D]</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="ss">f"El error estándar es la desviación estándar de `mu`, el cual se puede calcular con la siguiente instrucción. `se` tiene un valor de $</span><span class="sc">{</span>np<span class="sc">.</span>std(mu)<span class="sc">:0.4f}</span><span class="ss">$, que es similar al obtenido mediante $\mathbb V(\hat \mu).$"</span>)</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(mu)</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>Para complementar la información se presenta el histograma de <span class="in">`mu`</span> donde se puede observar la distribución de estimar la media de una población. </span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.histplot(mu)</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Coeficientes OLS {#sec-error-estandar-ols}</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>El error estándar de los coeficientes estimados con mínimos cuadrados se puede calcular de la siguiente forma. El primer paso es utilizar la siguiente identidad</span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>$$\mathbb V(A \mathcal Y) = A \Sigma A^\intercal,$$ </span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>donde $A$ es una matriz y $\mathcal Y$ es un vector de variables aleatorias. La matriz $A$ en OLS es</span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>$$A=(X^\intercal X)^{-1}X^\intercal.$$</span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>quedando la varianza como</span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>$$\mathbb V(\mathbf w) = A \Sigma A^\intercal,$$</span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>donde $\Sigma$ es la covarianza de $\mathcal Y.$ Dado que $\mathcal Y$ tiene una varianza constante entonces $\Sigma=\sigma^2 I.$ Usando esta información se puede derivar la varianza de $\mathbf w$ de la siguiente manera</span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>\begin{split} </span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>\mathbb V(\mathbf w) &amp;= A \sigma^2 I A^\intercal <span class="sc">\\</span>  </span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>&amp;= \sigma^2 A  A^\intercal <span class="sc">\\</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>&amp;= \sigma^2 (X^\intercal X)^{-1}X^\intercal ((X^\intercal X)^{-1}X^\intercal)^\intercal<span class="sc">\\</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>&amp;= \sigma^2 (X^\intercal X)^{-1}X^\intercal X (X^\intercal X)^{-1} <span class="sc">\\</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>&amp;= \sigma^2 (X^\intercal X)^{-1}<span class="sc">\\</span></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>Por lo tanto el error estándar es: $\textsf{se}(\mathbf w) = \sigma \sqrt{(X^\intercal X)^{-1}}.$</span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bootstrap {#sec-bootstrap }</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>Existen ocasiones donde no se cuenta con una ecuación cerrada para $\mathbb V(\hat \theta)$, un ejemplo sería la mediana. En aquellas estadísticas donde no se tenga el error estándar no se pueda calcular analíticamente se puede utilizar Bootstrap. </span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a>Bootstrap es un procedimiento que permite calcular el error estándar. Suponiendo que se la estadística se calcula mediante la realización de $N$ variables aleatorias, $\mathcal X \sim F$, es decir, $\theta = g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N).$ Por ejemplo, la media es $g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N) = \frac{1}{N} \sum_i^N \mathcal X_i.$</span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a>El Bootstrap simula la distribución $\theta$ mediante la selección con remplazo de $N$ elementos del conjunto de la muestra $\mathcal D = (x_1, x_2, \ldots, x_n)$ donde $x_i \sim F$. Es decir, se genera un nuevo conjunto $\mathcal D_j = (x_{j_1}, x_{j_2}, \ldots, x_{j_n})$ donde $x_{j_1}$ podría ser $x_4$ de $\mathcal D$ y dado que se selecciona con reemplazo entonces $x_4$ podría aparecer otra vez en $\mathcal D_j.$ Utilizando $\mathcal D_j$ se puede estimar la estadística $\hat \theta_j = g(x_{j_1}, x_{j_2}, \ldots, x_{j_n}).$ Bootstrap repite el proceso anterior $B$ donde en cada iteración se selecciona con reemplazo $N$ veces $\mathcal D$. Utilizando las $\theta_j$ calculadas se estima $\mathbb V(\theta)$ con la siguiente ecuación</span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>$$\mathbb V(\hat \theta) = \frac{1}{B} \sum_{j=1}^B (\hat \theta_j - \frac{1}{B} \sum_k^B \hat \theta_k)^2.$$</span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo {#sec-bootstrap-ejemplo}</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>Utilizando los datos generados en la @sec-ejemplo-normal-1d se puede calcular el error estándar de la mediana. El primer paso es tener el conjunto $\mathcal D$ el cual puede ser cualquier renglón de los 500 de la variable <span class="in">`D`</span>, por simplicidad se toma el primero como se muestra a continuación.</span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a>D_mediana <span class="op">=</span> D[<span class="dv">0</span>]</span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a>La variable <span class="in">`D_mediana`</span> tiene la muestra $\mathcal D$ con la que se trabajará para estimar el error estándar de la mediana. Se tienen que generar $B$ repeticiones de muestrear $\mathcal D$ $N$ veces con reemplazo. Esto se puede implementar usando índices y números aleatorios de $[0, N)$ considerando que en Python el primer índice es $0$. Este procedimiento se muestra en la primera linea del siguiente código. El arreglo <span class="in">`S`</span> contiene los índices para realizar las $B$ muestras, en la segunda linea se itera por los renglones de <span class="in">`S`</span> y en cada operación se calcula la mediana. Es decir, en cada iteración se está calculando un $\hat \theta_i$ que corresponde a la mediana. Finalmente, se calcula la desviación estándar de la lista <span class="in">`B`</span> y ese valor corresponde a error estándar de la mediana. </span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(D_mediana.shape[<span class="dv">0</span>],</span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, D_mediana.shape[<span class="dv">0</span>]))</span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [np.median(D_mediana[s]) <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="ss">f"`se` tiene un valor de $</span><span class="sc">{</span>se<span class="sc">:0.4f}</span><span class="ss">.$"</span>)</span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a>Considerando que se generaron $500$ poblaciones de $1000$ elementos que se encuentra en la variable <span class="in">`D`</span> se puede visualizar el histograma de las medianas calculadas con <span class="in">`D`</span> y aquellas obtenidas con Bootstrap. Se guardan estos dos valores en un <span class="in">`DataFrame`</span> para posteriormente graficar el histograma, como se muestra en el siguiente código y en la @fig-histograma-mediana.</span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-histograma-mediana</span></span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Histograma de la mediana"</span></span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(Bootstrap<span class="op">=</span>B, </span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a>                       Muestra<span class="op">=</span>[np.median(x) <span class="cf">for</span> x <span class="kw">in</span> D]))</span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.histplot(df)                       </span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" class="img-fluid"></a> <br> Esta obra está bajo una <a href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
