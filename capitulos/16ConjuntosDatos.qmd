@@ -6,15 +6,27 @@ El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en
 
 ```{python}
 #| echo: true
+#| warning: false
 from sklearn.datasets import load_breast_cancer,\
                              load_diabetes,\
                              load_digits, load_iris,\
                              load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn import decomposition
 from scipy.stats import multivariate_normal
+import umap
 from matplotlib import pylab as plt
+import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import seaborn as sns
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+PALETTE = mpl.cm.Paired
+sns.set_style('whitegrid')
 ```
 
 ## Problemas Sintéticos
@@ -48,6 +60,7 @@ clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
 _ = sns.relplot(data=df, kind='scatter', x='x',
+                palette=PALETTE,
                 y='y', hue='clase')
 ```               
 
@@ -76,48 +89,157 @@ clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
 _ = sns.relplot(data=df, kind='scatter', x='x',
+                palette=PALETTE,
                 y='y', hue='clase')
 ```   
 
 
 ## Problemas de Clasificación
 
-En esta sección se listan los problemas de clasificación utilizados durante el curso. 
+En esta sección se listan los problemas de clasificación utilizados durante el curso. La @tbl-conjunto-datos-clasificacion resume las principales características de los problemas utilizados. Se incluye la entropía como una media que está relacionada al desbalance de clases, la entropía está normalizada para que su rango se encuentre entre $[0, 1].$
+
+```{python}
+#| echo: false
+#| tbl-cap: Problemas de clasificación
+#| label: tbl-conjunto-datos-clasificacion
+
+def datos(D, nombre):
+    _, count = np.unique(y, return_counts=True)
+    p = count / count.sum()
+    K = count.shape[0]
+    ent = - np.sum(p * np.log(p)) / np.log(K)
+    return f'|{nombre}|${D.shape[0]}$|${D.shape[1]}$|${K}$|{ent:0.2f}|\n'
+
+txt =  '|Nombre | Tamaño ($N$) | Dimensión ($d$) | Número de clases ($K$)| Entropía |\n'
+txt += '|-------|--------------|-----------------|-----------------------|----------|\n'
+D, y = load_breast_cancer(return_X_y=True)
+txt += datos(D, 'Breast Cancer')
+D, y = load_iris(return_X_y=True)
+txt += datos(D, 'Iris')
+D, y = load_digits(return_X_y=True)
+txt += datos(D, 'Dígitos')
+D, y = load_wine(return_X_y=True)
+txt += datos(D, 'Vino')
+Markdown(txt)
+```
 
 ### Breast Cancer Wisconsin
 
-El conjunto de datos de Breast Cancer Wisconsin se obtiene con el siguiente código. 
+El conjunto de datos de Breast Cancer Wisconsin (ver @breast-cancer-wisconsin) se obtiene con el siguiente código. La @fig-conjunto-datos-wisconsin muestra una proyección utilizando PCA de este conjunto de datos. 
 
 ```{python}
 #| echo: true
 D, y = load_breast_cancer(return_X_y=True)
 ```
 
+
+```{python}
+#| fig-cap: Proyección mediante PCA del problema de Breast Cancer Wisconsin.
+#| label: fig-conjunto-datos-wisconsin
+#| code-fold: true
+D = StandardScaler().fit_transform(D)
+pca = decomposition.PCA(n_components=2).fit(D)
+low_dim = pca.transform(D)
+# reducer = umap.UMAP(n_neighbors=5)
+# low_dim = reducer.fit_transform(D)
+df = pd.DataFrame(low_dim, columns=['x', 'y'])
+df['Clase'] = y
+fig = sns.relplot(df, kind='scatter', 
+                  legend='full',  # palette=pal,
+                   x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+_ = fig.set(xlabel=None, ylabel=None)
+```
+
 ### Iris
 
-Un conjunto clásico en problemas de clasificación es el problema del Iris que se encuentra con las siguientes instrucciones.
+Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por @iris; este problema se descarga con la siguiente instrucción. La @fig-conjunto-datos-iris muestra una visualización de estos datos mediante PCA. 
 
 ```{python}
 #| echo: true
 D, y = load_iris(return_X_y=True)
 ```
 
-### Números
+```{python}
+#| fig-cap: Proyección mediante PCA del problema del Iris.
+#| label: fig-conjunto-datos-iris
+#| code-fold: true
+D = StandardScaler().fit_transform(D)
+pca = decomposition.PCA(n_components=2).fit(D)
+low_dim = pca.transform(D)
+# reducer = umap.UMAP(n_neighbors=5)
+# low_dim = reducer.fit_transform(D)
+df = pd.DataFrame(low_dim, columns=['x', 'y'])
+df['Clase'] = y
+fig = sns.relplot(df, kind='scatter', 
+                  legend='full', palette=PALETTE,
+                   x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+_ = fig.set(xlabel=None, ylabel=None)
+```
 
-El conjunto de Digits es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando las siguientes instrucciones. 
+
+### Dígitos
+
+El conjunto de Dígitos (ver @digits) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando la siguiente instrucción. La @fig-conjunto-datos-digits muestra una proyección de estos datos utilizando UMAP con ocho vecinos. 
 
 ```{python}
 #| echo: true
 D, y = load_digits(return_X_y=True)
 ```
 
+
+```{python}
+#| fig-cap: Proyección mediante UMAP del problema de Dígitos con ocho vecinos.
+#| label: fig-conjunto-datos-digits
+#| code-fold: true
+pal = mpl.cm.Paired
+reducer = umap.UMAP(n_neighbors=8)
+D = StandardScaler().fit_transform(D)
+low_dim = reducer.fit_transform(D)
+df = pd.DataFrame(low_dim, columns=['x', 'y'])
+df['Clase'] = y
+fig = sns.relplot(df, kind='scatter', 
+                  legend='full', palette=PALETTE,
+                   x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+_ = fig.set(xlabel=None, ylabel=None)
+```
+
 ### Vino
 
-El conjunto de vino es un problema que tiene 3 clases, 178 ejemplos y se encuentra representado en $\mathbb R^{13};$ este problema se obtiene con las siguientes instrucciones. 
+El conjunto de Vino se obtiene con la siguiente instrucción. La @fig-conjunto-datos-wine muestra una proyección de estos datos utilizando PCA. 
 
 ```{python}
 #| echo: true
 D, y = load_wine(return_X_y=True)
+```
+
+```{python}
+#| fig-cap: Proyección mediante PCA del problema del Vino.
+#| label: fig-conjunto-datos-wine
+#| code-fold: true
+pal = mpl.cm.Paired
+D = StandardScaler().fit_transform(D)
+pca = decomposition.PCA(n_components=2).fit(D)
+low_dim = pca.transform(D)
+# reducer = umap.UMAP(n_neighbors=5)
+# low_dim = reducer.fit_transform(D)
+df = pd.DataFrame(low_dim, columns=['x', 'y'])
+df['Clase'] = y
+fig = sns.relplot(df, kind='scatter', 
+                  legend='full', palette=PALETTE,
+                   x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+_ = fig.set(xlabel=None, ylabel=None)
 ```
 
 ## Problemas de Regresión

@@ -35,6 +35,7 @@ import seaborn as sns
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
@@ -216,7 +217,6 @@ La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa c
 #| fig-cap: Rendimiento de las variables en la primera iteración del selección hacia adelante
 #| label: fig-rendimiento-sel
 #| code-fold: true
-sns.set_style('whitegrid')
 sns.barplot(x=list(range(len(perf))), y=perf)
 plt.xlabel('Variable')
 fig = plt.ylabel('Macro-Recall')
@@ -312,7 +312,6 @@ La @fig-seleccion-por-modelo muestra el rendimiento ($R^2$) para cada modelo gen
 #| label: fig-seleccion-por-modelo
 #| code-fold: true
 df = pd.DataFrame(perf)
-sns.set_style('whitegrid')
 ax = sns.relplot(df, x='numero', y='r2', kind='line')
 ```
 
@@ -354,7 +353,6 @@ El siguiente código se utiliza para visualizar los datos. El resultado se muest
 #| code-fold: true
 data = pd.DataFrame([dict(x=x, y=y, clase=c)
                      for (x, y), c in zip(Xn, y)])
-sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter',
                   x='x', y='y', hue='clase')
 fig.tick_params(bottom=False, top=False, 
@@ -384,7 +382,6 @@ pca = decomposition.PCA(n_components=2).fit(D)
 Xn = pca.transform(D)
 df = pd.DataFrame(Xn, columns=['x', 'y'])
 df['Clase'] = y
-sns.set_style('whitegrid')
 fig = sns.relplot(df, kind='scatter',
                   legend='full', palette=pal,
                   x='x', y='y', hue='Clase')
@@ -430,7 +427,6 @@ Con el objetivo de mostrar con mayor detalle los grupos encontrados, la @fig-uma
 #| fig-cap: Proyección mediante UMAP del problema de dígitos con ocho vecinos
 #| label: fig-umap-digits-k8
 #| code-fold: true
-sns.set_style('whitegrid')
 fig = sns.relplot(df[df.K==8], kind='scatter', 
                   legend='full', palette=pal,
                   x='x', y='y', hue='Clase')
