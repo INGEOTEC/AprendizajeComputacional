@@ -6,7 +6,9 @@ El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos esta
 
 ```{python}
 #| echo: true
-from IngeoML import CI, SE
+from CompStats import StatisticSamples, CI
+from CompStats import performance, plot_performance
+from CompStats import difference, plot_difference
 from scipy.stats import norm, wilcoxon
 from sklearn.datasets import load_iris, load_breast_cancer
 from sklearn.naive_bayes import GaussianNB
@@ -15,6 +17,7 @@ from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import recall_score
 import numpy as np
 import seaborn as sns
+import pandas as pd
 ```
 
 ```{python}
@@ -243,23 +246,24 @@ obteniendo un intervalo de `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$
 
 
 ::: {.callout-note}
-El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza están implementados en la clase `SE` y `CI` respectivamente. Las siguientes instrucciones se pueden utilizar para calcular el error estándar. 
+El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza se pueden estimar utilizando la clase `StatisticSamples`. Las siguientes instrucciones se pueden utilizar para calcular el error estándar. 
 
-```{python}
+```{python} 
 #| echo: true
+
 recall = lambda y, hy: recall_score(y, hy,
                                     average="macro")
-se = SE(statistic=recall)
-se(y, hy)                                
+    
+statistic = StatisticSamples(statistic=recall)
+samples = statistic(y, hy)
+np.std(samples)                               
 ```
 
 Complementando el intervalo de confianza con el método de percentil se implementa en el siguiente código.
-```{python}
+```{python} 
 #| echo: true
-recall = lambda y, hy: recall_score(y, hy,
-                                    average="macro")
-ci = CI(statistic=recall)
-ci(y, hy)                                
+
+CI(samples)
 ```
 :::
 
@@ -304,7 +308,7 @@ En caso de que la medida de rendimiento no esté normalmente distribuido, la pru
 
 ### Método: Bootstrap en diferencias
 
-Un método para comparar el rendimiento de dos algoritmo que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. @10.1007/978-3-031-33783-3_9 utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este se procedimiento se explicará mediante un ejemplo. 
+Un método para comparar el rendimiento de dos algoritmo que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. @Nava2024 utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este se procedimiento se explicará mediante un ejemplo. 
 
 El primer paso es calcular las predicciones de los algoritmos, en este caso se realizar una validación cruzada, tal y como se muestra a continuación. 
 
@@ -334,9 +338,64 @@ B = [diff(y[s], forest[s], naive[s])
 
 Finalmente, el $p_{\text{value}}$ corresponde a la proporción de elementos que son menores que cero, i.e., `(np.array(B) < 0).mean()`, es decir, aquellas muestras donde Naive Bayes tiene un mejor desempeño que los bosques. En este caso el $p_{\text{value}}$ tiene un valor de `{python} Markdown(f'${(np.array(B) < 0).mean():0.4f}$')`. Dado que el valor es menor que $0.05$ se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos. La @fig-comparacion-diff muestra la distribución de la diferencia de rendimiento, en esta se puede observar como la mayor parte de la masa se encuentra del lado positivo y que muy poca masa es menor que cero. 
 
-```{python}
+```{python} 
 #| code-fold: true
 #| fig-cap: Distribución de la diferencia de rendimiento
 #| label: fig-comparacion-diff
+
 fig = sns.displot(B, kde=True)
+```
+
+## CompStats 
+
+La librería [CompStats](https://compstats.readthedocs.io) permite realizar de manera sencilla la comparación entre el rendimiento de varios algoritmos, además de presentar gráficas sobre su comportamiento. Esta librería usa la técnica de Bootstrap tal y como se ha mostrado en este capítulo. 
+
+
+```{python} 
+#| include: false
+
+from CompStats import utils
+utils.USE_TQDM = False
+```
+
+Lo primero que se realiza es calcular las muestras del rendimiento entre los dos algoritmos analizados, los cuales tienen sus predicciones en las variables `naive` y `forest`. En la primera línea se inicializa la variable `macro_recall` que calcula el promedio de la cobertura. La segunda línea crea un cuadro de datos (`DataFrame`) que contiene tanto la variable medida como las predicciones. La tercera línea calcula el rendimiento de los dos algoritmos. 
+
+```{python}
+#| echo: true
+
+macro_recall = lambda y, hy: recall_score(y, hy,
+                                          average='macro')
+df = pd.DataFrame(dict(y=y,
+                       naive=naive,
+                       forest=forest))
+perf = performance(df, score=macro_recall)
+```
+
+La variable `perf` contiene las muestras del rendimiento de cada algoritmo. Por ejemplo, la siguiente línea calcula el intervalo de confianza de cada algoritmo. 
+
+```{python} 
+#| echo: true
+
+CI(perf)
+```
+
+Los intervalos de confianza se pueden visualizar en la @fig-intervalos-compstats. 
+
+```{python} 
+#| code-fold: true
+#| fig-cap: Intervalos de confianzas
+#| label: fig-intervalos-compstats
+
+plot_performance(perf)
+```
+
+El segundo paso es conocer si la diferencia en rendimiento es significativa, en la @fig-comparacion-compstats se observa la comparación entre el mejor algoritmo (i.e., `forest`) y los otros algoritmos (`naive`) incluidos en la comparación. Se observa, en la figura, una linea puntuada que se encuentra en cero para facilitar la comparación, si el intervalo de confianza intersecta con la linea se puede concluir que los algoritmos comparados no son estadísticamente diferentes. En el ejemplo mostrado se ve que el intervalo no intersecta entonces se puede concluir que la hipótesis nula se puede descartar con una cierta confianza.  
+
+```{python} 
+#| code-fold: true
+#| fig-cap: Comparación contra el mejor
+#| label: fig-comparacion-compstats
+
+diff = difference(perf)
+plot_difference(diff)
 ```

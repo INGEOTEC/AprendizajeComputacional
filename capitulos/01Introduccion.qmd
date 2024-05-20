@@ -1,6 +1,6 @@
-# Tipos de Aprendizaje Computacional
+# Introducción
 
-El **objetivo** de la unidad es conocer los diferentes tipos de aprendizaje computacional y los conceptos globales propios a este campo de estudio.
+El **objetivo** de la unidad es explicar el área de aprendizaje computacional, los diferentes tipos de aprendizaje que la componen, la metodología general del área y su relación con otras áreas del conocimiento. 
 
 ::: {.content-visible when-format="html"}
 ---
@@ -10,9 +10,9 @@ El **objetivo** de la unidad es conocer los diferentes tipos de aprendizaje comp
 ---
 :::
 
-## Introducción
+## Aprendizaje Computacional
 
-Aprendizaje computacional es una rama de la IA que estudia los algoritmos que son capaces de aprender a partir de una serie de ejemplos o con alguna guía. Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. 
+Aprendizaje computacional es una rama de la Inteligencia Artificial (IA) que estudia los algoritmos que son capaces de aprender a partir de una serie de ejemplos o con alguna guía. Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. 
 
 En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
 
@@ -20,11 +20,9 @@ En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pare
 
 Finalmente **aprendizaje por refuerzo** es aquel donde se tiene un agente que tiene que aprender como interactuar con un ambiente. La interacción es tomando una acción en cada diferente estado del ambiente. Por ejemplo, el agente puede ser un jugador virtual en un juego de ajedrez entonces la acción es identificar y mover una pieza en el tablero, el objetivo de ganar la partida. La característica de aprendizaje por refuerzo es que el agente va a recibir una recompensa al final de la interacción con el ambiente, e.g., final del juego y el objetivo es optimizar las acciones para que la recompensa sea la mayor posible. 
 
-### Aplicaciones de Aprendizaje Computacional {#sec-tipos-aplicaciones}
+El área de aprendizaje computacional ha tenido un crecimiento importante en los últimos años, algunos ejemplos del impacto de área se pueden encontrar en artículos publicados en la revista de la editorial [Nature](https://www.nature.com). Por ejemplo, en el área médica en específico en Cardiología @Hannun2019 propone una metodología para detectar arritmias o en dermatología @Esteva2017 propone un algoritmo para la detección de cancer.
 
-Es importante mencionar que no todo lo que se hace en aprendizaje automático está relacionado con juegos clásicos y que existen avances importantes en otros dominios. Como por ejemplo, recientemente en el área de cardiología se presenta el siguiente artículo [https://www.nature.com/articles/s41591-018-0268-3](), o en dermatología para detección de cancer [https://www.nature.com/articles/nature21056]() solo por mostrar algunos otros ejemplos. 
-
-Cabe mencionar que los tres tipos de aprendizaje no son excluyentes uno del otro, comúnmente para resolver un problema complejo se combinan diferentes tipos de aprendizaje y otras tecnologías de IA para encontrar una solución aceptable. Probablemente una de las pruebas más significativas de lo que puede realizarse con aprendizaje automático es lo realizado por AlphaGo, leer el resumen del siguiente artículo [https://www.nature.com/articles/nature16961]() y recientemente se  quita una de las restricciones originales, la cual consiste en contar con un conjunto de jugadas realizadas por expertos, publicando este descubrimiento en [https://www.nature.com/articles/nature24270]().
+Cabe mencionar que los tres tipos de aprendizaje no son excluyentes uno del otro, comúnmente para resolver un problema complejo se combinan diferentes tipos de aprendizaje y otras tecnologías de IA para encontrar una solución aceptable. Probablemente una de las pruebas más significativas de lo que puede realizarse con aprendizaje automático es lo realizado por AlphaGo descrito por @Silver2016 y en @Silver2017 se quitan una de las restricciones originales, la cual consiste en contar con un conjunto de jugadas realizadas por expertos.
 
 En el área de aprendizaje, hay una tendencia de utilizar plataformas donde diferentes empresas u organismos gubernamentales o sin fines de lucro, ponen un problema e incentivan al publico en general a resolver este problema. La plataforma sirve de mediador en este proceso. Ver por ejemplo [https://www.kaggle.com]().
 
@@ -246,23 +244,23 @@ El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su tota
 
 ### Características de la hipótesis
 
-Continuando con algunas definiciones, en la búsqueda de encontrar $h^*$ uno puede elegir por aquella que captura todos los datos de entrenamiento siendo muy específica. Para poder explicar mejor este concepto usemos la siguiente figura que representa un ejemplo sintético.
+Continuando con algunas definiciones, en la búsqueda de encontrar $h^*$ se puede elegir por aquella que captura todos los datos de entrenamiento siendo muy específica. Para poder explicar mejor este concepto se usa la @fig-hipotesis-esp que muestra un ejemplo sintético.
 
-![Hipótesis mas específica](/docs/assets/images/clases-sh.png)
+![Hipótesis mas específica](/docs/assets/images/clases-sh.png){#fig-hipotesis-esp}
 
 Los puntos naranja representan una clase y los puntos azules son la otra clase, el clasificador es mostrado en el rectángulo. Para completar el funcionamiento de este clasificador falta mencionar que cualquier nuevo punto que esté dentro del rectángulo será calificado como clase azul y naranja si se encuentra fuera del rectángulo. Como se puede observar, el rectángulo contiene todos los elementos de una clase y en alguno de sus lados toca con uno de los puntos del conjunto de entrenamiento de la clase data.
 
-En este momento, es posible visualizar que el complemento de ser muy específico es ser lo mas general posible. La siguiente siguiente figura muestra un clasificador que es lo mas general. Se observa que el rectángulo casi toca uno de los puntos del conjunto de entrenamiento de la clase contraria, esto lo hace del lado exterior y el procedimiento para clasificar continua siendo el que se mencionó anteriormente.
+En este momento, es posible visualizar que el complemento de ser muy específico es ser lo mas general posible. La @fig-hipotesis-general muestra un clasificador que es lo mas general. Se observa que el rectángulo casi toca uno de los puntos del conjunto de entrenamiento de la clase contraria, esto lo hace del lado exterior y el procedimiento para clasificar continua siendo el que se mencionó anteriormente.
 
-![Hipótesis más general](/docs/assets/images/clases-gh.png)
+![Hipótesis más general](/docs/assets/images/clases-gh.png){#fig-hipotesis-general}
 
-Uno puede elegir una hipótesis que se encuentre entre la hipótesis mas general y la más específica, esto también se puede visualizar en la siguiente figura. Donde todas las hipótesis se encuentran representadas en gris.
+Es factible también elegir una hipótesis que se encuentre entre la hipótesis mas general y la más específica, esto también se puede visualizar en la @fig-hipotesis-media. Donde todas las hipótesis se encuentran representadas en gris.
 
-![Clase de hipótesis](/docs/assets/images/clases-ch.png)
+![Clases de hipótesis](/docs/assets/images/clases-ch.png){#fig-hipotesis-media}
 
-Finalmente, para poder describir mejor el comportamiento de un clasificador se hace uso de la distancia que hay entre la hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la siguiente figura, donde la hipótesis más general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
+Finalmente, para poder describir mejor el comportamiento de un clasificador se hace uso de la distancia que hay entre la hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la @fig-hipotesis-margen, donde la hipótesis más general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
 
-![Margen](/docs/assets/images/clases-margen.png)
+![Margen entre la clases](/docs/assets/images/clases-margen.png){#fig-hipotesis-margen}
 
 ### Estilos de Aprendizaje
 
