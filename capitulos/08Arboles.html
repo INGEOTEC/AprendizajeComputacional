@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 8&nbsp; Árboles de Decisión</title>
+<title>Aprendizaje Computacional – 8&nbsp; Árboles de Decisión</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -101,7 +101,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -116,14 +116,42 @@ div.csl-indent {
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -133,13 +161,13 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/08Arboles.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -148,13 +176,13 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -173,8 +201,8 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -257,9 +285,9 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -287,7 +315,7 @@ div.csl-indent {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -357,9 +385,9 @@ div.csl-indent {
 </section>
 <section id="sec-arboles-clasificacion" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="sec-arboles-clasificacion"><span class="header-section-number">8.3</span> Clasificación</h2>
-<p>Utilizando el procedimiento para generar tres Distribuciones Gausianas (<a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección&nbsp;2.3.1</span></a>) se generan las siguientes poblaciones (<a href="#fig-arboles-tres-distribuciones" class="quarto-xref">Figura&nbsp;<span>8.1</span></a>) con medias <span class="math inline">\(\mu_1=[5, 5]^\intercal\)</span>, <span class="math inline">\(\mu_2=[-5, -10]^\intercal\)</span> y <span class="math inline">\(\mu_3=[15, -6]^\intercal\)</span>; utilizando las matrices de covarianza originales.</p>
+<p>Utilizando el procedimiento para generar tres Distribuciones Gausianas (<a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a>) se generan las siguientes poblaciones (<a href="#fig-arboles-tres-distribuciones" class="quarto-xref">Figura&nbsp;<span>8.1</span></a>) con medias <span class="math inline">\(\mu_1=[5, 5]^\intercal\)</span>, <span class="math inline">\(\mu_2=[-5, -10]^\intercal\)</span> y <span class="math inline">\(\mu_3=[15, -6]^\intercal\)</span>; utilizando las matrices de covarianza originales.</p>
 <div id="cell-fig-arboles-tres-distribuciones" class="cell" data-execution_count="3">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
@@ -378,12 +406,12 @@ div.csl-indent {
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-arboles-tres-distribuciones" class="quarto-figure quarto-figure-center anchored" height="470" width="526">
+<div id="fig-arboles-tres-distribuciones" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-tres-distribuciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="08Arboles_files/figure-html/fig-arboles-tres-distribuciones-output-1.png" width="526" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-arboles-tres-distribuciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-tres-distribuciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.1: Tres distribuciones Gausianas
 </figcaption>
 </figure>
@@ -392,7 +420,7 @@ Figura&nbsp;8.1: Tres distribuciones Gausianas
 </div>
 <p>Con estas tres poblaciones, donde cada distribución genera una clase se crea un árbol de decisión. El árbol se muestra en la <a href="#fig-arboles-arbol-decision" class="quarto-xref">Figura&nbsp;<span>8.2</span></a>, donde se observa, en cada nodo interno, la siguiente información. La primera línea muestra el identificador del nodo, la segunda corresponde a la función de corte, la tercera línea es la entropía (<span class="math inline">\(H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)\)</span>), la cuarta es el número de elementos que llegaron al nodo y la última la frecuencia de cada clase en ese nodo.</p>
 <div id="cell-fig-arboles-arbol-decision" class="cell" data-execution_count="4">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3), axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
@@ -401,12 +429,12 @@ Figura&nbsp;8.1: Tres distribuciones Gausianas
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-arboles-arbol-decision" class="quarto-figure quarto-figure-center anchored" height="389" width="540">
+<div id="fig-arboles-arbol-decision" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-arbol-decision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="08Arboles_files/figure-html/fig-arboles-arbol-decision-output-1.png" width="540" height="389" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-arboles-arbol-decision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-arbol-decision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.2: Árbol de decisión
 </figcaption>
 </figure>
@@ -416,7 +444,7 @@ Figura&nbsp;8.2: Árbol de decisión
 <p>Por ejemplo el nodo raíz del árbol tiene una entropía de <span class="math inline">\(1.5850\)</span>, la función de decisión es <span class="math inline">\(x \leq 10.5605\)</span> que indica que todos los elementos con un valor en <span class="math inline">\(x\)</span> menor o igual del valor calculado están del lado izquierdo. Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es <span class="math inline">\(0\)</span>, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple.</p>
 <p>La siguiente <a href="#fig-arboles-arbol-decision-funcion" class="quarto-xref">Figura&nbsp;<span>8.3</span></a> muestra el árbol generado cuando se remueven el nodo #6. Se observa un árbol con menos nodos, aunque la entropía en es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo.</p>
 <div id="cell-fig-arboles-arbol-decision-funcion" class="cell" data-execution_count="7">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>, min_samples_split<span class="op">=</span><span class="dv">1003</span>).fit(X, y)</span>
@@ -432,12 +460,12 @@ Figura&nbsp;8.2: Árbol de decisión
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>              label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>, cmap<span class="op">=</span>plt.cm.RdYlBu, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-arboles-arbol-decision-funcion" class="quarto-figure quarto-figure-center anchored" height="427" width="589">
+<div id="fig-arboles-arbol-decision-funcion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-arbol-decision-funcion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="08Arboles_files/figure-html/fig-arboles-arbol-decision-funcion-output-1.png" width="589" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-arboles-arbol-decision-funcion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-arbol-decision-funcion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.3: Árbol de decisión y función
 </figcaption>
 </figure>
@@ -538,7 +566,7 @@ Nota
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada <a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección&nbsp;4.2.7</span></a> (<em>Log-loss</em>).</p>
+<p>La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada <a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a> (<em>Log-loss</em>).</p>
 <div id="575e6580" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -546,7 +574,7 @@ Nota
 <div id="f98940a4" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El error en el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(0.0789\)</span>, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (<a href="03Parametricos.html#sec-gaussina-perf-breast_cancer" class="quarto-xref"><span>Sección&nbsp;3.7.3</span></a>). La siguiente instrucción muestra el cálculo del error.</p>
+<p>El error en el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(0.0789\)</span>, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (<a href="03Parametricos.html#sec-gaussina-perf-breast_cancer" class="quarto-xref"><span>Sección 3.7.3</span></a>). La siguiente instrucción muestra el cálculo del error.</p>
 <div id="95ed905f" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -572,18 +600,18 @@ Nota
 </div>
 <p>El árbol de decisión obtenido se muestra en la <a href="#fig-arboles-regresion" class="quarto-xref">Figura&nbsp;<span>8.4</span></a>. La información que se muestra en cada nodo interno es equivalente a la mostrada en los árboles de clasificación. La diferencia es que en los árboles de regresión se muestra el promedio (<code>value</code>) de las salidas que llegan a ese nodo y en regresión es la frecuencia de clases. Se observa que si la entrada es <span class="math inline">\(x=-4.5\)</span> entonces la respuesta la da el nodo #4 con un valor de <span class="math inline">\(1.088.\)</span></p>
 <div id="cell-fig-arboles-regresion" class="cell" data-execution_count="25">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-arboles-regresion" class="quarto-figure quarto-figure-center anchored" height="389" width="540">
+<div id="fig-arboles-regresion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-regresion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="08Arboles_files/figure-html/fig-arboles-regresion-output-1.png" width="540" height="389" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-arboles-regresion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-regresion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.4: Árbol de Regresión
 </figcaption>
 </figure>
@@ -594,7 +622,7 @@ Figura&nbsp;8.4: Árbol de Regresión
 <h3 data-number="8.4.1" class="anchored" data-anchor-id="predicción"><span class="header-section-number">8.4.1</span> Predicción</h3>
 <p>El árbol anterior se usa para predecir todos los puntos del conjunto de entrenamiento, el resultado se muestra en la <a href="#fig-arboles-regresion-func" class="quarto-xref">Figura&nbsp;<span>8.5</span></a>. Se observa que la predicción es discreta, son escalones y esto es porque las hojas predicen el promedio de los valores que llegaron hasta ahí, en este caso el árbol tiene 8 hojas entonces a lo más ese árbol puede predecir 8 valores distintos.</p>
 <div id="cell-fig-arboles-regresion-func" class="cell" data-execution_count="26">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(X<span class="op">=</span>X, y<span class="op">=</span>y, </span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                       predicción<span class="op">=</span>arbol.predict(np.atleast_2d(X).T)))</span>
@@ -602,12 +630,12 @@ Figura&nbsp;8.4: Árbol de Regresión
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>sns.relplot(df, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-arboles-regresion-func" class="quarto-figure quarto-figure-center anchored" height="470" width="555">
+<div id="fig-arboles-regresion-func" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-regresion-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="08Arboles_files/figure-html/fig-arboles-regresion-func-output-1.png" width="555" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-arboles-regresion-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-regresion-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.5: Problema de regresión
 </figcaption>
 </figure>
@@ -627,10 +655,14 @@ Figura&nbsp;8.5: Problema de regresión
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(T, y_t)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, max_depth<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="08Arboles_files/figure-html/cell-29-output-1.png" width="540" height="389"></p>
+<div>
+<figure class="figure">
+<p><img src="08Arboles_files/figure-html/cell-29-output-1.png" width="540" height="389" class="figure-img"></p>
+</figure>
 </div>
 </div>
-<p>El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función <code>corte_var</code> definida en clasificación (<a href="#sec-arboles-clasificacion" class="quarto-xref"><span>Sección&nbsp;8.3</span></a>) es que la entropía <code>H</code> se cambia por la varianza <code>np.var</code>.</p>
+</div>
+<p>El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función <code>corte_var</code> definida en clasificación (<a href="#sec-arboles-clasificacion" class="quarto-xref"><span>Sección 8.3</span></a>) es que la entropía <code>H</code> se cambia por la varianza <code>np.var</code>.</p>
 <div id="1797fafd" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(response):</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
@@ -713,18 +745,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -756,7 +777,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -808,6 +851,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -842,7 +903,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -857,38 +922,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -897,8 +952,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1121,12 +1183,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/07NoParametricos.html" class="pagination-link">
+      <a href="../capitulos/07NoParametricos.html" class="pagination-link" aria-label="Métodos No Paramétricos">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/09Lineal.html" class="pagination-link">
+      <a href="../capitulos/09Lineal.html" class="pagination-link" aria-label="Discriminantes Lineales">
         <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1501,7 +1563,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-428"><a href="#cb29-428" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-429"><a href="#cb29-429" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-430"><a href="#cb29-430" aria-hidden="true" tabindex="-1"></a>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice <span class="in">`{python} np.argmin(res, axis=0)[0]`</span> tal y como se muestra en la figura anterior nodo derecho de la raíz. </span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

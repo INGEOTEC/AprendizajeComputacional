@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 11&nbsp; Redes Neuronales</title>
+<title>Aprendizaje Computacional – 11&nbsp; Redes Neuronales</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -96,14 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -113,13 +141,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/11RedesNeuronales.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,13 +156,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -153,8 +181,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -237,9 +265,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -267,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -337,7 +365,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="introducción" class="level2" data-number="11.2">
 <h2 data-number="11.2" class="anchored" data-anchor-id="introducción"><span class="header-section-number">11.2</span> Introducción</h2>
-<p>Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (<a href="10Optimizacion.html#sec-regresion-logistica-optimizacion" class="quarto-xref"><span>Sección&nbsp;10.5</span></a>) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.</p>
+<p>Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (<a href="10Optimizacion.html#sec-regresion-logistica-optimizacion" class="quarto-xref"><span>Sección 10.5</span></a>) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.</p>
 </section>
 <section id="sec-regresion-logistica-multinomial" class="level2" data-number="11.3">
 <h2 data-number="11.3" class="anchored" data-anchor-id="sec-regresion-logistica-multinomial"><span class="header-section-number">11.3</span> Regresión Logística Multinomial</h2>
@@ -385,7 +413,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        o.append(X <span class="op">@</span> p[<span class="st">'w'</span>] <span class="op">+</span> p[<span class="st">'w0'</span>])</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.softmax(jnp.array(o), axis<span class="op">=</span><span class="dv">0</span>).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección&nbsp;4.2.7</span></a>), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad <span class="math inline">\(1\)</span> corresponde a la clase, esto se puede realizar con el siguiente código.</p>
+<p>Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad <span class="math inline">\(1\)</span> corresponde a la clase, esto se puede realizar con el siguiente código.</p>
 <div id="8ba0bf0d" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>y_oh <span class="op">=</span> jax.nn.one_hot(y, n_labels)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -398,7 +426,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="optimización" class="level3" data-number="11.3.1">
 <h3 data-number="11.3.1" class="anchored" data-anchor-id="optimización"><span class="header-section-number">11.3.1</span> Optimización</h3>
-<p>El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( <a href="10Optimizacion.html#sec-regresion-logistica-optimizacion" class="quarto-xref"><span>Sección&nbsp;10.5</span></a>) con algunos ajustes. Lo primero es que se desarrolla todo en una función <code>fit</code> que recibe el parámetro <span class="math inline">\(\eta\)</span>, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento.</p>
+<p>El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( <a href="10Optimizacion.html#sec-regresion-logistica-optimizacion" class="quarto-xref"><span>Sección 10.5</span></a>) con algunos ajustes. Lo primero es que se desarrolla todo en una función <code>fit</code> que recibe el parámetro <span class="math inline">\(\eta\)</span>, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento.</p>
 <p>Dentro de la función <code>fit</code>se observa la función <code>update</code> que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función <code>update</code> genera la función que calculará el valor y el gradiente de la función <code>media_entropia_cruzada</code>. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época.</p>
 <div id="d9d836da" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(eta, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
@@ -418,7 +446,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="sec-adam" class="level3" data-number="11.3.2">
 <h3 data-number="11.3.2" class="anchored" data-anchor-id="sec-adam"><span class="header-section-number">11.3.2</span> Optimización Método Adam</h3>
-<p>Como se había visto en la <a href="10Optimizacion.html#sec-actualizacion-parametros" class="quarto-xref"><span>Sección&nbsp;10.6</span></a> existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería <a href="https://optax.readthedocs.io">optax</a>) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales.</p>
+<p>Como se había visto en la <a href="10Optimizacion.html#sec-actualizacion-parametros" class="quarto-xref"><span>Sección 10.6</span></a> existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería <a href="https://optax.readthedocs.io">optax</a>) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales.</p>
 <p>Siguiendo la misma estructura que la función <code>fit</code>, la función <code>adam</code> recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función <code>update</code> (que se encuentra en <code>adam</code>) calcula el valor de la función de error y su gradiente, estos son utilizados por <code>optimizer.update</code> para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de <code>update</code> inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función <code>media_entropia_cruzada</code>. El ciclo llama la función <code>update</code> y guarda el error encontrado en cada época.</p>
 <div id="807b652c" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
@@ -456,7 +484,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>La <a href="#fig-redes-neuronales-adam" class="quarto-xref">Figura&nbsp;<span>11.1</span></a> muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método <code>adam</code> converge más rápido y llega a un valor menor de Entropía Cruzada.</p>
 <div id="cell-fig-redes-neuronales-adam" class="cell" data-execution_count="12">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(entropia<span class="op">=</span>np.array(error1),</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                       optimizador<span class="op">=</span><span class="st">'fit'</span>,</span>
@@ -468,25 +496,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'epoca'</span>, y<span class="op">=</span><span class="st">'entropia'</span>, hue<span class="op">=</span><span class="st">'optimizador'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-redes-neuronales-adam" class="quarto-figure quarto-figure-center anchored" width="550" height="470">
+<div id="fig-redes-neuronales-adam" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-redes-neuronales-adam-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="11RedesNeuronales_files/figure-html/fig-redes-neuronales-adam-output-1.png" width="550" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-redes-neuronales-adam-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-redes-neuronales-adam-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Finalmente la exactitud (<a href="04Rendimiento.html#sec-accuracy" class="quarto-xref"><span>Sección&nbsp;4.2.2</span></a>) en el conjunto de entrenamiento del modelo estimado con <code>fit</code> es <span class="math inline">\(0.8867\)</span> (i.e., <code>(y == modelo(p1, D).argmax(axis=1)).mean()</code>) y del estimado con <code>adam</code> es <span class="math inline">\(0.9667\)</span>.</p>
+<p>Finalmente la exactitud (<a href="04Rendimiento.html#sec-accuracy" class="quarto-xref"><span>Sección 4.2.2</span></a>) en el conjunto de entrenamiento del modelo estimado con <code>fit</code> es <span class="math inline">\(0.8867\)</span> (i.e., <code>(y == modelo(p1, D).argmax(axis=1)).mean()</code>) y del estimado con <code>adam</code> es <span class="math inline">\(0.9667\)</span>.</p>
 </section>
 </section>
 <section id="sec-preceptron" class="level2" data-number="11.4">
 <h2 data-number="11.4" class="anchored" data-anchor-id="sec-preceptron"><span class="header-section-number">11.4</span> Perceptrón</h2>
-<p>La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de Discriminantes Lineales (<a href="09Lineal.html" class="quarto-xref"><span>Capítulo&nbsp;9</span></a>), es decir, <span class="math inline">\(g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.\)</span> En problemas de clasificación binaria se encuentran los parámetros de <span class="math inline">\(g(\mathbf x)\)</span> de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de Regresión (<a href="03Parametricos.html#sec-regresion-ols" class="quarto-xref"><span>Sección&nbsp;3.9</span></a>) los parámetros de <span class="math inline">\(g(\mathbf x)\)</span> se encuentran utilizando mínimos cuadrados.</p>
-<p>En el case de tener <span class="math inline">\(K&gt;2\)</span> clases entonces el problema se puede afrontar entrenando <span class="math inline">\(g_k(\mathbf x)\)</span> perceptrones (<span class="math inline">\(k=1, \ldots, K\)</span>) tal y como se realizó Discriminantes Lineales (<a href="09Lineal.html#sec-multiples-clases" class="quarto-xref"><span>Sección&nbsp;9.3.3</span></a>). De manera concisa se puede definir a <span class="math inline">\(g: \mathbb R^d \rightarrow \mathbb R^K\)</span>, es decir, <span class="math inline">\(g(\mathbf x)=W \mathbf x + \mathbf w_0\)</span> tal y como se realizó en Regresión Logística Multinomial (<a href="#sec-regresion-logistica-multinomial" class="quarto-xref"><span>Sección&nbsp;11.3</span></a>). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó <span class="math inline">\(g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)\)</span> y en el caso multiclase <span class="math inline">\(g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).\)</span></p>
+<p>La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de Discriminantes Lineales (<a href="09Lineal.html" class="quarto-xref"><span>Capítulo 9</span></a>), es decir, <span class="math inline">\(g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.\)</span> En problemas de clasificación binaria se encuentran los parámetros de <span class="math inline">\(g(\mathbf x)\)</span> de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de Regresión (<a href="03Parametricos.html#sec-regresion-ols" class="quarto-xref"><span>Sección 3.9</span></a>) los parámetros de <span class="math inline">\(g(\mathbf x)\)</span> se encuentran utilizando mínimos cuadrados.</p>
+<p>En el case de tener <span class="math inline">\(K&gt;2\)</span> clases entonces el problema se puede afrontar entrenando <span class="math inline">\(g_k(\mathbf x)\)</span> perceptrones (<span class="math inline">\(k=1, \ldots, K\)</span>) tal y como se realizó Discriminantes Lineales (<a href="09Lineal.html#sec-multiples-clases" class="quarto-xref"><span>Sección 9.3.3</span></a>). De manera concisa se puede definir a <span class="math inline">\(g: \mathbb R^d \rightarrow \mathbb R^K\)</span>, es decir, <span class="math inline">\(g(\mathbf x)=W \mathbf x + \mathbf w_0\)</span> tal y como se realizó en Regresión Logística Multinomial (<a href="#sec-regresion-logistica-multinomial" class="quarto-xref"><span>Sección 11.3</span></a>). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó <span class="math inline">\(g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)\)</span> y en el caso multiclase <span class="math inline">\(g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).\)</span></p>
 <section id="composición-de-perceptrones-lineales" class="level3" data-number="11.4.1">
 <h3 data-number="11.4.1" class="anchored" data-anchor-id="composición-de-perceptrones-lineales"><span class="header-section-number">11.4.1</span> Composición de Perceptrones Lineales</h3>
 <p>Se puede realizar una composición de perceptrones de la siguiente manera, sea <span class="math inline">\(g_1: \mathbb R^d \rightarrow \mathbb R^{d'}\)</span> y <span class="math inline">\(g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,\)</span> es decir <span class="math inline">\(g = g_2 \circ g_1.\)</span> Realizando está composición en las ecuaciones descritas anteriormente se tiene</p>
@@ -614,7 +642,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    y2 <span class="op">=</span> jax.nn.relu(y1 <span class="op">@</span> params[<span class="dv">1</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">1</span>][<span class="st">'w0'</span>])</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y2 <span class="op">@</span> params[<span class="dv">2</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">2</span>][<span class="st">'w0'</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Como medida de error se usa la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección&nbsp;4.2.7</span></a>) tal y como se implementa a continuación. El caso <span class="math inline">\(0 \log 0\)</span> corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa <code>jnp.nansum</code> que trata los valores no definidos como ceros.</p>
+<p>Como medida de error se usa la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>) tal y como se implementa a continuación. El caso <span class="math inline">\(0 \log 0\)</span> corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa <code>jnp.nansum</code> que trata los valores no definidos como ceros.</p>
 <div id="273ff6c4" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, D, y_oh):</span>
@@ -694,18 +722,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -737,7 +754,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -789,6 +828,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -823,7 +880,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -838,38 +899,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -878,8 +929,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1102,12 +1160,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/10Optimizacion.html" class="pagination-link">
+      <a href="../capitulos/10Optimizacion.html" class="pagination-link" aria-label="Optimización">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Optimización</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/12Ensambles.html" class="pagination-link">
+      <a href="../capitulos/12Ensambles.html" class="pagination-link" aria-label="Ensambles">
         <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ensambles</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1564,7 +1622,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-504"><a href="#cb24-504" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-505"><a href="#cb24-505" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-506"><a href="#cb24-506" aria-hidden="true" tabindex="-1"></a>El resultado de esta red, es que el error en el conjunto de prueba es <span class="in">`{python} error_f`</span> calculado con la siguiente instrucción <span class="in">`(ann(p, G).argmax(axis=1) != y_g).mean()`</span>. </span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

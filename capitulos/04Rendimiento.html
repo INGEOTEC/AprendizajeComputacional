@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 4&nbsp; Rendimiento</title>
+<title>Aprendizaje Computacional – 4&nbsp; Rendimiento</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -101,7 +101,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -116,14 +116,42 @@ div.csl-indent {
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -133,13 +161,13 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/04Rendimiento.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Rendimiento</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -148,13 +176,13 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -173,8 +201,8 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -257,9 +285,9 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -287,7 +315,7 @@ div.csl-indent {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -300,7 +328,7 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#sec-error" id="toc-sec-error" class="nav-link" data-scroll-target="#sec-error"><span class="header-section-number">4.2.1</span> Error</a></li>
   <li><a href="#sec-accuracy" id="toc-sec-accuracy" class="nav-link" data-scroll-target="#sec-accuracy"><span class="header-section-number">4.2.2</span> Exactitud (<em>Accuracy</em>)</a></li>
-  <li><a href="#sec-recall" id="toc-sec-recall" class="nav-link" data-scroll-target="#sec-recall"><span class="header-section-number">4.2.3</span> Recall</a></li>
+  <li><a href="#sec-recall" id="toc-sec-recall" class="nav-link" data-scroll-target="#sec-recall"><span class="header-section-number">4.2.3</span> Coberturba (<em>Recall</em>)</a></li>
   <li><a href="#sec-precision" id="toc-sec-precision" class="nav-link" data-scroll-target="#sec-precision"><span class="header-section-number">4.2.4</span> Precisión (<em>Precision</em>)</a></li>
   <li><a href="#sec-f1" id="toc-sec-f1" class="nav-link" data-scroll-target="#sec-f1"><span class="header-section-number">4.2.5</span> <span class="math inline">\(F_\beta\)</span></a></li>
   <li><a href="#sec-macro" id="toc-sec-macro" class="nav-link" data-scroll-target="#sec-macro"><span class="header-section-number">4.2.6</span> Medidas Macro</a></li>
@@ -344,7 +372,7 @@ div.csl-indent {
 <p>El <strong>objetivo</strong> es contrastar las características de diferentes medidas de rendimiento en aprendizaje supervisado así como simular un procedimiento de aprendizaje supervisado.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="558d1fe6" class="cell" data-execution_count="1">
+<div id="58c9a2d6" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA.model <span class="im">import</span> GaussianBayes</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -370,9 +398,9 @@ div.csl-indent {
 <h2 data-number="4.2" class="anchored" data-anchor-id="sec-clasificacion"><span class="header-section-number">4.2</span> Clasificación</h2>
 <p>En clasificación existen diferentes medidas de rendimiento, algunas de ellas son exactitud (<em>accuracy</em>), precisión (<em>precision</em>), recall, y <span class="math inline">\(F_1\)</span>, entre otras. <span class="citation" data-cites="10.1145/2808194.2809449">Sebastiani (<a href="17Referencias.html#ref-10.1145/2808194.2809449" role="doc-biblioref">2015</a>)</span> describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores.</p>
 <p>Varias de las medidas de rendimiento toman como insume la <strong>Tabla de Confusión</strong> (<a href="#tbl-confusion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a>), la cual contiene la información del proceso de clasificación. La siguiente tabla muestra la estructura de esta tabla para un problema binario, donde se tiene una clase positiva identificada con <span class="math inline">\(p\)</span> y una clase negativa (<span class="math inline">\(n\)</span>). La variable <span class="math inline">\(\mathcal Y\)</span> indica las clases reales y la variable <span class="math inline">\(\mathcal{\hat Y}\)</span> representa la estimación (predicción) hecha por el clasificador. Adicionalmente, la tabla se puede extender a <span class="math inline">\(K\)</span> clases siguiendo la misma estructura; la diagonal contienen los elementos correctamente identificados y los elementos fuera de la diagonal muestra los errores.</p>
-<div id="tbl-confusion" class="anchored">
+<div id="tbl-confusion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;4.1: Tabla de Confusión
 </figcaption>
 <div aria-describedby="tbl-confusion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -402,9 +430,9 @@ Tabla&nbsp;4.1: Tabla de Confusión
 </div>
 <p>La tabla se puede ver como valores nominales, es decir contar el número de ejemplos clasificados como verdaderos positivos o como proporción de tal manera que las cuatro celdas sumen <span class="math inline">\(1\)</span>. En esta descripción se asume que son proporcionen, esto porque se seguirá una interpretación probabilística descrita en <a href="https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25">este artículo</a> para presentar las diferentes medidas de rendimiento.</p>
 <p>Viendo la <a href="#tbl-confusion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a> como una proporción y combinando con la interpretación probabilística la tabla quedaría de la siguiente manera.</p>
-<div id="tbl-confusion-prob" class="anchored">
+<div id="tbl-confusion-prob" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-confusion-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-confusion-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;4.2: Tabla de Confusión como Proporción
 </figcaption>
 <div aria-describedby="tbl-confusion-prob-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -440,7 +468,7 @@ Tabla&nbsp;4.2: Tabla de Confusión como Proporción
 <p>Partiendo de la <a href="#tbl-confusion-prob" class="quarto-xref">Tabla&nbsp;<span>4.2</span></a> se puede calcular la probabilidad marginal de cualquier variable y también las probabilidades condicionales, por ejemplo <span class="math inline">\(\mathbb P(\mathcal Y=p) = \sum_k \mathbb P(\mathcal Y=p, \mathcal{\hat Y=k})\)</span> que es la suma de los elementos del primer renglón de la tabla anterior.</p>
 <section id="sec-error" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="sec-error"><span class="header-section-number">4.2.1</span> Error</h3>
-<p>Se empieza la descripción con el error de clasificación (<a href="02Teoria_Decision.html#sec-error-clasificacion" class="quarto-xref"><span>Sección&nbsp;2.4</span></a>) el cual es la proporción de errores y se puede definir como</p>
+<p>Se empieza la descripción con el error de clasificación (<a href="02Teoria_Decision.html#sec-error-clasificacion" class="quarto-xref"><span>Sección 2.4</span></a>) el cual es la proporción de errores y se puede definir como</p>
 <p><span class="math display">\[
 \textsf{error}(\mathcal Y, \mathcal{\hat Y}) = 1 -  \textsf{accuracy}(\mathcal Y, \mathcal{\hat Y}).
 \]</span></p>
@@ -461,7 +489,7 @@ Tabla&nbsp;4.2: Tabla de Confusión como Proporción
 <p>Esta manera ayuda a entender el caso cuando se tiene una clase con muchos ejemplos, e.g., <span class="math inline">\(\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),\)</span> en ese caso se ve que la exactitud está dominado por el primer término, i.e., <span class="math inline">\(\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).\)</span> En este caso, la manera trivial de optimizar la exactitud es crear un clasificador que siempre regrese la clase <span class="math inline">\(p.\)</span> Por esta razón la exactitud no es una medida adecuada cuando las clases son desbalanciadas, es buena medida cuando <span class="math inline">\(\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).\)</span></p>
 </section>
 <section id="sec-recall" class="level3" data-number="4.2.3">
-<h3 data-number="4.2.3" class="anchored" data-anchor-id="sec-recall"><span class="header-section-number">4.2.3</span> Recall</h3>
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="sec-recall"><span class="header-section-number">4.2.3</span> Coberturba (<em>Recall</em>)</h3>
 <p>La siguiente medida de rendimiento es el recall, este calcula la probabilidad de ejemplos correctamente clasificados como <span class="math inline">\(p\)</span> dados todos los ejemplos que se tienen de la clase <span class="math inline">\(p\)</span>. En base a esta ecuación se puede observar que un algoritmo trivial con el máximo valor de recall solamente tiene que predecir como clase <span class="math inline">\(p\)</span> todos los elementos.</p>
 <p>La segunda ecuación ayuda a medir en base de la tabla de confusión.</p>
 <p><span id="eq-recall"><span class="math display">\[
@@ -517,12 +545,12 @@ H(\mathbb P(\mathcal Y \mid \mathcal X=x) &amp;, \mathbb{\hat P}(\mathcal Y \mid
 <section id="sec-roc-curve" class="level3" data-number="4.2.8">
 <h3 data-number="4.2.8" class="anchored" data-anchor-id="sec-roc-curve"><span class="header-section-number">4.2.8</span> Área Bajo la Curva <em>ROC</em></h3>
 <p>El área bajo la curva <em>ROC</em> (<em>Relative Operating Characteristic</em>) es una medida de rendimiento que también está pasada en la probabilidad a posteriori <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> con la característica de que la clase se selecciona en base a un umbral <span class="math inline">\(\rho\)</span>. Es decir, dado un ejemplo <span class="math inline">\(x\)</span>, este ejemplo pertenece a la clase <span class="math inline">\(p\)</span> si <span class="math inline">\(\mathbb P(\mathcal Y=p \mid \mathcal X=x) \geq \rho.\)</span></p>
-<p>Se observa que modificando el umbral <span class="math inline">\(\rho\)</span> se tienen diferentes tablas de confusión, para cada tabla de confusión posible se calcula la tasa de verdaderos positivos (TPR) que corresponde al recall (<a href="#sec-recall" class="quarto-xref"><span>Sección&nbsp;4.2.3</span></a>), i.e., <span class="math inline">\(\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=p),\)</span> y la tasa de falsos positivos (FPR) que es <span class="math inline">\(\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=n).\)</span> Cada par de TPR y FPR representan un punto de la curva <em>ROC</em>. El rendimiento corresponde al área debajo de la curva delimitada por los pares TPR y FPR.</p>
+<p>Se observa que modificando el umbral <span class="math inline">\(\rho\)</span> se tienen diferentes tablas de confusión, para cada tabla de confusión posible se calcula la tasa de verdaderos positivos (TPR) que corresponde al recall (<a href="#sec-recall" class="quarto-xref"><span>Sección 4.2.3</span></a>), i.e., <span class="math inline">\(\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=p),\)</span> y la tasa de falsos positivos (FPR) que es <span class="math inline">\(\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=n).\)</span> Cada par de TPR y FPR representan un punto de la curva <em>ROC</em>. El rendimiento corresponde al área debajo de la curva delimitada por los pares TPR y FPR.</p>
 </section>
 <section id="ejemplo" class="level3" data-number="4.2.9">
 <h3 data-number="4.2.9" class="anchored" data-anchor-id="ejemplo"><span class="header-section-number">4.2.9</span> Ejemplo</h3>
-<p>El ejemplo de Breast Cancer Wisconsin (<a href="03Parametricos.html#sec-ejemplo-breast-cancer-wisconsin" class="quarto-xref"><span>Sección&nbsp;3.7</span></a>) se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta el momento.</p>
-<div id="06e7108a" class="cell" data-execution_count="3">
+<p>El ejemplo de Breast Cancer Wisconsin (<a href="03Parametricos.html#sec-ejemplo-breast-cancer-wisconsin" class="quarto-xref"><span>Sección 3.7</span></a>) se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta el momento.</p>
+<div id="7a38dd23" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(D, y, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,  </span>
@@ -531,11 +559,11 @@ H(\mathbb P(\mathcal Y \mid \mathcal X=x) &amp;, \mathbb{\hat P}(\mathcal Y \mid
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>hy_gaussian <span class="op">=</span> gaussian.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El clasificador Gausiano tiene un <code>accuracy</code> de <span class="math inline">\(0.8947\)</span>, el cual se puede calcular con el siguiente código.</p>
-<div id="11d09246" class="cell" data-execution_count="5">
+<div id="6a3420fb" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> metrics.accuracy_score(y_g, hy_gaussian)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Las medidas de <code>recall</code>, <code>precision</code> y <code>f1</code> se presentan en la <a href="#tbl-performance" class="quarto-xref">Tabla&nbsp;<span>4.3</span></a>, en la última columna se presenta el macro de cada una de las medidas.</p>
-<div id="ff26d262" class="cell" data-execution_count="6">
+<div id="7c1e6c3a" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> metrics.recall_score(y_g, hy_gaussian,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                              average<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>precision <span class="op">=</span> metrics.precision_score(y_g, hy_gaussian,</span>
@@ -544,14 +572,14 @@ H(\mathbb P(\mathcal Y \mid \mathcal X=x) &amp;, \mathbb{\hat P}(\mathcal Y \mid
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                      average<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="7">
-<div id="tbl-performance" class="cell anchored" data-execution_count="7">
+<div id="tbl-performance" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-performance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-performance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;4.3: Rendimiento
 </figcaption>
 <div aria-describedby="tbl-performance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="7">
-<table class="table table-sm table-striped small">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="7">
+<table class="do-not-create-environment cell table table-sm table-striped small">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -593,7 +621,7 @@ Tabla&nbsp;4.3: Rendimiento
 </div>
 </div>
 <p>Por otro lado la <code>entropia</code> cruzada es <span class="math inline">\(2.1071\)</span> que se puede calcular con el siguiente código.</p>
-<div id="1d9ff77a" class="cell" data-execution_count="9">
+<div id="755df829" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> gaussian.predict_proba(G)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>entropia <span class="op">=</span> metrics.log_loss(y_g, prob)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -604,12 +632,12 @@ Tabla&nbsp;4.3: Rendimiento
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.lineplot(df, x<span class="op">=</span><span class="st">'FPR'</span>, y<span class="op">=</span><span class="st">'TPR'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-roc-curve" class="quarto-figure quarto-figure-center anchored" height="427" width="585">
+<div id="fig-roc-curve" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="04Rendimiento_files/figure-html/fig-roc-curve-output-1.png" width="585" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;4.1: ROC
 </figcaption>
 </figure>
@@ -640,8 +668,8 @@ R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \math
 \tag{4.7}\]</span></span></p>
 <section id="ejemplo-1" class="level3" data-number="4.3.1">
 <h3 data-number="4.3.1" class="anchored" data-anchor-id="ejemplo-1"><span class="header-section-number">4.3.1</span> Ejemplo</h3>
-<p>Las medidas anteriores se ejemplifican utilizando el ejemplo de diabetes(#sec-diabetes) que se puede descargar y modelar mediante OLS (<a href="03Parametricos.html#sec-regresion-ols" class="quarto-xref"><span>Sección&nbsp;3.9</span></a>) de la siguiente manera.</p>
-<div id="3af7b8c6" class="cell" data-execution_count="12">
+<p>Las medidas anteriores se ejemplifican utilizando el ejemplo de diabetes(#sec-diabetes) que se puede descargar y modelar mediante OLS (<a href="03Parametricos.html#sec-regresion-ols" class="quarto-xref"><span>Sección 3.9</span></a>) de la siguiente manera.</p>
+<div id="d4a23181" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,  </span>
@@ -649,12 +677,12 @@ R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \math
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> LinearRegression().fit(T, y_t) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La predicción en el conjunto de prueba sería:</p>
-<div id="7e667b24" class="cell" data-execution_count="13">
+<div id="32b8b085" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> m.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Las diferentes medidas de rendimiento para problemas de regresión se puede calcular de la siguiente manera.</p>
 <p>El error cuadrático medio (<a href="#eq-mse" class="quarto-xref">Ecuación&nbsp;<span>4.4</span></a>), <code>mse</code> corresponde a</p>
-<div id="e31a0790" class="cell" data-execution_count="14">
+<div id="e8d2026d" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mse <span class="op">=</span> metrics.mean_squared_error(y_g, hy)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>y tienen un valor de <span class="math inline">\(3424.2593\)</span>.</p>
@@ -668,41 +696,41 @@ R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \math
 </section>
 <section id="sec-validacion-cruzada" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="sec-validacion-cruzada"><span class="header-section-number">4.4</span> Conjunto de Validación y Validación Cruzada</h2>
-<p>Antes de inicia la descripción de otro algoritmo para la selección de características es necesario describir otro conjunto que se utiliza para optimizar los hiperparámetros del algoritmo de aprendizaje. Previamente se describieron los conjuntos de Entrenamiento y Prueba (<a href="03Parametricos.html#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección&nbsp;3.5</span></a>), i.e., <span class="math inline">\(\mathcal T\)</span> y <span class="math inline">\(\mathcal G\)</span>. En particular estos conjuntos se definieron utilizando todos los datos <span class="math inline">\(\mathcal D\)</span> con lo que se especifica el problema.</p>
+<p>Antes de inicia la descripción de otro algoritmo para la selección de características es necesario describir otro conjunto que se utiliza para optimizar los hiperparámetros del algoritmo de aprendizaje. Previamente se describieron los conjuntos de Entrenamiento y Prueba (<a href="03Parametricos.html#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 3.5</span></a>), i.e., <span class="math inline">\(\mathcal T\)</span> y <span class="math inline">\(\mathcal G\)</span>. En particular estos conjuntos se definieron utilizando todos los datos <span class="math inline">\(\mathcal D\)</span> con lo que se especifica el problema.</p>
 <p>La mayoría de algoritmos de aprendizaje tiene hiperparámetros que pueden ser ajustados para optimizar su comportamiento al conjunto de datos que se está analizando. Estos hiperparámetros pueden estar dentro del algoritmo o pueden ser modificaciones al conjunto de datos para adecuarlos al algoritmo. El segundo caso es el que se analizará en esta unidad. Es decir, se seleccionarán las variables que facilitan el aprendizaje.</p>
 <p>Para optimizar los parámetros es necesario medir el rendimiento del algoritmo, es decir, observar como se comporta el algoritmo en el proceso de predicción. La manera trivial sería utilizar el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> para medir el rendimiento. Pero es necesario recordar que este conjunto no debe ser visto durante el aprendizaje y la optimización de los parámetros es parte de ese proceso. Si se usara <span class="math inline">\(\mathcal G\)</span> entonces dejaría de ser el conjunto de prueba y se tendría que seleccionar otro conjunto de prueba.</p>
 <p>Entonces para optimizar los parámetros del algoritmo se selecciona del conjunto de entrenamiento, i.e., <span class="math inline">\(\mathcal T\)</span>, el <strong>conjunto de validación</strong>, <span class="math inline">\(\mathcal V\)</span>. Este conjunto tiene la característica que <span class="math inline">\(\mathcal T \cap \mathcal V \cap \mathcal G = \emptyset\)</span> y <span class="math inline">\(\mathcal T \cup \mathcal V \cup \mathcal G = \mathcal D.\)</span> Una manera de realizar estos es seleccionar primeramente el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> y de los datos restantes generar los conjuntos de entrenamiento <span class="math inline">\(\mathcal T\)</span> y validación <span class="math inline">\(\mathcal V.\)</span></p>
-<p>Para ejemplificar esta idea se utiliza el ejemplo de Breast Cancer Wisconsin (<a href="03Parametricos.html#sec-ejemplo-breast-cancer-wisconsin" class="quarto-xref"><span>Sección&nbsp;3.7</span></a>) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utilizar un Bayesiano Ingenuo o se estima la matriz de covarianza.</p>
+<p>Para ejemplificar esta idea se utiliza el ejemplo de Breast Cancer Wisconsin (<a href="03Parametricos.html#sec-ejemplo-breast-cancer-wisconsin" class="quarto-xref"><span>Sección 3.7</span></a>) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utilizar un Bayesiano Ingenuo o se estima la matriz de covarianza.</p>
 <p>El primer paso es obtener los datos del problema, lo cual se muestra en la siguiente instrucción.</p>
-<div id="0b80fe13" class="cell" data-execution_count="16">
+<div id="656f5547" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con los datos <span class="math inline">\(\mathcal D\)</span> se genera el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> y los datos para estimar los parámetros y optimizar los hiperparámetros del algoritmo. En la variable <code>T</code> se tiene los datos para encontrar el algoritmo y en <code>G</code> se tiene el conjunto de prueba.</p>
-<div id="081d7ecf" class="cell" data-execution_count="17">
+<div id="b3f418a7" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(D, y,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Los datos de entrenamiento y validación se generan de manera equivalente tal como se muestra en la siguiente instrucción. El conjunto de validación (<span class="math inline">\(\mathcal V\)</span>) se encuentra en la variable <code>V</code> y la variable dependiente en <code>y_v.</code></p>
-<div id="cee9c740" class="cell" data-execution_count="18">
+<div id="8f0ecb2e" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>T, V, y_t, y_v <span class="op">=</span> train_test_split(T, y_t,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En este momento ya se tienen todos los elementos para medir el rendimiento de cada hiperparámetro. Empezando por el clasificador con la matriz de covarianza completa. El recall en ambas clases es [0.9615, 0.8824].</p>
-<div id="97fc90b1" class="cell" data-execution_count="20">
+<div id="6a002d20" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gaussian <span class="op">=</span> GaussianBayes().fit(T, y_t)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>hy_gaussian <span class="op">=</span> gaussian.predict(V)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> recall_score(y_v, hy_gaussian, average<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La segunda opción es utilizar un clasificador Bayesiano Ingenuo, el cual se especifica con el parámetro <code>naive</code> tal y como se muestra en las siguientes instrucciones. El recall en las dos clases es [0.8654, 0.9765].</p>
-<div id="0d663068" class="cell" data-execution_count="22">
+<div id="ece1d678" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ingenuo <span class="op">=</span> GaussianBayes(naive<span class="op">=</span><span class="va">True</span>).fit(T, y_t)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hy_ingenuo <span class="op">=</span> ingenuo.predict(V)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> recall_score(y_v, hy_ingenuo, average<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Comparando el rendimiento de los dos hiperparámetros se observa cual de los dos modelos obtiene el mejor rendimiento. Con el fin de completar el ejemplo se describe calcular el rendimiento en <span class="math inline">\(\mathcal G\)</span> del algoritmo con la matriz de covarianza completa. Este algoritmo tiene un rendimiento de [0.8298, 0.9403] que se puede calcular con el siguiente código.</p>
-<div id="c519670b" class="cell" data-execution_count="24">
+<div id="f905f78d" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>gaussian <span class="op">=</span> GaussianBayes().fit(np.concatenate((T, V)),</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                               np.concatenate((y_t, y_v)))</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>hy_gaussian <span class="op">=</span> gaussian.predict(G)</span>
@@ -769,13 +797,13 @@ R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \math
 </tbody>
 </table>
 <p>Se utiliza el mismo problema para medir el rendimiento del hiperparámetro del clasificador Gausiano. Lo primero es seleccionar el conjunto de prueba (<span class="math inline">\(\mathcal G\)</span>) que se realiza con el siguiente código.</p>
-<div id="587d0b4c" class="cell" data-execution_count="25">
+<div id="cac6941f" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(D, y,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,  </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La validación cruzada con k-iteraciones se puede realizar con la clase <code>KFold</code> de la siguiente manera. La primera línea crear una variable para guardar el rendimiento. En la segunda línea se inicializa el procedimiento indicando que los datos sean tomados al azar. Después se realiza el ciclo con las <span class="math inline">\(k\)</span> iteraciones, para cada iteración se genera un índice <code>ts</code> que indica cuales son los datos del conjunto de entrenamiento y <code>vs</code> que corresponde a los datos de validación. Se estiman los parámetros usando <code>ts</code> tal y como se observa en la cuarta línea. Habiendo estimado los parámetros se predicen los datos del conjunto de validación (5 línea), se mide el recall en todas las clases y se guarda en la lista <code>perf.</code> Al final se calcula la media de los <span class="math inline">\(k\)</span> rendimientos medidos, teniendo un valor de [0.8903, 0.9174].</p>
-<div id="6590b9dd" class="cell" data-execution_count="27">
+<div id="56cea068" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> []</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>kfold <span class="op">=</span> KFold(shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ts, vs <span class="kw">in</span> kfold.split(T):</span>
@@ -786,7 +814,7 @@ R^2(\mathcal Y, \mathcal{\hat Y}) = 1 - \frac{\sum_{i=1}^N (\mathcal Y_i - \math
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> np.mean(perf, axis<span class="op">=</span><span class="dv">0</span>)    </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Un procedimiento equivalente se realiza para el caso del clasificador Bayesiano Ingenuo tal y como se muestra a continuación. La media del recall en las clases es [0.8260, 0.9785] Se observa que el clasificador Bayesiano con la matriz de covarianza tiene un mejor rendimiento en validación que el clasificador Bayesiano Ingenuo. El último paso sería calcular el rendimiento en el conjunto <span class="math inline">\(\mathcal G\)</span> lo cual fue presentado anteriormente.</p>
-<div id="ed955afb" class="cell" data-execution_count="28">
+<div id="ff3d9355" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> []</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>kfold <span class="op">=</span> KFold(shuffle<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ts, vs <span class="kw">in</span> kfold.split(T):</span>
@@ -844,18 +872,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -887,7 +904,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -939,6 +978,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -973,7 +1030,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -988,38 +1049,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1028,8 +1079,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1252,12 +1310,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/03Parametricos.html" class="pagination-link">
+      <a href="../capitulos/03Parametricos.html" class="pagination-link" aria-label="Métodos Paramétricos">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/05ReduccionDim.html" class="pagination-link">
+      <a href="../capitulos/05ReduccionDim.html" class="pagination-link" aria-label="Reducción de Dimensión">
         <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1353,7 +1411,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a>Esta manera ayuda a entender el caso cuando se tiene una clase con muchos ejemplos, e.g., $\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),$ en ese caso se ve que la exactitud está dominado por el primer término, i.e., $\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).$ En este caso, la manera trivial de optimizar la exactitud es crear un clasificador que siempre regrese la clase $p.$ Por esta razón la exactitud no es una medida adecuada cuando las clases son desbalanciadas, es buena medida cuando $\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$</span>
 <span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### Recall {#sec-recall}</span></span>
+<span id="cb23-96"><a href="#cb23-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### Coberturba (*Recall*) {#sec-recall}</span></span>
 <span id="cb23-97"><a href="#cb23-97" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-98"><a href="#cb23-98" aria-hidden="true" tabindex="-1"></a>La siguiente medida de rendimiento es el recall, este calcula la probabilidad de ejemplos correctamente clasificados como $p$ dados todos los ejemplos que se tienen de la clase $p$. En base a esta ecuación se puede observar que un algoritmo trivial con el máximo valor de recall solamente tiene que predecir como clase $p$ todos los elementos. </span>
 <span id="cb23-99"><a href="#cb23-99" aria-hidden="true" tabindex="-1"></a></span>
@@ -1773,7 +1831,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-565"><a href="#cb23-565" aria-hidden="true" tabindex="-1"></a>    perf.append(_)</span>
 <span id="cb23-566"><a href="#cb23-566" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> np.mean(perf, axis<span class="op">=</span><span class="dv">0</span>)  </span>
 <span id="cb23-567"><a href="#cb23-567" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

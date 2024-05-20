@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 9&nbsp; Discriminantes Lineales</title>
+<title>Aprendizaje Computacional – 9&nbsp; Discriminantes Lineales</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -96,14 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -113,13 +141,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/09Lineal.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,13 +156,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -153,8 +181,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -237,9 +265,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -267,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -343,7 +371,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="sec-discriminante" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="sec-discriminante"><span class="header-section-number">9.3</span> Función Discriminante</h2>
-<p>En la unidad de Teoría de Decisión Bayesiana (<a href="02Teoria_Decision.html" class="quarto-xref"><span>Capítulo&nbsp;2</span></a>) se describió el uso de <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> para clasificar, se mencionó que la clase a la que pertenece <span class="math inline">\(\mathcal X=x\)</span> es la de mayor probabilidad, es decir,</p>
+<p>En la unidad de Teoría de Decisión Bayesiana (<a href="02Teoria_Decision.html" class="quarto-xref"><span>Capítulo 2</span></a>) se describió el uso de <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> para clasificar, se mencionó que la clase a la que pertenece <span class="math inline">\(\mathcal X=x\)</span> es la de mayor probabilidad, es decir,</p>
 <p><span class="math display">\[
 C(x) = \textsf{argmax}_{k=1}^K \mathbb P(\mathcal Y=k \mid \mathcal X=x),
 \]</span></p>
@@ -373,7 +401,7 @@ C(\mathbf x) = \textsf{sign}(g_1(\mathbf x) - g_2(\mathbf x)),
 <p>donde se concluye que para el caso binario es necesario definir solamente una función discriminante y que los parámetros de esta función son <span class="math inline">\(\mathbf w\)</span> y <span class="math inline">\(\mathbf w_0.\)</span> Otra característica que se ilustra es que el parámetro <span class="math inline">\(\mathbf w_0\)</span> está actuando como un umbral, es decir, <span class="math inline">\(\mathbf x\)</span> corresponde a la clase positiva si <span class="math inline">\(\mathbf w \cdot \mathbf x &gt; -w_0.\)</span></p>
 <p>En la <a href="#fig-lineal-discriminante" class="quarto-xref">Figura&nbsp;<span>9.1</span></a> se observa el plano (linea) que divide las dos clases, este plano representa los puntos que satisfacen <span class="math inline">\(g(\mathbf x)=0\)</span>.</p>
 <div id="cell-fig-lineal-discriminante" class="cell" data-execution_count="3">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="dv">20</span>],</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span><span class="dv">0</span>,</span>
@@ -397,12 +425,12 @@ C(\mathbf x) = \textsf{sign}(g_1(\mathbf x) - g_2(\mathbf x)),
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-discriminante" class="quarto-figure quarto-figure-center anchored" height="428" width="582">
+<div id="fig-lineal-discriminante" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-discriminante-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-discriminante-output-1.png" width="582" height="428" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-discriminante-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-discriminante-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.1: Función Discriminante
 </figcaption>
 </figure>
@@ -414,7 +442,7 @@ Figura&nbsp;9.1: Función Discriminante
 <h3 data-number="9.3.2" class="anchored" data-anchor-id="sec-geometria-funcion-decision"><span class="header-section-number">9.3.2</span> Geometría de la Función de Decisión</h3>
 <p>La función discriminante <span class="math inline">\(g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0\)</span> tiene una representación gráfica. Lo primero que se observa es que los parámetros <span class="math inline">\(\mathbf w\)</span> viven en al mismo espacio que los datos, tal y como se puede observar en la <a href="#fig-lineal-repr-df" class="quarto-xref">Figura&nbsp;<span>9.2</span></a>.</p>
 <div id="cell-fig-lineal-repr-df" class="cell" data-execution_count="4">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(x1<span class="op">=</span>w_1, x2<span class="op">=</span>w_2, clase<span class="op">=</span><span class="st">'w'</span>)])</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat((df, _), axis<span class="op">=</span><span class="dv">0</span>)</span>
@@ -423,12 +451,12 @@ Figura&nbsp;9.1: Función Discriminante
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-repr-df" class="quarto-figure quarto-figure-center anchored" height="428" width="582">
+<div id="fig-lineal-repr-df" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-repr-df-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-repr-df-output-1.png" width="582" height="428" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-repr-df-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-repr-df-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.2: Función discriminante
 </figcaption>
 </figure>
@@ -443,9 +471,9 @@ g(\mathbf x_a) &amp;= g(\mathbf x_b) \\
 \mathbf w \cdot (\mathbf x_a -  \mathbf x_b) &amp;= 0,
 \end{split}
 \]</span></p>
-<p>donde el vector <span class="math inline">\(\mathbf x_a - \mathbf x_b\)</span> es paralelo a <span class="math inline">\(g(\mathbf x)=0\)</span>, ortogonal a <span class="math inline">\(\mathbf w\)</span> y el sub-espacio generado por <span class="math inline">\(\mathbf w \cdot (\mathbf x_a - \mathbf x_b) = 0\)</span> pasa por el origen.</p>
+<p>donde el vector <span class="math inline">\(\mathbf x_a -  \mathbf x_b\)</span> es paralelo a <span class="math inline">\(g(\mathbf x)=0\)</span>, ortogonal a <span class="math inline">\(\mathbf w\)</span> y el sub-espacio generado por <span class="math inline">\(\mathbf w \cdot (\mathbf x_a -  \mathbf x_b) = 0\)</span> pasa por el origen.</p>
 <div id="cell-fig-lineal-ort" class="cell" data-execution_count="5">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.array([w_1, w_2]) <span class="op">/</span> np.linalg.norm([w_1, w_2])</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>len_0 <span class="op">=</span> w_0 <span class="op">/</span> np.linalg.norm([w_1, w_2])</span>
@@ -462,12 +490,12 @@ g(\mathbf x_a) &amp;= g(\mathbf x_b) \\
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-ort" class="quarto-figure quarto-figure-center anchored" height="428" width="582">
+<div id="fig-lineal-ort" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-ort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-ort-output-1.png" width="582" height="428" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-ort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-ort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.3: Visualizando que <span class="math inline">\(\mathbf w\)</span> y la función discriminante son ortogonales.
 </figcaption>
 </figure>
@@ -477,7 +505,7 @@ Figura&nbsp;9.3: Visualizando que <span class="math inline">\(\mathbf w\)</span>
 <p>En la figura anterior, <span class="math inline">\(\ell \mathbf w\)</span> corresponde al vector <span class="math inline">\(\mathbf w\)</span> multiplicado por un factor <span class="math inline">\(\ell\)</span> de tal manera que intersecte con <span class="math inline">\(g(\mathbf x)=0.\)</span> El factor <span class="math inline">\(\ell\)</span> corresponde a la distancia que hay del origen a <span class="math inline">\(g(\mathbf x)=0\)</span> la cual es <span class="math inline">\(\ell = \frac{w_0}{\mid\mid \mathbf w \mid\mid}.\)</span> El signo de <span class="math inline">\(\ell\)</span> indica el lado donde se encuentra el origen con respecto a <span class="math inline">\(g(\mathbf x)=0.\)</span></p>
 <p>La <a href="#fig-lineal-dist-hyp" class="quarto-xref">Figura&nbsp;<span>9.4</span></a> muestra en rojo la línea generada por <span class="math inline">\(\mathbf w \cdot \mathbf x=0\)</span>, la función discriminante <span class="math inline">\(g(\mathbf x)=0\)</span> (negro), la línea puntuada muestra la distancia entre ellas, que corresponde a <span class="math inline">\(\ell\)</span> y el vector <span class="math inline">\(\mathbf w\)</span>. Visualmente, se observa que <span class="math inline">\(\mathbf w\)</span> está pegado a la línea roja, pero esto solo es un efecto de la resolución y estos elementos no se tocan.</p>
 <div id="cell-fig-lineal-dist-hyp" class="cell" data-execution_count="6">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>vec <span class="op">=</span> np.array([<span class="dv">1</span>, (<span class="op">-</span> w_1 <span class="op">*</span> <span class="dv">1</span>) <span class="op">/</span> w_2])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>x_max <span class="op">=</span> T[:, <span class="dv">0</span>].<span class="bu">max</span>()</span>
@@ -504,12 +532,12 @@ Figura&nbsp;9.3: Visualizando que <span class="math inline">\(\mathbf w\)</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-dist-hyp" class="quarto-figure quarto-figure-center anchored" height="427" width="582">
+<div id="fig-lineal-dist-hyp" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-dist-hyp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-dist-hyp-output-1.png" width="582" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-dist-hyp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-dist-hyp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.4: Geometría de la función discriminante.
 </figcaption>
 </figure>
@@ -534,7 +562,7 @@ g(\mathbf x) &amp;= g(\mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mi
 \tag{9.1}\]</span></span></p>
 <p>Como ya se había visto la distancia del origen al hiperplano está dada por <span class="math inline">\(\ell_0 = \frac{w_0}{\mid\mid\mathbf w \mid\mid}\)</span> y de cualquier elemento por <span class="math inline">\(\ell_{\mathbf x} = \frac{g(\mathbf x)}{\mid\mid\mathbf w \mid\mid}.\)</span> La <a href="#fig-lineal-dis-ele" class="quarto-xref">Figura&nbsp;<span>9.5</span></a> muestra la <span class="math inline">\(\ell_{\mathbf x}\)</span> en un elemento de la clase negativa. Se puede observar el punto <span class="math inline">\(\mathbf x_g\)</span> que es donde intersecta la línea con el hiperplano.</p>
 <div id="cell-fig-lineal-dis-ele" class="cell" data-execution_count="7">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>point <span class="op">=</span> X_2[X_2.argmax(axis<span class="op">=</span><span class="dv">0</span>)[<span class="dv">1</span>]]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>point_g <span class="op">=</span> vec <span class="op">*</span>  np.dot(point, vec) <span class="op">/</span> np.dot(vec, vec) <span class="op">-</span> len_0 <span class="op">*</span> w</span>
@@ -550,12 +578,12 @@ g(\mathbf x) &amp;= g(\mathbf x_g + \ell \frac{\mathbf w}{\mid\mid \mathbf w \mi
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-dis-ele" class="quarto-figure quarto-figure-center anchored" height="428" width="582">
+<div id="fig-lineal-dis-ele" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-dis-ele-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-dis-ele-output-1.png" width="582" height="428" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-dis-ele-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-dis-ele-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.5: Distancia (<span class="math inline">\(\ell_{\mathbf x} = x\)</span>) de un elemento al hiperplano
 </figcaption>
 </figure>
@@ -573,7 +601,7 @@ Figura&nbsp;9.5: Distancia (<span class="math inline">\(\ell_{\mathbf x} = x\)</
 <p>Una manera de tratar un problema de <span class="math inline">\(K\)</span> clases, es convertirlo en <span class="math inline">\(K\)</span> problemas de clasificación binarios, a este procedimiento se le conoce como <em>Uno vs Resto</em>. La idea es entrenar <span class="math inline">\(K\)</span> clasificadores donde la clase positiva corresponde a cada una de las clases y la clase de negativa se construye con todas las clases que no son la clase positiva en esa iteración. Finalmente, la clase predicha corresponde al clasificador que tiene el valor máximo en la función discriminante.</p>
 <p>La <a href="#fig-lineal-multiclase" class="quarto-xref">Figura&nbsp;<span>9.6</span></a> ejemplifica el comportamiento de esta técnica en un problema de tres clases y utilizando un clasificador con discrimitante lineal. En la figura se muestra las tres funciones discriminantes <span class="math inline">\(g_k(\mathbf x)=0\)</span>, los parámetros escalados de esas funciones, i.e., <span class="math inline">\(\ell_k \mathbf w_k\)</span> y los datos. Por ejemplo se observa como la clase <span class="math inline">\(1\)</span> mostrada en azul, se separa de las otras dos clases con la función <span class="math inline">\(g_1(\mathbf x)=0\)</span>, es decir, para <span class="math inline">\(g_1(\mathbf x)=0\)</span> la clase positiva es <span class="math inline">\(1\)</span> y la clase negativa corresponde a los elementos que corresponde a las clases <span class="math inline">\(2\)</span> y <span class="math inline">\(3.\)</span></p>
 <div id="cell-fig-lineal-multiclase" class="cell" data-execution_count="8">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="dv">20</span>],</span>
@@ -609,12 +637,12 @@ Figura&nbsp;9.5: Distancia (<span class="math inline">\(\ell_{\mathbf x} = x\)</
 <span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-multiclase" class="quarto-figure quarto-figure-center anchored" height="427" width="582">
+<div id="fig-lineal-multiclase" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-multiclase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-multiclase-output-1.png" width="582" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-multiclase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-multiclase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.6: Problema multiclase
 </figcaption>
 </figure>
@@ -660,7 +688,7 @@ f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdo
 \]</span></p>
 <p>donde <span class="math inline">\(\xi\)</span> captura los errores empezando por aquellos elementos que están del lado correcto del hiperplano, pero que no son mayores a <span class="math inline">\(1\)</span>. La <a href="#fig-lineal-xi" class="quarto-xref">Figura&nbsp;<span>9.7</span></a> muestra un ejemplo donde existe un elemento negativo que se encuentra entre la función de decisión y el hiperplano de margen, i.e., el que corresponde a la restricción <span class="math inline">\(\mathbf w \cdot \mathbf x_i + w_0 \geq 1\)</span>, es decir ese punto tiene un <span class="math inline">\(0 &lt; \xi &lt; 1.\)</span> También se observa un elemento positivo que está muy cerca a <span class="math inline">\(g(\mathbf x) = 1.\)</span></p>
 <div id="cell-fig-lineal-xi" class="cell" data-execution_count="9">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="dv">20</span>], cov<span class="op">=</span>[[<span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>], [<span class="op">-</span><span class="dv">3</span>, <span class="dv">8</span>]], seed<span class="op">=</span>seed).rvs(<span class="dv">1000</span>)</span>
@@ -688,12 +716,12 @@ f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdo
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-xi" class="quarto-figure quarto-figure-center anchored" height="427" width="582">
+<div id="fig-lineal-xi" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-xi-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-xi-output-1.png" width="582" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-xi-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-xi-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.7: Hiperplanos
 </figcaption>
 </figure>
@@ -706,7 +734,7 @@ f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdo
 \]</span></p>
 <p>Se observa que el parámetro <span class="math inline">\(C\)</span> controla la penalización que se hace a los elementos que se encuentran en el lado incorrecto del hiperplano o dentro del margen. La <a href="#fig-lineal-hip-c" class="quarto-xref">Figura&nbsp;<span>9.8</span></a> muestra el hiperplano generado utilizando <span class="math inline">\(C=1\)</span> y <span class="math inline">\(C=0.01.\)</span> Se observa como el elemento que está correctamente clasificado en <span class="math inline">\(C=1\)</span> pasa al lado incorrecto del hiperplano, ademas se ve como la función de decisión rota cuando el valor cambia.</p>
 <div id="cell-fig-lineal-hip-c" class="cell" data-execution_count="10">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, (C, legend) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>([<span class="dv">1</span>, <span class="fl">0.01</span>], [<span class="va">False</span>, <span class="va">True</span>])):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>     linear <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>, C<span class="op">=</span>C).fit(T, y_t)</span>
@@ -734,12 +762,12 @@ f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdo
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> plt.tight_layout()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-hip-c" class="quarto-figure quarto-figure-center anchored" height="470" width="663">
+<div id="fig-lineal-hip-c" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-hip-c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-hip-c-output-1.png" width="663" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-hip-c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-hip-c-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.8: Hiperplanos para diferentes valores de <span class="math inline">\(C\)</span>. Se observa que en <span class="math inline">\(C=0.01\)</span> se clasifica incorrectamente un elemento positivo.
 </figcaption>
 </figure>
@@ -765,9 +793,9 @@ f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_
 f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j K(\mathbf x_i, \mathbf x_j).
 \]</span></p>
 <p>La función discriminante está dada por <span class="math inline">\(g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x),\)</span> donde aquellos elementos donde <span class="math inline">\(\alpha \neq 0\)</span> se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.</p>
-<p>La <a href="#fig-lineal-kernel" class="quarto-xref">Figura&nbsp;<span>9.9</span></a> muestra los datos del iris (proyectados con Análisis de Componentes Principales <a href="05ReduccionDim.html#sec-pca" class="quarto-xref"><span>Sección&nbsp;5.5</span></a>), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase <span class="math inline">\(0\)</span>, después se observan las clases <span class="math inline">\(1\)</span> y del lado derecho las clases <span class="math inline">\(2\)</span>. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases <span class="math inline">\(1\)</span> y <span class="math inline">\(2\)</span> que corresponden a las que no son linealmente separables.</p>
+<p>La <a href="#fig-lineal-kernel" class="quarto-xref">Figura&nbsp;<span>9.9</span></a> muestra los datos del iris (proyectados con Análisis de Componentes Principales <a href="05ReduccionDim.html#sec-pca" class="quarto-xref"><span>Sección 5.5</span></a>), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase <span class="math inline">\(0\)</span>, después se observan las clases <span class="math inline">\(1\)</span> y del lado derecho las clases <span class="math inline">\(2\)</span>. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases <span class="math inline">\(1\)</span> y <span class="math inline">\(2\)</span> que corresponden a las que no son linealmente separables.</p>
 <div id="cell-fig-lineal-kernel" class="cell" data-execution_count="11">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>linear <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>, C<span class="op">=</span><span class="dv">10</span>).fit(X, y)</span>
@@ -791,12 +819,12 @@ f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> plt.tight_layout()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-kernel" class="quarto-figure quarto-figure-center anchored" height="471" width="662">
+<div id="fig-lineal-kernel" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-kernel-output-1.png" width="662" height="471" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-kernel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.9: Visualización de los vectores de soporte usando PCA.
 </figcaption>
 </figure>
@@ -807,7 +835,7 @@ Figura&nbsp;9.9: Visualización de los vectores de soporte usando PCA.
 </section>
 <section id="sec-regresion-logistica" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="sec-regresion-logistica"><span class="header-section-number">9.5</span> Regresión Logística</h2>
-<p>En clasificación binaria (<a href="#sec-binaria" class="quarto-xref"><span>Sección&nbsp;9.3.1</span></a>) se describió que la función discriminante se puede definir como la resta, i.e., <span class="math inline">\(g_1(\mathbf x) - g_2(\mathbf x);\)</span> equivalentemente se pudo haber seleccionado la división (<span class="math inline">\(\frac{g_1(\mathbf x)}{g_2(\mathbf x)}\)</span>) para generar la función discriminante o el logaritmo de la división, i.e., <span class="math inline">\(\log \frac{g_1(\mathbf x)}{g_2(\mathbf x)}.\)</span> Esta última ecuación en el caso de <span class="math inline">\(g_i(\mathbf x)=\mathbb P(\mathcal Y=i \mid \mathcal X=\mathbf x)\)</span> corresponde a la función <span class="math inline">\(\textsf{logit}\)</span>, tal y como se muestra a continuación.</p>
+<p>En clasificación binaria (<a href="#sec-binaria" class="quarto-xref"><span>Sección 9.3.1</span></a>) se describió que la función discriminante se puede definir como la resta, i.e., <span class="math inline">\(g_1(\mathbf x) - g_2(\mathbf x);\)</span> equivalentemente se pudo haber seleccionado la división (<span class="math inline">\(\frac{g_1(\mathbf x)}{g_2(\mathbf x)}\)</span>) para generar la función discriminante o el logaritmo de la división, i.e., <span class="math inline">\(\log \frac{g_1(\mathbf x)}{g_2(\mathbf x)}.\)</span> Esta última ecuación en el caso de <span class="math inline">\(g_i(\mathbf x)=\mathbb P(\mathcal Y=i \mid \mathcal X=\mathbf x)\)</span> corresponde a la función <span class="math inline">\(\textsf{logit}\)</span>, tal y como se muestra a continuación.</p>
 <p><span class="math display">\[
 \begin{split}
 \log \frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)} &amp;= \frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{1 - \mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}\\
@@ -835,7 +863,7 @@ Figura&nbsp;9.9: Visualización de los vectores de soporte usando PCA.
 <p>En el caso de regresión logística, se asume que <span class="math inline">\(\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) = \mathbf w \cdot \mathbf x + w_0\)</span> y se realiza ninguna asunción sobre la distribución que tienen los datos. Equivalentemente, se puede asumir que <span class="math inline">\(\log\frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)} = \mathbf w \cdot \mathbf x + w_0^0,\)</span> realizando algunas substituciones se puede ver que <span class="math inline">\(w_0 = w_0^0 + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.\)</span></p>
 <section id="optimización-1" class="level3" data-number="9.5.1">
 <h3 data-number="9.5.1" class="anchored" data-anchor-id="optimización-1"><span class="header-section-number">9.5.1</span> Optimización</h3>
-<p>Se puede asumir que <span class="math inline">\(\mathcal Y \mid \mathcal X\)</span> sigue una distribución Bernoulli en el caso de dos clases, entonces el logaritmo de la verosimilitud (<a href="03Parametricos.html#sec-verosimilitud" class="quarto-xref"><span>Sección&nbsp;3.3.1</span></a>) quedaría como:</p>
+<p>Se puede asumir que <span class="math inline">\(\mathcal Y \mid \mathcal X\)</span> sigue una distribución Bernoulli en el caso de dos clases, entonces el logaritmo de la verosimilitud (<a href="03Parametricos.html#sec-verosimilitud" class="quarto-xref"><span>Sección 3.3.1</span></a>) quedaría como:</p>
 <p><span class="math display">\[
 \ell(\mathbf w, w_0 \mid \mathcal D) = \prod_{(\mathbf x, y) \in \mathcal D} (C(\mathbf x))^{y} (1 -  C(\mathbf x)))^{1-y},
 \]</span></p>
@@ -844,15 +872,15 @@ Figura&nbsp;9.9: Visualización de los vectores de soporte usando PCA.
 <p><span id="eq-lineal-entropia-cruzada"><span class="math display">\[
 E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \log C(x) + (1-y) \log (1 -  C(x)).
 \tag{9.2}\]</span></span></p>
-<p>Es importante notar que la ecuación anterior corresponde a Entropía cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección&nbsp;4.2.7</span></a>), donde <span class="math inline">\(y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))\)</span> y <span class="math inline">\(C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)\)</span> y los términos <span class="math inline">\(1-y\)</span> y <span class="math inline">\(1-C(\mathbf x)\)</span> corresponde a la otra clase.</p>
-<p>Otra característica de <span class="math inline">\(E(\mathbf w, w_0 \mid \mathcal D)\)</span> es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización (<a href="10Optimizacion.html" class="quarto-xref"><span>Capítulo&nbsp;10</span></a>) para encontrar los parámetros <span class="math inline">\(\mathbf w\)</span> y <span class="math inline">\(w_0\)</span>.</p>
+<p>Es importante notar que la ecuación anterior corresponde a Entropía cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>), donde <span class="math inline">\(y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))\)</span> y <span class="math inline">\(C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)\)</span> y los términos <span class="math inline">\(1-y\)</span> y <span class="math inline">\(1-C(\mathbf x)\)</span> corresponde a la otra clase.</p>
+<p>Otra característica de <span class="math inline">\(E(\mathbf w, w_0 \mid \mathcal D)\)</span> es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización (<a href="10Optimizacion.html" class="quarto-xref"><span>Capítulo 10</span></a>) para encontrar los parámetros <span class="math inline">\(\mathbf w\)</span> y <span class="math inline">\(w_0\)</span>.</p>
 </section>
 </section>
 <section id="comparación" class="level2" data-number="9.6">
 <h2 data-number="9.6" class="anchored" data-anchor-id="comparación"><span class="header-section-number">9.6</span> Comparación</h2>
 <p>Es momento de comparar el comportamiento de los dos métodos de discriminantes lineales visto en la unidad, estos son, Máquinas de Soporte Vectorial (MSV) y Regresión Logística (RL). La <a href="#fig-lineal-comparacion" class="quarto-xref">Figura&nbsp;<span>9.10</span></a> muestra el hiperplano generado por MSV y RL, además se puede observar los valores de los pesos <span class="math inline">\(\mathbf w\)</span> para cada uno de los algoritmos.</p>
 <div id="cell-fig-lineal-comparacion" class="cell" data-execution_count="12">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>svm <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T, y_t)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> LogisticRegression().fit(T, y_t)</span>
@@ -876,12 +904,12 @@ E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \lo
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-lineal-comparacion" class="quarto-figure quarto-figure-center anchored" height="427" width="582">
+<div id="fig-lineal-comparacion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lineal-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="09Lineal_files/figure-html/fig-lineal-comparacion-output-1.png" width="582" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-lineal-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineal-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;9.10: Comparación de dos métodos lineales
 </figcaption>
 </figure>
@@ -903,14 +931,14 @@ Figura&nbsp;9.10: Comparación de dos métodos lineales
 </div>
 <p>La <a href="#tbl-lineal-rendimiento" class="quarto-xref">Tabla&nbsp;<span>9.1</span></a> muestra el rendimiento (en medidas macro) de estos algoritmos en el conjunto de prueba, se puede observar que estos algoritmos tienen rendimientos diferentes para esta selección del conjunto de entrenamiento y prueba. También en esta ocasión la regresión lineal es la que presenta el mejor rendimiento. Aunque es importante aclarar que este rendimiento es resultado del proceso aleatorio de selección del conjunto de entrenamiento y prueba.</p>
 <div class="cell" data-execution_count="15">
-<div id="tbl-lineal-rendimiento" class="cell anchored" data-execution_count="15">
+<div id="tbl-lineal-rendimiento" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-lineal-rendimiento-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lineal-rendimiento-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;9.1: Rendimiento de clasificadores lineales
 </figcaption>
 <div aria-describedby="tbl-lineal-rendimiento-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="15">
-<table class="table table-sm table-striped small">
+<table class="do-not-create-environment cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th>Clasificador</th>
@@ -987,18 +1015,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1030,7 +1047,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -1082,6 +1121,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1116,7 +1173,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1131,38 +1192,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1171,8 +1222,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1395,12 +1453,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/08Arboles.html" class="pagination-link">
+      <a href="../capitulos/08Arboles.html" class="pagination-link" aria-label="Árboles de Decisión">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/10Optimizacion.html" class="pagination-link">
+      <a href="../capitulos/10Optimizacion.html" class="pagination-link" aria-label="Optimización">
         <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Optimización</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -2008,7 +2066,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb14-631"><a href="#cb14-631" aria-hidden="true" tabindex="-1"></a>  cdn <span class="op">+=</span> <span class="ss">f'</span><span class="sc">{</span>system<span class="sc">}</span><span class="ss">|'</span> <span class="op">+</span> <span class="st">'|'</span>.join(perfs) <span class="op">+</span> <span class="st">'|</span><span class="ch">\n</span><span class="st">'</span></span>
 <span id="cb14-632"><a href="#cb14-632" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="ss">f'</span><span class="sc">{</span>headers<span class="sc">}</span><span class="ch">\n</span><span class="sc">{</span>linea<span class="sc">}</span><span class="ch">\n</span><span class="sc">{</span>cdn<span class="sc">}</span><span class="ss">'</span>)  </span>
 <span id="cb14-633"><a href="#cb14-633" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

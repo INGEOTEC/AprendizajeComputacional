@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 5&nbsp; Reducción de Dimensión</title>
+<title>Aprendizaje Computacional – 5&nbsp; Reducción de Dimensión</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -101,7 +101,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -116,14 +116,42 @@ div.csl-indent {
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -133,13 +161,13 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/05ReduccionDim.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -148,13 +176,13 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -173,8 +201,8 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -257,9 +285,9 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -287,7 +315,7 @@ div.csl-indent {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -375,7 +403,7 @@ div.csl-indent {
 </section>
 <section id="sec-seleccion-var-estadistica" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="sec-seleccion-var-estadistica"><span class="header-section-number">5.2</span> Selección de Variables basadas en Estadísticas</h2>
-<p>Se utilizará el problema sintético (<a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección&nbsp;2.3.1</span></a>) de tres clases para describir el algoritmo de selección. Este problema está definido por tres Distribuciones Gausianas donde se generan tres muestras de 1000 elementos cada una utilizando el siguiente código.</p>
+<p>Se utilizará el problema sintético (<a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a>) de tres clases para describir el algoritmo de selección. Este problema está definido por tres Distribuciones Gausianas donde se generan tres muestras de 1000 elementos cada una utilizando el siguiente código.</p>
 <div id="d8e19828" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
@@ -400,7 +428,7 @@ div.csl-indent {
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> norm.rvs(loc<span class="op">=</span><span class="dv">2</span>, scale<span class="op">=</span><span class="dv">3</span>, size<span class="op">=</span><span class="dv">3000</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.concatenate((D, np.atleast_2d(N).T), axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El objetivo es encontrar la variable que no está relacionada con la salida. Una manera de realizar esto es imaginar que si la media en las diferentes variables es la misma en todas las clases entonces esa variable no contribuye a discriminar la clase. En <a href="03Parametricos.html#sec-estimacion-parametros" class="quarto-xref"><span>Sección&nbsp;3.5.2</span></a> se presentó el procedimiento para obtener las medias que definen <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span> para cada clase. El siguiente código muestra el procedimiento para calcular las medías que son <span class="math inline">\(\mu_1=[5.0494, 4.9877, 1.9303]^\intercal\)</span>, <span class="math inline">\(\mu_2=[1.5272, -1.5190, 2.0854]^\intercal\)</span> y <span class="math inline">\(\mu_3=[12.5464, -3.4195, 1.8253]^\intercal\)</span>.</p>
+<p>El objetivo es encontrar la variable que no está relacionada con la salida. Una manera de realizar esto es imaginar que si la media en las diferentes variables es la misma en todas las clases entonces esa variable no contribuye a discriminar la clase. En <a href="03Parametricos.html#sec-estimacion-parametros" class="quarto-xref"><span>Sección 3.5.2</span></a> se presentó el procedimiento para obtener las medias que definen <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span> para cada clase. El siguiente código muestra el procedimiento para calcular las medías que son <span class="math inline">\(\mu_1=[5.0494, 4.9877, 1.9303]^\intercal\)</span>, <span class="math inline">\(\mu_2=[1.5272, -1.5190, 2.0854]^\intercal\)</span> y <span class="math inline">\(\mu_3=[12.5464, -3.4195, 1.8253]^\intercal\)</span>.</p>
 <div id="5c4cba34" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> np.unique(y)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mus <span class="op">=</span> [np.mean(D[y<span class="op">==</span>i], axis<span class="op">=</span><span class="dv">0</span>) <span class="cf">for</span> i <span class="kw">in</span> labels]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -434,7 +462,7 @@ div.csl-indent {
 <p>En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento <span class="math inline">\(\mathcal T = \{(x_i, y_i)\},\)</span> con una función <span class="math inline">\(L\)</span> que mide el rendimiento del algoritmo de aprendizaje <span class="math inline">\(\mathcal H.\)</span> La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización del algoritmo se pueden realizar de diferentes maneras, una es mediante la división de <span class="math inline">\(\mathcal X\)</span> en dos conjuntos: entrenamiento y validación; y la segunda manera corresponde a utilizar <span class="math inline">\(k\)</span>-iteraciones de validación cruzada.</p>
 <p>Suponga un conjunto <span class="math inline">\(\pi \subseteq \{1, 2, \ldots, d\}\)</span> de tal manera que <span class="math inline">\(\mathcal T_\pi\)</span> solamente cuenta con las variables identificadas en el conjunto <span class="math inline">\(\pi\)</span>. Utilizando está notación el algoritmo se puede definir de la siguiente manera. Inicialmente $^0 = $, en el siguiente paso <span class="math inline">\(\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)\)</span>, donde <span class="math inline">\(\mathcal P\)</span> representa el rendimiento del algoritmo <span class="math inline">\(\mathcal H\)</span> en el subconjunto <span class="math inline">\({\pi \cup i}\)</span> usando la función de rendimiento <span class="math inline">\(L\)</span>. Este proceso continua si <span class="math inline">\(\mathcal P^{j+1} &gt; \mathcal P^j\)</span> donde <span class="math inline">\(\mathcal P^0 = 0\)</span>.</p>
 <p>Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.</p>
-<p>Ilustrando estos pasos en el conjunto de Breast Cancer Wisconsin (<a href="03Parametricos.html#sec-ejemplo-breast-cancer-wisconsin" class="quarto-xref"><span>Sección&nbsp;3.7</span></a>).</p>
+<p>Ilustrando estos pasos en el conjunto de Breast Cancer Wisconsin (<a href="03Parametricos.html#sec-ejemplo-breast-cancer-wisconsin" class="quarto-xref"><span>Sección 3.7</span></a>).</p>
 <div id="a2fe4b68" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(D, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -456,19 +484,19 @@ div.csl-indent {
 </div>
 <p>La <a href="#fig-rendimiento-sel" class="quarto-xref">Figura&nbsp;<span>5.1</span></a> muestra el rendimiento de las 30 variables, se observa como una gran parte de las variables proporcionan un rendimiento superior al <span class="math inline">\(0.8\)</span> y la variable que tiene el mejor rendimiento es la que corresponde al índice <span class="math inline">\(27\)</span> y valor <span class="math inline">\(0.9037\)</span>.</p>
 <div id="cell-fig-rendimiento-sel" class="cell" data-execution_count="17">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="bu">list</span>(<span class="bu">range</span>(<span class="bu">len</span>(perf))), y<span class="op">=</span>perf)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Variable'</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.ylabel(<span class="st">'Macro-Recall'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-rendimiento-sel" class="quarto-figure quarto-figure-center anchored" height="427" width="585">
+<div id="fig-rendimiento-sel" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rendimiento-sel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="05ReduccionDim_files/figure-html/fig-rendimiento-sel-output-1.png" width="585" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-rendimiento-sel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rendimiento-sel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.1: Rendimiento de las variables en la primera iteración del selección hacia adelante
 </figcaption>
 </figure>
@@ -494,12 +522,12 @@ Figura&nbsp;5.1: Rendimiento de las variables en la primera iteración del selec
 </section>
 <section id="sec-seleccion-por-modelo" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="sec-seleccion-por-modelo"><span class="header-section-number">5.4</span> Selección mediante Modelo</h2>
-<p>Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Para ejemplificar esto se utilizará el problema de Diabetes que fue utilizado en la <a href="03Parametricos.html#sec-diabetes" class="quarto-xref"><span>Sección&nbsp;3.9.1</span></a>. Los datos se obtienen con la siguiente instrucción, adicionalmente se normalizan las características para tener una media <span class="math inline">\(0\)</span> y desviación estándar <span class="math inline">\(1\)</span>.</p>
+<p>Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Para ejemplificar esto se utilizará el problema de Diabetes que fue utilizado en la <a href="03Parametricos.html#sec-diabetes" class="quarto-xref"><span>Sección 3.9.1</span></a>. Los datos se obtienen con la siguiente instrucción, adicionalmente se normalizan las características para tener una media <span class="math inline">\(0\)</span> y desviación estándar <span class="math inline">\(1\)</span>.</p>
 <div id="3263b793" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(D)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El siguiente paso se estiman los parámetros de una regresión lineal (<a href="03Parametricos.html#sec-regresion-ols" class="quarto-xref"><span>Sección&nbsp;3.9</span></a>), también se muestran los valores de los primeros tres coeficientes de la regresión. Se puede observar que el valor absoluto de estos coeficientes está en diferentes rangos, el primer coeficiente es cercano a cero, el segundo está alrededor de 10 y el tercero es superior a 20. Considerando que los datos están normalizados, entonces el valor absoluto indica el efecto que tiene esa variable en el resultado final, en estos tres datos es puede concluir que el tercer coeficiente tiene una mayor contribución que los otros dos coeficientes.</p>
+<p>El siguiente paso se estiman los parámetros de una regresión lineal (<a href="03Parametricos.html#sec-regresion-ols" class="quarto-xref"><span>Sección 3.9</span></a>), también se muestran los valores de los primeros tres coeficientes de la regresión. Se puede observar que el valor absoluto de estos coeficientes está en diferentes rangos, el primer coeficiente es cercano a cero, el segundo está alrededor de 10 y el tercero es superior a 20. Considerando que los datos están normalizados, entonces el valor absoluto indica el efecto que tiene esa variable en el resultado final, en estos tres datos es puede concluir que el tercer coeficiente tiene una mayor contribución que los otros dos coeficientes.</p>
 <div id="2985a3c7" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>reg <span class="op">=</span> LinearRegression().fit(D, y)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>reg.coef_[:<span class="dv">3</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -516,7 +544,7 @@ Figura&nbsp;5.1: Rendimiento de las variables en la primera iteración del selec
 <pre><code>array([2, 4, 5, 8])</code></pre>
 </div>
 </div>
-<p>Habiendo descrito el procedimiento para seleccionar aquellas características más importantes, es necesario encontrar cuál es el número de características que producen el mejor rendimiento. Para realizar esto, se realiza <span class="math inline">\(k\)</span>-iteraciones de validación cruzada (<a href="04Rendimiento.html#sec-kfold-cross-validation" class="quarto-xref"><span>Sección&nbsp;4.4.1</span></a>), donde se varía el número de características y en cada caso se mide el rendimiento utilizando la medida <span class="math inline">\(R^2\)</span> (<a href="04Rendimiento.html#sec-rendimiento-regresion" class="quarto-xref"><span>Sección&nbsp;4.3</span></a>).</p>
+<p>Habiendo descrito el procedimiento para seleccionar aquellas características más importantes, es necesario encontrar cuál es el número de características que producen el mejor rendimiento. Para realizar esto, se realiza <span class="math inline">\(k\)</span>-iteraciones de validación cruzada (<a href="04Rendimiento.html#sec-kfold-cross-validation" class="quarto-xref"><span>Sección 4.4.1</span></a>), donde se varía el número de características y en cada caso se mide el rendimiento utilizando la medida <span class="math inline">\(R^2\)</span> (<a href="04Rendimiento.html#sec-rendimiento-regresion" class="quarto-xref"><span>Sección 4.3</span></a>).</p>
 <div id="3cbbb59d" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>folds <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> KFold(shuffle<span class="op">=</span><span class="va">True</span>).split(D, y)]</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> []</span>
@@ -533,18 +561,18 @@ Figura&nbsp;5.1: Rendimiento de las variables en la primera iteración del selec
 </div>
 <p>La <a href="#fig-seleccion-por-modelo" class="quarto-xref">Figura&nbsp;<span>5.2</span></a> muestra el rendimiento (<span class="math inline">\(R^2\)</span>) para cada modelo generado, empezando cuando se usan las <span class="math inline">\(2\)</span> características más importantes y terminando con el modelo que tiene todas las características. En la figura se puede observar que el rendimiento mejora considerablemente de <span class="math inline">\(2\)</span> a <span class="math inline">\(3\)</span> características, este sigue mejorando y llega un punto donde incluir más características tiene un impacto negativo en el rendimiento.</p>
 <div id="cell-fig-seleccion-por-modelo" class="cell" data-execution_count="24">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(perf)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.relplot(df, x<span class="op">=</span><span class="st">'numero'</span>, y<span class="op">=</span><span class="st">'r2'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-seleccion-por-modelo" class="quarto-figure quarto-figure-center anchored" height="471" width="471">
+<div id="fig-seleccion-por-modelo" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-seleccion-por-modelo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="05ReduccionDim_files/figure-html/fig-seleccion-por-modelo-output-1.png" width="471" height="471" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-seleccion-por-modelo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seleccion-por-modelo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.2: Rendimiento variando el número de características
 </figcaption>
 </figure>
@@ -573,7 +601,7 @@ Figura&nbsp;5.2: Rendimiento variando el número de características
 </div>
 <p>El siguiente código se utiliza para visualizar los datos. El resultado se muestra en la <a href="#fig-pca-iris" class="quarto-xref">Figura&nbsp;<span>5.3</span></a>, donde se observa en diferente color cada una de las clases.</p>
 <div id="cell-fig-pca-iris" class="cell" data-execution_count="27">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span>c)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> (x, y), c <span class="kw">in</span> <span class="bu">zip</span>(Xn, y)])</span>
@@ -585,12 +613,12 @@ Figura&nbsp;5.2: Rendimiento variando el número de características
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-pca-iris" class="quarto-figure quarto-figure-center anchored" height="432" width="485">
+<div id="fig-pca-iris" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pca-iris-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="05ReduccionDim_files/figure-html/fig-pca-iris-output-1.png" width="485" height="432" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-pca-iris-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pca-iris-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.3: Proyección mediante PCA del problema del Iris
 </figcaption>
 </figure>
@@ -608,7 +636,7 @@ Figura&nbsp;5.3: Proyección mediante PCA del problema del Iris
 </div>
 <p>Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la <a href="#fig-pca-digits" class="quarto-xref">Figura&nbsp;<span>5.4</span></a> presenta la proyección del conjunto de Dígitos utilizando PCA. Como se puede observar en la figura, esta proyección no da una separación clara entre grupos, aunque si se puede identificar una estructura, donde algunos números se encuentran en la perifería de la figura.</p>
 <div id="cell-fig-pca-digits" class="cell" data-execution_count="29">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>pal <span class="op">=</span> mpl.cm.Paired</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
@@ -624,12 +652,12 @@ Figura&nbsp;5.3: Proyección mediante PCA del problema del Iris
 <span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-pca-digits" class="quarto-figure quarto-figure-center anchored" height="432" width="473">
+<div id="fig-pca-digits" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pca-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="05ReduccionDim_files/figure-html/fig-pca-digits-output-1.png" width="473" height="432" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-pca-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pca-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.4: Proyección mediante PCA del problema de Dígitos
 </figcaption>
 </figure>
@@ -649,7 +677,7 @@ Figura&nbsp;5.4: Proyección mediante PCA del problema de Dígitos
 </div>
 <p>La <a href="#fig-umap-digits-k" class="quarto-xref">Figura&nbsp;<span>5.5</span></a> muestra las diferentes visualizaciones cuando el número de vecinos de cambia en UMAP, se puede observar como para <span class="math inline">\(K=2\)</span> la visualización no muestra ninguna estructura, pero partiendo de <span class="math inline">\(K=4\)</span> se puede visualizar grupos que corresponden a los diferentes dígitos.</p>
 <div id="cell-fig-umap-digits-k" class="cell" data-execution_count="31">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>,</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
@@ -660,12 +688,12 @@ Figura&nbsp;5.4: Proyección mediante PCA del problema de Dígitos
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)            </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-umap-digits-k" class="quarto-figure quarto-figure-center anchored" height="432" width="1923">
+<div id="fig-umap-digits-k" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-umap-digits-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="05ReduccionDim_files/figure-html/fig-umap-digits-k-output-1.png" width="1923" height="432" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-umap-digits-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-umap-digits-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.5: Proyección mediante UMAP del problema de Dígitos variando el número de vecinos
 </figcaption>
 </figure>
@@ -674,7 +702,7 @@ Figura&nbsp;5.5: Proyección mediante UMAP del problema de Dígitos variando el 
 </div>
 <p>Con el objetivo de mostrar con mayor detalle los grupos encontrados, la <a href="#fig-umap-digits-k8" class="quarto-xref">Figura&nbsp;<span>5.6</span></a> muestra la visualización de <span class="math inline">\(K=8\)</span> en ella se puede observar como los ejemplos se agrupan de acuerdo al dígito que representan, también se puede ver la similitud entre los diferentes dígitos y como algunos ejemplos están muy cerca a un grupo al cual no pertenecen.</p>
 <div id="cell-fig-umap-digits-k8" class="cell" data-execution_count="32">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df[df.K<span class="op">==</span><span class="dv">8</span>], kind<span class="op">=</span><span class="st">'scatter'</span>, </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
@@ -685,12 +713,12 @@ Figura&nbsp;5.5: Proyección mediante UMAP del problema de Dígitos variando el 
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-umap-digits-k8" class="quarto-figure quarto-figure-center anchored" height="432" width="477">
+<div id="fig-umap-digits-k8" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-umap-digits-k8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="05ReduccionDim_files/figure-html/fig-umap-digits-k8-output-1.png" width="477" height="432" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-umap-digits-k8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-umap-digits-k8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.6: Proyección mediante UMAP del problema de dígitos con ocho vecinos
 </figcaption>
 </figure>
@@ -744,18 +772,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -787,7 +804,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -839,6 +878,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -873,7 +930,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -888,38 +949,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -928,8 +979,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1152,12 +1210,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/04Rendimiento.html" class="pagination-link">
+      <a href="../capitulos/04Rendimiento.html" class="pagination-link" aria-label="Rendimiento">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Rendimiento</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/06Agrupamiento.html" class="pagination-link">
+      <a href="../capitulos/06Agrupamiento.html" class="pagination-link" aria-label="Agrupamiento">
         <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1599,7 +1657,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-499"><a href="#cb28-499" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb28-500"><a href="#cb28-500" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb28-501"><a href="#cb28-501" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

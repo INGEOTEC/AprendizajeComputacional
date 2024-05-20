@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 2&nbsp; Teoría de Decisión Bayesiana</title>
+<title>Aprendizaje Computacional – 2&nbsp; Teoría de Decisión Bayesiana</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../capitulos/03Parametricos.html" rel="next">
-<link href="../capitulos/01Tipos.html" rel="prev">
+<link href="../capitulos/01Introduccion.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -96,14 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -113,13 +141,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/02Teoria_Decision.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,13 +156,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -153,8 +181,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -237,9 +265,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -267,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -337,7 +365,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="sec-teoria-decision-probabilidad" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-teoria-decision-probabilidad"><span class="header-section-number">2.2</span> Probabilidad</h2>
-<p>En <a href="01Tipos.html#sec-aprendizaje-supervisado" class="quarto-xref"><span>Sección&nbsp;1.4</span></a> se describió que el punto de inicio de aprendizaje supervisado es el conjunto <span class="math inline">\(\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}\)</span>, donde <span class="math inline">\(x_i \in \mathbb R^d\)</span> corresponde a la <span class="math inline">\(i\)</span>-ésima entrada y <span class="math inline">\(y_i\)</span> es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar una método que capture de la relación entre <span class="math inline">\(x\)</span> y <span class="math inline">\(y\)</span>.</p>
+<p>En <a href="01Introduccion.html#sec-aprendizaje-supervisado" class="quarto-xref"><span>Sección 1.4</span></a> se describió que el punto de inicio de aprendizaje supervisado es el conjunto <span class="math inline">\(\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}\)</span>, donde <span class="math inline">\(x_i \in \mathbb R^d\)</span> corresponde a la <span class="math inline">\(i\)</span>-ésima entrada y <span class="math inline">\(y_i\)</span> es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar una método que capture de la relación entre <span class="math inline">\(x\)</span> y <span class="math inline">\(y\)</span>.</p>
 <p>Se pueden tratar la variables <span class="math inline">\(x\)</span> y <span class="math inline">\(y\)</span> de <span class="math inline">\(\mathcal D\)</span> como dos variables aleatorías <span class="math inline">\(\mathcal X\)</span> y <span class="math inline">\(\mathcal Y\)</span>, respectivamente; en este dominio el problema de identificar la respuesta (<span class="math inline">\(\mathcal Y\)</span>) dada la entrada (<span class="math inline">\(\mathcal X\)</span>) se puede describir como encontrar la probabilidad de observar <span class="math inline">\(\mathcal Y\)</span> habiendo visto <span class="math inline">\(\mathcal X\)</span>, es decir, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span>.</p>
 <section id="ejemplos" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="ejemplos"><span class="header-section-number">2.2.1</span> Ejemplos</h3>
@@ -392,12 +420,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)     </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-gaussian-3classes" class="quarto-figure quarto-figure-center anchored" height="470" width="536">
+<div id="fig-gaussian-3classes" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gaussian-3classes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="02Teoria_Decision_files/figure-html/fig-gaussian-3classes-output-1.png" width="536" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;2.1: Muestras de 3 distribuciones gausianas
 </figcaption>
 </figure>
@@ -408,7 +436,7 @@ Figura&nbsp;2.1: Muestras de 3 distribuciones gausianas
 </section>
 <section id="sec-prediccion-normal" class="level3" data-number="2.3.2">
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="sec-prediccion-normal"><span class="header-section-number">2.3.2</span> Predicción</h3>
-<p>En esta sección se describe el primer ejemplo del paso 4 de la metodología general (ver <a href="01Tipos.html#sec-metodologia-general" class="quarto-xref"><span>Sección&nbsp;1.2</span></a>) de los algoritmos de aprendizaje supervisado. El algoritmo <span class="math inline">\(f\)</span> mencionado en la metodología corresponde en este ejemplo al uso del Teorema de Bayes y las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code> y los correspondientes priors.</p>
+<p>En esta sección se describe el primer ejemplo del paso 4 de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.2</span></a>) de los algoritmos de aprendizaje supervisado. El algoritmo <span class="math inline">\(f\)</span> mencionado en la metodología corresponde en este ejemplo al uso del Teorema de Bayes y las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code> y los correspondientes priors.</p>
 <p>Quitando la evidencia del Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) se observa que <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span>. En el ejemplo creado se observa que <span class="math inline">\(\mathbb P(\mathcal Y=1) = \frac{1000}{3000},\)</span> las otras probabilidades a priori tienen el mismo valor, es decir, <span class="math inline">\(\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.\)</span></p>
 <p>La verosimilitud está definida en las variables <code>p1</code>, <code>p2</code> y <code>p3</code>; en particular en la función <code>pdf</code>, es decir, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> es <code>p1.pdf</code>, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=2)\)</span> corresponde a <code>p2.pdf</code> y equivalentemente <code>p3.pdf</code> es la verosimilitud cuando <span class="math inline">\(\mathcal Y=3.\)</span></p>
 <p>Utilizando esta información <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> se calcula de la siguiente manera.</p>
@@ -445,12 +473,12 @@ Figura&nbsp;2.1: Muestras de 3 distribuciones gausianas
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data<span class="op">=</span>df_error, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'error'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-gaussian-3classes-error" class="quarto-figure quarto-figure-center anchored" height="470" width="548">
+<div id="fig-gaussian-3classes-error" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gaussian-3classes-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="02Teoria_Decision_files/figure-html/fig-gaussian-3classes-error-output-1.png" width="548" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;2.2: Error en problema de clasificación
 </figcaption>
 </figure>
@@ -463,16 +491,16 @@ Figura&nbsp;2.2: Error en problema de clasificación
 <section id="sec-error-clasificacion" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="sec-error-clasificacion"><span class="header-section-number">2.4</span> Error de Clasificación</h2>
 <p>Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la <a href="#fig-gaussian-3classes" class="quarto-xref">Figura&nbsp;<span>2.1</span></a>.</p>
-<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Tipos.html#sec-metodologia-general" class="quarto-xref"><span>Sección&nbsp;1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0107\)</span>.</p>
+<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0107\)</span>.</p>
 <div id="3a061be5" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> prediccion).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code>. Una manera de conocer esta variabilidad de la medición del error es calculando su <strong>error estándar</strong>.</p>
-<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección&nbsp;A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estandar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección&nbsp;A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0019\)</span>.</p>
+<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estandar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0019\)</span>.</p>
 <div id="1d2721e4" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Aunque el error estándar del parámetro <span class="math inline">\(p\)</span> de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección&nbsp;A.2</span></a>) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar <span class="math inline">\(B\)</span> muestras de <span class="math inline">\(N\)</span> elementos con remplazo de los datos. En este caso los datos son los errores entre <code>y</code> y <code>prediccion</code>. Siguiendo el método presentado en la <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección&nbsp;A.2</span></a> se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las <span class="math inline">\(B\)</span> repeticiones las cuales consisten en calcular <span class="math inline">\(\hat p\)</span>. Se puede observar como se usa directamente <code>y</code> y <code>prediccion</code> junto con el arreglo de índices <code>s</code> para calcular la media del error. Finalmente se calcula la desviación estándar de <code>B</code> (tercera línea) y ese valor corresponde al error estándar.</p>
+<p>Aunque el error estándar del parámetro <span class="math inline">\(p\)</span> de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar <span class="math inline">\(B\)</span> muestras de <span class="math inline">\(N\)</span> elementos con remplazo de los datos. En este caso los datos son los errores entre <code>y</code> y <code>prediccion</code>. Siguiendo el método presentado en la <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a> se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las <span class="math inline">\(B\)</span> repeticiones las cuales consisten en calcular <span class="math inline">\(\hat p\)</span>. Se puede observar como se usa directamente <code>y</code> y <code>prediccion</code> junto con el arreglo de índices <code>s</code> para calcular la media del error. Finalmente se calcula la desviación estándar de <code>B</code> (tercera línea) y ese valor corresponde al error estándar.</p>
 <div id="fb5618af" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [(y[s] <span class="op">!=</span> prediccion[s]).mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
@@ -484,12 +512,12 @@ Figura&nbsp;2.2: Error en problema de clasificación
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-gaussian-3classes-distribucion" class="quarto-figure quarto-figure-center anchored" height="470" width="471">
+<div id="fig-gaussian-3classes-distribucion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gaussian-3classes-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="02Teoria_Decision_files/figure-html/fig-gaussian-3classes-distribucion-output-1.png" width="471" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;2.3: Distribución del error de clasificación
 </figcaption>
 </figure>
@@ -581,18 +609,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -624,7 +641,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -676,6 +715,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -710,7 +767,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -725,38 +786,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -765,8 +816,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -989,12 +1047,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/01Tipos.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span>
+      <a href="../capitulos/01Introduccion.html" class="pagination-link" aria-label="Introducción">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/03Parametricos.html" class="pagination-link">
+      <a href="../capitulos/03Parametricos.html" class="pagination-link" aria-label="Métodos Paramétricos">
         <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1301,7 +1359,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb15-336"><a href="#cb15-336" aria-hidden="true" tabindex="-1"></a>Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.</span>
 <span id="cb15-337"><a href="#cb15-337" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-338"><a href="#cb15-338" aria-hidden="true" tabindex="-1"></a>En esta circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.$</span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

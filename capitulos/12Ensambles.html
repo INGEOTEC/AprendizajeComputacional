@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 12&nbsp; Ensambles</title>
+<title>Aprendizaje Computacional – 12&nbsp; Ensambles</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -96,14 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -113,13 +141,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/12Ensambles.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ensambles</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,13 +156,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -153,8 +181,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -237,9 +265,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -267,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -342,7 +370,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>La descripción de ensambles se empieza observando el siguiente comportamiento. Suponiendo que se cuenta con <span class="math inline">\(M\)</span> algoritmos de clasificación binaria cada uno tiene una exactitud de <span class="math inline">\(p=0.51\)</span> y estos son completamente independientes. El proceso de clasificar un elemento corresponde a preguntar la clase a los <span class="math inline">\(M\)</span> clasificadores y la clase que se recibe mayor votos es la clase seleccionada, esta votación se comporta como una variable aleatoria que tiene una distribución Binomial. Suponiendo con la clase del elemento es <span class="math inline">\(1\)</span>, en esta condición la función cumulativa de distribución (<span class="math inline">\(\textsf{cdf}\)</span>) con parámetros <span class="math inline">\(k=\lfloor \frac{M}{2}\rfloor,\)</span> <span class="math inline">\(n=M\)</span> y <span class="math inline">\(p=0.51\)</span> indica seleccionar la clase <span class="math inline">\(0\)</span> y <span class="math inline">\(1 - \textsf{cdf}\)</span> corresponde a la probabilidad de seleccionar la clase <span class="math inline">\(1\)</span>.</p>
 <p>La <a href="#fig-ensambles-acc-bin" class="quarto-xref">Figura&nbsp;<span>12.1</span></a> muestra como cambia la exactitud, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene una exactitud de <span class="math inline">\(p=0.51,\)</span> se puede observar que cuando <span class="math inline">\(M=501\)</span> el rendimiento es <span class="math inline">\(0.673\)</span> y con <span class="math inline">\(9,999\)</span> clasificadores se tiene un valor de <span class="math inline">\(0.977.\)</span></p>
 <div id="cell-fig-ensambles-acc-bin" class="cell" data-execution_count="3">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="bu">range</span>(<span class="dv">3</span>, <span class="dv">10002</span>, <span class="dv">2</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cdf_c <span class="op">=</span> [<span class="dv">1</span> <span class="op">-</span> binom.cdf(np.floor(n <span class="op">/</span> <span class="dv">2</span>), n, <span class="fl">0.51</span>) <span class="cf">for</span> n <span class="kw">in</span> N]</span>
@@ -350,12 +378,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'ensamble'</span>, y<span class="op">=</span><span class="st">'accuracy'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-ensambles-acc-bin" class="quarto-figure quarto-figure-center anchored" width="471" height="471">
+<div id="fig-ensambles-acc-bin" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ensambles-acc-bin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="12Ensambles_files/figure-html/fig-ensambles-acc-bin-output-1.png" width="471" height="471" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-ensambles-acc-bin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ensambles-acc-bin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 </figcaption>
 </figure>
@@ -382,13 +410,13 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 &amp;=\frac{1}{M} \sum_{i=1}^M \underbrace{\mathbb E[\hat y^i]}_{\mathbb E[\hat y]} =\frac{1}{M} M \mathbb E[\hat y] =\mathbb E[\hat y]
 \end{split}
 \]</span></p>
-<p>Por otro lado la varianza del promedio (i.e., <span class="math inline">\(\mathbb V(\bar y)\)</span>) está dada por <span class="math inline">\(\mathbb V(\bar y)=\frac{1}{M} \mathbb V(\hat y)\)</span>, que se deriva siguiendo los pasos del error estándar de la media (<a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección&nbsp;A.1.1</span></a>).</p>
+<p>Por otro lado la varianza del promedio (i.e., <span class="math inline">\(\mathbb V(\bar y)\)</span>) está dada por <span class="math inline">\(\mathbb V(\bar y)=\frac{1}{M} \mathbb V(\hat y)\)</span>, que se deriva siguiendo los pasos del error estándar de la media (<a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>).</p>
 <p>Esto quiere decir que si se tienen <span class="math inline">\(M\)</span> regresores independientes, entonces el error cuadrado de su promedio es menor que el error de cada regresor individual, esto es porque su la varianza se reduce tal y como se mostró.</p>
 <p>Tanto en el caso de clasificación como en el caso del error cuadrado, es poco probable contar con clasificadores y regresores que sean completamente independientes, entonces sus predicciones van a estar relacionadas en algún grado y no se podrá llegar a las reducciones obtenidas en el procedimiento presentado.</p>
 </section>
 <section id="bagging" class="level2" data-number="12.4">
 <h2 data-number="12.4" class="anchored" data-anchor-id="bagging"><span class="header-section-number">12.4</span> Bagging</h2>
-<p>Siguiendo con la idea de combinar <span class="math inline">\(M\)</span> instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa la técnica de Bootstrap (<a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección&nbsp;A.2</span></a>) para generar <span class="math inline">\(M\)</span> instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.</p>
+<p>Siguiendo con la idea de combinar <span class="math inline">\(M\)</span> instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa la técnica de Bootstrap (<a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para generar <span class="math inline">\(M\)</span> instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.</p>
 <section id="ejemplo-dígitos" class="level3" data-number="12.4.1">
 <h3 data-number="12.4.1" class="anchored" data-anchor-id="ejemplo-dígitos"><span class="header-section-number">12.4.1</span> Ejemplo: Dígitos</h3>
 <p>Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento (<span class="math inline">\(\mathcal T\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>) con las siguientes instrucciones.</p>
@@ -398,8 +426,8 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (<a href="09Lineal.html#sec-svm" class="quarto-xref"><span>Sección&nbsp;9.4</span></a>) y Árboles de Decisión (<a href="08Arboles.html" class="quarto-xref"><span>Capítulo&nbsp;8</span></a>). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging.</p>
-<p>La siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el macro-recall (<a href="04Rendimiento.html#sec-macro" class="quarto-xref"><span>Sección&nbsp;4.2.6</span></a>). El rendimiento se presenta en una tabla para facilitar la comparación.</p>
+<p>Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (<a href="09Lineal.html#sec-svm" class="quarto-xref"><span>Sección 9.4</span></a>) y Árboles de Decisión (<a href="08Arboles.html" class="quarto-xref"><span>Capítulo 8</span></a>). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging.</p>
+<p>La siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el macro-recall (<a href="04Rendimiento.html#sec-macro" class="quarto-xref"><span>Sección 4.2.6</span></a>). El rendimiento se presenta en una tabla para facilitar la comparación.</p>
 <div id="3d1a7598" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>svc <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T, y_t)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>svc_recall <span class="op">=</span> recall_score(y_g, svc.predict(G),</span>
@@ -412,7 +440,7 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tree_recall <span class="op">=</span> recall_score(y_g, tree.predict(G),</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                           average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la media (<a href="14Estadistica.html#sec-bootstrap-ejemplo" class="quarto-xref"><span>Sección&nbsp;A.2.1</span></a>); el siguiente código genera las muestras, en particular el ensamble sería de <span class="math inline">\(M=11\)</span> elementos.</p>
+<p>El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la media (<a href="14Estadistica.html#sec-bootstrap-ejemplo" class="quarto-xref"><span>Sección A.2.1</span></a>); el siguiente código genera las muestras, en particular el ensamble sería de <span class="math inline">\(M=11\)</span> elementos.</p>
 <div id="0f2f363f" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.random.randint(T.shape[<span class="dv">0</span>],</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">11</span>, T.shape[<span class="dv">0</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -457,14 +485,14 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <p>Finalmente, la <a href="#tbl-ensambles-perf-cl" class="quarto-xref">Tabla&nbsp;<span>12.1</span></a> muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma.</p>
 <p>Comparando los diferentes rendimientos, se puede observar que no existe mucha diferencia en rendimiento en las M.S.V Lineal y que la mayor mejora se presentó en los Árboles de Decisión. Este comportamiento es esperado dado que para que Bagging funciones adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo.</p>
 <div class="cell" data-execution_count="12">
-<div id="tbl-ensambles-perf-cl" class="cell anchored" data-execution_count="12">
+<div id="tbl-ensambles-perf-cl" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-ensambles-perf-cl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ensambles-perf-cl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 </figcaption>
 <div aria-describedby="tbl-ensambles-perf-cl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="12">
-<table class="table table-sm table-striped small">
+<table class="do-not-create-environment cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th></th>
@@ -540,14 +568,14 @@ Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 </div>
 <p>La <a href="#tbl-ensambles-perf-reg" class="quarto-xref">Tabla&nbsp;<span>12.2</span></a> muestra el rendimiento de los algoritmos de regresión utilizados, al igual que en el caso de clasificación, la M.S.V. no se ve beneficiada con el uso de Bagging. Por otro lado los Árboles de Decisión tienen un incremento en rendimiento considerable al usar Bagging.</p>
 <div class="cell" data-execution_count="19">
-<div id="tbl-ensambles-perf-reg" class="cell anchored" data-execution_count="19">
+<div id="tbl-ensambles-perf-reg" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-ensambles-perf-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ensambles-perf-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;12.2: Rendimiento (MAPE) de bagging y estimadores base.
 </figcaption>
 <div aria-describedby="tbl-ensambles-perf-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="19">
-<table class="table table-sm table-striped small">
+<table class="do-not-create-environment cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th></th>
@@ -575,7 +603,7 @@ Tabla&nbsp;12.2: Rendimiento (MAPE) de bagging y estimadores base.
 </div>
 <p>Hasta este momento los ensambles han sido de <span class="math inline">\(M=11\)</span> elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La <a href="#fig-ensamble-variacion" class="quarto-xref">Figura&nbsp;<span>12.2</span></a> muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia <span class="math inline">\(M=2,\ldots,500.\)</span> Se observa que alrededor que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor de <span class="math inline">\(M=100.\)</span> Finalmente se ve que el rendimiento es estable cuando <span class="math inline">\(M&gt;200.\)</span></p>
 <div id="cell-fig-ensamble-variacion" class="cell" data-execution_count="20">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.random.randint(T.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, T.shape[<span class="dv">0</span>]))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>tree_ins <span class="op">=</span> [DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T[b], y_t[b]) <span class="cf">for</span> b <span class="kw">in</span> B]</span>
@@ -589,12 +617,12 @@ Tabla&nbsp;12.2: Rendimiento (MAPE) de bagging y estimadores base.
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'ensamble'</span>, y<span class="op">=</span><span class="st">'error'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-ensamble-variacion" class="quarto-figure quarto-figure-center anchored" width="471" height="470">
+<div id="fig-ensamble-variacion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ensamble-variacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="12Ensambles_files/figure-html/fig-ensamble-variacion-output-1.png" width="471" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-ensamble-variacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ensamble-variacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;12.2: Variación del rendimiento con respecto al tamaño del ensamble (<span class="math inline">\(M\)</span>).
 </figcaption>
 </figure>
@@ -614,7 +642,7 @@ Figura&nbsp;12.2: Variación del rendimiento con respecto al tamaño del ensambl
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>T1, V, y_t1, y_v <span class="op">=</span> train_test_split(T, y_t,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                                    test_size<span class="op">=</span><span class="fl">0.3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Para este ejemplo se usará como regresores bases el algoritmo de Vecinos Cercanos (<a href="07NoParametricos.html#sec-regresion" class="quarto-xref"><span>Sección&nbsp;7.7</span></a>) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación (<span class="math inline">\(\mathcal V\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>), esto se observa en la segunda y tercera línea del siguiente código.</p>
+<p>Para este ejemplo se usará como regresores bases el algoritmo de Vecinos Cercanos (<a href="07NoParametricos.html#sec-regresion" class="quarto-xref"><span>Sección 7.7</span></a>) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación (<span class="math inline">\(\mathcal V\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>), esto se observa en la segunda y tercera línea del siguiente código.</p>
 <div id="35cb5bbc" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [KNeighborsRegressor(n_neighbors<span class="op">=</span>n).fit(T1, y_t1)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">7</span>, <span class="dv">9</span>]]</span>
@@ -629,7 +657,7 @@ Figura&nbsp;12.2: Variación del rendimiento con respecto al tamaño del ensambl
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  mape_test.append(mape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>teniendo los siguientes valores <span class="math inline">\(0.3725\)</span> y <span class="math inline">\(0.3704\)</span>, respectivamente.</p>
-<p>Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una Máquina de Soporte Vectorial (<a href="09Lineal.html#sec-svm" class="quarto-xref"><span>Sección&nbsp;9.4</span></a>) con kernel polinomial de grado <span class="math inline">\(2\)</span>. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba.</p>
+<p>Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una Máquina de Soporte Vectorial (<a href="09Lineal.html#sec-svm" class="quarto-xref"><span>Sección 9.4</span></a>) con kernel polinomial de grado <span class="math inline">\(2\)</span>. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba.</p>
 <div id="3025e9ed" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>stacking <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>).fit(V_stack, y_v)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> stacking.predict(np.vstack(G_stack))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -685,18 +713,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -728,7 +745,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -780,6 +819,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -814,7 +871,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -829,38 +890,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -869,8 +920,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1093,12 +1151,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/11RedesNeuronales.html" class="pagination-link">
+      <a href="../capitulos/11RedesNeuronales.html" class="pagination-link" aria-label="Redes Neuronales">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/13Comparacion.html" class="pagination-link">
+      <a href="../capitulos/13Comparacion.html" class="pagination-link" aria-label="Comparación de Algoritmos">
         <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1473,7 +1531,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-422"><a href="#cb23-422" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-423"><a href="#cb23-423" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-424"><a href="#cb23-424" aria-hidden="true" tabindex="-1"></a>El rendimiento de este cambio es <span class="in">`{python} Markdown(f"${mape:0.4f}$")`</span> lo cual es mayor que el error obtenido por los estimadores base. </span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 10&nbsp; Optimización</title>
+<title>Aprendizaje Computacional – 10&nbsp; Optimización</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -96,14 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -113,13 +141,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/10Optimizacion.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Optimización</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,13 +156,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -153,8 +181,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -237,9 +265,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -267,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -336,7 +364,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="introducción" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="introducción"><span class="header-section-number">10.2</span> Introducción</h2>
-<p>Existen diferentes modelos de clasificación y regresión donde no es posible encontrar una solución analítica para estimar los parámetros, por ejemplo en Regresión Logística (<a href="09Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección&nbsp;9.5</span></a>). Es en este escenario donde se voltea a métodos de optimización iterativos para calcular los parámetros.</p>
+<p>Existen diferentes modelos de clasificación y regresión donde no es posible encontrar una solución analítica para estimar los parámetros, por ejemplo en Regresión Logística (<a href="09Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección 9.5</span></a>). Es en este escenario donde se voltea a métodos de optimización iterativos para calcular los parámetros.</p>
 <p>En esta unidad se describe posiblemente el método de optimización más conocido que es <strong>Descenso de Gradiente</strong>. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá como se puede calcular el gradiente utilizando un método gráfico y como este método naturalmente realiza <strong>Propagación hacia Atrás</strong>.</p>
 </section>
 <section id="sec-descenso-gradiente" class="level2" data-number="10.3">
@@ -402,7 +430,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>En la <a href="#fig-optimizacion-evolucion-desc" class="quarto-xref">Figura&nbsp;<span>10.1</span></a> se muestra el camino que siguieron los parámetros hasta llegar a los parámetros que generaron el problema. Los parámetros que generaron el problema se encuentran marcados en negro.</p>
 <div id="cell-fig-optimizacion-evolucion-desc" class="cell" data-execution_count="6">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(np.array(D), columns<span class="op">=</span>[<span class="st">'a'</span>, <span class="st">'b'</span>])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.atleast_2d(np.log(np.arange(<span class="dv">1</span>, df.shape[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span>))).T</span>
@@ -411,12 +439,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> plt.tight_layout()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-optimizacion-evolucion-desc" class="quarto-figure quarto-figure-center anchored" height="470" width="555">
+<div id="fig-optimizacion-evolucion-desc" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-evolucion-desc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="10Optimizacion_files/figure-html/fig-optimizacion-evolucion-desc-output-1.png" width="555" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-optimizacion-evolucion-desc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-evolucion-desc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;10.1: Camino de los parámetros en el proceso de optimización.
 </figcaption>
 </figure>
@@ -461,12 +489,12 @@ Figura&nbsp;10.1: Camino de los parámetros en el proceso de optimización.
 <section id="visualización" class="level3" data-number="10.4.3">
 <h3 data-number="10.4.3" class="anchored" data-anchor-id="visualización"><span class="header-section-number">10.4.3</span> Visualización</h3>
 <p>Una manera de visualizar este proceso de diferenciación automática es poniéndolo en un árbol de expresión, en la <a href="#fig-optimizacion-arbol-expresion" class="quarto-xref">Figura&nbsp;<span>10.2</span></a> se muestra la ecuación <span class="math inline">\(ax^2+bx+c\)</span>. Dentro de cada nodo se observa el valor que se tiene que guardar para cualquier valor de <span class="math inline">\(a,b,c\)</span> y <span class="math inline">\(x.\)</span></p>
-<div id="fig-optimizacion-arbol-expresion" class="quarto-figure quarto-figure-center anchored">
+<div id="fig-optimizacion-arbol-expresion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-arbol-expresion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../docs/assets/images/eval.png" class="img-fluid figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-optimizacion-arbol-expresion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-arbol-expresion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;10.2: Árbol de expresión
 </figcaption>
 </figure>
@@ -474,7 +502,7 @@ Figura&nbsp;10.2: Árbol de expresión
 </section>
 <section id="regresión-lineal" class="level3" data-number="10.4.4">
 <h3 data-number="10.4.4" class="anchored" data-anchor-id="regresión-lineal"><span class="header-section-number">10.4.4</span> Regresión Lineal</h3>
-<p>En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (<a href="#sec-regresion-lineal-manual" class="quarto-xref"><span>Sección&nbsp;10.3.1</span></a>). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es <span class="math inline">\(ax + b\)</span> la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después viene los argumentos de la función que en este caso son los valores de <span class="math inline">\(x.\)</span></p>
+<p>En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (<a href="#sec-regresion-lineal-manual" class="quarto-xref"><span>Sección 10.3.1</span></a>). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es <span class="math inline">\(ax + b\)</span> la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después viene los argumentos de la función que en este caso son los valores de <span class="math inline">\(x.\)</span></p>
 <div id="2e2bc16d" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> func(params, x):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> params</span>
@@ -506,7 +534,7 @@ Figura&nbsp;10.2: Árbol de expresión
 </section>
 <section id="sec-regresion-logistica-optimizacion" class="level2" data-number="10.5">
 <h2 data-number="10.5" class="anchored" data-anchor-id="sec-regresion-logistica-optimizacion"><span class="header-section-number">10.5</span> Regresión Logística</h2>
-<p>En esta sección, se presenta la implementación de Regresión Logística (<a href="09Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección&nbsp;9.5</span></a>) utilizando diferenciación automática.</p>
+<p>En esta sección, se presenta la implementación de Regresión Logística (<a href="09Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección 9.5</span></a>) utilizando diferenciación automática.</p>
 <p>El método se probará en los datos generados por dos normales en <span class="math inline">\(\mathbb R^2\)</span> que se generan con las siguientes instrucciones.</p>
 <div id="28505ddb" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="dv">20</span>], cov<span class="op">=</span>[[<span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>], [<span class="op">-</span><span class="dv">3</span>, <span class="dv">8</span>]]).rvs(<span class="dv">1000</span>)</span>
@@ -551,19 +579,19 @@ Figura&nbsp;10.2: Árbol de expresión
 </div>
 <p>La <a href="#fig-optimizacion-descenso-ent-x" class="quarto-xref">Figura&nbsp;<span>10.3</span></a> muestra como se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drasticamente.</p>
 <div id="cell-fig-optimizacion-descenso-ent-x" class="cell" data-execution_count="21">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'Iteración'</span>: np.arange(<span class="dv">5000</span>), <span class="st">'error'</span>: np.array(error)})</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'Iteración'</span>, y<span class="op">=</span><span class="st">'error'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> plt.tight_layout()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-optimizacion-descenso-ent-x" class="quarto-figure quarto-figure-center anchored" height="470" width="470">
+<div id="fig-optimizacion-descenso-ent-x" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-descenso-ent-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="10Optimizacion_files/figure-html/fig-optimizacion-descenso-ent-x-output-1.png" width="470" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-optimizacion-descenso-ent-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-descenso-ent-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;10.3: Descenso de Entropía Cruzada
 </figcaption>
 </figure>
@@ -572,7 +600,7 @@ Figura&nbsp;10.3: Descenso de Entropía Cruzada
 </div>
 
 <p>Optimizando los parámetros de la regresión logística utilizando el procedimiento de diferenciación automática se obtiene [3.8149, 4.4874, -0.5492].</p>
-<p>En Discriminantes Lineales (<a href="09Lineal.html" class="quarto-xref"><span>Capítulo&nbsp;9</span></a>) se presento el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción.</p>
+<p>En Discriminantes Lineales (<a href="09Lineal.html" class="quarto-xref"><span>Capítulo 9</span></a>) se presento el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción.</p>
 <div id="977fe051" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> LogisticRegression().fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -595,7 +623,7 @@ Figura&nbsp;10.3: Descenso de Entropía Cruzada
 <p>Se observa como se usa la misma función de error (<code>suma_entropia_cruzada</code>) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son [21.5859, 46.1358, -4.5738] y tiene un error <span class="math inline">\(-0.0004\)</span>.</p>
 <p>La <a href="#fig-optimizacion-comparacion" class="quarto-xref">Figura&nbsp;<span>10.4</span></a> muestra la función discriminantes obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librearía <code>sklearn</code> y el algoritmo <code>BFGS</code>. Se puede observar que el plano de <code>sklearn</code> y <code>BFGS</code> son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, <code>BFGS</code>. Por supuesto la implementaciones tiene algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros <span class="math inline">\(\mathbf w\)</span> para que tengan una longitud de <span class="math inline">\(1\)</span> se observaría que <code>sklearn</code> y <code>BFGS</code> se tocan.</p>
 <div id="cell-fig-optimizacion-comparacion" class="cell" data-execution_count="28">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> [jnp.array([lr.coef_[<span class="dv">0</span>, <span class="dv">0</span>], lr.coef_[<span class="dv">0</span>, <span class="dv">1</span>], lr.intercept_[<span class="dv">0</span>]]), params, res.x]</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> []</span>
@@ -621,12 +649,12 @@ Figura&nbsp;10.3: Descenso de Entropía Cruzada
 <span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-optimizacion-comparacion" class="quarto-figure quarto-figure-center anchored" height="427" width="582">
+<div id="fig-optimizacion-comparacion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="10Optimizacion_files/figure-html/fig-optimizacion-comparacion-output-1.png" width="582" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-optimizacion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;10.4: Comparación de modelos lineales con diferentes optimizadores
 </figcaption>
 </figure>
@@ -675,18 +703,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -718,7 +735,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -770,6 +809,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -804,7 +861,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -819,38 +880,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -859,8 +910,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1083,12 +1141,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/09Lineal.html" class="pagination-link">
+      <a href="../capitulos/09Lineal.html" class="pagination-link" aria-label="Discriminantes Lineales">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/11RedesNeuronales.html" class="pagination-link">
+      <a href="../capitulos/11RedesNeuronales.html" class="pagination-link" aria-label="Redes Neuronales">
         <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1493,7 +1551,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-454"><a href="#cb24-454" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-455"><a href="#cb24-455" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axis(<span class="st">'equal'</span>)</span>
 <span id="cb24-456"><a href="#cb24-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>  </span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

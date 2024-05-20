@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.391">
+<meta name="generator" content="quarto-1.5.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Aprendizaje Computacional - 13&nbsp; Comparación de Algoritmos</title>
+<title>Aprendizaje Computacional – 13&nbsp; Comparación de Algoritmos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -101,7 +101,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
   "keyboard-shortcut": [
     "f",
     "/",
@@ -116,14 +116,42 @@ div.csl-indent {
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -133,13 +161,13 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/13Comparacion.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -148,13 +176,13 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Aprendizaje Computacional</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Aprendizaje-Computacional.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -173,8 +201,8 @@ div.csl-indent {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Tipos.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Tipos de Aprendizaje Computacional</span></span></a>
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -257,9 +285,9 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Apéndices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -287,7 +315,7 @@ div.csl-indent {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -309,6 +337,7 @@ div.csl-indent {
   <li><a href="#método-distribución-t-de-student" id="toc-método-distribución-t-de-student" class="nav-link" data-scroll-target="#método-distribución-t-de-student"><span class="header-section-number">13.4.1</span> Método: Distribución <span class="math inline">\(t\)</span> de Student</a></li>
   <li><a href="#método-bootstrap-en-diferencias" id="toc-método-bootstrap-en-diferencias" class="nav-link" data-scroll-target="#método-bootstrap-en-diferencias"><span class="header-section-number">13.4.2</span> Método: Bootstrap en diferencias</a></li>
   </ul></li>
+  <li><a href="#compstats" id="toc-compstats" class="nav-link" data-scroll-target="#compstats"><span class="header-section-number">13.5</span> CompStats</a></li>
   </ul>
 </nav>
     </div>
@@ -337,16 +366,19 @@ div.csl-indent {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y analizar el rendimiento de algoritmos.</p>
 <section id="paquetes-usados" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">13.1</span> Paquetes usados</h2>
-<div id="6405a881" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IngeoML <span class="im">import</span> CI, SE</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm, wilcoxon</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris, load_breast_cancer</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, StratifiedKFold</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="7fe534e7" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> StatisticSamples, CI</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> performance, plot_performance</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> difference, plot_difference</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm, wilcoxon</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris, load_breast_cancer</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, StratifiedKFold</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/a6zzTtscYtU" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
@@ -361,7 +393,7 @@ div.csl-indent {
 <p>El análisis del rendimiento se inicia partiendo de que el rendimiento se puede estimar a partir del conjunto de prueba, <span class="math inline">\(\mathcal G\)</span>; el valor obtenido estima el rendimiento real, <span class="math inline">\(\theta\)</span>, el cual se considera una constante. Una manera de conocer el rango de valores donde se puede encontrar <span class="math inline">\(\theta\)</span> es generando su intervalo de confianza. El intervalo de confianza de <span class="math inline">\(\theta\)</span> está dado por <span class="math inline">\(C = (a(\mathcal G), b(\mathcal G)),\)</span> de tal manera que <span class="math inline">\(P_{\theta}(\theta \in C) \geq 1 - \alpha\)</span>. Es importante mencionar que el intervalo no mide la probabilidad de <span class="math inline">\(\theta\)</span> dado que <span class="math inline">\(\theta\)</span> es una constante, en su lugar mide de que el valor estimado esté dentro de esos límites con esa probabilidad. Por otro lado se utiliza la notación <span class="math inline">\(a(\mathcal G)\)</span> y <span class="math inline">\(b(\mathcal G)\)</span> para hacer explicito que en este caso los límites del intervalo son obtenidos utilizando el conjunto de prueba. Una manera de entender el intervalo de confianza de cualquier parámetro es suponer que si el parámetro se estima <span class="math inline">\(100\)</span> veces con el mismo procedimiento, en diferentes muestras, un intervalo del 95% de confianza dice que 95 de las veces la estimación del parámetro estará en el intervalo calculado.</p>
 <section id="método-distribución-normal" class="level3" data-number="13.3.1">
 <h3 data-number="13.3.1" class="anchored" data-anchor-id="método-distribución-normal"><span class="header-section-number">13.3.1</span> Método: Distribución Normal</h3>
-<p>Existen diferentes procedimientos para generar intervalos de confianza, uno de ellos es asumir que la estimación de <span class="math inline">\(\theta\)</span>, i.e., <span class="math inline">\(\hat \theta\)</span> se distribuye como una normal, i.e., <span class="math inline">\(\hat \theta \sim \mathcal N(\mu, \sigma^2),\)</span> donde <span class="math inline">\(\sigma=\textsf{se}=\sqrt{\mathbb V(\hat \theta)}\)</span> corresponde al error estándar (<a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección&nbsp;A.1</span></a>) de la estimación <span class="math inline">\(\hat \theta.\)</span> En estas condiciones el intervalo está dado por:</p>
+<p>Existen diferentes procedimientos para generar intervalos de confianza, uno de ellos es asumir que la estimación de <span class="math inline">\(\theta\)</span>, i.e., <span class="math inline">\(\hat \theta\)</span> se distribuye como una normal, i.e., <span class="math inline">\(\hat \theta \sim \mathcal N(\mu, \sigma^2),\)</span> donde <span class="math inline">\(\sigma=\textsf{se}=\sqrt{\mathbb V(\hat \theta)}\)</span> corresponde al error estándar (<a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) de la estimación <span class="math inline">\(\hat \theta.\)</span> En estas condiciones el intervalo está dado por:</p>
 <p><span class="math display">\[
 C = (\hat \theta - z_{\frac{\alpha}{2}}\textsf{se}, \hat \theta + z_{\frac{\alpha}{2}}\textsf{se}),
 \]</span></p>
@@ -374,7 +406,7 @@ C = (\hat \theta - z_{\frac{\alpha}{2}}\textsf{se}, \hat \theta + z_{\frac{\alph
 C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).
 \]</span></p>
 <p>Suponiendo <span class="math inline">\(N=100\)</span> y <span class="math inline">\(p=0.85\)</span> el siguiente código calcula el intervalo usando <span class="math inline">\(\alpha=0.05\)</span></p>
-<div id="5dfbbcb2" class="cell" data-execution_count="3">
+<div id="0000f347" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.85</span></span>
@@ -385,19 +417,19 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 <p>dando como resultado el siguiente intervalo, <span class="math inline">\(C = (0.78, 0.92)\)</span>.</p>
 <p>En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema del Iris.</p>
 <p>Lo primero que se realiza es cargar los datos y dividir en el conjunto de entrenamiento (<span class="math inline">\(\mathcal T\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>) como se muestra a continuación.</p>
-<div id="2d7f4ff0" class="cell" data-execution_count="4">
+<div id="17b8ab01" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">1</span>,  </span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente paso es entrenar el algoritmo y realizar las predicciones en el conjunto de prueba (<span class="math inline">\(\mathcal G\)</span>) tal y como se muestra en las siguientes instrucciones.</p>
-<div id="0a215241" class="cell" data-execution_count="5">
+<div id="812f1bef" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> GaussianNB().fit(T, y_t)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> model.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con las predicciones se estima la exactitud y se siguen los pasos para calcular el intervalo de confianza como se ilustra en el siguiente código.</p>
-<div id="3fc20a33" class="cell" data-execution_count="6">
+<div id="851fb161" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.where(y_g <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> _.mean()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> _.shape[<span class="dv">0</span>]</span>
@@ -405,7 +437,7 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 </div>
 <p>El intervalo de confianza obtenido es <span class="math inline">\(C = (0.86, 1.01)\)</span>. se puede observar que el límite superior es mayor que <span class="math inline">\(1\)</span> lo cual no es posible dado que el máximo valor del accuracy es <span class="math inline">\(1,\)</span> esto es resultado de generar el intervalo de confianza asumiendo una distribución normal.</p>
 <p>Cuando se cuenta con conjuntos de datos pequeños y además no se ha definido un conjunto de prueba, se puede obtener las predicciones del algoritmo de clasificación mediante el uso de validación cruzada usando K-fold. En el siguiente código se muestra su uso, el cambio solamente es en el procedimiento para obtener las predicciones.</p>
-<div id="97ad8c6c" class="cell" data-execution_count="7">
+<div id="f7d8b923" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
@@ -418,9 +450,9 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 </section>
 <section id="sec-bootstrap-error-estandar" class="level3" data-number="13.3.3">
 <h3 data-number="13.3.3" class="anchored" data-anchor-id="sec-bootstrap-error-estandar"><span class="header-section-number">13.3.3</span> Método: Bootstrap del error estándar</h3>
-<p>Existen ocasiones donde no es sencillo identificar el error estándar (<span class="math inline">\(\textsf{se}\)</span>) y por lo mismo no se puede calcular el intervalo de confianza. En estos casos se emplea la técnica de Bootstrap (<a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección&nbsp;A.2</span></a>) para estimar <span class="math inline">\(\mathbb V(\hat \theta).\)</span> Un ejemplo donde no es sencillo encontrar analíticamente el error estándar es en el <span class="math inline">\(recall\)</span> (<a href="04Rendimiento.html#sec-recall" class="quarto-xref"><span>Sección&nbsp;4.2.3</span></a>).</p>
+<p>Existen ocasiones donde no es sencillo identificar el error estándar (<span class="math inline">\(\textsf{se}\)</span>) y por lo mismo no se puede calcular el intervalo de confianza. En estos casos se emplea la técnica de Bootstrap (<a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para estimar <span class="math inline">\(\mathbb V(\hat \theta).\)</span> Un ejemplo donde no es sencillo encontrar analíticamente el error estándar es en el <span class="math inline">\(recall\)</span> (<a href="04Rendimiento.html#sec-recall" class="quarto-xref"><span>Sección 4.2.3</span></a>).</p>
 <p>Es más sencillo entender este método mediante un ejemplo. Usando el ejercicio de <span class="math inline">\(N=100\)</span> y <span class="math inline">\(p=0.85\)</span> y <span class="math inline">\(\alpha=0.05\)</span> descrito previamente, el siguiente código primero construye las variables aleatorias de tal manera que den <span class="math inline">\(p=0.85\)</span></p>
-<div id="60fd5914" class="cell" data-execution_count="9">
+<div id="95e75ce5" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">100</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
@@ -428,19 +460,19 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>X[:<span class="dv">85</span>] <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><code>X</code> es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener <span class="math inline">\(\hat \theta\)</span> para cada muestra, en este caso <span class="math inline">\(\hat \theta\)</span> corresponde a la media. El resultado se guarda en una lista <span class="math inline">\(B\)</span> y se repite el experimento <span class="math inline">\(500\)</span> veces.</p>
-<div id="6d44bdc0" class="cell" data-execution_count="10">
+<div id="5e35eec8" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(X.shape[<span class="dv">0</span>],</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, X.shape[<span class="dv">0</span>]))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [X[s].mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El error estándar es y el intervalo de confianza se calcula con las siguientes instrucciones</p>
-<div id="6d0101e0" class="cell" data-execution_count="11">
+<div id="77568081" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>el intervalo de confianza corresponde a <span class="math inline">\(C = (0.88, 1.02)\)</span>.</p>
 <p>Continuando con el mismo ejemplo pero ahora analizando Naive Bayes en el problema del Iris. El primer paso es obtener evaluar las predicciones que se puede observar en el siguiente código (previamente descrito.)</p>
-<div id="7c26e1a7" class="cell" data-execution_count="12">
+<div id="10fb5542" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
@@ -453,12 +485,12 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.where(y <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Realizando la selección con remplazo se obtiene el intervalo con las siguientes instrucciones</p>
-<div id="7b06a430" class="cell" data-execution_count="13">
+<div id="874aae63" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [X[s].mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>teniendo un valor de <span class="math inline">\(C = (0.92, 0.98)\)</span>.</p>
+<p>teniendo un valor de <span class="math inline">\(C = (0.92, 0.99)\)</span>.</p>
 </section>
 <section id="método-percentil" class="level3" data-number="13.3.4">
 <h3 data-number="13.3.4" class="anchored" data-anchor-id="método-percentil"><span class="header-section-number">13.3.4</span> Método: Percentil</h3>
@@ -466,12 +498,12 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 <div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span> <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (np.percentile(B, alpha <span class="op">*</span> <span class="dv">100</span>),</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>     np.percentile(B, (<span class="dv">1</span> <span class="op">-</span> alpha) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>obteniendo un intervalo de <span class="math inline">\(C = (0.92, 0.98)\)</span>.</p>
+<p>obteniendo un intervalo de <span class="math inline">\(C = (0.92, 0.99)\)</span>.</p>
 </section>
 <section id="ejemplo-macro-recall" class="level3" data-number="13.3.5">
 <h3 data-number="13.3.5" class="anchored" data-anchor-id="ejemplo-macro-recall"><span class="header-section-number">13.3.5</span> Ejemplo: macro-recall</h3>
 <p>Hasta el momento se ha usado una medida de rendimiento para la cual se puede conocer su varianza de manera analítica. Existen problemas donde esta medida no es recomendada, en el siguiente ejemplo utilizaremos macro-recall para medir el rendimiento de Naive Bayes en el problema del Iris. El primer paso es realizar las predicciones del algoritmo usando validación cruzada y hacer la muestra con reemplazo <span class="math inline">\(B\)</span>.</p>
-<div id="01f58ef3" class="cell" data-execution_count="14">
+<div id="03cfec8a" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -491,7 +523,7 @@ C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> s <span class="kw">in</span> S]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones;</p>
-<div id="b6bb262e" class="cell" data-execution_count="15">
+<div id="b8c98b7a" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> np.mean(B)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -507,24 +539,23 @@ Nota
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza están implementados en la clase <code>SE</code> y <code>CI</code> respectivamente. Las siguientes instrucciones se pueden utilizar para calcular el error estándar.</p>
-<div id="d2b91bb0" class="cell" data-execution_count="17">
+<p>El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza se pueden estimar utilizando la clase <code>StatisticSamples</code>. Las siguientes instrucciones se pueden utilizar para calcular el error estándar.</p>
+<div id="715d24f3" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                                    average<span class="op">=</span><span class="st">"macro"</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> SE(statistic<span class="op">=</span>recall)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>se(y, hy)                                </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>statistic <span class="op">=</span> StatisticSamples(statistic<span class="op">=</span>recall)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> statistic(y, hy)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>np.std(samples)                               </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>0.01723131480632186</code></pre>
+<pre><code>0.017322381817494535</code></pre>
 </div>
 </div>
 <p>Complementando el intervalo de confianza con el método de percentil se implementa en el siguiente código.</p>
-<div id="f6d59741" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                                    average<span class="op">=</span><span class="st">"macro"</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>ci <span class="op">=</span> CI(statistic<span class="op">=</span>recall)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>ci(y, hy)                                </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="4b64e651" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>CI(samples)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
-<pre><code>(0.9208529079777972, 0.9814563492063492)</code></pre>
+<pre><code>(0.9182958289698858, 0.9813722126929675)</code></pre>
 </div>
 </div>
 </div>
@@ -538,7 +569,7 @@ Nota
 <h3 data-number="13.4.1" class="anchored" data-anchor-id="método-distribución-t-de-student"><span class="header-section-number">13.4.1</span> Método: Distribución <span class="math inline">\(t\)</span> de Student</h3>
 <p>Suponiendo que se tienen las medidas de rendimiento de dos algoritmos mediante validación cruzada de K-fold, es decir, se tiene el rendimiento del primer algoritmo como <span class="math inline">\(p_i^1\)</span> y del segundo como <span class="math inline">\(p_i^2\)</span> en la <span class="math inline">\(i\)</span>-ésima instancia. Suponiendo que el rendimiento es una normal, entonces la resta, i.e., <span class="math inline">\(p_i = p_i^1 - p_i^2\)</span> también sería normal. Dado que se está comparando los algoritmos en los mismos datos, se puede utilizar la prueba <span class="math inline">\(t\)</span> de Student de muestras dependientes. La estadística de la prueba está dada por <span class="math inline">\(\frac{\sqrt{K} m}{S} \sim t_{K-1}\)</span>, donde <span class="math inline">\(m\)</span> y <span class="math inline">\(S^2\)</span> es la media varianza estimada.</p>
 <p>En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de Breast Cancer. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos.</p>
-<div id="5fd7ea9d" class="cell" data-execution_count="19">
+<div id="547736bb" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">30</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span>K,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
@@ -553,18 +584,18 @@ Nota
 <span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array(P)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como se puede observar la medida de rendimiento es macro-recall. Continuando con el procedimiento para obtener la estadística <span class="math inline">\(t_{K-1}\)</span></p>
-<div id="59158873" class="cell" data-execution_count="20">
+<div id="e5d76359" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> P[:, <span class="dv">0</span>] <span class="op">-</span> P[:, <span class="dv">1</span>]</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.sqrt(K) <span class="op">*</span> np.mean(p) <span class="op">/</span> np.std(p)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>donde el valor de la estadística es <span class="math inline">\(2.7848\)</span>, si el valor está fuera del siguiente intervalo <span class="math inline">\((-2.045, 2.045)\)</span> se rechaza la hipótesis nula de que los dos algoritmos se comportan similar.</p>
-<p>En caso de que la medida de rendimiento no esté normalmente distribuido, la prueba no-parametrica equivalente corresponde a Wilcoxon. La instrucción <code>wilcoxon(P[:, 0], P[:, 1])</code> se puede utilizar para calcularla, dando un <span class="math inline">\(p_{\text{value}}\)</span> de <span class="math inline">\(0.0198\)</span>. En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadisticamente diferentes con una confianza del 95% en el problema de Breast Cancer.</p>
+<p>donde el valor de la estadística es <span class="math inline">\(2.8975\)</span>, si el valor está fuera del siguiente intervalo <span class="math inline">\((-2.045, 2.045)\)</span> se rechaza la hipótesis nula de que los dos algoritmos se comportan similar.</p>
+<p>En caso de que la medida de rendimiento no esté normalmente distribuido, la prueba no-parametrica equivalente corresponde a Wilcoxon. La instrucción <code>wilcoxon(P[:, 0], P[:, 1])</code> se puede utilizar para calcularla, dando un <span class="math inline">\(p_{\text{value}}\)</span> de <span class="math inline">\(0.0170\)</span>. En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadisticamente diferentes con una confianza del 95% en el problema de Breast Cancer.</p>
 </section>
 <section id="método-bootstrap-en-diferencias" class="level3" data-number="13.4.2">
 <h3 data-number="13.4.2" class="anchored" data-anchor-id="método-bootstrap-en-diferencias"><span class="header-section-number">13.4.2</span> Método: Bootstrap en diferencias</h3>
-<p>Un método para comparar el rendimiento de dos algoritmo que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. <span class="citation" data-cites="10.1007/978-3-031-33783-3_9">Nava-Muñoz, Graff Guerrero, y Escalante (<a href="17Referencias.html#ref-10.1007/978-3-031-33783-3_9" role="doc-biblioref">2023</a>)</span> utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este se procedimiento se explicará mediante un ejemplo.</p>
+<p>Un método para comparar el rendimiento de dos algoritmo que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. <span class="citation" data-cites="Nava2024">Nava-Muñoz, Graff, y Escalante (<a href="17Referencias.html#ref-Nava2024" role="doc-biblioref">2024</a>)</span> utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este se procedimiento se explicará mediante un ejemplo.</p>
 <p>El primer paso es calcular las predicciones de los algoritmos, en este caso se realizar una validación cruzada, tal y como se muestra a continuación.</p>
-<div id="5df6d160" class="cell" data-execution_count="21">
+<div id="66844466" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>forest <span class="op">=</span> np.empty_like(y)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> np.empty_like(y)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
@@ -573,7 +604,7 @@ Nota
 </div>
 <p>El macro-recall para los Bosques Aleatorios es <span class="math inline">\(0.96\)</span> y para el Naive Bayes es <span class="math inline">\(0.93\)</span>. Lo que se observa es que los bosques tienen un mejor rendimiento, entonces la distribución de la diferencia del rendimiento entre bosques y Naive Bayes no debería de incluir al cero, si lo incluye la masa que está al lado izquierdo del cero debe de ser menor, esa mas corresponde al valor <span class="math inline">\(p.\)</span></p>
 <p>Las muestras de la diferencia de rendimiento se pueden calcular de las siguientes instrucciones.</p>
-<div id="c4548137" class="cell" data-execution_count="22">
+<div id="cb9b7292" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>],</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> recall_score                      </span>
@@ -584,18 +615,79 @@ Nota
 </div>
 <p>Finalmente, el <span class="math inline">\(p_{\text{value}}\)</span> corresponde a la proporción de elementos que son menores que cero, i.e., <code>(np.array(B) &lt; 0).mean()</code>, es decir, aquellas muestras donde Naive Bayes tiene un mejor desempeño que los bosques. En este caso el <span class="math inline">\(p_{\text{value}}\)</span> tiene un valor de <span class="math inline">\(0.0020\)</span>. Dado que el valor es menor que <span class="math inline">\(0.05\)</span> se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos. La <a href="#fig-comparacion-diff" class="quarto-xref">Figura&nbsp;<span>13.1</span></a> muestra la distribución de la diferencia de rendimiento, en esta se puede observar como la mayor parte de la masa se encuentra del lado positivo y que muy poca masa es menor que cero.</p>
 <div id="cell-fig-comparacion-diff" class="cell" data-execution_count="23">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-comparacion-diff" class="quarto-figure quarto-figure-center anchored" height="470" width="471">
+<div id="fig-comparacion-diff" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-comparacion-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="13Comparacion_files/figure-html/fig-comparacion-diff-output-1.png" width="471" height="470" class="figure-img">
+<img src="13Comparacion_files/figure-html/fig-comparacion-diff-output-1.png" width="471" height="471" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-comparacion-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-comparacion-diff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;13.1: Distribución de la diferencia de rendimiento
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="compstats" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="compstats"><span class="header-section-number">13.5</span> CompStats</h2>
+<p>La librería <a href="https://compstats.readthedocs.io">CompStats</a> permite realizar de manera sencilla la comparación entre el rendimiento de varios algoritmos, además de presentar gráficas sobre su comportamiento. Esta librería usa la técnica de Bootstrap tal y como se ha mostrado en este capítulo.</p>
+<p>Lo primero que se realiza es calcular las muestras del rendimiento entre los dos algoritmos analizados, los cuales tienen sus predicciones en las variables <code>naive</code> y <code>forest</code>. En la primera línea se inicializa la variable <code>macro_recall</code> que calcula el promedio de la cobertura. La segunda línea crea un cuadro de datos (<code>DataFrame</code>) que contiene tanto la variable medida como las predicciones. La tercera línea calcula el rendimiento de los dos algoritmos.</p>
+<div id="ccf13265" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>macro_recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                                          average<span class="op">=</span><span class="st">'macro'</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(y<span class="op">=</span>y,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                       naive<span class="op">=</span>naive,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                       forest<span class="op">=</span>forest))</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> performance(df, score<span class="op">=</span>macro_recall)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La variable <code>perf</code> contiene las muestras del rendimiento de cada algoritmo. Por ejemplo, la siguiente línea calcula el intervalo de confianza de cada algoritmo.</p>
+<div id="4d1c7c45" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>CI(perf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>{'naive': (0.9031633862672502, 0.9509194577792208),
+ 'forest': (0.9379929657295595, 0.9735565840568744)}</code></pre>
+</div>
+</div>
+<p>Los intervalos de confianza se pueden visualizar en la <a href="#fig-intervalos-compstats" class="quarto-xref">Figura&nbsp;<span>13.2</span></a>.</p>
+<div id="cell-fig-intervalos-compstats" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>plot_performance(perf)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-intervalos-compstats" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-intervalos-compstats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13Comparacion_files/figure-html/fig-intervalos-compstats-output-1.png" width="487" height="470" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-intervalos-compstats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.2: Intervalos de confianzas
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>El segundo paso es conocer si la diferencia en rendimiento es significativa, en la <a href="#fig-comparacion-compstats" class="quarto-xref">Figura&nbsp;<span>13.3</span></a> se observa la comparación entre el mejor algoritmo (i.e., <code>forest</code>) y los otros algoritmos (<code>naive</code>) incluidos en la comparación. Se observa, en la figura, una linea puntuada que se encuentra en cero para facilitar la comparación, si el intervalo de confianza intersecta con la linea se puede concluir que los algoritmos comparados no son estadísticamente diferentes. En el ejemplo mostrado se ve que el intervalo no intersecta entonces se puede concluir que la hipótesis nula se puede descartar con una cierta confianza.</p>
+<div id="cell-fig-comparacion-compstats" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> difference(perf)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>plot_difference(diff)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-comparacion-compstats" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-comparacion-compstats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13Comparacion_files/figure-html/fig-comparacion-compstats-output-1.png" width="553" height="490" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-comparacion-compstats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.3: Comparación contra el mejor
 </figcaption>
 </figure>
 </div>
@@ -606,11 +698,10 @@ Figura&nbsp;13.1: Distribución de la diferencia de rendimiento
 <!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-10.1007/978-3-031-33783-3_9" class="csl-entry" role="listitem">
-Nava-Muñoz, Sergio, Mario Graff Guerrero, y Hugo Jair Escalante. 2023. <span>«Comparison of Classifiers in Challenge Scheme»</span>. En <em>Pattern Recognition</em>, editado por Ansel Yoan Rodríguez-González, Humberto Pérez-Espinosa, José Francisco Martínez-Trinidad, Jesús Ariel Carrasco-Ochoa, y José Arturo Olvera-López, 89-98. Cham: Springer Nature Switzerland. <a href="https://doi.org/10.1007/978-3-031-33783-3_9">https://doi.org/10.1007/978-3-031-33783-3_9</a>.
+<div id="ref-Nava2024" class="csl-entry" role="listitem">
+Nava-Muñoz, Sergio, Mario Graff, y Hugo Jair Escalante. 2024. <span>«Analysis of systems’ performance in natural language processing competitions»</span>. <em>Pattern Recognition Letters</em>, marzo. <a href="https://doi.org/10.1016/J.PATREC.2024.03.010">https://doi.org/10.1016/J.PATREC.2024.03.010</a>.
 </div>
 </div>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -649,18 +740,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -692,7 +772,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -744,6 +846,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -778,7 +898,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -793,38 +917,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -833,8 +947,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1057,359 +1178,418 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/12Ensambles.html" class="pagination-link">
+      <a href="../capitulos/12Ensambles.html" class="pagination-link" aria-label="Ensambles">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ensambles</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/17Referencias.html" class="pagination-link">
+      <a href="../capitulos/17Referencias.html" class="pagination-link" aria-label="Referencias">
         <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb24" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Comparación de Algoritmos</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y analizar el rendimiento de algoritmos. </span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IngeoML <span class="im">import</span> CI, SE</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm, wilcoxon</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris, load_breast_cancer</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, StratifiedKFold</span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/a6zzTtscYtU width="560" height="315" &gt;}}</span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
-<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a>Hasta el momento se han descrito diferentes algoritmos de clasificación y regresión; se han presentado diferentes medidas para conocer su rendimiento, pero se ha dejado de lado el conocer la distribución de estas medidas para poder tener mayor información sobre el rendimiento del algoritmo y también poder comparar y seleccionar el algoritmo que tenga las mejores prestaciones ya sea en rendimiento o en complejidad. </span>
-<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Intervalos de confianza {#sec-intervalos}</span></span>
-<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a>El análisis del rendimiento se inicia partiendo de que el rendimiento se puede estimar a partir del conjunto de prueba, $\mathcal G$; el valor obtenido estima el rendimiento real, $\theta$, el cual se considera una constante. Una manera de conocer el rango de valores donde se puede encontrar $\theta$ es generando su intervalo de confianza. El intervalo de confianza de $\theta$ está dado por $C = (a(\mathcal G), b(\mathcal G)),$ de tal manera que $P_{\theta}(\theta \in C) \geq 1 - \alpha$. Es importante mencionar que el intervalo no mide la probabilidad de $\theta$ dado que $\theta$ es una constante, en su lugar mide de que el valor estimado esté dentro de esos límites con esa probabilidad. Por otro lado se utiliza la notación $a(\mathcal G)$ y $b(\mathcal G)$ para hacer explicito que en este caso los límites del intervalo son obtenidos utilizando el conjunto de prueba. Una manera de entender el intervalo de confianza de cualquier parámetro es suponer que si el parámetro se estima $100$ veces con el mismo procedimiento, en diferentes muestras, un intervalo del 95% de confianza dice que 95 de las veces la estimación del parámetro estará en el intervalo calculado.</span>
-<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Distribución Normal</span></span>
-<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a>Existen diferentes procedimientos para generar intervalos de confianza, uno de ellos es asumir que la estimación de $\theta$, i.e., $\hat \theta$ se distribuye como una normal, i.e., $\hat \theta \sim \mathcal N(\mu, \sigma^2),$ donde $\sigma=\textsf{se}=\sqrt{\mathbb V(\hat \theta)}$ corresponde al error estándar (@sec-error-estandar) de la estimación $\hat \theta.$ En estas condiciones el intervalo está dado por:</span>
-<span id="cb24-49"><a href="#cb24-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-50"><a href="#cb24-50" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a>C = (\hat \theta - z_{\frac{\alpha}{2}}\textsf{se}, \hat \theta + z_{\frac{\alpha}{2}}\textsf{se}),</span>
-<span id="cb24-52"><a href="#cb24-52" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb24-53"><a href="#cb24-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-54"><a href="#cb24-54" aria-hidden="true" tabindex="-1"></a>donde $z_{\frac{\alpha}{2}} = \Phi^{-1}(1 - \frac{\alpha}{2})$ y $\Phi$ es la función de distribución acumulada de una normal. </span>
-<span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Exactitud</span></span>
-<span id="cb24-57"><a href="#cb24-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a>Recordado que dado una entrada el clasificador puede acertar la clase a la que pertenece esa entrada, entonces el resultado se puede representar como $1$ si la respuesta es correcta y $0$ de lo contrario. En este caso la respuesta es una variable aleatoria con una distribución de Bernoulli. Recordando que la distribución Bernoulli está definida por un parámetro $p$, estimado como $\hat p = \frac{1}{N} \sum_{i=1}^N \mathcal X_i$ donde $\mathcal X_i$ corresponde al resultado del algoritmo en el $i$-ésimo ejemplo. La varianza de una distribución Bernoulli es $p(1-p)$ por lo que el error estándar es: $se=\sqrt{\frac{p(1-p)}{N}}$ dando como resultado el siguiente intervalo:</span>
-<span id="cb24-59"><a href="#cb24-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-60"><a href="#cb24-60" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb24-61"><a href="#cb24-61" aria-hidden="true" tabindex="-1"></a>C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).</span>
-<span id="cb24-62"><a href="#cb24-62" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb24-63"><a href="#cb24-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-64"><a href="#cb24-64" aria-hidden="true" tabindex="-1"></a>Suponiendo $N=100$ y $p=0.85$ el siguiente código calcula el intervalo usando $\alpha=0.05$</span>
-<span id="cb24-65"><a href="#cb24-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-68"><a href="#cb24-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-69"><a href="#cb24-69" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-70"><a href="#cb24-70" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb24-71"><a href="#cb24-71" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
-<span id="cb24-72"><a href="#cb24-72" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.85</span></span>
-<span id="cb24-73"><a href="#cb24-73" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb24-74"><a href="#cb24-74" aria-hidden="true" tabindex="-1"></a>Cn <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N),</span>
-<span id="cb24-75"><a href="#cb24-75" aria-hidden="true" tabindex="-1"></a>      p <span class="op">+</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N))</span>
-<span id="cb24-76"><a href="#cb24-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-77"><a href="#cb24-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-78"><a href="#cb24-78" aria-hidden="true" tabindex="-1"></a>dando como resultado el siguiente intervalo, <span class="in">`{python} Markdown(f'$C = ({Cn[0]:0.2f}, {Cn[1]:0.2f})$')`</span>.</span>
-<span id="cb24-79"><a href="#cb24-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-80"><a href="#cb24-80" aria-hidden="true" tabindex="-1"></a>En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema del Iris. </span>
-<span id="cb24-81"><a href="#cb24-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-82"><a href="#cb24-82" aria-hidden="true" tabindex="-1"></a>Lo primero que se realiza es cargar los datos y dividir en el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) como se muestra a continuación. </span>
-<span id="cb24-83"><a href="#cb24-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-86"><a href="#cb24-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-87"><a href="#cb24-87" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-88"><a href="#cb24-88" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-89"><a href="#cb24-89" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
-<span id="cb24-90"><a href="#cb24-90" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">1</span>,  </span>
-<span id="cb24-91"><a href="#cb24-91" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb24-92"><a href="#cb24-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-93"><a href="#cb24-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-94"><a href="#cb24-94" aria-hidden="true" tabindex="-1"></a>El siguiente paso es entrenar el algoritmo y realizar las predicciones en el conjunto de prueba ($\mathcal G$) tal y como se muestra en las siguientes instrucciones. </span>
-<span id="cb24-95"><a href="#cb24-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-98"><a href="#cb24-98" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-99"><a href="#cb24-99" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-100"><a href="#cb24-100" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> GaussianNB().fit(T, y_t)</span>
-<span id="cb24-101"><a href="#cb24-101" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> model.predict(G)</span>
-<span id="cb24-102"><a href="#cb24-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
-<span id="cb24-103"><a href="#cb24-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-104"><a href="#cb24-104" aria-hidden="true" tabindex="-1"></a>Con las predicciones se estima la exactitud y se siguen los pasos para calcular el intervalo de confianza como se ilustra en el siguiente código.</span>
-<span id="cb24-105"><a href="#cb24-105" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb24-108"><a href="#cb24-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-109"><a href="#cb24-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-110"><a href="#cb24-110" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.where(y_g <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb24-111"><a href="#cb24-111" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> _.mean()</span>
-<span id="cb24-112"><a href="#cb24-112" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> _.shape[<span class="dv">0</span>]</span>
-<span id="cb24-113"><a href="#cb24-113" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N), p <span class="op">+</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N))</span>
-<span id="cb24-114"><a href="#cb24-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-115"><a href="#cb24-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-116"><a href="#cb24-116" aria-hidden="true" tabindex="-1"></a>El intervalo de confianza obtenido es <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>. se puede observar que el límite superior es mayor que $1$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ esto es resultado de generar el intervalo de confianza asumiendo una distribución normal. </span>
-<span id="cb24-117"><a href="#cb24-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-118"><a href="#cb24-118" aria-hidden="true" tabindex="-1"></a>Cuando se cuenta con conjuntos de datos pequeños y además no se ha definido un conjunto de prueba, se puede obtener las predicciones del algoritmo de clasificación mediante el uso de validación cruzada usando K-fold. En el siguiente código se muestra su uso, el cambio solamente es en el procedimiento para obtener las predicciones.</span>
-<span id="cb24-119"><a href="#cb24-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-122"><a href="#cb24-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-123"><a href="#cb24-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-124"><a href="#cb24-124" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb24-125"><a href="#cb24-125" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb24-126"><a href="#cb24-126" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-127"><a href="#cb24-127" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.empty_like(y)</span>
-<span id="cb24-128"><a href="#cb24-128" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
-<span id="cb24-129"><a href="#cb24-129" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> GaussianNB().fit(X[tr], y[tr])</span>
-<span id="cb24-130"><a href="#cb24-130" aria-hidden="true" tabindex="-1"></a>    hy[ts] <span class="op">=</span> model.predict(X[ts])</span>
-<span id="cb24-131"><a href="#cb24-131" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-132"><a href="#cb24-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-135"><a href="#cb24-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-136"><a href="#cb24-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb24-137"><a href="#cb24-137" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.where(y <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb24-138"><a href="#cb24-138" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> _.mean()</span>
-<span id="cb24-139"><a href="#cb24-139" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> _.shape[<span class="dv">0</span>]</span>
-<span id="cb24-140"><a href="#cb24-140" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N), p <span class="op">+</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N))</span>
-<span id="cb24-141"><a href="#cb24-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-142"><a href="#cb24-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-143"><a href="#cb24-143" aria-hidden="true" tabindex="-1"></a>El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>.</span>
-<span id="cb24-144"><a href="#cb24-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-145"><a href="#cb24-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Bootstrap del error estándar {#sec-bootstrap-error-estandar}</span></span>
-<span id="cb24-146"><a href="#cb24-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-147"><a href="#cb24-147" aria-hidden="true" tabindex="-1"></a>Existen ocasiones donde no es sencillo identificar el error estándar ($\textsf{se}$) y por lo mismo no se puede calcular el intervalo de confianza. En estos casos se emplea la técnica de Bootstrap (@sec-bootstrap) para estimar $\mathbb V(\hat \theta).$ Un ejemplo donde no es sencillo encontrar analíticamente el error estándar es en el $recall$ (@sec-recall).</span>
-<span id="cb24-148"><a href="#cb24-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-149"><a href="#cb24-149" aria-hidden="true" tabindex="-1"></a>Es más sencillo entender este método mediante un ejemplo. Usando el ejercicio de $N=100$ y $p=0.85$ y $\alpha=0.05$ descrito previamente, el siguiente código primero construye las variables aleatorias de tal manera que den $p=0.85$</span>
-<span id="cb24-150"><a href="#cb24-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-153"><a href="#cb24-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-154"><a href="#cb24-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-155"><a href="#cb24-155" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb24-156"><a href="#cb24-156" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb24-157"><a href="#cb24-157" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
-<span id="cb24-158"><a href="#cb24-158" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.zeros(N)</span>
-<span id="cb24-159"><a href="#cb24-159" aria-hidden="true" tabindex="-1"></a>X[:<span class="dv">85</span>] <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb24-160"><a href="#cb24-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-161"><a href="#cb24-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-162"><a href="#cb24-162" aria-hidden="true" tabindex="-1"></a><span class="in">`X`</span> es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener $\hat \theta$ para cada muestra, en este caso $\hat \theta$ corresponde a la media. El resultado se guarda en una lista $B$ y se repite el experimento $500$ veces.</span>
-<span id="cb24-163"><a href="#cb24-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-166"><a href="#cb24-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-167"><a href="#cb24-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-168"><a href="#cb24-168" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(X.shape[<span class="dv">0</span>],</span>
-<span id="cb24-169"><a href="#cb24-169" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, X.shape[<span class="dv">0</span>]))</span>
-<span id="cb24-170"><a href="#cb24-170" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [X[s].mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
-<span id="cb24-171"><a href="#cb24-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
-<span id="cb24-172"><a href="#cb24-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-173"><a href="#cb24-173" aria-hidden="true" tabindex="-1"></a>El error estándar es y el intervalo de confianza se calcula con las siguientes instrucciones </span>
-<span id="cb24-174"><a href="#cb24-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-177"><a href="#cb24-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-178"><a href="#cb24-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-179"><a href="#cb24-179" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
-<span id="cb24-180"><a href="#cb24-180" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span>
-<span id="cb24-181"><a href="#cb24-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
-<span id="cb24-182"><a href="#cb24-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-183"><a href="#cb24-183" aria-hidden="true" tabindex="-1"></a>el intervalo de confianza corresponde a <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>. </span>
-<span id="cb24-184"><a href="#cb24-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-185"><a href="#cb24-185" aria-hidden="true" tabindex="-1"></a>Continuando con el mismo ejemplo pero ahora analizando Naive Bayes en el problema del Iris. El primer paso es obtener evaluar las predicciones que se puede observar en el siguiente código (previamente descrito.)</span>
-<span id="cb24-186"><a href="#cb24-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-189"><a href="#cb24-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-190"><a href="#cb24-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-191"><a href="#cb24-191" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-192"><a href="#cb24-192" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb24-193"><a href="#cb24-193" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb24-194"><a href="#cb24-194" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-195"><a href="#cb24-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-196"><a href="#cb24-196" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.empty_like(y)</span>
-<span id="cb24-197"><a href="#cb24-197" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
-<span id="cb24-198"><a href="#cb24-198" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> GaussianNB().fit(X[tr], y[tr])</span>
-<span id="cb24-199"><a href="#cb24-199" aria-hidden="true" tabindex="-1"></a>    hy[ts] <span class="op">=</span> model.predict(X[ts])</span>
-<span id="cb24-200"><a href="#cb24-200" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.where(y <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb24-201"><a href="#cb24-201" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-202"><a href="#cb24-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-203"><a href="#cb24-203" aria-hidden="true" tabindex="-1"></a>Realizando la selección con remplazo se obtiene el intervalo con las siguientes instrucciones </span>
-<span id="cb24-204"><a href="#cb24-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-207"><a href="#cb24-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-208"><a href="#cb24-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-209"><a href="#cb24-209" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [X[s].mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
-<span id="cb24-210"><a href="#cb24-210" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
-<span id="cb24-211"><a href="#cb24-211" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span>
-<span id="cb24-212"><a href="#cb24-212" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-213"><a href="#cb24-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-214"><a href="#cb24-214" aria-hidden="true" tabindex="-1"></a>teniendo un valor de <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>.  </span>
-<span id="cb24-215"><a href="#cb24-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-216"><a href="#cb24-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-217"><a href="#cb24-217" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Percentil</span></span>
-<span id="cb24-218"><a href="#cb24-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-219"><a href="#cb24-219" aria-hidden="true" tabindex="-1"></a>Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $\hat \theta$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, </span>
-<span id="cb24-220"><a href="#cb24-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-221"><a href="#cb24-221" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb24-222"><a href="#cb24-222" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span> <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb24-223"><a href="#cb24-223" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (np.percentile(B, alpha <span class="op">*</span> <span class="dv">100</span>),</span>
-<span id="cb24-224"><a href="#cb24-224" aria-hidden="true" tabindex="-1"></a>     np.percentile(B, (<span class="dv">1</span> <span class="op">-</span> alpha) <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb24-225"><a href="#cb24-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-226"><a href="#cb24-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-227"><a href="#cb24-227" aria-hidden="true" tabindex="-1"></a>obteniendo un intervalo de <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>.</span>
-<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-229"><a href="#cb24-229" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: macro-recall</span></span>
-<span id="cb24-230"><a href="#cb24-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-231"><a href="#cb24-231" aria-hidden="true" tabindex="-1"></a>Hasta el momento se ha usado una medida de rendimiento para la cual se puede conocer su varianza de manera analítica. Existen problemas donde esta medida no es recomendada, en el siguiente ejemplo utilizaremos macro-recall para medir el rendimiento de Naive Bayes en el problema del Iris. El primer paso es realizar las predicciones del algoritmo usando validación cruzada y hacer la muestra con reemplazo $B$. </span>
-<span id="cb24-232"><a href="#cb24-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-235"><a href="#cb24-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-236"><a href="#cb24-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-237"><a href="#cb24-237" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb24-238"><a href="#cb24-238" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
-<span id="cb24-239"><a href="#cb24-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-240"><a href="#cb24-240" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-241"><a href="#cb24-241" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb24-242"><a href="#cb24-242" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb24-243"><a href="#cb24-243" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-244"><a href="#cb24-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-245"><a href="#cb24-245" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.empty_like(y)</span>
-<span id="cb24-246"><a href="#cb24-246" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
-<span id="cb24-247"><a href="#cb24-247" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> GaussianNB().fit(X[tr], y[tr])</span>
-<span id="cb24-248"><a href="#cb24-248" aria-hidden="true" tabindex="-1"></a>    hy[ts] <span class="op">=</span> model.predict(X[ts])</span>
-<span id="cb24-249"><a href="#cb24-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-250"><a href="#cb24-250" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(hy.shape[<span class="dv">0</span>],</span>
-<span id="cb24-251"><a href="#cb24-251" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, hy.shape[<span class="dv">0</span>]))</span>
-<span id="cb24-252"><a href="#cb24-252" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [recall_score(y[s], hy[s], average<span class="op">=</span><span class="st">"macro"</span>)</span>
-<span id="cb24-253"><a href="#cb24-253" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> s <span class="kw">in</span> S]</span>
-<span id="cb24-254"><a href="#cb24-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-255"><a href="#cb24-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-256"><a href="#cb24-256" aria-hidden="true" tabindex="-1"></a>El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones;</span>
-<span id="cb24-257"><a href="#cb24-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-260"><a href="#cb24-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-261"><a href="#cb24-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-262"><a href="#cb24-262" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> np.mean(B)</span>
-<span id="cb24-263"><a href="#cb24-263" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
-<span id="cb24-264"><a href="#cb24-264" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span>
-<span id="cb24-265"><a href="#cb24-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
-<span id="cb24-266"><a href="#cb24-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-269"><a href="#cb24-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-270"><a href="#cb24-270" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb24-271"><a href="#cb24-271" aria-hidden="true" tabindex="-1"></a>C2 <span class="op">=</span> (np.percentile(B, alpha <span class="op">*</span> <span class="dv">100</span>), np.percentile(B, (<span class="dv">1</span> <span class="op">-</span> alpha) <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb24-272"><a href="#cb24-272" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-273"><a href="#cb24-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-274"><a href="#cb24-274" aria-hidden="true" tabindex="-1"></a>obteniendo un intervalo de <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span> Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, estimando un intervalo de <span class="in">`{python} Markdown(f'$C = ({C2[0]:0.2f}, {C2[1]:0.2f})$')`</span></span>
-<span id="cb24-275"><a href="#cb24-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-276"><a href="#cb24-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-277"><a href="#cb24-277" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb24-278"><a href="#cb24-278" aria-hidden="true" tabindex="-1"></a>El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza están implementados en la clase <span class="in">`SE`</span> y <span class="in">`CI`</span> respectivamente. Las siguientes instrucciones se pueden utilizar para calcular el error estándar. </span>
-<span id="cb24-279"><a href="#cb24-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-282"><a href="#cb24-282" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-283"><a href="#cb24-283" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-284"><a href="#cb24-284" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
-<span id="cb24-285"><a href="#cb24-285" aria-hidden="true" tabindex="-1"></a>                                    average<span class="op">=</span><span class="st">"macro"</span>)</span>
-<span id="cb24-286"><a href="#cb24-286" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> SE(statistic<span class="op">=</span>recall)</span>
-<span id="cb24-287"><a href="#cb24-287" aria-hidden="true" tabindex="-1"></a>se(y, hy)                                </span>
-<span id="cb24-288"><a href="#cb24-288" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-289"><a href="#cb24-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-290"><a href="#cb24-290" aria-hidden="true" tabindex="-1"></a>Complementando el intervalo de confianza con el método de percentil se implementa en el siguiente código.</span>
-<span id="cb24-293"><a href="#cb24-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-294"><a href="#cb24-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-295"><a href="#cb24-295" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
-<span id="cb24-296"><a href="#cb24-296" aria-hidden="true" tabindex="-1"></a>                                    average<span class="op">=</span><span class="st">"macro"</span>)</span>
-<span id="cb24-297"><a href="#cb24-297" aria-hidden="true" tabindex="-1"></a>ci <span class="op">=</span> CI(statistic<span class="op">=</span>recall)</span>
-<span id="cb24-298"><a href="#cb24-298" aria-hidden="true" tabindex="-1"></a>ci(y, hy)                                </span>
-<span id="cb24-299"><a href="#cb24-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-300"><a href="#cb24-300" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb24-301"><a href="#cb24-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-302"><a href="#cb24-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparación de Algoritmos</span></span>
-<span id="cb24-303"><a href="#cb24-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-304"><a href="#cb24-304" aria-hidden="true" tabindex="-1"></a>Se han descrito varios procedimientos para conocer los intervalos de confianza de un algoritmos de aprendizaje. Es momento para describir la metodología para conocer si dos algoritmos se comportan similar en un problema dado. </span>
-<span id="cb24-305"><a href="#cb24-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-306"><a href="#cb24-306" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Distribución $t$ de Student</span></span>
-<span id="cb24-307"><a href="#cb24-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-308"><a href="#cb24-308" aria-hidden="true" tabindex="-1"></a>Suponiendo que se tienen las medidas de rendimiento de dos algoritmos mediante validación cruzada de K-fold, es decir, se tiene el rendimiento del primer algoritmo como $p_i^1$ y del segundo como $p_i^2$ en la $i$-ésima instancia. Suponiendo que el rendimiento es una normal, entonces la resta, i.e., $p_i = p_i^1 - p_i^2$ también sería normal. Dado que se está comparando los algoritmos en los mismos datos, se puede utilizar la prueba $t$ de Student de muestras dependientes. La estadística de la prueba está dada por $\frac{\sqrt{K} m}{S} \sim t_{K-1}$, donde $m$ </span>
-<span id="cb24-309"><a href="#cb24-309" aria-hidden="true" tabindex="-1"></a>y $S^2$ es la media varianza estimada.</span>
-<span id="cb24-310"><a href="#cb24-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-311"><a href="#cb24-311" aria-hidden="true" tabindex="-1"></a>En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de Breast Cancer. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. </span>
-<span id="cb24-312"><a href="#cb24-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-315"><a href="#cb24-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-316"><a href="#cb24-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-317"><a href="#cb24-317" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">30</span></span>
-<span id="cb24-318"><a href="#cb24-318" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span>K,</span>
-<span id="cb24-319"><a href="#cb24-319" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb24-320"><a href="#cb24-320" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-321"><a href="#cb24-321" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-322"><a href="#cb24-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-323"><a href="#cb24-323" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> []</span>
-<span id="cb24-324"><a href="#cb24-324" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
-<span id="cb24-325"><a href="#cb24-325" aria-hidden="true" tabindex="-1"></a>    forest <span class="op">=</span> RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])</span>
-<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a>    naive <span class="op">=</span> GaussianNB().fit(X[tr], y[tr]).predict(X[ts])</span>
-<span id="cb24-327"><a href="#cb24-327" aria-hidden="true" tabindex="-1"></a>    P.append([recall_score(y[ts], hy, average<span class="op">=</span><span class="st">"macro"</span>) <span class="cf">for</span> hy <span class="kw">in</span> [forest, naive]])</span>
-<span id="cb24-328"><a href="#cb24-328" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array(P)</span>
-<span id="cb24-329"><a href="#cb24-329" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-330"><a href="#cb24-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-331"><a href="#cb24-331" aria-hidden="true" tabindex="-1"></a>Como se puede observar la medida de rendimiento es macro-recall. Continuando con el procedimiento para obtener la estadística $t_{K-1}$</span>
-<span id="cb24-332"><a href="#cb24-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-335"><a href="#cb24-335" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-336"><a href="#cb24-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-337"><a href="#cb24-337" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> P[:, <span class="dv">0</span>] <span class="op">-</span> P[:, <span class="dv">1</span>]</span>
-<span id="cb24-338"><a href="#cb24-338" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.sqrt(K) <span class="op">*</span> np.mean(p) <span class="op">/</span> np.std(p)</span>
-<span id="cb24-339"><a href="#cb24-339" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-340"><a href="#cb24-340" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a>donde el valor de la estadística es <span class="in">`{python} Markdown(f'${t:0.4f}$')`</span>, si el valor está fuera del siguiente intervalo $(-2.045, 2.045)$ se rechaza la hipótesis nula de que los dos algoritmos se comportan similar. </span>
-<span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a>En caso de que la medida de rendimiento no esté normalmente distribuido, la prueba no-parametrica equivalente corresponde a Wilcoxon. La instrucción <span class="in">`wilcoxon(P[:, 0], P[:, 1])`</span> se puede utilizar para calcularla, dando un $p_{\text{value}}$ de <span class="in">`{python} Markdown(f'${wilcoxon(P[:, 0], P[:, 1]).pvalue:0.4f}$')`</span>. En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadisticamente diferentes con una confianza del 95% en el problema de Breast Cancer.</span>
-<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Bootstrap en diferencias</span></span>
-<span id="cb24-346"><a href="#cb24-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-347"><a href="#cb24-347" aria-hidden="true" tabindex="-1"></a>Un método para comparar el rendimiento de dos algoritmo que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. @10.1007/978-3-031-33783-3_9 utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este se procedimiento se explicará mediante un ejemplo. </span>
-<span id="cb24-348"><a href="#cb24-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-349"><a href="#cb24-349" aria-hidden="true" tabindex="-1"></a>El primer paso es calcular las predicciones de los algoritmos, en este caso se realizar una validación cruzada, tal y como se muestra a continuación. </span>
-<span id="cb24-350"><a href="#cb24-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-353"><a href="#cb24-353" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-354"><a href="#cb24-354" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-355"><a href="#cb24-355" aria-hidden="true" tabindex="-1"></a>forest <span class="op">=</span> np.empty_like(y)</span>
-<span id="cb24-356"><a href="#cb24-356" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> np.empty_like(y)</span>
-<span id="cb24-357"><a href="#cb24-357" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
-<span id="cb24-358"><a href="#cb24-358" aria-hidden="true" tabindex="-1"></a>    forest[ts] <span class="op">=</span> RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])</span>
-<span id="cb24-359"><a href="#cb24-359" aria-hidden="true" tabindex="-1"></a>    naive[ts] <span class="op">=</span> GaussianNB().fit(X[tr], y[tr]).predict(X[ts])</span>
-<span id="cb24-360"><a href="#cb24-360" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-361"><a href="#cb24-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-362"><a href="#cb24-362" aria-hidden="true" tabindex="-1"></a>El macro-recall para los Bosques Aleatorios es <span class="in">`{python} Markdown(f'${recall_score(y, forest, average="macro"):0.2f}$')`</span> y para el Naive Bayes es <span class="in">`{python} Markdown(f'${recall_score(y, naive, average="macro"):0.2f}$')`</span>. Lo que se observa es que los bosques tienen un mejor rendimiento, entonces la distribución de la diferencia del rendimiento entre bosques y Naive Bayes no debería de incluir al cero, si lo incluye la masa que está al lado izquierdo del cero debe de ser menor, esa mas corresponde al valor $p.$</span>
-<span id="cb24-363"><a href="#cb24-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-364"><a href="#cb24-364" aria-hidden="true" tabindex="-1"></a>Las muestras de la diferencia de rendimiento se pueden calcular de las siguientes instrucciones. </span>
-<span id="cb24-365"><a href="#cb24-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-368"><a href="#cb24-368" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-369"><a href="#cb24-369" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb24-370"><a href="#cb24-370" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>],</span>
-<span id="cb24-371"><a href="#cb24-371" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
-<span id="cb24-372"><a href="#cb24-372" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> recall_score                      </span>
-<span id="cb24-373"><a href="#cb24-373" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> <span class="kw">lambda</span> y, hy1, hy2: r(y, hy1, average<span class="op">=</span><span class="st">"macro"</span>) <span class="op">-\</span></span>
-<span id="cb24-374"><a href="#cb24-374" aria-hidden="true" tabindex="-1"></a>                           r(y, hy2, average<span class="op">=</span><span class="st">"macro"</span>)</span>
-<span id="cb24-375"><a href="#cb24-375" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [diff(y[s], forest[s], naive[s])</span>
-<span id="cb24-376"><a href="#cb24-376" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> s <span class="kw">in</span> S]</span>
-<span id="cb24-377"><a href="#cb24-377" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb24-378"><a href="#cb24-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-379"><a href="#cb24-379" aria-hidden="true" tabindex="-1"></a>Finalmente, el $p_{\text{value}}$ corresponde a la proporción de elementos que son menores que cero, i.e., <span class="in">`(np.array(B) &lt; 0).mean()`</span>, es decir, aquellas muestras donde Naive Bayes tiene un mejor desempeño que los bosques. En este caso el $p_{\text{value}}$ tiene un valor de <span class="in">`{python} Markdown(f'${(np.array(B) &lt; 0).mean():0.4f}$')`</span>. Dado que el valor es menor que $0.05$ se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos. La @fig-comparacion-diff muestra la distribución de la diferencia de rendimiento, en esta se puede observar como la mayor parte de la masa se encuentra del lado positivo y que muy poca masa es menor que cero. </span>
-<span id="cb24-380"><a href="#cb24-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-383"><a href="#cb24-383" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb24-384"><a href="#cb24-384" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb24-385"><a href="#cb24-385" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Distribución de la diferencia de rendimiento</span></span>
-<span id="cb24-386"><a href="#cb24-386" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comparacion-diff</span></span>
-<span id="cb24-387"><a href="#cb24-387" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-388"><a href="#cb24-388" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Comparación de Algoritmos</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y analizar el rendimiento de algoritmos. </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> StatisticSamples, CI</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> performance, plot_performance</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> difference, plot_difference</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm, wilcoxon</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris, load_breast_cancer</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, StratifiedKFold</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/a6zzTtscYtU width="560" height="315" &gt;}}</span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>Hasta el momento se han descrito diferentes algoritmos de clasificación y regresión; se han presentado diferentes medidas para conocer su rendimiento, pero se ha dejado de lado el conocer la distribución de estas medidas para poder tener mayor información sobre el rendimiento del algoritmo y también poder comparar y seleccionar el algoritmo que tenga las mejores prestaciones ya sea en rendimiento o en complejidad. </span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Intervalos de confianza {#sec-intervalos}</span></span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>El análisis del rendimiento se inicia partiendo de que el rendimiento se puede estimar a partir del conjunto de prueba, $\mathcal G$; el valor obtenido estima el rendimiento real, $\theta$, el cual se considera una constante. Una manera de conocer el rango de valores donde se puede encontrar $\theta$ es generando su intervalo de confianza. El intervalo de confianza de $\theta$ está dado por $C = (a(\mathcal G), b(\mathcal G)),$ de tal manera que $P_{\theta}(\theta \in C) \geq 1 - \alpha$. Es importante mencionar que el intervalo no mide la probabilidad de $\theta$ dado que $\theta$ es una constante, en su lugar mide de que el valor estimado esté dentro de esos límites con esa probabilidad. Por otro lado se utiliza la notación $a(\mathcal G)$ y $b(\mathcal G)$ para hacer explicito que en este caso los límites del intervalo son obtenidos utilizando el conjunto de prueba. Una manera de entender el intervalo de confianza de cualquier parámetro es suponer que si el parámetro se estima $100$ veces con el mismo procedimiento, en diferentes muestras, un intervalo del 95% de confianza dice que 95 de las veces la estimación del parámetro estará en el intervalo calculado.</span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Distribución Normal</span></span>
+<span id="cb29-50"><a href="#cb29-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a>Existen diferentes procedimientos para generar intervalos de confianza, uno de ellos es asumir que la estimación de $\theta$, i.e., $\hat \theta$ se distribuye como una normal, i.e., $\hat \theta \sim \mathcal N(\mu, \sigma^2),$ donde $\sigma=\textsf{se}=\sqrt{\mathbb V(\hat \theta)}$ corresponde al error estándar (@sec-error-estandar) de la estimación $\hat \theta.$ En estas condiciones el intervalo está dado por:</span>
+<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a>C = (\hat \theta - z_{\frac{\alpha}{2}}\textsf{se}, \hat \theta + z_{\frac{\alpha}{2}}\textsf{se}),</span>
+<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a>donde $z_{\frac{\alpha}{2}} = \Phi^{-1}(1 - \frac{\alpha}{2})$ y $\Phi$ es la función de distribución acumulada de una normal. </span>
+<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Exactitud</span></span>
+<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a>Recordado que dado una entrada el clasificador puede acertar la clase a la que pertenece esa entrada, entonces el resultado se puede representar como $1$ si la respuesta es correcta y $0$ de lo contrario. En este caso la respuesta es una variable aleatoria con una distribución de Bernoulli. Recordando que la distribución Bernoulli está definida por un parámetro $p$, estimado como $\hat p = \frac{1}{N} \sum_{i=1}^N \mathcal X_i$ donde $\mathcal X_i$ corresponde al resultado del algoritmo en el $i$-ésimo ejemplo. La varianza de una distribución Bernoulli es $p(1-p)$ por lo que el error estándar es: $se=\sqrt{\frac{p(1-p)}{N}}$ dando como resultado el siguiente intervalo:</span>
+<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a>C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).</span>
+<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a>Suponiendo $N=100$ y $p=0.85$ el siguiente código calcula el intervalo usando $\alpha=0.05$</span>
+<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb29-75"><a href="#cb29-75" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.85</span></span>
+<span id="cb29-76"><a href="#cb29-76" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb29-77"><a href="#cb29-77" aria-hidden="true" tabindex="-1"></a>Cn <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N),</span>
+<span id="cb29-78"><a href="#cb29-78" aria-hidden="true" tabindex="-1"></a>      p <span class="op">+</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N))</span>
+<span id="cb29-79"><a href="#cb29-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-80"><a href="#cb29-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-81"><a href="#cb29-81" aria-hidden="true" tabindex="-1"></a>dando como resultado el siguiente intervalo, <span class="in">`{python} Markdown(f'$C = ({Cn[0]:0.2f}, {Cn[1]:0.2f})$')`</span>.</span>
+<span id="cb29-82"><a href="#cb29-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-83"><a href="#cb29-83" aria-hidden="true" tabindex="-1"></a>En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema del Iris. </span>
+<span id="cb29-84"><a href="#cb29-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-85"><a href="#cb29-85" aria-hidden="true" tabindex="-1"></a>Lo primero que se realiza es cargar los datos y dividir en el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) como se muestra a continuación. </span>
+<span id="cb29-86"><a href="#cb29-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-89"><a href="#cb29-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-90"><a href="#cb29-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-91"><a href="#cb29-91" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-92"><a href="#cb29-92" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
+<span id="cb29-93"><a href="#cb29-93" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">1</span>,  </span>
+<span id="cb29-94"><a href="#cb29-94" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb29-95"><a href="#cb29-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-96"><a href="#cb29-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-97"><a href="#cb29-97" aria-hidden="true" tabindex="-1"></a>El siguiente paso es entrenar el algoritmo y realizar las predicciones en el conjunto de prueba ($\mathcal G$) tal y como se muestra en las siguientes instrucciones. </span>
+<span id="cb29-98"><a href="#cb29-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-101"><a href="#cb29-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-102"><a href="#cb29-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-103"><a href="#cb29-103" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> GaussianNB().fit(T, y_t)</span>
+<span id="cb29-104"><a href="#cb29-104" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> model.predict(G)</span>
+<span id="cb29-105"><a href="#cb29-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb29-106"><a href="#cb29-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-107"><a href="#cb29-107" aria-hidden="true" tabindex="-1"></a>Con las predicciones se estima la exactitud y se siguen los pasos para calcular el intervalo de confianza como se ilustra en el siguiente código.</span>
+<span id="cb29-108"><a href="#cb29-108" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb29-111"><a href="#cb29-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-112"><a href="#cb29-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-113"><a href="#cb29-113" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.where(y_g <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb29-114"><a href="#cb29-114" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> _.mean()</span>
+<span id="cb29-115"><a href="#cb29-115" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> _.shape[<span class="dv">0</span>]</span>
+<span id="cb29-116"><a href="#cb29-116" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N), p <span class="op">+</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N))</span>
+<span id="cb29-117"><a href="#cb29-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-118"><a href="#cb29-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-119"><a href="#cb29-119" aria-hidden="true" tabindex="-1"></a>El intervalo de confianza obtenido es <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>. se puede observar que el límite superior es mayor que $1$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ esto es resultado de generar el intervalo de confianza asumiendo una distribución normal. </span>
+<span id="cb29-120"><a href="#cb29-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-121"><a href="#cb29-121" aria-hidden="true" tabindex="-1"></a>Cuando se cuenta con conjuntos de datos pequeños y además no se ha definido un conjunto de prueba, se puede obtener las predicciones del algoritmo de clasificación mediante el uso de validación cruzada usando K-fold. En el siguiente código se muestra su uso, el cambio solamente es en el procedimiento para obtener las predicciones.</span>
+<span id="cb29-122"><a href="#cb29-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-125"><a href="#cb29-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-126"><a href="#cb29-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-127"><a href="#cb29-127" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb29-128"><a href="#cb29-128" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb29-129"><a href="#cb29-129" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-130"><a href="#cb29-130" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.empty_like(y)</span>
+<span id="cb29-131"><a href="#cb29-131" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
+<span id="cb29-132"><a href="#cb29-132" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> GaussianNB().fit(X[tr], y[tr])</span>
+<span id="cb29-133"><a href="#cb29-133" aria-hidden="true" tabindex="-1"></a>    hy[ts] <span class="op">=</span> model.predict(X[ts])</span>
+<span id="cb29-134"><a href="#cb29-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-135"><a href="#cb29-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-138"><a href="#cb29-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-139"><a href="#cb29-139" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-140"><a href="#cb29-140" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.where(y <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb29-141"><a href="#cb29-141" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> _.mean()</span>
+<span id="cb29-142"><a href="#cb29-142" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> _.shape[<span class="dv">0</span>]</span>
+<span id="cb29-143"><a href="#cb29-143" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N), p <span class="op">+</span> z <span class="op">*</span> np.sqrt(p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p) <span class="op">/</span> N))</span>
+<span id="cb29-144"><a href="#cb29-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-145"><a href="#cb29-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-146"><a href="#cb29-146" aria-hidden="true" tabindex="-1"></a>El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>.</span>
+<span id="cb29-147"><a href="#cb29-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Bootstrap del error estándar {#sec-bootstrap-error-estandar}</span></span>
+<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-150"><a href="#cb29-150" aria-hidden="true" tabindex="-1"></a>Existen ocasiones donde no es sencillo identificar el error estándar ($\textsf{se}$) y por lo mismo no se puede calcular el intervalo de confianza. En estos casos se emplea la técnica de Bootstrap (@sec-bootstrap) para estimar $\mathbb V(\hat \theta).$ Un ejemplo donde no es sencillo encontrar analíticamente el error estándar es en el $recall$ (@sec-recall).</span>
+<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a>Es más sencillo entender este método mediante un ejemplo. Usando el ejercicio de $N=100$ y $p=0.85$ y $\alpha=0.05$ descrito previamente, el siguiente código primero construye las variables aleatorias de tal manera que den $p=0.85$</span>
+<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-157"><a href="#cb29-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-158"><a href="#cb29-158" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb29-159"><a href="#cb29-159" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb29-160"><a href="#cb29-160" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb29-161"><a href="#cb29-161" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.zeros(N)</span>
+<span id="cb29-162"><a href="#cb29-162" aria-hidden="true" tabindex="-1"></a>X[:<span class="dv">85</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb29-163"><a href="#cb29-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-164"><a href="#cb29-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-165"><a href="#cb29-165" aria-hidden="true" tabindex="-1"></a><span class="in">`X`</span> es una arreglo que podrían provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es generar seleccionar con remplazo y obtener $\hat \theta$ para cada muestra, en este caso $\hat \theta$ corresponde a la media. El resultado se guarda en una lista $B$ y se repite el experimento $500$ veces.</span>
+<span id="cb29-166"><a href="#cb29-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-169"><a href="#cb29-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-170"><a href="#cb29-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-171"><a href="#cb29-171" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(X.shape[<span class="dv">0</span>],</span>
+<span id="cb29-172"><a href="#cb29-172" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, X.shape[<span class="dv">0</span>]))</span>
+<span id="cb29-173"><a href="#cb29-173" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [X[s].mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb29-174"><a href="#cb29-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb29-175"><a href="#cb29-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-176"><a href="#cb29-176" aria-hidden="true" tabindex="-1"></a>El error estándar es y el intervalo de confianza se calcula con las siguientes instrucciones </span>
+<span id="cb29-177"><a href="#cb29-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-180"><a href="#cb29-180" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-181"><a href="#cb29-181" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-182"><a href="#cb29-182" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
+<span id="cb29-183"><a href="#cb29-183" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span>
+<span id="cb29-184"><a href="#cb29-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb29-185"><a href="#cb29-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-186"><a href="#cb29-186" aria-hidden="true" tabindex="-1"></a>el intervalo de confianza corresponde a <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>. </span>
+<span id="cb29-187"><a href="#cb29-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-188"><a href="#cb29-188" aria-hidden="true" tabindex="-1"></a>Continuando con el mismo ejemplo pero ahora analizando Naive Bayes en el problema del Iris. El primer paso es obtener evaluar las predicciones que se puede observar en el siguiente código (previamente descrito.)</span>
+<span id="cb29-189"><a href="#cb29-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-192"><a href="#cb29-192" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-193"><a href="#cb29-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-194"><a href="#cb29-194" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-195"><a href="#cb29-195" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb29-196"><a href="#cb29-196" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb29-197"><a href="#cb29-197" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-198"><a href="#cb29-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-199"><a href="#cb29-199" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.empty_like(y)</span>
+<span id="cb29-200"><a href="#cb29-200" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
+<span id="cb29-201"><a href="#cb29-201" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> GaussianNB().fit(X[tr], y[tr])</span>
+<span id="cb29-202"><a href="#cb29-202" aria-hidden="true" tabindex="-1"></a>    hy[ts] <span class="op">=</span> model.predict(X[ts])</span>
+<span id="cb29-203"><a href="#cb29-203" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.where(y <span class="op">==</span> hy, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb29-204"><a href="#cb29-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-205"><a href="#cb29-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-206"><a href="#cb29-206" aria-hidden="true" tabindex="-1"></a>Realizando la selección con remplazo se obtiene el intervalo con las siguientes instrucciones </span>
+<span id="cb29-207"><a href="#cb29-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-210"><a href="#cb29-210" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-211"><a href="#cb29-211" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-212"><a href="#cb29-212" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [X[s].mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb29-213"><a href="#cb29-213" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
+<span id="cb29-214"><a href="#cb29-214" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span>
+<span id="cb29-215"><a href="#cb29-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-216"><a href="#cb29-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-217"><a href="#cb29-217" aria-hidden="true" tabindex="-1"></a>teniendo un valor de <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>.  </span>
+<span id="cb29-218"><a href="#cb29-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-219"><a href="#cb29-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-220"><a href="#cb29-220" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Percentil</span></span>
+<span id="cb29-221"><a href="#cb29-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-222"><a href="#cb29-222" aria-hidden="true" tabindex="-1"></a>Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $\hat \theta$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, </span>
+<span id="cb29-223"><a href="#cb29-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-224"><a href="#cb29-224" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb29-225"><a href="#cb29-225" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span> <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb29-226"><a href="#cb29-226" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (np.percentile(B, alpha <span class="op">*</span> <span class="dv">100</span>),</span>
+<span id="cb29-227"><a href="#cb29-227" aria-hidden="true" tabindex="-1"></a>     np.percentile(B, (<span class="dv">1</span> <span class="op">-</span> alpha) <span class="op">*</span> <span class="dv">100</span>))</span>
+<span id="cb29-228"><a href="#cb29-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-229"><a href="#cb29-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-230"><a href="#cb29-230" aria-hidden="true" tabindex="-1"></a>obteniendo un intervalo de <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span>.</span>
+<span id="cb29-231"><a href="#cb29-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-232"><a href="#cb29-232" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: macro-recall</span></span>
+<span id="cb29-233"><a href="#cb29-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-234"><a href="#cb29-234" aria-hidden="true" tabindex="-1"></a>Hasta el momento se ha usado una medida de rendimiento para la cual se puede conocer su varianza de manera analítica. Existen problemas donde esta medida no es recomendada, en el siguiente ejemplo utilizaremos macro-recall para medir el rendimiento de Naive Bayes en el problema del Iris. El primer paso es realizar las predicciones del algoritmo usando validación cruzada y hacer la muestra con reemplazo $B$. </span>
+<span id="cb29-235"><a href="#cb29-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-238"><a href="#cb29-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-239"><a href="#cb29-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-240"><a href="#cb29-240" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb29-241"><a href="#cb29-241" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> norm().ppf(<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb29-242"><a href="#cb29-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-243"><a href="#cb29-243" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-244"><a href="#cb29-244" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb29-245"><a href="#cb29-245" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb29-246"><a href="#cb29-246" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-247"><a href="#cb29-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-248"><a href="#cb29-248" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.empty_like(y)</span>
+<span id="cb29-249"><a href="#cb29-249" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
+<span id="cb29-250"><a href="#cb29-250" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> GaussianNB().fit(X[tr], y[tr])</span>
+<span id="cb29-251"><a href="#cb29-251" aria-hidden="true" tabindex="-1"></a>    hy[ts] <span class="op">=</span> model.predict(X[ts])</span>
+<span id="cb29-252"><a href="#cb29-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-253"><a href="#cb29-253" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(hy.shape[<span class="dv">0</span>],</span>
+<span id="cb29-254"><a href="#cb29-254" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, hy.shape[<span class="dv">0</span>]))</span>
+<span id="cb29-255"><a href="#cb29-255" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [recall_score(y[s], hy[s], average<span class="op">=</span><span class="st">"macro"</span>)</span>
+<span id="cb29-256"><a href="#cb29-256" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb29-257"><a href="#cb29-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-258"><a href="#cb29-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-259"><a href="#cb29-259" aria-hidden="true" tabindex="-1"></a>El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones;</span>
+<span id="cb29-260"><a href="#cb29-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-263"><a href="#cb29-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-264"><a href="#cb29-264" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-265"><a href="#cb29-265" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> np.mean(B)</span>
+<span id="cb29-266"><a href="#cb29-266" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.sqrt(np.var(B))</span>
+<span id="cb29-267"><a href="#cb29-267" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> (p <span class="op">-</span> z <span class="op">*</span> se, p <span class="op">+</span> z <span class="op">*</span> se)</span>
+<span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-273"><a href="#cb29-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-274"><a href="#cb29-274" aria-hidden="true" tabindex="-1"></a>C2 <span class="op">=</span> (np.percentile(B, alpha <span class="op">*</span> <span class="dv">100</span>), np.percentile(B, (<span class="dv">1</span> <span class="op">-</span> alpha) <span class="op">*</span> <span class="dv">100</span>))</span>
+<span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-276"><a href="#cb29-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-277"><a href="#cb29-277" aria-hidden="true" tabindex="-1"></a>obteniendo un intervalo de <span class="in">`{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`</span> Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, estimando un intervalo de <span class="in">`{python} Markdown(f'$C = ({C2[0]:0.2f}, {C2[1]:0.2f})$')`</span></span>
+<span id="cb29-278"><a href="#cb29-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-279"><a href="#cb29-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-280"><a href="#cb29-280" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb29-281"><a href="#cb29-281" aria-hidden="true" tabindex="-1"></a>El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza se pueden estimar utilizando la clase <span class="in">`StatisticSamples`</span>. Las siguientes instrucciones se pueden utilizar para calcular el error estándar. </span>
+<span id="cb29-282"><a href="#cb29-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-285"><a href="#cb29-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-286"><a href="#cb29-286" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-287"><a href="#cb29-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-288"><a href="#cb29-288" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
+<span id="cb29-289"><a href="#cb29-289" aria-hidden="true" tabindex="-1"></a>                                    average<span class="op">=</span><span class="st">"macro"</span>)</span>
+<span id="cb29-290"><a href="#cb29-290" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-291"><a href="#cb29-291" aria-hidden="true" tabindex="-1"></a>statistic <span class="op">=</span> StatisticSamples(statistic<span class="op">=</span>recall)</span>
+<span id="cb29-292"><a href="#cb29-292" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> statistic(y, hy)</span>
+<span id="cb29-293"><a href="#cb29-293" aria-hidden="true" tabindex="-1"></a>np.std(samples)                               </span>
+<span id="cb29-294"><a href="#cb29-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-295"><a href="#cb29-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-296"><a href="#cb29-296" aria-hidden="true" tabindex="-1"></a>Complementando el intervalo de confianza con el método de percentil se implementa en el siguiente código.</span>
+<span id="cb29-299"><a href="#cb29-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-300"><a href="#cb29-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-301"><a href="#cb29-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-302"><a href="#cb29-302" aria-hidden="true" tabindex="-1"></a>CI(samples)</span>
+<span id="cb29-303"><a href="#cb29-303" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-304"><a href="#cb29-304" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb29-305"><a href="#cb29-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-306"><a href="#cb29-306" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparación de Algoritmos</span></span>
+<span id="cb29-307"><a href="#cb29-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-308"><a href="#cb29-308" aria-hidden="true" tabindex="-1"></a>Se han descrito varios procedimientos para conocer los intervalos de confianza de un algoritmos de aprendizaje. Es momento para describir la metodología para conocer si dos algoritmos se comportan similar en un problema dado. </span>
+<span id="cb29-309"><a href="#cb29-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-310"><a href="#cb29-310" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Distribución $t$ de Student</span></span>
+<span id="cb29-311"><a href="#cb29-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-312"><a href="#cb29-312" aria-hidden="true" tabindex="-1"></a>Suponiendo que se tienen las medidas de rendimiento de dos algoritmos mediante validación cruzada de K-fold, es decir, se tiene el rendimiento del primer algoritmo como $p_i^1$ y del segundo como $p_i^2$ en la $i$-ésima instancia. Suponiendo que el rendimiento es una normal, entonces la resta, i.e., $p_i = p_i^1 - p_i^2$ también sería normal. Dado que se está comparando los algoritmos en los mismos datos, se puede utilizar la prueba $t$ de Student de muestras dependientes. La estadística de la prueba está dada por $\frac{\sqrt{K} m}{S} \sim t_{K-1}$, donde $m$ </span>
+<span id="cb29-313"><a href="#cb29-313" aria-hidden="true" tabindex="-1"></a>y $S^2$ es la media varianza estimada.</span>
+<span id="cb29-314"><a href="#cb29-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-315"><a href="#cb29-315" aria-hidden="true" tabindex="-1"></a>En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de Breast Cancer. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. </span>
+<span id="cb29-316"><a href="#cb29-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-319"><a href="#cb29-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-320"><a href="#cb29-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-321"><a href="#cb29-321" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb29-322"><a href="#cb29-322" aria-hidden="true" tabindex="-1"></a>kf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span>K,</span>
+<span id="cb29-323"><a href="#cb29-323" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb29-324"><a href="#cb29-324" aria-hidden="true" tabindex="-1"></a>                     shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-325"><a href="#cb29-325" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-326"><a href="#cb29-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-327"><a href="#cb29-327" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> []</span>
+<span id="cb29-328"><a href="#cb29-328" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
+<span id="cb29-329"><a href="#cb29-329" aria-hidden="true" tabindex="-1"></a>    forest <span class="op">=</span> RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])</span>
+<span id="cb29-330"><a href="#cb29-330" aria-hidden="true" tabindex="-1"></a>    naive <span class="op">=</span> GaussianNB().fit(X[tr], y[tr]).predict(X[ts])</span>
+<span id="cb29-331"><a href="#cb29-331" aria-hidden="true" tabindex="-1"></a>    P.append([recall_score(y[ts], hy, average<span class="op">=</span><span class="st">"macro"</span>) <span class="cf">for</span> hy <span class="kw">in</span> [forest, naive]])</span>
+<span id="cb29-332"><a href="#cb29-332" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array(P)</span>
+<span id="cb29-333"><a href="#cb29-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-334"><a href="#cb29-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-335"><a href="#cb29-335" aria-hidden="true" tabindex="-1"></a>Como se puede observar la medida de rendimiento es macro-recall. Continuando con el procedimiento para obtener la estadística $t_{K-1}$</span>
+<span id="cb29-336"><a href="#cb29-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-339"><a href="#cb29-339" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-340"><a href="#cb29-340" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-341"><a href="#cb29-341" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> P[:, <span class="dv">0</span>] <span class="op">-</span> P[:, <span class="dv">1</span>]</span>
+<span id="cb29-342"><a href="#cb29-342" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.sqrt(K) <span class="op">*</span> np.mean(p) <span class="op">/</span> np.std(p)</span>
+<span id="cb29-343"><a href="#cb29-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-344"><a href="#cb29-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-345"><a href="#cb29-345" aria-hidden="true" tabindex="-1"></a>donde el valor de la estadística es <span class="in">`{python} Markdown(f'${t:0.4f}$')`</span>, si el valor está fuera del siguiente intervalo $(-2.045, 2.045)$ se rechaza la hipótesis nula de que los dos algoritmos se comportan similar. </span>
+<span id="cb29-346"><a href="#cb29-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-347"><a href="#cb29-347" aria-hidden="true" tabindex="-1"></a>En caso de que la medida de rendimiento no esté normalmente distribuido, la prueba no-parametrica equivalente corresponde a Wilcoxon. La instrucción <span class="in">`wilcoxon(P[:, 0], P[:, 1])`</span> se puede utilizar para calcularla, dando un $p_{\text{value}}$ de <span class="in">`{python} Markdown(f'${wilcoxon(P[:, 0], P[:, 1]).pvalue:0.4f}$')`</span>. En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadisticamente diferentes con una confianza del 95% en el problema de Breast Cancer.</span>
+<span id="cb29-348"><a href="#cb29-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-349"><a href="#cb29-349" aria-hidden="true" tabindex="-1"></a><span class="fu">### Método: Bootstrap en diferencias</span></span>
+<span id="cb29-350"><a href="#cb29-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-351"><a href="#cb29-351" aria-hidden="true" tabindex="-1"></a>Un método para comparar el rendimiento de dos algoritmo que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. @Nava2024 utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este se procedimiento se explicará mediante un ejemplo. </span>
+<span id="cb29-352"><a href="#cb29-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-353"><a href="#cb29-353" aria-hidden="true" tabindex="-1"></a>El primer paso es calcular las predicciones de los algoritmos, en este caso se realizar una validación cruzada, tal y como se muestra a continuación. </span>
+<span id="cb29-354"><a href="#cb29-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-357"><a href="#cb29-357" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-358"><a href="#cb29-358" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-359"><a href="#cb29-359" aria-hidden="true" tabindex="-1"></a>forest <span class="op">=</span> np.empty_like(y)</span>
+<span id="cb29-360"><a href="#cb29-360" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> np.empty_like(y)</span>
+<span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tr, ts <span class="kw">in</span> kf.split(X, y):</span>
+<span id="cb29-362"><a href="#cb29-362" aria-hidden="true" tabindex="-1"></a>    forest[ts] <span class="op">=</span> RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])</span>
+<span id="cb29-363"><a href="#cb29-363" aria-hidden="true" tabindex="-1"></a>    naive[ts] <span class="op">=</span> GaussianNB().fit(X[tr], y[tr]).predict(X[ts])</span>
+<span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-365"><a href="#cb29-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-366"><a href="#cb29-366" aria-hidden="true" tabindex="-1"></a>El macro-recall para los Bosques Aleatorios es <span class="in">`{python} Markdown(f'${recall_score(y, forest, average="macro"):0.2f}$')`</span> y para el Naive Bayes es <span class="in">`{python} Markdown(f'${recall_score(y, naive, average="macro"):0.2f}$')`</span>. Lo que se observa es que los bosques tienen un mejor rendimiento, entonces la distribución de la diferencia del rendimiento entre bosques y Naive Bayes no debería de incluir al cero, si lo incluye la masa que está al lado izquierdo del cero debe de ser menor, esa mas corresponde al valor $p.$</span>
+<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a>Las muestras de la diferencia de rendimiento se pueden calcular de las siguientes instrucciones. </span>
+<span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-373"><a href="#cb29-373" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>],</span>
+<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
+<span id="cb29-376"><a href="#cb29-376" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> recall_score                      </span>
+<span id="cb29-377"><a href="#cb29-377" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> <span class="kw">lambda</span> y, hy1, hy2: r(y, hy1, average<span class="op">=</span><span class="st">"macro"</span>) <span class="op">-\</span></span>
+<span id="cb29-378"><a href="#cb29-378" aria-hidden="true" tabindex="-1"></a>                           r(y, hy2, average<span class="op">=</span><span class="st">"macro"</span>)</span>
+<span id="cb29-379"><a href="#cb29-379" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [diff(y[s], forest[s], naive[s])</span>
+<span id="cb29-380"><a href="#cb29-380" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> s <span class="kw">in</span> S]</span>
+<span id="cb29-381"><a href="#cb29-381" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-382"><a href="#cb29-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-383"><a href="#cb29-383" aria-hidden="true" tabindex="-1"></a>Finalmente, el $p_{\text{value}}$ corresponde a la proporción de elementos que son menores que cero, i.e., <span class="in">`(np.array(B) &lt; 0).mean()`</span>, es decir, aquellas muestras donde Naive Bayes tiene un mejor desempeño que los bosques. En este caso el $p_{\text{value}}$ tiene un valor de <span class="in">`{python} Markdown(f'${(np.array(B) &lt; 0).mean():0.4f}$')`</span>. Dado que el valor es menor que $0.05$ se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos. La @fig-comparacion-diff muestra la distribución de la diferencia de rendimiento, en esta se puede observar como la mayor parte de la masa se encuentra del lado positivo y que muy poca masa es menor que cero. </span>
+<span id="cb29-384"><a href="#cb29-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-387"><a href="#cb29-387" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-388"><a href="#cb29-388" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-389"><a href="#cb29-389" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Distribución de la diferencia de rendimiento</span></span>
+<span id="cb29-390"><a href="#cb29-390" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comparacion-diff</span></span>
+<span id="cb29-391"><a href="#cb29-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-392"><a href="#cb29-392" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-393"><a href="#cb29-393" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-394"><a href="#cb29-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-395"><a href="#cb29-395" aria-hidden="true" tabindex="-1"></a><span class="fu">## CompStats </span></span>
+<span id="cb29-396"><a href="#cb29-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-397"><a href="#cb29-397" aria-hidden="true" tabindex="-1"></a>La librería <span class="co">[</span><span class="ot">CompStats</span><span class="co">](https://compstats.readthedocs.io)</span> permite realizar de manera sencilla la comparación entre el rendimiento de varios algoritmos, además de presentar gráficas sobre su comportamiento. Esta librería usa la técnica de Bootstrap tal y como se ha mostrado en este capítulo. </span>
+<span id="cb29-398"><a href="#cb29-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-399"><a href="#cb29-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-402"><a href="#cb29-402" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-403"><a href="#cb29-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb29-404"><a href="#cb29-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-405"><a href="#cb29-405" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats <span class="im">import</span> utils</span>
+<span id="cb29-406"><a href="#cb29-406" aria-hidden="true" tabindex="-1"></a>utils.USE_TQDM <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb29-407"><a href="#cb29-407" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-408"><a href="#cb29-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-409"><a href="#cb29-409" aria-hidden="true" tabindex="-1"></a>Lo primero que se realiza es calcular las muestras del rendimiento entre los dos algoritmos analizados, los cuales tienen sus predicciones en las variables <span class="in">`naive`</span> y <span class="in">`forest`</span>. En la primera línea se inicializa la variable <span class="in">`macro_recall`</span> que calcula el promedio de la cobertura. La segunda línea crea un cuadro de datos (<span class="in">`DataFrame`</span>) que contiene tanto la variable medida como las predicciones. La tercera línea calcula el rendimiento de los dos algoritmos. </span>
+<span id="cb29-410"><a href="#cb29-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-413"><a href="#cb29-413" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-414"><a href="#cb29-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-415"><a href="#cb29-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-416"><a href="#cb29-416" aria-hidden="true" tabindex="-1"></a>macro_recall <span class="op">=</span> <span class="kw">lambda</span> y, hy: recall_score(y, hy,</span>
+<span id="cb29-417"><a href="#cb29-417" aria-hidden="true" tabindex="-1"></a>                                          average<span class="op">=</span><span class="st">'macro'</span>)</span>
+<span id="cb29-418"><a href="#cb29-418" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(y<span class="op">=</span>y,</span>
+<span id="cb29-419"><a href="#cb29-419" aria-hidden="true" tabindex="-1"></a>                       naive<span class="op">=</span>naive,</span>
+<span id="cb29-420"><a href="#cb29-420" aria-hidden="true" tabindex="-1"></a>                       forest<span class="op">=</span>forest))</span>
+<span id="cb29-421"><a href="#cb29-421" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> performance(df, score<span class="op">=</span>macro_recall)</span>
+<span id="cb29-422"><a href="#cb29-422" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-423"><a href="#cb29-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-424"><a href="#cb29-424" aria-hidden="true" tabindex="-1"></a>La variable <span class="in">`perf`</span> contiene las muestras del rendimiento de cada algoritmo. Por ejemplo, la siguiente línea calcula el intervalo de confianza de cada algoritmo. </span>
+<span id="cb29-425"><a href="#cb29-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-428"><a href="#cb29-428" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-429"><a href="#cb29-429" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-430"><a href="#cb29-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-431"><a href="#cb29-431" aria-hidden="true" tabindex="-1"></a>CI(perf)</span>
+<span id="cb29-432"><a href="#cb29-432" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-433"><a href="#cb29-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-434"><a href="#cb29-434" aria-hidden="true" tabindex="-1"></a>Los intervalos de confianza se pueden visualizar en la @fig-intervalos-compstats. </span>
+<span id="cb29-435"><a href="#cb29-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-438"><a href="#cb29-438" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-439"><a href="#cb29-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-440"><a href="#cb29-440" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Intervalos de confianzas</span></span>
+<span id="cb29-441"><a href="#cb29-441" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-intervalos-compstats</span></span>
+<span id="cb29-442"><a href="#cb29-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-443"><a href="#cb29-443" aria-hidden="true" tabindex="-1"></a>plot_performance(perf)</span>
+<span id="cb29-444"><a href="#cb29-444" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-445"><a href="#cb29-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-446"><a href="#cb29-446" aria-hidden="true" tabindex="-1"></a>El segundo paso es conocer si la diferencia en rendimiento es significativa, en la @fig-comparacion-compstats se observa la comparación entre el mejor algoritmo (i.e., <span class="in">`forest`</span>) y los otros algoritmos (<span class="in">`naive`</span>) incluidos en la comparación. Se observa, en la figura, una linea puntuada que se encuentra en cero para facilitar la comparación, si el intervalo de confianza intersecta con la linea se puede concluir que los algoritmos comparados no son estadísticamente diferentes. En el ejemplo mostrado se ve que el intervalo no intersecta entonces se puede concluir que la hipótesis nula se puede descartar con una cierta confianza.  </span>
+<span id="cb29-447"><a href="#cb29-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-450"><a href="#cb29-450" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-451"><a href="#cb29-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-452"><a href="#cb29-452" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Comparación contra el mejor</span></span>
+<span id="cb29-453"><a href="#cb29-453" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comparacion-compstats</span></span>
+<span id="cb29-454"><a href="#cb29-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-455"><a href="#cb29-455" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> difference(perf)</span>
+<span id="cb29-456"><a href="#cb29-456" aria-hidden="true" tabindex="-1"></a>plot_difference(diff)</span>
+<span id="cb29-457"><a href="#cb29-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
