@@ -12,9 +12,9 @@ El **objetivo** de la unidad es explicar el área de aprendizaje computacional, 
 
 ## Aprendizaje Computacional
 
-Aprendizaje computacional es una rama de la Inteligencia Artificial (IA) que estudia los algoritmos que son capaces de aprender a partir de una serie de ejemplos o con alguna guía. Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. 
+Utilizando la descripción de @langley1986machine, se puede definir el **aprendizaje computacional** como una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el paso del tiempo. En sus inicios, el campo estaba enfocado al desarrollo de representaciones simbólicas, de la misma manera que la IA, sin prohibir las representaciones numéricas. Actualmente, el campo ha cambiado de dirección privilegiando las representaciones numéricas a las simbólicas, en particular, este documento se enfoca solamente a representaciones numéricas. 
 
-En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
+Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
 
 **Aprendizaje no-supervisado** es aquel donde se tiene un conjunto de entradas y se busca aprender alguna relación de estas entradas, por ejemplo, generando grupos o utilizando estas entradas para hacer una transformación o encontrar un patrón. 
 
@@ -108,7 +108,21 @@ Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los
 
 ## Aprendizaje Supervisado {#sec-aprendizaje-supervisado}
 
-Aprendizaje supervisado es un problema donde el componente inicial es un conjunto de pares, entrada y salida. Es decir se cuenta con $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada. Tomando en cuenta estas condiciones iniciales podemos definir el *objetivo* de aprendizaje supervisado como encontrar un algoritmo capaz de regresar la salida $y$ dada una entrada $x$.
+Aprendizaje supervisado inicia con un conjunto de pares, entrada y salida; la @fig-datos-aprendizaje-supervisado ilustra el mecanismo que genera estos pares, del lado izquierdo se tiene las variables medibles que entran al proceso o fenómeno que se desconoce y del lado derecho se mide la(s) variable(s) respuesta, es decir, la(s) salida(s) del sistema. En otras palabras se tiene $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada. 
+
+```{mermaid}
+%%| echo: false
+%%| fig-cap: Datos de Aprendizaje Supervisado
+%%| label: fig-datos-aprendizaje-supervisado
+
+flowchart LR
+    Entrada([Entradas]) -->  Proceso[Proceso / Fenómeno]
+    Proceso --> Salidas([Salidas])
+```
+
+Considerando que se desconoce el modelo del proceso o fenómeno que generó la respuesta y además que pueden existir variables de entrada que no son medibles, se puede definir el **objetivo** de aprendizaje supervisado como encontrar un algoritmo o función, $f$, capaz de regresar la salida, $y$, dada una entrada $x$.
+
+Los posibles fines de desarrollar la función $f$ es por un lado **predecir** la salida dada una nueva entrada $x$ y por el otro lado **extraer conocimiento** del proceso que asocia la respuesta de las variables de entrada (ver @breiman2001statistical). Estos dos metas se pueden contraponer, es decir, extraer conocimiento implica una reducción en la calidad de la predicción y viceversa mejorar la calidad de predicción en general trae consigo una menor capacidad para entender el fenómeno generador de datos.  
 
 Existe una gran variedad de problemas que se puede categorizar como tareas de aprendizaje supervisado, solamente hay que recordar que en todos los casos se inicia con un conjunto $\mathcal D$ de pares entrada y salida. En ocasiones la construcción del conjunto es directa, por ejemplo en el caso de que se quiera identificar si una persona será sujeta a un crédito, entonces el conjunto a crear esta compuesto por las características de las personas que se les ha otorgado un crédito y el estado final de crédito, es decir, si el crédito fue pagado o no fue pagado. En otro ejemplo, suponiendo que se quiere crear un algoritmo capaz de identificar si un texto dado tiene una polaridad positiva o negativa, entonces el conjunto se crea recolectando textos y a cada texto un conjunto de personas decide si el texto dado es positivo o negativo y la polaridad final es el consenso de varias opiniones; a este problema en general se le conoce como análisis de sentimientos.
 
