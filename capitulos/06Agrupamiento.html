@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.40">
+<meta name="generator" content="quarto-1.5.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -303,7 +303,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados"><span class="header-section-number">6.1</span> Paquetes usados</a></li>
-  <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">6.2</span> Introducción</a></li>
+  <li><a href="#sec-intro-06" id="toc-sec-intro-06" class="nav-link" data-scroll-target="#sec-intro-06"><span class="header-section-number">6.2</span> Introducción</a></li>
   <li><a href="#sec-agrupamiento-k-medias" id="toc-sec-agrupamiento-k-medias" class="nav-link" data-scroll-target="#sec-agrupamiento-k-medias"><span class="header-section-number">6.3</span> K-medias</a>
   <ul class="collapse">
   <li><a href="#mu_i" id="toc-mu_i" class="nav-link" data-scroll-target="#mu_i"><span class="header-section-number">6.3.1</span> <span class="math inline">\(\mu_i\)</span></a></li>
@@ -341,7 +341,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar el algoritmo de agrupamiento k-medias</p>
 <section id="paquetes-usados" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">6.1</span> Paquetes usados</h2>
-<div id="a909b8f1" class="cell" data-execution_count="1">
+<div id="7d4c6768" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> decomposition</span>
@@ -357,8 +357,8 @@ window.Quarto = {
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/oS_U5XZLS8g" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <hr>
 </section>
-<section id="introducción" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="introducción"><span class="header-section-number">6.2</span> Introducción</h2>
+<section id="sec-intro-06" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-intro-06"><span class="header-section-number">6.2</span> Introducción</h2>
 <p>Esta unidad trata el problema de agrupamiento, el cual es un problema de aprendizaje no supervisado (<a href="01Introduccion.html#sec-aprendizaje-no-supervisado" class="quarto-xref"><span>Sección 1.3</span></a>), en el cual se cuenta con un conjunto <span class="math inline">\(\mathcal D = \{ x_i \mid i=1, \ldots, N\}\)</span> donde <span class="math inline">\(x_i \in \mathbb R^d.\)</span> El objetivo de agrupamiento es separar los elementos de <span class="math inline">\(\mathcal D\)</span> en <span class="math inline">\(K\)</span> grupos. Es decir asociar a <span class="math inline">\(x_i \in \mathcal D\)</span> a un grupo <span class="math inline">\(x_i \in G_j\)</span> donde <span class="math inline">\(\cup_j^K G_j = \mathcal D\)</span> y <span class="math inline">\(G_j \cap G_i = \emptyset\)</span> para todo <span class="math inline">\(i \neq j.\)</span></p>
 <p>Por supuesto existen diferentes algoritmos que se han desarrollado para generar esta partición, en particular, todos de ellos encuentran la participación optimizando una función objetivo que se considera adecuada para el problema que se está analizando. En particular, esta unidad se enfoca a describir uno de los algoritmos de agrupamiento más utilizados que es K-medias.</p>
 </section>
@@ -367,20 +367,20 @@ window.Quarto = {
 <p>De manera formal el objetivo de K-medias es encontrar la partición <span class="math inline">\(G = \{G_1, G_2, \ldots, G_K \}\)</span> que corresponda al <span class="math inline">\(\min \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid,\)</span> donde <span class="math inline">\(\mu_i\)</span> es la media de todos los elementos que pertenecen a <span class="math inline">\(G_i.\)</span></p>
 <p>Para comprender la función objetivo (<span class="math inline">\(\min \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid\)</span>) de k-medias se explican los dos componentes principales que son las medias <span class="math inline">\(\mu_i\)</span> y los grupos <span class="math inline">\(G_i.\)</span></p>
 <p>Para ilustrar tanto a <span class="math inline">\(\mu_i\)</span> como a <span class="math inline">\(G_i\)</span> se utiliza el problema del iris (<a href="05ReduccionDim.html#sec-visualizacion-iris" class="quarto-xref"><span>Sección 5.5.1</span></a>) cuyos datos se pueden obtener de la siguiente manera.</p>
-<div id="62c5b446" class="cell" data-execution_count="3">
+<div id="d0620ac8" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="mu_i" class="level3" data-number="6.3.1">
 <h3 data-number="6.3.1" class="anchored" data-anchor-id="mu_i"><span class="header-section-number">6.3.1</span> <span class="math inline">\(\mu_i\)</span></h3>
 <p>Como se describió, <span class="math inline">\(\mu_i\)</span> es la media de los elementos que corresponden al grupo <span class="math inline">\(G_i\)</span>. Asumiendo que el grupo <span class="math inline">\(1\)</span> (<span class="math inline">\(G_1\)</span>) tiene <span class="math inline">\(10\)</span> elementos seleccionados de manera aleatoria de <span class="math inline">\(\mathcal D\)</span> como se muestra a continuación.</p>
-<div id="9ab81b96" class="cell" data-execution_count="4">
+<div id="495f10f7" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> np.arange(<span class="bu">len</span>(D))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>np.random.shuffle(index)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> index[:<span class="dv">10</span>]</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>G_1 <span class="op">=</span> D[sel]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La variable <code>G_1</code> tiene los 10 elementos considerados como miembros de <span class="math inline">\(G_1\)</span> entonces <span class="math inline">\(\mu_1\)</span> se calcula como la media de cada componente, lo cual se puede calcular con el siguiente código.</p>
-<div id="c13bef2e" class="cell" data-execution_count="5">
+<div id="11be8324" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu_1 <span class="op">=</span> G_1.mean(axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La <a href="#fig-g1-centro" class="quarto-xref">Figura&nbsp;<span>6.1</span></a> muestra los elementos seleccionados (<span class="math inline">\(x \in G_1\)</span>) y la media (<span class="math inline">\(\mu_1\)</span>) del grupo. Los elementos se encuentran en <span class="math inline">\(\mathbb R^4\)</span> y para visualizarlos se transformaron usando PCA descrito en la <a href="05ReduccionDim.html#sec-visualizacion-iris" class="quarto-xref"><span>Sección 5.5.1</span></a>.</p>
@@ -403,7 +403,7 @@ window.Quarto = {
 <div id="fig-g1-centro" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-g1-centro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06Agrupamiento_files/figure-html/fig-g1-centro-output-1.png" width="487" height="432" class="figure-img">
+<img src="06Agrupamiento_files/figure-html/fig-g1-centro-output-1.png" width="495" height="432" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-g1-centro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.1: Elementos del primer grupo y su centro
@@ -416,18 +416,18 @@ Figura&nbsp;6.1: Elementos del primer grupo y su centro
 <section id="g_i" class="level3" data-number="6.3.2">
 <h3 data-number="6.3.2" class="anchored" data-anchor-id="g_i"><span class="header-section-number">6.3.2</span> <span class="math inline">\(G_i\)</span></h3>
 <p>El complemento del procedimiento anterior es encontrar los elementos de <span class="math inline">\(G_i\)</span> dando la <span class="math inline">\(\mu_i\)</span>. El ejemplo consiste en generar dos medias, es decir, <span class="math inline">\(K=2\)</span> y encontrar los elementos que corresponden a las medias generadas. Se puede utilizar cualquier procedimiento para generar dos vectores de manera aleatoria, pero en este ejemplo se asume que estos vectores corresponden a dos elementos de <span class="math inline">\(\mathcal D.\)</span> Estos elementos son los que se encuentran en los indices <span class="math inline">\(50\)</span> y <span class="math inline">\(100\)</span> tal y como se muestra en las siguientes instrucciones.</p>
-<div id="874715cb" class="cell" data-execution_count="7">
+<div id="b83d0146" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mu_1 <span class="op">=</span> D[<span class="dv">50</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mu_2 <span class="op">=</span> D[<span class="dv">100</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El elemento <span class="math inline">\(x\)</span> pertenece al grupo <span class="math inline">\(G_i\)</span> si el valor <span class="math inline">\(\mid\mid x - \mu_i\mid\mid\)</span> corresponde al <span class="math inline">\(\min_j \mid\mid x - \mu_j\mid\mid.\)</span> Entonces se requiere calcular <span class="math inline">\(\mid\mid x - \mu_i\mid\mid\)</span> para cada elemento <span class="math inline">\(x \in \mathcal D\)</span> y para cada una de las medias <span class="math inline">\(\mu_i\)</span>. Esto se puede realizar con la siguiente instrucción</p>
-<div id="24d5f000" class="cell" data-execution_count="8">
+<div id="ca6d4418" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.array([linalg.norm((D <span class="op">-</span> np.atleast_2d(mu)),</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                            axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> mu <span class="kw">in</span> [mu_1, mu_2]]).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>donde se puede observar que el ciclo itera por cada una de las medias, i.e., <code>mu_1</code> y <code>mu_2</code>. Después se calcula la norma utilizando la función <code>linalg.norm</code> y finalmente se regresa la transpuesta para tener una matriz de 150 renglones y dos columnas que corresponden al número de ejemplos en <span class="math inline">\(\mathcal D\)</span> y a las dos medias. Los valores de <code>dis[50]</code> y <code>dis[100]</code> son array([0. , 1.8439]) y array([1.8439, 0. ]) respectivamente. Tal y como se espera porque <span class="math inline">\(\mu_1\)</span> corresponde al índice 50 y <span class="math inline">\(\mu_2\)</span> es el índice 100. Estos dos ejemplos, array([0. , 1.8439]) y array([1.8439, 0. ]), permiten observar que el argumento mínimo de <code>dis</code> identifica al grupo del elemento, haciendo la consideración que el índice 0 representa <span class="math inline">\(G_1\)</span> y el índice 1 es <span class="math inline">\(G_2.\)</span> La siguiente instrucción muestra como se realiza esta asignación.</p>
-<div id="78694472" class="cell" data-execution_count="9">
+<div id="182ac354" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> dis.argmin(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La <a href="#fig-k-means-g" class="quarto-xref">Figura&nbsp;<span>6.2</span></a> muestra los grupos formados, el primer grupo <code>G_1</code> se encuentra en azul y el segundo en naranja, también muestra los elementos que fueron usados como medias de cada grupo; estos elementos se observan en color verde.</p>
@@ -479,7 +479,7 @@ Figura&nbsp;6.2: Proyección de los elementos del conjunto y sus centros
 <section id="ejemplo-iris" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="ejemplo-iris"><span class="header-section-number">6.4</span> Ejemplo: Iris</h2>
 <p>En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos en el conjunto del iris. La clase se inicializa primero con 2 grupos (primera línea). En la segunda instrucción se predice los grupos para todo el conjunto de datos. Las medias para cada grupo se encuentran en el atributo <code>cluster_centers_.</code></p>
-<div id="f69c2f13" class="cell" data-execution_count="11">
+<div id="81bb564d" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">2</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -518,7 +518,7 @@ Figura&nbsp;6.3: Proyección de k-means usando dos grupos
 </div>
 </div>
 <p>Un procedimiento equivalente se puede realizar para generar tres grupos, el único cambio es el parámetro <code>n_clusters</code> en la clase <code>KMeans</code> de la siguiente manera.</p>
-<div id="2f9bbbd4" class="cell" data-execution_count="13">
+<div id="6fa4467d" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -560,9 +560,9 @@ Figura&nbsp;6.4: Proyección de k-means usando tres grupos
 <section id="rendimiento" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="rendimiento"><span class="header-section-number">6.5</span> Rendimiento</h2>
 <p>Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir. En este caso particular se utilizó un problema de clasificación para ilustrar el procedimiento de k-medias, entonces se cuenta con una clase para cada elemento <span class="math inline">\(x \in \mathcal D\)</span>. Además se sabe que el problema del iris tiene tres clases, entonces utilizando los tres grupos obtenidos previamente podemos medir que tanto se parecen estos tres grupos a las clases del iris. Es decir, se puede saber si el algoritmo de k-medias agrupa los elementos de tal manera que cada grupo corresponda a una clase del iris.</p>
-<p>Los grupos generados se encuentran en la lista <code>cl</code> y las clases se encuentran en <code>y</code>. La lista <code>y</code> tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase <span class="math inline">\(0\)</span>, los siguientes <span class="math inline">\(50\)</span> son clase <span class="math inline">\(1\)</span> y los últimos son la clase <span class="math inline">\(2\)</span>. Dado que K-medias no conoce los clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en <code>cl</code> están organizados de la siguiente manera aproximadamente los <span class="math inline">\(50\)</span> primeros elementos son del grupo <span class="math inline">\(1\)</span>, los siguientes son grupo <span class="math inline">\(0\)</span> y finalmente los últimos son grupo <span class="math inline">\(2\)</span>. Entonces se puede hacer una transformación usando la variable <code>perm</code> con la siguiente información array([2, 0, 1]).</p>
-<p>Utilizando <code>perm</code> se calcula la exactitud (<a href="04Rendimiento.html#sec-accuracy" class="quarto-xref"><span>Sección 4.2.2</span></a>) utilizando la siguiente instrucción. Se obtiene una exactitud de <span class="math inline">\(0.8933\)</span> que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris.</p>
-<div id="dced2534" class="cell" data-execution_count="17">
+<p>Los grupos generados se encuentran en la lista <code>cl</code> y las clases se encuentran en <code>y</code>. La lista <code>y</code> tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase <span class="math inline">\(0\)</span>, los siguientes <span class="math inline">\(50\)</span> son clase <span class="math inline">\(1\)</span> y los últimos son la clase <span class="math inline">\(2\)</span>. Dado que K-medias no conoce los clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en <code>cl</code> están organizados de la siguiente manera aproximadamente los <span class="math inline">\(50\)</span> primeros elementos son del grupo <span class="math inline">\(1\)</span>, los siguientes son grupo <span class="math inline">\(0\)</span> y finalmente los últimos son grupo <span class="math inline">\(2\)</span>. Entonces se puede hacer una transformación usando la variable <code>perm</code> con la siguiente información array([0, 2, 1]).</p>
+<p>Utilizando <code>perm</code> se calcula la exactitud (<a href="04Rendimiento.html#sec-accuracy" class="quarto-xref"><span>Sección 4.2.2</span></a>) utilizando la siguiente instrucción. Se obtiene una exactitud de <span class="math inline">\(0.8867\)</span> que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris.</p>
+<div id="fe05ea8f" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> metrics.accuracy_score(y, perm[cl])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el accuracy o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos.</p>
@@ -571,18 +571,18 @@ Figura&nbsp;6.4: Proyección de k-means usando tres grupos
 s = \frac{b - a}{\max(a, b)},
 \]</span></p>
 <p>donde <span class="math inline">\(a\)</span> corresponde a la distancia media entre un elemento y todos las objetos del mismo grupo; y <span class="math inline">\(b\)</span> es la distancia media entre la muestra y todos los elementos del grupo más cercano.</p>
-<p>Por ejemplo, en el problema del Iris <span class="math inline">\(s\)</span> tiene un valor de <span class="math inline">\(0.5528\)</span> calculado con la siguiente instrucción.</p>
-<div id="e5f6629a" class="cell" data-execution_count="19">
+<p>Por ejemplo, en el problema del Iris <span class="math inline">\(s\)</span> tiene un valor de <span class="math inline">\(0.5512\)</span> calculado con la siguiente instrucción.</p>
+<div id="1015e5e6" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sil <span class="op">=</span> metrics.silhouette_score(D, cl, metric<span class="op">=</span><span class="st">'euclidean'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Otra medida de la calidad de los grupos es índice de <strong>Calinski-Harabasz</strong> que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de <span class="math inline">\(561.6278\)</span> obtenido con la siguiente instrucción.</p>
+<p>Otra medida de la calidad de los grupos es índice de <strong>Calinski-Harabasz</strong> que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de <span class="math inline">\(561.5937\)</span> obtenido con la siguiente instrucción.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cal_har <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="número-de-grupos" class="level2" data-number="6.6">
 <h2 data-number="6.6" class="anchored" data-anchor-id="número-de-grupos"><span class="header-section-number">6.6</span> Número de Grupos</h2>
 <p>Utilizando una medida de rendimiento de agrupamiento se analizar cual sería el número adecuado de grupos para un problema dado. El procedimiento es variar el número de grupos y medir el rendimiento para cada grupo y quedarse con aquel que da el mejor rendimiento considerando también el número de grupos.</p>
 <p>Por ejemplo, el siguiente instrucción calcula el coeficiente de Silhouette y el índice de Calinski-Harabasz en el problema del Iris.</p>
-<div id="bbea4b6d" class="cell" data-execution_count="20">
+<div id="4f566781" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>S1 <span class="op">=</span> []</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="op">=</span> []</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">11</span>):</span>
@@ -610,7 +610,7 @@ s = \frac{b - a}{\max(a, b)},
 <div id="fig-k-means-performance-k" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-k-means-performance-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06Agrupamiento_files/figure-html/fig-k-means-performance-k-output-1.png" width="642" height="432" class="figure-img">
+<img src="06Agrupamiento_files/figure-html/fig-k-means-performance-k-output-1.png" width="642" height="427" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-k-means-performance-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.5: Rendimiento variando el número de grupos
@@ -1143,7 +1143,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-06}</span></span>
 <span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>Esta unidad trata el problema de agrupamiento, el cual es un problema de aprendizaje no supervisado (@sec-aprendizaje-no-supervisado), en el cual se cuenta con un conjunto $\mathcal D = <span class="sc">\{</span> x_i \mid i=1, \ldots, N<span class="sc">\}</span>$ donde $x_i \in \mathbb R^d.$ El objetivo de agrupamiento es separar los elementos de $\mathcal D$ en $K$ grupos. Es decir asociar a $x_i \in \mathcal D$ a un grupo $x_i \in G_j$ donde $\cup_j^K G_j = \mathcal D$ y $G_j \cap G_i = \emptyset$ para todo $i \neq j.$</span>
 <span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a></span>

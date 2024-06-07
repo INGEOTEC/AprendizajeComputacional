@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.40">
+<meta name="generator" content="quarto-1.5.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -303,7 +303,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
-  <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">3.1</span> Introducción</a></li>
+  <li><a href="#sec-intro-03" id="toc-sec-intro-03" class="nav-link" data-scroll-target="#sec-intro-03"><span class="header-section-number">3.1</span> Introducción</a></li>
   <li><a href="#sec-metodologia-met-parametricos" id="toc-sec-metodologia-met-parametricos" class="nav-link" data-scroll-target="#sec-metodologia-met-parametricos"><span class="header-section-number">3.2</span> Metodología</a></li>
   <li><a href="#sec-estimacion-parametros-gnal" id="toc-sec-estimacion-parametros-gnal" class="nav-link" data-scroll-target="#sec-estimacion-parametros-gnal"><span class="header-section-number">3.3</span> Estimación de Parámetros</a>
   <ul class="collapse">
@@ -359,7 +359,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer las características de los modelos paramétricos y aplicar máxima verosimilitud para estimar los parámetros del modelo paramétrico en problemas de regresión y clasificación.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="16465b5d" class="cell" data-execution_count="1">
+<div id="95d2d900" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA.model <span class="im">import</span> GaussianBayes</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -376,8 +376,8 @@ window.Quarto = {
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/Tlwecs3dUPw" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <hr>
 </section>
-<section id="introducción" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">3.1</span> Introducción</h2>
+<section id="sec-intro-03" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-intro-03"><span class="header-section-number">3.1</span> Introducción</h2>
 <p>Existen diferentes tipos de algoritmos que se puede utilizar para resolver problemas de aprendizaje supervisado y no supervisado. En particular, esta unidad se enfoca en presentar las técnicas que se pueden caracterizar como métodos paramétricos.</p>
 <p>Los métodos paramétricos se identifican por asumir que los datos provienen de una distribución de la cual se desconocen los parámetros y el procedimiento es encontrar los parámetros de la distribución que mejor modelen los datos. Una vez obtenidos los parámetros se cuenta con todos los elementos para utilizar el modelo y predecir la característica para la cual fue entrenada.</p>
 </section>
@@ -426,42 +426,42 @@ window.Quarto = {
 <h3 data-number="3.3.3" class="anchored" data-anchor-id="sec-estimacion-distribucion-gausiana"><span class="header-section-number">3.3.3</span> Ejemplo: Distribución Gausiana</h3>
 <p>Esta sección sigue un camino práctico presentando el código para estimar los parámetros de una distribución Gausiana donde se conocen todos los parámetros. La distribución se usa para generar 1000 muestras y después de esta población se estiman los parámetros; de estas manera se tienen todos los elementos para comparar los parámetros reales <span class="math inline">\(\theta\)</span> de los parámetros estimados <span class="math inline">\(\hat \theta.\)</span></p>
 <p>La distribución que se usará se utilizó para generar un problema sintético (ver <a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a>) de tres clases. Los parámetros de la distribución son: <span class="math inline">\(\mathbf \mu = [5, 5]^\intercal\)</span> y <span class="math inline">\(\Sigma = \begin{pmatrix} 4 &amp; 0 \\ 0 &amp; 2 \\ \end{pmatrix}.\)</span> La siguiente instrucción se puede utilizar para generar 1000 muestras de esa distribución.</p>
-<div id="926affcf" class="cell" data-execution_count="3">
+<div id="487d49fa" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>], </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                        cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                             [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(size<span class="op">=</span><span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La media estimada de los datos en <code>D</code> se calcula usando la función <code>np.mean</code> de la siguiente manera</p>
-<div id="83c1ecf7" class="cell" data-execution_count="4">
+<div id="2dfc72c1" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> np.mean(D, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b42b6e36" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display" data-execution_count="5">
-<p>donde el eje de operación es el primero que corresponde al índice <span class="math inline">\(0.\)</span> La media estimada es: <span class="math inline">\(\hat \mu = [5.0341, 5.0985]^\intercal\)</span> con un <a href="ver @sec-error-estandar-media">error estándar</a> (<code>se</code>) de <span class="math inline">\([0.0657, 0.0449]^\intercal\)</span> que se calcula con el siguiente código.</p>
+<div id="ed438f0a" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="5">
+<p>donde el eje de operación es el primero que corresponde al índice <span class="math inline">\(0.\)</span> La media estimada es: <span class="math inline">\(\hat \mu = [4.9389, 5.0773]^\intercal\)</span> con un <a href="ver @sec-error-estandar-media">error estándar</a> (<code>se</code>) de <span class="math inline">\([0.0630, 0.0451]^\intercal\)</span> que se calcula con el siguiente código.</p>
 </div>
 </div>
-<div id="7e7a1063" class="cell" data-execution_count="6">
+<div id="eb95491f" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(D, axis<span class="op">=</span><span class="dv">0</span>) <span class="op">/</span> np.sqrt(<span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Hasta el momento se ha estimado <span class="math inline">\(\mu\)</span>, falta por estimar <span class="math inline">\(\Sigma\)</span>, que se puede realizar con la siguiente instrucción</p>
-<div id="f13b789f" class="cell" data-execution_count="7">
+<div id="e07e536b" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cov <span class="op">=</span> np.cov(D, rowvar<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="4c54f50d" class="cell" data-execution_count="8">
-<div class="cell-output cell-output-display" data-execution_count="8">
-<p>donde el parámetro <code>rowvar</code> indica la forma en que están proporcionados los datos. La estimación da los siguientes valores <span class="math inline">\(\hat \Sigma = \begin{pmatrix} 4.3158&amp;0.2391 \\ 0.2391&amp;2.0178 \\ \end{pmatrix};\)</span> se puede observar que son similares al parámetro con que se simularon los datos.</p>
+<div id="d699a3db" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="8">
+<p>donde el parámetro <code>rowvar</code> indica la forma en que están proporcionados los datos. La estimación da los siguientes valores <span class="math inline">\(\hat \Sigma = \begin{pmatrix} 3.9780&amp;-0.0219 \\ -0.0219&amp;2.0325 \\ \end{pmatrix};\)</span> se puede observar que son similares al parámetro con que se simularon los datos.</p>
 </div>
 </div>
 <p>Siguiendo con la inercia de presentar el error estándar de cada estimación, en las siguientes instrucciones se presenta el error estándar de <span class="math inline">\(\hat \Sigma\)</span>, el cual se calcula utilizando la técnica de bootstrap (ver <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) implementada en el siguiente código.</p>
-<div id="4e482c3d" class="cell" data-execution_count="9">
+<div id="a0c75684" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(D.shape[<span class="dv">0</span>],</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, D.shape[<span class="dv">0</span>]))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [np.cov(D[s], rowvar<span class="op">=</span><span class="va">False</span>) <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="06cb3308" class="cell" data-execution_count="10">
-<div class="cell-output cell-output-display" data-execution_count="10">
-<p>Se puede observar que la función <code>np.cov</code> se ejecuta utilizando la muestra indicada en la variable <code>s</code>. El error estándar (<code>se</code>) de <span class="math inline">\(\hat \Sigma\)</span> corresponde a <span class="math inline">\(\begin{pmatrix} 0.1831&amp;0.0911 \\ 0.0911&amp;0.0912 \\ \end{pmatrix}.\)</span> Se observa que los elementos fuera de la diagonal tienen un error estándar tal que el cero se encuentra en el intervalo <span class="math inline">\(\hat \Sigma \pm se;\)</span> lo cual indica que el cero es un valor factible. Lo anterior se puede verificar tomando en cuenta que se conoce <span class="math inline">\(\Sigma\)</span> y que el parámetro real es <span class="math inline">\(0\)</span> para aquellos elementos fuera de la diagonal.</p>
+<div id="2a362c68" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="10">
+<p>Se puede observar que la función <code>np.cov</code> se ejecuta utilizando la muestra indicada en la variable <code>s</code>. El error estándar (<code>se</code>) de <span class="math inline">\(\hat \Sigma\)</span> corresponde a <span class="math inline">\(\begin{pmatrix} 0.1756&amp;0.0861 \\ 0.0861&amp;0.0920 \\ \end{pmatrix}.\)</span> Se observa que los elementos fuera de la diagonal tienen un error estándar tal que el cero se encuentra en el intervalo <span class="math inline">\(\hat \Sigma \pm se;\)</span> lo cual indica que el cero es un valor factible. Lo anterior se puede verificar tomando en cuenta que se conoce <span class="math inline">\(\Sigma\)</span> y que el parámetro real es <span class="math inline">\(0\)</span> para aquellos elementos fuera de la diagonal.</p>
 </div>
 </div>
 </section>
@@ -477,7 +477,7 @@ window.Quarto = {
 <li>La <a href="#sec-rendimiento" class="quarto-xref"><span>Sección 3.5.4</span></a> muestra el procedimiento para medir el rendimiento utilizando un conjunto de prueba (ver <a href="#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 3.5</span></a>).</li>
 </ol>
 <p>La metodología de clasificación se ilustra utilizando el problema sintético (ver <a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a>) de tres clases que se presentó en el <a href="02Teoria_Decision.html" class="quarto-xref"><span>Capítulo 2</span></a>. Específicamente las entradas que definían a cada clase estaban en la variables <code>X_1</code>, <code>X_2</code> y <code>X_3</code>. Entonces las clases se pueden colocar en la variable <code>y</code> tal como se indica a continuación.</p>
-<div id="3caaf4a5" class="cell" data-execution_count="12">
+<div id="122f0611" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -487,7 +487,7 @@ window.Quarto = {
 <h2 data-number="3.5" class="anchored" data-anchor-id="sec-conjunto-entre-prueba"><span class="header-section-number">3.5</span> Conjunto de Entrenamiento y Prueba</h2>
 <p>En la <a href="#sec-estimacion-distribucion-gausiana" class="quarto-xref"><span>Sección 3.3.3</span></a> se había utilizado a <span class="math inline">\(\mathcal D\)</span> en el procedimiento de maximizar la verosimilitud, esto porque el objetivo en ese procedimiento era estimar los parámetros de la distribución. Pero el objetivo en aprendizaje supervisado es diseñar un algoritmo (función en este caso) que modele la relación entre <span class="math inline">\(\mathcal X\)</span> y <span class="math inline">\(\mathcal Y\)</span>. Para conocer esto es necesario medir el rendimiento del algoritmo en instancias que no han sido vistas en el entrenamiento.</p>
 <p>En consecuencia, se requieren contar con datos para medir el rendimiento, a este conjunto de datos se le conoce como el conjunto de prueba, <span class="math inline">\(\mathcal G\)</span>. <span class="math inline">\(\mathcal G\)</span> se crea a partir de <span class="math inline">\(\mathcal D\)</span> de tal manera que <span class="math inline">\(\mathcal G \cap \mathcal T = \emptyset\)</span> y <span class="math inline">\(\mathcal D =  \mathcal G \cup \mathcal T.\)</span> La siguiente instrucción se puede utilizar para dividir la generación de estos conjuntos a partir de <span class="math inline">\(\mathcal D.\)</span></p>
-<div id="f6804593" class="cell" data-execution_count="13">
+<div id="85ddaeeb" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El parámetro <code>test_size</code> indica la proporción del tamaño de conjunto <span class="math inline">\(\mathcal G\)</span> en relación con el conjunto <span class="math inline">\(\mathcal D.\)</span></p>
@@ -499,13 +499,13 @@ window.Quarto = {
 <h3 data-number="3.5.2" class="anchored" data-anchor-id="sec-estimacion-parametros"><span class="header-section-number">3.5.2</span> Estimación de Parámetros</h3>
 <p>Dado que por definición del problema (ver <a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a>) se conoce que la verosimilitud para cada clase proviene de una Gausiana, i.e., <span class="math inline">\(\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),\)</span> en esta sección se estimarán los parámetros utilizando este conocimiento.</p>
 <p>El primer paso en la estimación de parámetros es calcular el prior <span class="math inline">\(\mathbb P(\mathcal Y)\)</span>, el cual corresponde a clasificar el evento sin observar el valor de <span class="math inline">\(\mathcal X.\)</span> Esto se puede modelar mediante una distribución Categórica con parámetros <span class="math inline">\(p_i\)</span> donde <span class="math inline">\(\sum_i^K p_i = 1\)</span>. Estos parámetros se pueden estimar utilizando la función <code>np.unique</code> de la siguiente manera</p>
-<div id="3b579c54" class="cell" data-execution_count="14">
+<div id="39f58cc7" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>labels, counts <span class="op">=</span> np.unique(y_t, return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>prior <span class="op">=</span> counts <span class="op">/</span> counts.<span class="bu">sum</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La variable <code>prior</code> contiene en el primer elemento <span class="math inline">\(\mathbb P(\mathcal Y=1) = 0.3292,\)</span> en el segundo <span class="math inline">\(\mathbb P(\mathcal Y=2) = 0.3412\)</span> y en el tercero <span class="math inline">\(\mathbb P(\mathcal Y=3) = 0.3296\)</span> que es aproximadamente <span class="math inline">\(\frac{1}{3}\)</span> el cual es el valor real del prior.</p>
 <p>Siguiendo los pasos en estimación de parámetros de una Gausiana(<a href="#sec-estimacion-distribucion-gausiana" class="quarto-xref"><span>Sección 3.3.3</span></a>) se pueden estimar los parámetros para cada Gausiana dada la clase. Es decir, se tiene que estimar los parámetros <span class="math inline">\(\mu\)</span> y <span class="math inline">\(\Sigma\)</span> para la clase <span class="math inline">\(1\)</span>, <span class="math inline">\(2\)</span> y <span class="math inline">\(3\)</span>. Esto se puede realizar iterando por las etiquetas contenidas en la variable <code>labels</code> y seleccionando los datos en <code>T</code> que corresponden a la clase analizada, ver el uso de la variable <code>mask</code> en el slice de la línea 4 y 5. Después se inicializa una instancia de la clase <code>multivariate_normal</code> para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista <code>likelihood</code>.</p>
-<div id="622effb8" class="cell" data-execution_count="15">
+<div id="f2a2187c" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> []</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> labels:</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> y_t <span class="op">==</span> k</span>
@@ -514,9 +514,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    likelihood_k <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>mu, cov<span class="op">=</span>cov)</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    likelihood.append(likelihood_k)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="8ad0c2ea" class="cell" data-execution_count="16">
-<div class="cell-output cell-output-display" data-execution_count="16">
-<p>Los valores estimados para la media, en cada clase son: <span class="math inline">\(\hat \mu_1 = [5.0133, 5.0293]^\intercal,\)</span> <span class="math inline">\(\hat \mu_2 = [1.4612, -1.4185]^\intercal\)</span> y <span class="math inline">\(\hat \mu_3 = [12.5317, -3.4426]^\intercal\)</span>. Para las matrices de covarianza, los valores estimados corresponden a <span class="math inline">\(\hat \Sigma_1 = \begin{pmatrix} 4.0789 &amp; -0.0132\\-0.0132 &amp; 1.8829 \\ \end{pmatrix},\)</span> <span class="math inline">\(\hat \Sigma_2 = \begin{pmatrix} 1.9812 &amp; 0.9541\\0.9541 &amp; 2.9672 \\ \end{pmatrix}\)</span> y <span class="math inline">\(\hat \Sigma_3 = \begin{pmatrix} 1.7917 &amp; 2.5068\\2.5068 &amp; 6.2007 \\ \end{pmatrix}.\)</span></p>
+<div id="c5024f05" class="cell" data-execution_count="16">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="16">
+<p>Los valores estimados para la media, en cada clase son: <span class="math inline">\(\hat \mu_1 = [4.9587, 5.0199]^\intercal,\)</span> <span class="math inline">\(\hat \mu_2 = [1.5191, -1.4424]^\intercal\)</span> y <span class="math inline">\(\hat \mu_3 = [12.4947, -3.5243]^\intercal\)</span>. Para las matrices de covarianza, los valores estimados corresponden a <span class="math inline">\(\hat \Sigma_1 = \begin{pmatrix} 4.0576 &amp; -0.0997\\-0.0997 &amp; 2.0719 \\ \end{pmatrix},\)</span> <span class="math inline">\(\hat \Sigma_2 = \begin{pmatrix} 1.9671 &amp; 0.8217\\0.8217 &amp; 2.8147 \\ \end{pmatrix}\)</span> y <span class="math inline">\(\hat \Sigma_3 = \begin{pmatrix} 1.9170 &amp; 3.0914\\3.0914 &amp; 7.4018 \\ \end{pmatrix}.\)</span></p>
 </div>
 </div>
 <p>Estas estimaciones se pueden comparar con los parámetros reales (<a href="02Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a>). También se puede calcular su error estándar para identificar si el parámetro real, <span class="math inline">\(\theta\)</span>, se encuentra en el intervalo definido por <span class="math inline">\(\hat \theta - 2\hat{se} \leq \hat \theta \leq \hat \theta + 2 \hat{se}\)</span> que corresponde aproximadamente al 95% de confianza asumiendo que la distribución de la estimación del parámetro es Gausiana.</p>
@@ -525,7 +525,7 @@ window.Quarto = {
 <h3 data-number="3.5.3" class="anchored" data-anchor-id="sec-prediccion"><span class="header-section-number">3.5.3</span> Predicción</h3>
 <p>Una vez que se tiene la función que modela los datos, se está en condiciones de utilizarla para predecir(ver <a href="02Teoria_Decision.html#sec-prediccion-normal" class="quarto-xref"><span>Sección 2.3.2</span></a>) nuevos datos.</p>
 <p>En esta ocasión se organiza el procedimiento de predicción en diferentes funciones, la primera función recibe los datos a predecir <code>X</code> y los componentes del modelo, que son la verosimilitud (<code>likelihood</code>) y el <code>prior</code>. La función calcula <span class="math inline">\(\mathbb P(\mathcal Y=y \mid \mathcal X=x)\)</span> que es la probabilidad de cada clase dada la entrada <span class="math inline">\(x\)</span>. Se puede observar en la primera línea que se usa la función de densidad de probabilidad (<code>pdf</code>) para cada clase y esta se multiplica por el <code>prior</code> y en la tercera línea se calcula la evidencia. Finalmente, se regresa el a posteriori.</p>
-<div id="09206504" class="cell" data-execution_count="17">
+<div id="32af58b8" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_prob(X, likelihood, prior):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    likelihood <span class="op">=</span> [m.pdf(X) <span class="cf">for</span> m <span class="kw">in</span> likelihood]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    posterior <span class="op">=</span> np.vstack(likelihood).T <span class="op">*</span> prior</span>
@@ -533,7 +533,7 @@ window.Quarto = {
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> posterior <span class="op">/</span> np.atleast_2d(evidence).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La función <code>predict_proba</code> se utiliza como base para predecir la clase, para la cual se requiere el mapa entre índices y clases que se encuentra en la variable <code>labels</code>. Se observa que se llama a la función <code>predict_proba</code> y después se calcula el argumento que tiene la máxima probabilidad regresando la etiqueta asociada.</p>
-<div id="dff3c25c" class="cell" data-execution_count="18">
+<div id="969b3530" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(X, likelihood, prior, labels):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> predict_prob(X, likelihood, prior)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> labels[np.argmax(_, axis<span class="op">=</span><span class="dv">1</span>)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -542,21 +542,21 @@ window.Quarto = {
 <section id="sec-rendimiento" class="level3" data-number="3.5.4">
 <h3 data-number="3.5.4" class="anchored" data-anchor-id="sec-rendimiento"><span class="header-section-number">3.5.4</span> Rendimiento</h3>
 <p>El rendimiento del algoritmo se mide en el conjunto de prueba <code>G</code>, utilizando como medida el error de clasificación (<a href="02Teoria_Decision.html#sec-error-clasificacion" class="quarto-xref"><span>Sección 2.4</span></a>). El primer paso es predecir las clases de los elementos en <code>G</code>, utilizando la función <code>predict</code> que fue diseñada anteriormente. Después se mide el error, con la instrucción de la segunda línea.</p>
-<div id="408e8df4" class="cell" data-execution_count="19">
+<div id="c4acf9a4" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> predict(G, likelihood, prior, labels)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="14df2232" class="cell" data-execution_count="20">
-<div class="cell-output cell-output-display" data-execution_count="20">
-<p>El error que tiene el algoritmo en el conjunto de prueba es <span class="math inline">\(0.01,\)</span> el cual es ligeramente superior al encontrado con el modelo ideal.</p>
+<div id="7d633e7c" class="cell" data-execution_count="20">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="20">
+<p>El error que tiene el algoritmo en el conjunto de prueba es <span class="math inline">\(0.00,\)</span> el cual es ligeramente superior al encontrado con el modelo ideal.</p>
 </div>
 </div>
-<div id="eb627457" class="cell" data-execution_count="21">
-<div class="cell-output cell-output-display" data-execution_count="21">
-<p>El error estándar se calcula con la siguiente instrucción el cual tiene un valor de <span class="math inline">\(0.0037.\)</span></p>
+<div id="6c1d4c5d" class="cell" data-execution_count="21">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="21">
+<p>El error estándar se calcula con la siguiente instrucción el cual tiene un valor de <span class="math inline">\(0.0024.\)</span></p>
 </div>
 </div>
-<div id="54e1f927" class="cell" data-execution_count="22">
+<div id="21b6d16d" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> y_g.shape[<span class="dv">0</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -566,7 +566,7 @@ window.Quarto = {
 <p>Uno de los clasificadores mas utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. En la <a href="#sec-model-clasificacion" class="quarto-xref"><span>Sección 3.5.1</span></a> se asumió que la variable aleatoria <span class="math inline">\(\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)\)</span> dado <span class="math inline">\(\mathcal Y\)</span> (<span class="math inline">\(\mathcal X_{\mid \mathcal Y}\)</span>) es <span class="math inline">\(\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),\)</span> donde <span class="math inline">\(\mu_{\mathcal Y} \in \mathbb R^d\)</span>, <span class="math inline">\(\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}\)</span> y <span class="math inline">\(f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)\)</span> es la función de densidad de probabilidad conjunta.</p>
 <p>En el clasificador Bayesiano Ingenuo se asume que las variables <span class="math inline">\(\mathcal X_i\)</span> y <span class="math inline">\(\mathcal X_j\)</span> para <span class="math inline">\(i \neq j\)</span> son independientes, esto trae como consecuencia que <span class="math inline">\(f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).\)</span> Esto quiere decir que cada variable está definida como una Gausina donde se tiene que identificar <span class="math inline">\(\mu\)</span> y <span class="math inline">\(\sigma^2.\)</span></p>
 <p>La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que en se calcula <span class="math inline">\(\sigma^2\)</span> de cada variable en lugar de la covarianza <span class="math inline">\(\Sigma\)</span>, esto se puede observar en la quinta línea donde se usa la función <code>np.var</code> en el primer eje. El resto del código es equivalente al usado en la <a href="#sec-estimacion-parametros" class="quarto-xref"><span>Sección 3.5.2</span></a>.</p>
-<div id="a64fa818" class="cell" data-execution_count="23">
+<div id="172efd93" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> []</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> labels:</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> y_t <span class="op">==</span> k</span>
@@ -575,32 +575,32 @@ window.Quarto = {
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    likelihood_k <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>mu, cov<span class="op">=</span>var)</span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    likelihood.append(likelihood_k)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="3128041b" class="cell" data-execution_count="24">
-<div class="cell-output cell-output-display" data-execution_count="24">
-<p>Los parámetros estimados en la versión ingenua son equivalentes con respecto a las medias, i.e., <span class="math inline">\(\hat \mu_1 = [5.0133, 5.0293]^\intercal\)</span>, <span class="math inline">\(\hat \mu_2 = [1.4612, -1.4185] ^\intercal\)</span> y <span class="math inline">\(\hat \mu_3 = [12.5317, -3.4426]^\intercal\)</span>. La diferencia se puede observar en las varianzas, que a continuación se muestran como matrices de covarianza para resaltar la diferencia, i.e., <span class="math inline">\(\hat \Sigma_1 = \begin{pmatrix} 4.0789 &amp; 0.0000\\0.0000 &amp; 1.8829 \\ \end{pmatrix}\)</span>, <span class="math inline">\(\hat \Sigma_2 = \begin{pmatrix} 1.9812 &amp; 0.0000\\0.0000 &amp; 2.9672 \\ \end{pmatrix}\)</span> y <span class="math inline">\(\hat \Sigma_3 = \begin{pmatrix} 1.7917 &amp; 0.0000\\0.0000 &amp; 6.2007 \\ \end{pmatrix}\)</span> se observa como los elementos fuera de la diagonal son ceros, lo cual indica la independencia entra las variables de entrada.</p>
+<div id="92dbe6dd" class="cell" data-execution_count="24">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="24">
+<p>Los parámetros estimados en la versión ingenua son equivalentes con respecto a las medias, i.e., <span class="math inline">\(\hat \mu_1 = [4.9587, 5.0199]^\intercal\)</span>, <span class="math inline">\(\hat \mu_2 = [1.5191, -1.4424] ^\intercal\)</span> y <span class="math inline">\(\hat \mu_3 = [12.4947, -3.5243]^\intercal\)</span>. La diferencia se puede observar en las varianzas, que a continuación se muestran como matrices de covarianza para resaltar la diferencia, i.e., <span class="math inline">\(\hat \Sigma_1 = \begin{pmatrix} 4.0576 &amp; 0.0000\\0.0000 &amp; 2.0719 \\ \end{pmatrix}\)</span>, <span class="math inline">\(\hat \Sigma_2 = \begin{pmatrix} 1.9671 &amp; 0.0000\\0.0000 &amp; 2.8147 \\ \end{pmatrix}\)</span> y <span class="math inline">\(\hat \Sigma_3 = \begin{pmatrix} 1.9170 &amp; 0.0000\\0.0000 &amp; 7.4018 \\ \end{pmatrix}\)</span> se observa como los elementos fuera de la diagonal son ceros, lo cual indica la independencia entra las variables de entrada.</p>
 </div>
 </div>
 <p>Finalmente, el código para predecir se utiliza el código descrito en la <a href="#sec-prediccion" class="quarto-xref"><span>Sección 3.5.3</span></a> dado que el modelo está dado en las variables <code>likelihood</code> y <code>prior</code>.</p>
-<div id="db3c6b18" class="cell" data-execution_count="25">
-<div class="cell-output cell-output-display" data-execution_count="25">
-<p>El <code>error</code> del clasificador Bayesiano Ingenuo, en el conjunto de prueba, es de <span class="math inline">\(0.01\)</span> y su error estándar (<code>se_formula</code>) es <span class="math inline">\(0.0041.\)</span></p>
+<div id="4cf39547" class="cell" data-execution_count="25">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="25">
+<p>El <code>error</code> del clasificador Bayesiano Ingenuo, en el conjunto de prueba, es de <span class="math inline">\(0.01\)</span> y su error estándar (<code>se_formula</code>) es <span class="math inline">\(0.0033.\)</span></p>
 </div>
 </div>
 </section>
 <section id="sec-ejemplo-breast-cancer-wisconsin" class="level2" data-number="3.7">
 <h2 data-number="3.7" class="anchored" data-anchor-id="sec-ejemplo-breast-cancer-wisconsin"><span class="header-section-number">3.7</span> Ejemplo: Breast Cancer Wisconsin</h2>
 <p>Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos (Clasificador Bayesiano y Bayesiano Ingenuo) del conjunto de datos de <em>Breast Cancer Wisconsin.</em> Estos datos se pueden obtener utilizando la función <code>load_breast_cancer</code> tal y como se muestra a continuación.</p>
-<div id="5bae95d5" class="cell" data-execution_count="26">
+<div id="90afdd4e" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El primer paso es contar con los conjuntos de <a href="../AprendizajeComputacional/capitulos/03Parametricos/#conjunto-de-entrenamiento-y-prueba">entrenamiento y prueba</a> para poder realizar de manera completa la evaluación del proceso de clasificación. Esto se realiza ejecutando la siguiente instrucción.</p>
-<div id="6c92fc8b" class="cell" data-execution_count="27">
+<div id="6e7c1665" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="entrenamiento" class="level3" data-number="3.7.1">
 <h3 data-number="3.7.1" class="anchored" data-anchor-id="entrenamiento"><span class="header-section-number">3.7.1</span> Entrenamiento</h3>
 <p>Los dos modelos que se utilizarán será el clasificador Bayesiano Gausiano y Bayesiano Ingenuo, utilizando la clase <code>GaussianBayes</code> que se explica en el <a href="15Codigo.html" class="quarto-xref"><span>Apéndice B</span></a>. Las siguientes dos instrucciones inicializan estos dos clasificadores, la única diferencia es el parámetro <code>naive</code> que indica si el clasificador es ingenuo.</p>
-<div id="30d3a2d6" class="cell" data-execution_count="28">
+<div id="6f699640" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>gaussian <span class="op">=</span> GaussianBayes().fit(T, y_t)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> GaussianBayes(naive<span class="op">=</span><span class="va">True</span>).fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -608,7 +608,7 @@ window.Quarto = {
 <section id="predicción" class="level3" data-number="3.7.2">
 <h3 data-number="3.7.2" class="anchored" data-anchor-id="predicción"><span class="header-section-number">3.7.2</span> Predicción</h3>
 <p>Habiendo definido los dos clasificadores, las predicciones del conjunto de prueba se realiza de la siguiente manera.</p>
-<div id="e06cb4a5" class="cell" data-execution_count="29">
+<div id="44040d3a" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>hy_gaussian <span class="op">=</span> gaussian.predict(G)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>hy_naive <span class="op">=</span> naive.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -616,7 +616,7 @@ window.Quarto = {
 <section id="sec-gaussina-perf-breast_cancer" class="level3" data-number="3.7.3">
 <h3 data-number="3.7.3" class="anchored" data-anchor-id="sec-gaussina-perf-breast_cancer"><span class="header-section-number">3.7.3</span> Rendimiento</h3>
 <p>El rendimiento de ambos clasificadores se calcula de la siguiente manera</p>
-<div id="33aed6de" class="cell" data-execution_count="30">
+<div id="811dc233" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>error_gaussian <span class="op">=</span> (y_g <span class="op">!=</span> hy_gaussian).mean()</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>error_naive <span class="op">=</span> (y_g <span class="op">!=</span> hy_naive).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -626,7 +626,7 @@ window.Quarto = {
 <section id="diferencias-en-rendimiento" class="level2" data-number="3.8">
 <h2 data-number="3.8" class="anchored" data-anchor-id="diferencias-en-rendimiento"><span class="header-section-number">3.8</span> Diferencias en Rendimiento</h2>
 <p>Una manera de ver si existe una diferencia en rendimiento es calcular la diferencia entre los dos errores de clasificación, esto es</p>
-<div id="551386c1" class="cell" data-execution_count="31">
+<div id="1023cfc2" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> (y_g <span class="op">!=</span> hy_naive).mean()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>completo <span class="op">=</span> (y_g <span class="op">!=</span> hy_gaussian).mean()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> naive <span class="op">&gt;</span> completo:</span>
@@ -635,7 +635,7 @@ window.Quarto = {
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    diff <span class="op">=</span> completo <span class="op">-</span> naive</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>que tiene un valor de <span class="math inline">\(0.0088\)</span>. De la misma manera que se ha utilizado la técnica de bootstrap (<a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para calcular el error estándar de la media, se puede usar para estimar el error estándar de la diferencia en rendimiento. El siguiente código muestra el procedimiento para estimar este error estándar.</p>
-<div id="6459a697" class="cell" data-execution_count="33">
+<div id="2df068c3" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y_g.shape[<span class="dv">0</span>],</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, y_g.shape[<span class="dv">0</span>]))</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> naive <span class="op">&gt;</span> completo:</span>
@@ -647,7 +647,7 @@ window.Quarto = {
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [diff_f(s) <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El error estándar de la diferencia de rendimiento es de <span class="math inline">\(0.0149\)</span>, una procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de <span class="math inline">\(0.5874\)</span>. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gausiana.</p>
+<p>El error estándar de la diferencia de rendimiento es de <span class="math inline">\(0.0227\)</span>, una procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de <span class="math inline">\(0.3870\)</span>. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gausiana.</p>
 <p>El histograma de los datos que se tienen en la variable <code>B</code> se observa en la <a href="#fig-diff-cl-bayesianos" class="quarto-xref">Figura&nbsp;<span>3.1</span></a>. Se puede ver que la forma del histograma asemeja una distribución Gausiana y que el cero esta en el cuerpo de la Gausiana, tal y como lo confirmó el cociente que se calculado.</p>
 <div id="cell-fig-diff-cl-bayesianos" class="cell" data-execution_count="35">
 <details class="code-fold">
@@ -659,7 +659,7 @@ window.Quarto = {
 <div id="fig-diff-cl-bayesianos" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-diff-cl-bayesianos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="03Parametricos_files/figure-html/fig-diff-cl-bayesianos-output-1.png" width="471" height="470" class="figure-img">
+<img src="03Parametricos_files/figure-html/fig-diff-cl-bayesianos-output-1.png" width="471" height="471" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diff-cl-bayesianos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;3.1: Diferencia entre Clasificadores Bayesianos
@@ -669,11 +669,11 @@ Figura&nbsp;3.1: Diferencia entre Clasificadores Bayesianos
 </div>
 </div>
 <p>Se puede conocer la probabilidad de manera exacta calculando el área bajo la curva a la izquierda del cero, este sería el valor <span class="math inline">\(p\)</span>, si este es menor a 0.05 quiere decir que se tiene una confianza mayor del 95% de que los rendimientos son diferentes. Para este ejemplo, el área se calcula con el siguiente código</p>
-<div id="1a481a5d" class="cell" data-execution_count="36">
+<div id="a231c442" class="cell" data-execution_count="36">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> norm(loc<span class="op">=</span>diff, scale<span class="op">=</span>se)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> dist.cdf(<span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>teniendo el valor de <span class="math inline">\(0.2785\)</span>, lo que significa que se tiene una confianza del <span class="math inline">\(72\)</span>% de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento.</p>
+<p>teniendo el valor de <span class="math inline">\(0.3494\)</span>, lo que significa que se tiene una confianza del <span class="math inline">\(65\)</span>% de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento.</p>
 </section>
 <section id="sec-regresion-ols" class="level2" data-number="3.9">
 <h2 data-number="3.9" class="anchored" data-anchor-id="sec-regresion-ols"><span class="header-section-number">3.9</span> Regresión</h2>
@@ -712,41 +712,41 @@ X^\intercal X \mathbf w = X^\intercal \mathbf y.
 <section id="sec-diabetes" class="level3" data-number="3.9.1">
 <h3 data-number="3.9.1" class="anchored" data-anchor-id="sec-diabetes"><span class="header-section-number">3.9.1</span> Ejemplo: Diabetes</h3>
 <p>Esta sección ilustra el proceso de resolver un problema de regresión utilizando OLS. El problema a resolver se obtiene mediante la función <code>load_diabetes</code> de la siguiente manera</p>
-<div id="a7a0a61c" class="cell" data-execution_count="38">
+<div id="29c78f37" class="cell" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente paso es generar los conjuntos de entrenamiento y prueba (<a href="#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 3.5</span></a>)</p>
-<div id="6f21dcbe" class="cell" data-execution_count="39">
+<div id="44ecbb40" class="cell" data-execution_count="39">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con el conjunto de entrenamiento <code>T</code> y <code>y_t</code> se estiman los parámetros de la regresión lineal tal y como se muestra a continuación</p>
-<div id="4b5a902f" class="cell" data-execution_count="40">
+<div id="7546f601" class="cell" data-execution_count="40">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> LinearRegression().fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="11fb7329" class="cell" data-execution_count="41">
+<div id="993ee6ee" class="cell" data-execution_count="41">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>w_f <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'</span><span class="sc">{</span>v<span class="sc">:0.2f}</span><span class="ss">'</span> <span class="cf">for</span> v <span class="kw">in</span> m.coef_[:<span class="dv">3</span>]])</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>w_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="ch">\\</span><span class="ss">mathbf w=[</span><span class="sc">{</span>w_f<span class="sc">}</span><span class="ss">, \ldots]$'</span>)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>w_0 <span class="op">=</span> Markdown(<span class="ss">f'$w_0=</span><span class="sc">{</span>m<span class="sc">.</span>intercept_<span class="sc">:0.2f}</span><span class="ss">$'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Los primeros tres coeficientes de la regresión lineal son <span class="math inline">\(\mathbf w=[-18.06, -281.54, 542.41, \ldots]\)</span> y <span class="math inline">\(w_0=154.04\)</span> lo cual se encuentran en las siguientes variables</p>
-<div id="44cdd5c1" class="cell" data-execution_count="42">
+<p>Los primeros tres coeficientes de la regresión lineal son <span class="math inline">\(\mathbf w=[-17.25, -257.92, 577.70, \ldots]\)</span> y <span class="math inline">\(w_0=153.19\)</span> lo cual se encuentran en las siguientes variables</p>
+<div id="4ba29401" class="cell" data-execution_count="42">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> m.coef_</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>w_0 <span class="op">=</span> m.intercept_</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La pregunta es si estos coeficientes son estadísticamente diferentes de cero, esto se puede conocer calculando el error estándar de cada coeficiente. Para lo cual se requiere estimar <span class="math inline">\(\sigma\)</span> que corresponde a la desviación estándar del error tal y como se muestra en las siguientes instrucciones.</p>
-<div id="16ce5347" class="cell" data-execution_count="43">
+<div id="dae4bf2c" class="cell" data-execution_count="43">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> y_t <span class="op">-</span> m.predict(T)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>std_error <span class="op">=</span> np.std(error)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El error estándar de <span class="math inline">\(\mathbf w\)</span> es</p>
-<div id="f105ae62" class="cell" data-execution_count="44">
+<div id="9e2cbb31" class="cell" data-execution_count="44">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>diag <span class="op">=</span> np.arange(T.shape[<span class="dv">1</span>])</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.sqrt((np.dot(T.T, T)<span class="op">**</span>(<span class="op">-</span><span class="dv">1</span>))[diag, diag])</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> std_error <span class="op">*</span> _</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>y para saber si los coeficientes son significativamente diferente de cero se calcula el cociente <code>m.coef_</code> entre <code>se</code>; teniendo los siguientes valores <span class="math inline">\([-0.31, -4.69, 9.03, \ldots]\)</span>, para las tres primeras componentes. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tiene un coeficiente que estadísticamente no es diferente de cero.</p>
+<p>y para saber si los coeficientes son significativamente diferente de cero se calcula el cociente <code>m.coef_</code> entre <code>se</code>; teniendo los siguientes valores <span class="math inline">\([-0.28, -4.30, 9.48, \ldots]\)</span>, para las tres primeras componentes. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tiene un coeficiente que estadísticamente no es diferente de cero.</p>
 <p>La predicción del conjunto de prueba se puede realizar con la siguiente instrucción</p>
-<div id="bf8217c3" class="cell" data-execution_count="46">
+<div id="9c60d602" class="cell" data-execution_count="46">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> m.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finalmente, la <a href="#fig-regresion-lineal-scatter" class="quarto-xref">Figura&nbsp;<span>3.2</span></a> muestra las predicciones contra las mediciones reales. También se incluye la línea que ilustra el modelo ideal.</p>
@@ -763,7 +763,7 @@ X^\intercal X \mathbf w = X^\intercal \mathbf y.
 <div id="fig-regresion-lineal-scatter" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-regresion-lineal-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="03Parametricos_files/figure-html/fig-regresion-lineal-scatter-output-1.png" width="581" height="414" class="figure-img">
+<img src="03Parametricos_files/figure-html/fig-regresion-lineal-scatter-output-1.png" width="572" height="410" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-regresion-lineal-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;3.2: Regresión Lineal
@@ -773,20 +773,20 @@ Figura&nbsp;3.2: Regresión Lineal
 </div>
 </div>
 <p>Complementando el ejemplo anterior, se realiza un modelo que primero elimina las variables que no son estadísticamente diferentes de cero (primera línea) y después crea nuevas variables al incluir el cuadrado, ver las líneas dos y tres del siguiente código.</p>
-<div id="ff480ec7" class="cell" data-execution_count="48">
+<div id="3f91a994" class="cell" data-execution_count="48">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> np.fabs(m.coef_ <span class="op">/</span> se) <span class="op">&gt;=</span> <span class="dv">2</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> np.concatenate((T[:, mask], T[:, mask]<span class="op">**</span><span class="dv">2</span>), axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> np.concatenate((G[:, mask], G[:, mask]<span class="op">**</span><span class="dv">2</span>), axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Se observa que la identificación de los coeficientes <span class="math inline">\(\mathbf w\)</span> sigue siendo lineal aun y cuando la representación ya no es lineal por incluir el cuadrado. Siguiendo los pasos descritos previamente, se inicializa el modelo y después se realiza la predicción.</p>
-<div id="d4554385" class="cell" data-execution_count="49">
+<div id="ce4ca948" class="cell" data-execution_count="49">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="op">=</span> LinearRegression().fit(T, y_t)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>hy2 <span class="op">=</span> m2.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>En este momento se compara si la diferencia entre el error cuadrático medio, del primer y segundo modelo, la diferencia es <span class="math inline">\(-62.0983\)</span> indicando que el primer modelo es mejor.</p>
+<p>En este momento se compara si la diferencia entre el error cuadrático medio, del primer y segundo modelo, la diferencia es <span class="math inline">\(341.0860\)</span> indicando que el primer modelo es mejor.</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> ((y_g <span class="op">-</span> hy2)<span class="op">**</span><span class="dv">2</span>).mean() <span class="op">-</span>  ((y_g <span class="op">-</span> hy)<span class="op">**</span><span class="dv">2</span>).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Para comprobar si esta diferencia es significativa se calcula el error estándar, utilizando bootstrap (<a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) tal y como se muestra a continuación.</p>
-<div id="2d04ca1d" class="cell" data-execution_count="51">
+<div id="19d0bec4" class="cell" data-execution_count="51">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y_g.shape[<span class="dv">0</span>],</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, y_g.shape[<span class="dv">0</span>]))</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [((y_g[s] <span class="op">-</span> hy2[s])<span class="op">**</span><span class="dv">2</span>).mean() <span class="op">-</span></span>
@@ -795,7 +795,7 @@ Figura&nbsp;3.2: Regresión Lineal
 <span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finalmente, se calcula el área bajo la curva a la izquierda del cero, teniendo un valor de <span class="math inline">\(0.5000\)</span> lo cual indica que los dos modelos son similares. En este caso se prefiere el modelo más simple porque se observar que incluir el cuadrado de las variables no contribuye a generar un mejor model. El área bajo la curva se calcula con el siguiente código.</p>
-<div id="d5216e80" class="cell" data-execution_count="53">
+<div id="c85d73cb" class="cell" data-execution_count="53">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> norm(loc<span class="op">=</span>diff, scale<span class="op">=</span>se)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> dist.cdf(<span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1324,7 +1324,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-03}</span></span>
 <span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a>Existen diferentes tipos de algoritmos que se puede utilizar para resolver problemas de aprendizaje supervisado y no supervisado. En particular, esta unidad se enfoca en presentar las técnicas que se pueden caracterizar como métodos paramétricos. </span>
 <span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a></span>

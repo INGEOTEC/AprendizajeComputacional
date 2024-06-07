@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.40">
+<meta name="generator" content="quarto-1.5.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -303,7 +303,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
-  <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">2.1</span> Introducción</a></li>
+  <li><a href="#sec-intro-02" id="toc-sec-intro-02" class="nav-link" data-scroll-target="#sec-intro-02"><span class="header-section-number">2.1</span> Introducción</a></li>
   <li><a href="#sec-teoria-decision-probabilidad" id="toc-sec-teoria-decision-probabilidad" class="nav-link" data-scroll-target="#sec-teoria-decision-probabilidad"><span class="header-section-number">2.2</span> Probabilidad</a>
   <ul class="collapse">
   <li><a href="#ejemplos" id="toc-ejemplos" class="nav-link" data-scroll-target="#ejemplos"><span class="header-section-number">2.2.1</span> Ejemplos</a></li>
@@ -347,7 +347,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es analizar el uso de la teoría de la probabilidad para la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas de clasificación y su uso para tomar la decisión que reduzca el riesgo.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="a09e972c" class="cell" data-execution_count="1">
+<div id="2b88f9ab" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -358,8 +358,8 @@ window.Quarto = {
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/KvRuEdROo-s" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <hr>
 </section>
-<section id="introducción" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">2.1</span> Introducción</h2>
+<section id="sec-intro-02" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="sec-intro-02"><span class="header-section-number">2.1</span> Introducción</h2>
 <p>Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una certeza absoluta sobre la respuesta dada. Por ejemplo, si uno diseña un algoritmo que ordene un conjunto de números uno esperan que ese algoritmo siempre regrese el orden correcto independientemente de la entrada dada, es mas un algoritmo de ordenamiento que en ocasiones se equivoca se consideraría de manera estricta erróneo.</p>
 <p>Sin embargo, existen problemas cuyas características, como incertidumbre en la captura de los datos, variables que no se pueden medir, entre otros factores hacen que lo mejor que se puede esperar es un algoritmo exacto y preciso. Todos los problemas que trataremos en Aprendizaje Computacional caen dentro del segundo escenario. El lenguaje que nos permite describir de manera adecuada este tipo de ambiente, que se caracteriza por variables aleatorios es el de la probabilidad.</p>
 </section>
@@ -389,7 +389,7 @@ window.Quarto = {
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="sec-tres-normales"><span class="header-section-number">2.3.1</span> Problema Sintético</h3>
 <p>Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección presenta un problema sintético. El procedimiento es el siguiente, primero se generarán los datos, los cuales van a ser tres nubes de puntos generadas mediantes tres distribuciones gausianas multivariadas. Con estas tres nubes de puntos, se utilizará el Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) para clasificar todos los puntos generados.</p>
 <p>El primer paso es definir las tres distribuciones gausianas multivariadas, para este objetivo se usa la clase <code>multivariate_normal</code> como se muestra a continuación.</p>
-<div id="650a5d78" class="cell" data-execution_count="3">
+<div id="c0701c3e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">1.5</span>, <span class="op">-</span><span class="fl">1.5</span>],</span>
@@ -405,7 +405,7 @@ window.Quarto = {
          \end{pmatrix}.
 \]</span></p>
 <p>Una vez definidas las distribuciones podemos generar números aleatoreos de las mismas, en el siguiente código se generar 1000 vectores aleatorios de las tres distribuciones.</p>
-<div id="6353f807" class="cell" data-execution_count="4">
+<div id="606da268" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> p3.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -440,28 +440,28 @@ Figura&nbsp;2.1: Muestras de 3 distribuciones gausianas
 <p>Quitando la evidencia del Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) se observa que <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span>. En el ejemplo creado se observa que <span class="math inline">\(\mathbb P(\mathcal Y=1) = \frac{1000}{3000},\)</span> las otras probabilidades a priori tienen el mismo valor, es decir, <span class="math inline">\(\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.\)</span></p>
 <p>La verosimilitud está definida en las variables <code>p1</code>, <code>p2</code> y <code>p3</code>; en particular en la función <code>pdf</code>, es decir, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> es <code>p1.pdf</code>, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=2)\)</span> corresponde a <code>p2.pdf</code> y equivalentemente <code>p3.pdf</code> es la verosimilitud cuando <span class="math inline">\(\mathcal Y=3.\)</span></p>
 <p>Utilizando esta información <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> se calcula de la siguiente manera.</p>
-<div id="7e4de752" class="cell" data-execution_count="6">
+<div id="f3561d80" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> (np.vstack([p1.pdf(X),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        p2.pdf(X), </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        p3.pdf(X)]) <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La evidencia (<a href="#eq-evidencia" class="quarto-xref">Ecuación&nbsp;<span>2.2</span></a>) es un factor normalizador que hace que las probabilidad sume a uno, el siguiente código calcula la evidencia, <span class="math inline">\(\mathbb P(\mathcal X)\)</span></p>
-<div id="78c4fbb4" class="cell" data-execution_count="7">
+<div id="97ff6d3e" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finalmente, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> se obtiene normalizando <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> que se puede realizar de la siguiente manera.</p>
-<div id="1298f3fa" class="cell" data-execution_count="8">
+<div id="20397e85" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.atleast_2d(evidencia).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X),\)</span> <span class="math inline">\(\mathbb P(\mathcal Y=2 \mid \mathcal X)\)</span> y <span class="math inline">\(\mathbb P(\mathcal Y=3 \mid \mathcal X)\)</span>; y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase.</p>
-<div id="a358a1d2" class="cell" data-execution_count="9">
+<div id="f48c2068" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>prediccion <span class="op">=</span> clase[indice]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En la variable <code>prediccion</code> se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó <code>X</code> se sabe que los primero 1000 elementos pertenecen a la clase <span class="math inline">\(1\)</span>, los siguientes 1000 a la clase <span class="math inline">\(2\)</span> y los restantes a la clase <span class="math inline">\(3\)</span>. A continuación se muestra el arreglo <code>y</code> que tiene esta estructura.</p>
-<div id="ade0e981" class="cell" data-execution_count="10">
+<div id="8714fefe" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Teniendo las predicciones y los valores de reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.</p>
@@ -491,22 +491,22 @@ Figura&nbsp;2.2: Error en problema de clasificación
 <section id="sec-error-clasificacion" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="sec-error-clasificacion"><span class="header-section-number">2.4</span> Error de Clasificación</h2>
 <p>Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la <a href="#fig-gaussian-3classes" class="quarto-xref">Figura&nbsp;<span>2.1</span></a>.</p>
-<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0107\)</span>.</p>
-<div id="3a061be5" class="cell" data-execution_count="13">
+<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0100\)</span>.</p>
+<div id="273eccc2" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> prediccion).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code>. Una manera de conocer esta variabilidad de la medición del error es calculando su <strong>error estándar</strong>.</p>
-<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estandar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0019\)</span>.</p>
-<div id="1d2721e4" class="cell" data-execution_count="15">
+<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estandar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0018\)</span>.</p>
+<div id="dbb0d9da" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Aunque el error estándar del parámetro <span class="math inline">\(p\)</span> de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar <span class="math inline">\(B\)</span> muestras de <span class="math inline">\(N\)</span> elementos con remplazo de los datos. En este caso los datos son los errores entre <code>y</code> y <code>prediccion</code>. Siguiendo el método presentado en la <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a> se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las <span class="math inline">\(B\)</span> repeticiones las cuales consisten en calcular <span class="math inline">\(\hat p\)</span>. Se puede observar como se usa directamente <code>y</code> y <code>prediccion</code> junto con el arreglo de índices <code>s</code> para calcular la media del error. Finalmente se calcula la desviación estándar de <code>B</code> (tercera línea) y ese valor corresponde al error estándar.</p>
-<div id="fb5618af" class="cell" data-execution_count="16">
+<div id="38dc03a1" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [(y[s] <span class="op">!=</span> prediccion[s]).mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0019\)</span>.</p>
+<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0018\)</span>.</p>
 <p>El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés, mediante Boostrap se simulo está distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista <code>B</code>.</p>
 <div id="cell-fig-gaussian-3classes-distribucion" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
@@ -1085,7 +1085,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-02}</span></span>
 <span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una certeza absoluta sobre la respuesta dada. Por ejemplo, si uno diseña un algoritmo que ordene un conjunto de números uno esperan que ese algoritmo siempre regrese el orden correcto independientemente de la entrada dada, es mas un algoritmo de ordenamiento que en ocasiones se equivoca se consideraría de manera estricta erróneo.</span>
 <span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>

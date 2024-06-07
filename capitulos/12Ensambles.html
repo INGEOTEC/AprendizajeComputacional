@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.40">
+<meta name="generator" content="quarto-1.5.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -303,7 +303,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados"><span class="header-section-number">12.1</span> Paquetes usados</a></li>
-  <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">12.2</span> Introducción</a></li>
+  <li><a href="#sec-intro-12" id="toc-sec-intro-12" class="nav-link" data-scroll-target="#sec-intro-12"><span class="header-section-number">12.2</span> Introducción</a></li>
   <li><a href="#sec-fundamentos" id="toc-sec-fundamentos" class="nav-link" data-scroll-target="#sec-fundamentos"><span class="header-section-number">12.3</span> Fundamentos</a></li>
   <li><a href="#bagging" id="toc-bagging" class="nav-link" data-scroll-target="#bagging"><span class="header-section-number">12.4</span> Bagging</a>
   <ul class="collapse">
@@ -342,7 +342,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar diferentes técnicas para realizar un ensamble de clasificadores o regresores.</p>
 <section id="paquetes-usados" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">12.1</span> Paquetes usados</h2>
-<div id="42283b5c" class="cell" data-execution_count="1">
+<div id="ede921ab" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> binom</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_diabetes, load_digits</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -361,8 +361,8 @@ window.Quarto = {
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/eqpMGmlWIP8" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <hr>
 </section>
-<section id="introducción" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="introducción"><span class="header-section-number">12.2</span> Introducción</h2>
+<section id="sec-intro-12" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="sec-intro-12"><span class="header-section-number">12.2</span> Introducción</h2>
 <p>Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gausiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesgo este mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión.</p>
 </section>
 <section id="sec-fundamentos" class="level2" data-number="12.3">
@@ -420,7 +420,7 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <section id="ejemplo-dígitos" class="level3" data-number="12.4.1">
 <h3 data-number="12.4.1" class="anchored" data-anchor-id="ejemplo-dígitos"><span class="header-section-number">12.4.1</span> Ejemplo: Dígitos</h3>
 <p>Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento (<span class="math inline">\(\mathcal T\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>) con las siguientes instrucciones.</p>
-<div id="72f71f43" class="cell" data-execution_count="4">
+<div id="aed304eb" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
@@ -428,25 +428,25 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 </div>
 <p>Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (<a href="09Lineal.html#sec-svm" class="quarto-xref"><span>Sección 9.4</span></a>) y Árboles de Decisión (<a href="08Arboles.html" class="quarto-xref"><span>Capítulo 8</span></a>). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging.</p>
 <p>La siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el macro-recall (<a href="04Rendimiento.html#sec-macro" class="quarto-xref"><span>Sección 4.2.6</span></a>). El rendimiento se presenta en una tabla para facilitar la comparación.</p>
-<div id="3d1a7598" class="cell" data-execution_count="5">
+<div id="0c7917f8" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>svc <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T, y_t)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>svc_recall <span class="op">=</span> recall_score(y_g, svc.predict(G),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                          average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Complementando las instrucciones anteriores, en el siguiente código se entrena un Árbol de Decisión.</p>
-<div id="7471e801" class="cell" data-execution_count="6">
+<div id="4f33b90e" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tree <span class="op">=</span> DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                              min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T, y_t)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tree_recall <span class="op">=</span> recall_score(y_g, tree.predict(G),</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                           average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la media (<a href="14Estadistica.html#sec-bootstrap-ejemplo" class="quarto-xref"><span>Sección A.2.1</span></a>); el siguiente código genera las muestras, en particular el ensamble sería de <span class="math inline">\(M=11\)</span> elementos.</p>
-<div id="0f2f363f" class="cell" data-execution_count="7">
+<div id="64331f44" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.random.randint(T.shape[<span class="dv">0</span>],</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">11</span>, T.shape[<span class="dv">0</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entra los máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.</p>
-<div id="49865c16" class="cell" data-execution_count="8">
+<div id="311e4dfe" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>svc_ins <span class="op">=</span> [LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T[b], y_t[b])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> b <span class="kw">in</span> B]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> svc_ins])</span>
@@ -455,7 +455,7 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>bsvc_recall <span class="op">=</span> recall_score(y_g, hy, average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente algoritmo son los Árboles de Decisión; la única diferencia con respecto a las instrucciones anteriores es la primera línea donde se entrenan los árboles.</p>
-<div id="c3678011" class="cell" data-execution_count="9">
+<div id="2e8a4d19" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tree_ins <span class="op">=</span> [DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                                   min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T[b], y_t[b])</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> b <span class="kw">in</span> B]</span>
@@ -466,7 +466,7 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                            average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como se mencionó, la predicción final se puede realizar de dos manera en clasificación una es usando votación, como se vió en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculas las probabilidad de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa está información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que <span class="math inline">\(1\)</span> y menor que <span class="math inline">\(-1\)</span> y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo.</p>
-<div id="2171c127" class="cell" data-execution_count="10">
+<div id="9c3593de" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.decision_function(G) <span class="cf">for</span> m <span class="kw">in</span> svc_ins])</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.where(hys <span class="op">&gt;</span> <span class="dv">1</span>, <span class="dv">1</span>, hys)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.where(hys <span class="op">&lt;</span> <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, hys)</span>
@@ -475,7 +475,7 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                           average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El procedimiento anterior se puede adaptar a los Árboles de Decisión utilizando el siguiente código.</p>
-<div id="419e57e0" class="cell" data-execution_count="11">
+<div id="875ce085" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict_proba(G)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> m <span class="kw">in</span> tree_ins])</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ctree_recall <span class="op">=</span> recall_score(y_g,</span>
@@ -491,7 +491,7 @@ Figura&nbsp;12.1: Rendimiento cuando el número de clasificadores se incrementa
 Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 </figcaption>
 <div aria-describedby="tbl-ensambles-perf-cl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="12">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
@@ -504,17 +504,17 @@ Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 <tr class="odd">
 <td>Único</td>
 <td><span class="math inline">\(0.9425\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.8304\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.8296\)</span></td>
 </tr>
 <tr class="even">
 <td>Votación (<span class="math inline">\(M=11\)</span>)</td>
-<td><span class="math inline">\(0.9423\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.9390\)</span></td>
+<td><span class="math inline">\(0.9446\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.9321\)</span></td>
 </tr>
 <tr class="odd">
 <td>Suma (<span class="math inline">\(M=11\)</span>)</td>
-<td><span class="math inline">\(0.9481\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.9334\)</span></td>
+<td><span class="math inline">\(0.9505\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.9313\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -527,31 +527,31 @@ Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 <section id="ejemplo-diabetes" class="level3" data-number="12.4.2">
 <h3 data-number="12.4.2" class="anchored" data-anchor-id="ejemplo-diabetes"><span class="header-section-number">12.4.2</span> Ejemplo: Diabetes</h3>
 <p>Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento (<span class="math inline">\(\mathcal T\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>) se muestra a continuación.</p>
-<div id="0b368b80" class="cell" data-execution_count="13">
+<div id="c8b97fd0" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como mediada de rendimiento el porcentaje del error absoluto (<a href="04Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>4.6</span></a>); tal y como se muestran en las siguientes instrucciones.</p>
-<div id="0d2e77c1" class="cell" data-execution_count="14">
+<div id="7df3a90c" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>svr <span class="op">=</span> LinearSVR(dual<span class="op">=</span><span class="st">'auto'</span>).fit(T, y_t)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>svr_mape <span class="op">=</span> mean_absolute_percentage_error(y_g,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                          svr.predict(G))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El árbol de decisión y su rendimiento se implementa con el siguiente código.</p>
-<div id="06922994" class="cell" data-execution_count="15">
+<div id="398e0e8e" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tree <span class="op">=</span> DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                                      y_t)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>tree_mape <span class="op">=</span> mean_absolute_percentage_error(y_g,</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                           tree.predict(G))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Al igual que en el caso de clasificación, la siguiente instrucción genera los índices para generar las muestras. Se hace un ensamble de <span class="math inline">\(M=11\)</span> elementos.</p>
-<div id="756aff82" class="cell" data-execution_count="16">
+<div id="842aabd3" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.random.randint(T.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">11</span>, T.shape[<span class="dv">0</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrena las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y se en la tercera se realiza el promedio y se mide el rendimiento.</p>
-<div id="6f7a4c26" class="cell" data-execution_count="17">
+<div id="fddc99d8" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>svr_ins <span class="op">=</span> [LinearSVR(dual<span class="op">=</span><span class="st">'auto'</span>).fit(T[b], y_t[b])</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> b <span class="kw">in</span> B]</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> svr_ins])</span>
@@ -559,7 +559,7 @@ Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                           hys.mean(axis<span class="op">=</span><span class="dv">0</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>De manera equivalente se entrenan los Árboles de Decisión, como se muestra a continuación.</p>
-<div id="4ae6c4af" class="cell" data-execution_count="18">
+<div id="bdd742fd" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tree_ins <span class="op">=</span> [DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T[b], y_t[b])</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> b <span class="kw">in</span> B]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> tree_ins])</span>
@@ -574,7 +574,7 @@ Tabla&nbsp;12.1: Rendimiento (macro-recall) de bagging y estimadores base.
 Tabla&nbsp;12.2: Rendimiento (MAPE) de bagging y estimadores base.
 </figcaption>
 <div aria-describedby="tbl-ensambles-perf-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="19">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
@@ -586,13 +586,13 @@ Tabla&nbsp;12.2: Rendimiento (MAPE) de bagging y estimadores base.
 <tbody>
 <tr class="odd">
 <td>Único</td>
-<td><span class="math inline">\(0.4129\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.5611\)</span></td>
+<td><span class="math inline">\(0.4131\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.5661\)</span></td>
 </tr>
 <tr class="even">
 <td>Promedio (<span class="math inline">\(M=11\)</span>)</td>
-<td><span class="math inline">\(0.4128\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.4083\)</span></td>
+<td><span class="math inline">\(0.4136\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.3845\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -638,38 +638,38 @@ Figura&nbsp;12.2: Variación del rendimiento con respecto al tamaño del ensambl
 <section id="ejemplo-diabetes-1" class="level3" data-number="12.5.1">
 <h3 data-number="12.5.1" class="anchored" data-anchor-id="ejemplo-diabetes-1"><span class="header-section-number">12.5.1</span> Ejemplo: Diabetes</h3>
 <p>Para ejemplificar el uso de Stack Generalization, se usa el conjunto de datos de Diabetes. Como se acaba de describir es necesario contar con un conjunto independiente para estimar los parámetros del estimador del stack. Entonces el primer paso es dividir el conjunto de entrenamiento en un conjunto de entrenamiento y validación (<span class="math inline">\(\mathcal V,\)</span>) tal y como se muestra en la siguiente instrucción.</p>
-<div id="0b7c7a2a" class="cell" data-execution_count="21">
+<div id="67a9c160" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>T1, V, y_t1, y_v <span class="op">=</span> train_test_split(T, y_t,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                                    test_size<span class="op">=</span><span class="fl">0.3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Para este ejemplo se usará como regresores bases el algoritmo de Vecinos Cercanos (<a href="07NoParametricos.html#sec-regresion" class="quarto-xref"><span>Sección 7.7</span></a>) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación (<span class="math inline">\(\mathcal V\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>), esto se observa en la segunda y tercera línea del siguiente código.</p>
-<div id="35cb5bbc" class="cell" data-execution_count="22">
+<div id="906fe783" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [KNeighborsRegressor(n_neighbors<span class="op">=</span>n).fit(T1, y_t1)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">7</span>, <span class="dv">9</span>]]</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>V_stack <span class="op">=</span> np.array([m.predict(V) <span class="cf">for</span> m <span class="kw">in</span> models]).T</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>G_stack <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> models]).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El porcentaje del error absoluto (<a href="04Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>4.6</span></a>) de los estimadores bases en el conjunto de prueba se puede calcular con el siguiente código</p>
-<div id="dd45e8a2" class="cell" data-execution_count="23">
+<div id="0d22d767" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mape_test <span class="op">=</span> []</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> hy <span class="kw">in</span> G_stack.T:</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  mape <span class="op">=</span> mean_absolute_percentage_error(y_g, hy)</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  mape_test.append(mape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>teniendo los siguientes valores <span class="math inline">\(0.3725\)</span> y <span class="math inline">\(0.3704\)</span>, respectivamente.</p>
+<p>teniendo los siguientes valores <span class="math inline">\(0.3762\)</span> y <span class="math inline">\(0.3587\)</span>, respectivamente.</p>
 <p>Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una Máquina de Soporte Vectorial (<a href="09Lineal.html#sec-svm" class="quarto-xref"><span>Sección 9.4</span></a>) con kernel polinomial de grado <span class="math inline">\(2\)</span>. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba.</p>
-<div id="3025e9ed" class="cell" data-execution_count="25">
+<div id="923cbf60" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>stacking <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>).fit(V_stack, y_v)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> stacking.predict(np.vstack(G_stack))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El error (<a href="04Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>4.6</span></a>) obtenido por este procedimiento es de <span class="math inline">\(0.3570\)</span>; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases, por ejemplo, en las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial.</p>
-<div id="92e7db1c" class="cell" data-execution_count="27">
+<p>El error (<a href="04Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>4.6</span></a>) obtenido por este procedimiento es de <span class="math inline">\(0.3579\)</span>; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases, por ejemplo, en las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial.</p>
+<div id="4a7c2a45" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>st_trees <span class="op">=</span> BaggingRegressor(estimator<span class="op">=</span>DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>),</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                            n_estimators<span class="op">=</span><span class="dv">200</span>).fit(V_stack, y_v)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> st_trees.predict(np.vstack(G_stack))</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>mape <span class="op">=</span> mean_absolute_percentage_error(y_g, hy)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El rendimiento de este cambio es <span class="math inline">\(0.4112\)</span> lo cual es mayor que el error obtenido por los estimadores base.</p>
+<p>El rendimiento de este cambio es <span class="math inline">\(0.4118\)</span> lo cual es mayor que el error obtenido por los estimadores base.</p>
 
 
 <!-- -->
@@ -1198,7 +1198,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-12}</span></span>
 <span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gausiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesgo este mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. </span>
 <span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a></span>
