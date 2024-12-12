@@ -262,26 +262,6 @@ Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funcio
 
 El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
 
-### Características de la hipótesis
-
-Continuando con algunas definiciones, en la búsqueda de encontrar $h^*$ se puede elegir por aquella que captura todos los datos de entrenamiento siendo muy específica. Para poder explicar mejor este concepto se usa la @fig-hipotesis-esp que muestra un ejemplo sintético.
-
-![Hipótesis mas específica](/docs/assets/images/clases-sh.png){#fig-hipotesis-esp}
-
-Los puntos naranja representan una clase y los puntos azules son la otra clase, el clasificador es mostrado en el rectángulo. Para completar el funcionamiento de este clasificador falta mencionar que cualquier nuevo punto que esté dentro del rectángulo será calificado como clase azul y naranja si se encuentra fuera del rectángulo. Como se puede observar, el rectángulo contiene todos los elementos de una clase y en alguno de sus lados toca con uno de los puntos del conjunto de entrenamiento de la clase data.
-
-En este momento, es posible visualizar que el complemento de ser muy específico es ser lo mas general posible. La @fig-hipotesis-general muestra un clasificador que es lo mas general. Se observa que el rectángulo casi toca uno de los puntos del conjunto de entrenamiento de la clase contraria, esto lo hace del lado exterior y el procedimiento para clasificar continua siendo el que se mencionó anteriormente.
-
-![Hipótesis más general](/docs/assets/images/clases-gh.png){#fig-hipotesis-general}
-
-Es factible también elegir una hipótesis que se encuentre entre la hipótesis mas general y la más específica, esto también se puede visualizar en la @fig-hipotesis-media. Donde todas las hipótesis se encuentran representadas en gris.
-
-![Clases de hipótesis](/docs/assets/images/clases-ch.png){#fig-hipotesis-media}
-
-Finalmente, para poder describir mejor el comportamiento de un clasificador se hace uso de la distancia que hay entre la hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la @fig-hipotesis-margen, donde la hipótesis más general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
-
-![Margen entre la clases](/docs/assets/images/clases-margen.png){#fig-hipotesis-margen}
-
 ### Estilos de Aprendizaje
 
 Utilizando $\mathcal T$ y $\mathcal G$ podemos definir **inductive learning** como el proceso de aprendizaje en donde solamente se utiliza $\mathcal T$ y el algoritmo debe de ser capaz de predecir cualquier instancia. Por otro lado, **transductive learning** es el proceso de aprendizaje donde se utilizar $\mathcal T \cup \{ x \mid (x, y) \in \mathcal G \}$ para aprender y solamente es de interés el conocer la clase o variable dependiente del conjunto $\mathcal G$.
