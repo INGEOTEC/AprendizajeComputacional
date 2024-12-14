@@ -103,7 +103,7 @@ Para graficar estas tres nubes de puntos se puede hacer uso del siguiente códig
 ```{python}
 #| label: fig-gaussian-3classes
 #| warning: false
-#| fig-cap: "Muestras de 3 distribuciones gausianas"
+#| fig-cap: "Muestras de 3 distribuciones Gausianas"
 #| echo: true
 D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
@@ -114,7 +114,29 @@ _ = sns.relplot(data=df, kind='scatter', x='x',
                 y='y', hue='clase')     
 ```               
 
-El resultado del código anterior se muestra en la @fig-gaussian-3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
+El resultado del código anterior se muestra en la @fig-gaussian-3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase.
+
+::: {.callout-tip collapse="true"}
+#### Actividad
+
+Generar una nube de puntos similar a la que se muestra en la @fig-guasiana-alargada-x. Observar que ambos ejes de la figura están en el rango $[-20, 20].$
+
+```{python} 
+#| label: fig-guasiana-alargada-x
+#| fig-cap: "Distribución Gausiana"
+#| echo: false
+ejemplo = multivariate_normal(mean=[5, 5],
+                              cov=[[20, -5], [-5, 2]])
+X_e = ejemplo.rvs(size=1000)
+df = pd.DataFrame(X_e, columns=['x', 'y'])
+sns.set_style('whitegrid')
+fig = sns.relplot(data=df, kind='scatter', x='x',
+                y='y')
+fig.ax.set_xlim(-20, 20)
+fig.ax.set_ylim(-20, 20)
+```                         
+:::
+
 
 ### Predicción {#sec-prediccion-normal}
 
