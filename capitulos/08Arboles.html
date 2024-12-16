@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.6">
+<meta name="generator" content="quarto-1.7.3">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -91,10 +91,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-81b5c3e63835cfde897ecd3d35a35a41.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-cd7de1037569933fbb609f06423bd096.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -363,7 +363,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar árboles de decisión a problemas de clasificación y regresión.</p>
 <section id="paquetes-usados" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">8.1</span> Paquetes usados</h2>
-<div id="ce7cb19a" class="cell" data-execution_count="1">
+<div id="16b948d0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer, load_diabetes</span>
@@ -409,7 +409,7 @@ window.Quarto = {
 <div id="fig-arboles-tres-distribuciones" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-tres-distribuciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="08Arboles_files/figure-html/fig-arboles-tres-distribuciones-output-1.png" width="526" height="470" class="figure-img">
+<img src="08Arboles_files/figure-html/fig-arboles-tres-distribuciones-output-1.png" width="525" height="468" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-tres-distribuciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.1: Tres distribuciones Gausianas
@@ -441,41 +441,29 @@ Figura&nbsp;8.2: Árbol de decisión
 </div>
 </div>
 </div>
-<div id="c8d7dc5a" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-stderr">
-<pre><code>&lt;&gt;:3: SyntaxWarning: invalid escape sequence '\l'
-&lt;&gt;:6: SyntaxWarning: invalid escape sequence '\l'
-&lt;&gt;:3: SyntaxWarning: invalid escape sequence '\l'
-&lt;&gt;:6: SyntaxWarning: invalid escape sequence '\l'
-/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_37840/3397020348.py:3: SyntaxWarning: invalid escape sequence '\l'
-  funcion_decision = Markdown(f'$x \leq {arbol.tree_.threshold[0]:0.4f}$')
-/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_37840/3397020348.py:6: SyntaxWarning: invalid escape sequence '\l'
-  funcion_decision = Markdown(f'$y \leq {arbol.tree_.threshold[0]:0.4f}$')</code></pre>
-</div>
-</div>
 <p>Por ejemplo el nodo raíz del árbol tiene una entropía de <span class="math inline">\(1.5850\)</span>, la función de decisión es <span class="math inline">\(x \leq 10.5605\)</span> que indica que todos los elementos con un valor en <span class="math inline">\(x\)</span> menor o igual del valor calculado están del lado izquierdo. Los hojas (nodos #2, #3, #5, y #6) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es <span class="math inline">\(0\)</span>, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple.</p>
 <p>La siguiente <a href="#fig-arboles-arbol-decision-funcion" class="quarto-xref">Figura&nbsp;<span>8.3</span></a> muestra el árbol generado cuando se remueven el nodo #6. Se observa un árbol con menos nodos, aunque la entropía en es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo.</p>
 <div id="cell-fig-arboles-arbol-decision-funcion" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>, min_samples_split<span class="op">=</span><span class="dv">1003</span>).fit(X, y)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>DecisionBoundaryDisplay.from_estimator(arbol, X, cmap<span class="op">=</span>plt.cm.RdYlBu,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                       response_method<span class="op">=</span><span class="st">'predict'</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                                       ax<span class="op">=</span>ax, xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, color <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="st">'ryb'</span>):</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> y <span class="op">==</span> (i <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  plt.scatter(X[mask, <span class="dv">0</span>], X[mask, <span class="dv">1</span>], c<span class="op">=</span>color,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>              label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>, cmap<span class="op">=</span>plt.cm.RdYlBu, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>, min_samples_split<span class="op">=</span><span class="dv">1003</span>).fit(X, y)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>DecisionBoundaryDisplay.from_estimator(arbol, X, cmap<span class="op">=</span>plt.cm.RdYlBu,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                       response_method<span class="op">=</span><span class="st">'predict'</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                                       ax<span class="op">=</span>ax, xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, color <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="st">'ryb'</span>):</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> y <span class="op">==</span> (i <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  plt.scatter(X[mask, <span class="dv">0</span>], X[mask, <span class="dv">1</span>], c<span class="op">=</span>color,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>              label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>, cmap<span class="op">=</span>plt.cm.RdYlBu, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-arboles-arbol-decision-funcion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-arbol-decision-funcion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="08Arboles_files/figure-html/fig-arboles-arbol-decision-funcion-output-1.png" width="589" height="427" class="figure-img">
+<img src="08Arboles_files/figure-html/fig-arboles-arbol-decision-funcion-output-1.png" width="596" height="429" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-arbol-decision-funcion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.3: Árbol de decisión y función
@@ -496,65 +484,65 @@ Figura&nbsp;8.3: Árbol de decisión y función
 L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),
 \]</span></p>
 <p>donde <span class="math inline">\(H(\mathcal D_h)\)</span> es la entropía de las etiquetas del conjunto <span class="math inline">\(\mathcal D_h\)</span>, la entropía se puede calcular con la siguiente función. La función recibe un arreglo con las clases, está protegida para calcular <span class="math inline">\(0 \log 0 = 0\)</span> y finalmente regresa la entropía de <code>arr</code>.</p>
-<div id="431fab3f" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> H(arr):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> np.unique(arr, return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">/</span> b.<span class="bu">sum</span>()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (b <span class="op">*</span> np.log2(b, where<span class="op">=</span>b <span class="op">!=</span> <span class="dv">0</span>)).<span class="bu">sum</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="4b601508" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> H(arr):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> np.unique(arr, return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">/</span> b.<span class="bu">sum</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (b <span class="op">*</span> np.log2(b, where<span class="op">=</span>b <span class="op">!=</span> <span class="dv">0</span>)).<span class="bu">sum</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La función que optimiza <span class="math inline">\(L(x_i, a),\)</span> para encontrar <span class="math inline">\(a\)</span> se implementa en el procedimiento <code>corte_var</code>. Este procedimiento asume que las etiquetas (<code>labels</code>) están ordenadas por la variable <span class="math inline">\(x_i\)</span>, es decir la primera etiqueta corresponde al valor mínimo de <span class="math inline">\(x_i\)</span> y la última al valor máximo. Considerando esto, el valor de <span class="math inline">\(a\)</span> es el índice con el menor costo. En la primera línea se inicializa la variable <code>mejor</code> para guardar el valor de <span class="math inline">\(a\)</span> con mejor costo. La segunda línea corresponde a <span class="math inline">\(\mid \mathcal D_m \mid\)</span>, en la tercera línea se identifican los diferentes valores de <span class="math inline">\(a\)</span> que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función <code>np.diff</code>; dado que está quita el primer elemento entonces es necesario incrementar <span class="math inline">\(1.\)</span> El ciclo es por todos los puntos de corte, se calculan el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró.</p>
-<div id="474bfeac" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(labels):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> labels.shape[<span class="dv">0</span>]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(labels))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> labels[:j]</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> labels[j:]</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(izq)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(der)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1e629cb0" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(labels):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> labels.shape[<span class="dv">0</span>]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(labels))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> labels[:j]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> labels[j:]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(izq)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(der)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En el siguiente ejemplo se usa la función <code>corte_var</code>; la función regresa un costo de <span class="math inline">\(0.4591\)</span> y el punto de corte es el elemento <span class="math inline">\(3\)</span>, se puede observar que es el mejor punto de corte en el arreglo dado.</p>
-<div id="3eb7aa22" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>costo, indice <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="b3fbbe19" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>costo, indice <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con la función <code>corte_var</code> se optimiza el valor <span class="math inline">\(a\)</span> de <span class="math inline">\(L(x_i, a)\)</span>, ahora es el turno de optimizar <span class="math inline">\(x_i\)</span> con respecto a la función de costo. El procedimiento <code>corte</code> encuentra el mínimo con respecto de <span class="math inline">\(x_i\)</span>, está función recibe los índices (<code>idx</code>) donde se buscará estos valores, en un inicio <code>idx</code> es un arreglo de <span class="math inline">\(0\)</span> al número de elemento del conjunto <span class="math inline">\(\mathcal D\)</span> menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables <span class="math inline">\(x_i\)</span>. Dentro del ciclo se llama a la función <code>corte_var</code> donde se observa como las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en <code>mejor</code>. Finalmente, se regresa <code>mejor</code> y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.</p>
-<div id="3630f42a" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte(idx):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>, <span class="va">None</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> np.argsort(X[idx], axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> y[idx]</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(orden.T):</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        comp <span class="op">=</span> corte_var(labels[x])</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> comp[<span class="dv">0</span>] <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            mejor <span class="op">=</span> (comp[<span class="dv">0</span>], i, comp[<span class="dv">1</span>])</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor, idx[orden[:, mejor[<span class="dv">1</span>]]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="ddbe2655" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte(idx):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>, <span class="va">None</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> np.argsort(X[idx], axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> y[idx]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(orden.T):</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        comp <span class="op">=</span> corte_var(labels[x])</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> comp[<span class="dv">0</span>] <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            mejor <span class="op">=</span> (comp[<span class="dv">0</span>], i, comp[<span class="dv">1</span>])</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor, idx[orden[:, mejor[<span class="dv">1</span>]]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con la función <code>corte</code> se puede encontrar los parámetros de la función de corte <span class="math inline">\(f_m(\mathbf x) = x_i \leq a\)</span> para cada nodo del árbol completo del ejemplo anterior. Por ejemplo, los parámetros de la función de decisión para la raíz (#0) que se observa en la <a href="#fig-arboles-arbol-decision-funcion" class="quarto-xref">Figura&nbsp;<span>8.3</span></a> se puede obtener con el siguiente código.</p>
-<div id="592360c9" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(np.arange(X.shape[<span class="dv">0</span>]))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cc72b6d1" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(np.arange(X.shape[<span class="dv">0</span>]))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>10.560464864725406</code></pre>
+<pre><code>np.float64(10.560464864725406)</code></pre>
 </div>
 </div>
 <p>La variable <code>orden</code> tiene la información para dividir el conjunto dado, lo cual se realiza en las siguientes instrucciones, donde <code>idx_i</code> corresponde a los elementos a la izquierda y <code>idx_d</code> son los de la derecha.</p>
-<div id="2a9353fa" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>idx_i <span class="op">=</span> orden[:j]</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>idx_d <span class="op">=</span> orden[j:]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="2f1ebc7a" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>idx_i <span class="op">=</span> orden[:j]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>idx_d <span class="op">=</span> orden[j:]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros de la función de corte del nodo #1 los cuales se pueden calcular con las siguientes instrucciones.</p>
-<div id="102c26b4" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(idx_i)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="34d136b8" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(idx_i)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="16">
-<pre><code>-1.8516821607950367</code></pre>
+<pre><code>np.float64(-1.8516821607950367)</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -574,27 +562,27 @@ Nota
 <section id="ejemplo-breast-cancer-wisconsin" class="level3" data-number="8.3.3">
 <h3 data-number="8.3.3" class="anchored" data-anchor-id="ejemplo-breast-cancer-wisconsin"><span class="header-section-number">8.3.3</span> Ejemplo: Breast Cancer Wisconsin</h3>
 <p>Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.</p>
-<div id="844562a9" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="13457dd4" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada <a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a> (<em>Log-loss</em>).</p>
-<div id="12865c43" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="6f85380d" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como es de esperarse la predicción se realiza con el método <code>predict</code> como se ve a continuación.</p>
-<div id="34c313bc" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0b8d13fc" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El error en el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(0.0439\)</span>, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (<a href="03Parametricos.html#sec-gaussina-perf-breast_cancer" class="quarto-xref"><span>Sección 3.7.3</span></a>). La siguiente instrucción muestra el cálculo del error.</p>
-<div id="a0abc378" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>El error en el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(0.0702\)</span>, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (<a href="03Parametricos.html#sec-gaussina-perf-breast_cancer" class="quarto-xref"><span>Sección 3.7.3</span></a>). La siguiente instrucción muestra el cálculo del error.</p>
+<div id="197d58f6" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Un dato interesante, considerando los parámetros con los que se inicializó el árbol, entonces este hizo que todas las hojas fueran puras, es decir, con entropía cero. Por lo tanto el error de clasificación en el conjunto de entrenamiento <span class="math inline">\(\mathcal T\)</span> es cero, como se puede verificar con el siguiente código.</p>
-<div id="b3753a66" class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(y_t <span class="op">!=</span> arbol.predict(T)).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="2cca0a64" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(y_t <span class="op">!=</span> arbol.predict(T)).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
-<pre><code>0.0</code></pre>
+<pre><code>np.float64(0.0)</code></pre>
 </div>
 </div>
 </section>
@@ -602,20 +590,20 @@ Nota
 <section id="regresión" class="level2" data-number="8.4">
 <h2 data-number="8.4" class="anchored" data-anchor-id="regresión"><span class="header-section-number">8.4</span> Regresión</h2>
 <p>Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético; el cual corresponde a la suma de un seno y un coseno como se muestra a continuación.</p>
-<div id="d007c4b6" class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="59cd84c6" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con este problema se genera un árbol de decisión utilizando la siguiente instrucción. El método <code>fit</code> espera recibir un arreglo en dos dimensiones por eso se usa la función <code>np.atleast_2d</code> y se calcula la transpuesta siguiendo el formato esperado. Se observa el uso del parámetro <code>max_depth</code> para limitar la profundidad del árbol de decisión.</p>
-<div id="f1e10145" class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">3</span>).fit(np.atleast_2d(X).T, y)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="93805b32" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">3</span>).fit(np.atleast_2d(X).T, y)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El árbol de decisión obtenido se muestra en la <a href="#fig-arboles-regresion" class="quarto-xref">Figura&nbsp;<span>8.4</span></a>. La información que se muestra en cada nodo interno es equivalente a la mostrada en los árboles de clasificación. La diferencia es que en los árboles de regresión se muestra el promedio (<code>value</code>) de las salidas que llegan a ese nodo y en regresión es la frecuencia de clases. Se observa que si la entrada es <span class="math inline">\(x=-4.5\)</span> entonces la respuesta la da el nodo #4 con un valor de <span class="math inline">\(1.088.\)</span></p>
 <div id="cell-fig-arboles-regresion" class="cell" data-execution_count="25">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-arboles-regresion" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -636,16 +624,16 @@ Figura&nbsp;8.4: Árbol de Regresión
 <div id="cell-fig-arboles-regresion-func" class="cell" data-execution_count="26">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(X<span class="op">=</span>X, y<span class="op">=</span>y, </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                       predicción<span class="op">=</span>arbol.predict(np.atleast_2d(X).T)))</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>df.set_index(<span class="st">'X'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sns.relplot(df, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(X<span class="op">=</span>X, y<span class="op">=</span>y, </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                       predicción<span class="op">=</span>arbol.predict(np.atleast_2d(X).T)))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df.set_index(<span class="st">'X'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>sns.relplot(df, kind<span class="op">=</span><span class="st">'line'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-arboles-regresion-func" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-arboles-regresion-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="08Arboles_files/figure-html/fig-arboles-regresion-func-output-1.png" width="555" height="470" class="figure-img">
+<img src="08Arboles_files/figure-html/fig-arboles-regresion-func-output-1.png" width="558" height="468" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-arboles-regresion-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;8.5: Problema de regresión
@@ -658,14 +646,14 @@ Figura&nbsp;8.5: Problema de regresión
 <section id="entrenamiento" class="level3" data-number="8.4.2">
 <h3 data-number="8.4.2" class="anchored" data-anchor-id="entrenamiento"><span class="header-section-number">8.4.2</span> Entrenamiento</h3>
 <p>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran en las siguientes instrucciones.</p>
-<div id="1a6511d7" class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="8fc59a2d" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestran la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho.</p>
-<div id="9982dd2d" class="cell" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(T, y_t)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, max_depth<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="ecdf4656" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(T, y_t)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, max_depth<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -675,40 +663,40 @@ Figura&nbsp;8.5: Problema de regresión
 </div>
 </div>
 <p>El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función <code>corte_var</code> definida en clasificación (<a href="#sec-arboles-clasificacion" class="quarto-xref"><span>Sección 8.3</span></a>) es que la entropía <code>H</code> se cambia por la varianza <code>np.var</code>.</p>
-<div id="74a18bba" class="cell" data-execution_count="29">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(response):</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> response.shape[<span class="dv">0</span>]</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(response))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> response[:j]</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> response[j:]</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(izq)</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(der)</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor    </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="151c2284" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(response):</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> response.shape[<span class="dv">0</span>]</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(response))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> response[:j]</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> response[j:]</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(izq)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(der)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor    </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La función <code>corte_var</code> de regresión se utiliza para encontrar el punto de corte en los datos del conjunto de entrenamiento de la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables independientes para calcular el corte con costo mínimo.</p>
-<div id="00231f0f" class="cell" data-execution_count="30">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> T.argsort(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> [corte_var(y_t[orden[:, x]]) <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)]</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="3ccb3845" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> T.argsort(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> [corte_var(y_t[orden[:, x]]) <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)]</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="30">
-<pre><code>[(5513.924404442889, 185),
- (5682.076869008433, 171),
- (4056.4364363846908, 216),
- (4785.479097411985, 240),
- (5399.684732642239, 210),
- (5536.445873375171, 220),
- (4907.375056760159, 132),
- (4634.885915547769, 147),
- (4229.862577295835, 181),
- (4906.772261812374, 298)]</code></pre>
+<pre><code>[(np.float64(5758.259343143195), np.int64(186)),
+ (np.float64(5930.56899112803), np.int64(349)),
+ (np.float64(4189.208810820317), np.int64(217)),
+ (np.float64(4941.397263647953), np.int64(258)),
+ (np.float64(5636.302702016032), np.int64(223)),
+ (np.float64(5664.051921774618), np.int64(237)),
+ (np.float64(5035.570459855388), np.int64(138)),
+ (np.float64(4768.473934063198), np.int64(166)),
+ (np.float64(4173.166745026942), np.int64(190)),
+ (np.float64(5170.793096089601), np.int64(271))]</code></pre>
 </div>
 </div>
-<p>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice 2 tal y como se muestra en la figura anterior nodo derecho de la raíz.</p>
+<p>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice np.int64(8) tal y como se muestra en la figura anterior nodo derecho de la raíz.</p>
 
 
 <!-- -->
@@ -804,8 +792,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -967,7 +953,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -1205,376 +1190,378 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb30" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Árboles de Decisión {#sec-arboles-decision}</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar árboles de decisión a problemas de clasificación y </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>regresión.</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer, load_diabetes</span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> DecisionBoundaryDisplay</span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
-<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/HhLRmQWV9h0 width="560" height="315" &gt;}}</span>
-<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-08}</span></span>
-<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>Los árboles de decisión son una estructura de datos jerárquica, la cual se construye utilizando una estrategia de divide y vencerás. Los árboles son un método no paramétrico diseñado para problemas de regresión y clasificación. </span>
-<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una regla que muestra el camino de acuerdo a la entrada y la hoja indica la clase o respuesta que corresponde a la entrada.</span>
-<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clasificación { #sec-arboles-clasificacion }</span></span>
-<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=<span class="co">[</span><span class="ot">5, 5</span><span class="co">]</span>^\intercal$, $\mu_2=<span class="co">[</span><span class="ot">-5, -10</span><span class="co">]</span>^\intercal$ y $\mu_3=<span class="co">[</span><span class="ot">15, -6</span><span class="co">]</span>^\intercal$; utilizando las matrices de covarianza originales.</span>
-<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Tres distribuciones Gausianas</span></span>
-<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-tres-distribuciones</span></span>
-<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
-<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span>seed,</span>
-<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(<span class="dv">1000</span>)</span>
-<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="op">-</span><span class="dv">5</span>, <span class="op">-</span><span class="dv">10</span>],</span>
-<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span>seed,</span>
-<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">3</span>]]).rvs(<span class="dv">1000</span>)</span>
-<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="op">-</span><span class="dv">6</span>],</span>
-<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span>seed,</span>
-<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">3</span>, <span class="dv">7</span>]]).rvs(<span class="dv">1000</span>)</span>
-<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span><span class="dv">1</span>) <span class="cf">for</span> x, y <span class="kw">in</span> X_1] <span class="op">+</span> <span class="op">\</span></span>
-<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a>                  [<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span><span class="dv">2</span>) <span class="cf">for</span> x, y <span class="kw">in</span> X_2] <span class="op">+</span> <span class="op">\</span></span>
-<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a>                  [<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span><span class="dv">3</span>) <span class="cf">for</span> x, y <span class="kw">in</span> X_3])</span>
-<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
-<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span>
-<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-72"><a href="#cb30-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-73"><a href="#cb30-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-74"><a href="#cb30-74" aria-hidden="true" tabindex="-1"></a>Con estas tres poblaciones, donde cada distribución genera una clase se crea un árbol de decisión. El árbol se muestra en la @fig-arboles-arbol-decision, donde se observa, en cada nodo interno, la siguiente información. La primera línea muestra el identificador del nodo, la segunda corresponde a la función de corte, la tercera línea es la entropía ($H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$), la cuarta es el número de elementos que llegaron al nodo y la última la frecuencia de cada clase en ese nodo. </span>
-<span id="cb30-75"><a href="#cb30-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-78"><a href="#cb30-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-79"><a href="#cb30-79" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb30-80"><a href="#cb30-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Árbol de decisión</span></span>
-<span id="cb30-81"><a href="#cb30-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-arbol-decision</span></span>
-<span id="cb30-82"><a href="#cb30-82" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3), axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb30-83"><a href="#cb30-83" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
-<span id="cb30-84"><a href="#cb30-84" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(X, y)</span>
-<span id="cb30-85"><a href="#cb30-85" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb30-86"><a href="#cb30-86" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
-<span id="cb30-87"><a href="#cb30-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-88"><a href="#cb30-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-91"><a href="#cb30-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-92"><a href="#cb30-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb30-93"><a href="#cb30-93" aria-hidden="true" tabindex="-1"></a>entropia_raiz <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>impurity[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb30-94"><a href="#cb30-94" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> arbol.tree_.feature[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb30-95"><a href="#cb30-95" aria-hidden="true" tabindex="-1"></a>  funcion_decision <span class="op">=</span> Markdown(<span class="ss">f'$x \leq </span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>threshold[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb30-96"><a href="#cb30-96" aria-hidden="true" tabindex="-1"></a>  componente <span class="op">=</span> Markdown(<span class="st">'$x$'</span>)</span>
-<span id="cb30-97"><a href="#cb30-97" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb30-98"><a href="#cb30-98" aria-hidden="true" tabindex="-1"></a>  funcion_decision <span class="op">=</span> Markdown(<span class="ss">f'$y \leq </span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>threshold[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)    </span>
-<span id="cb30-99"><a href="#cb30-99" aria-hidden="true" tabindex="-1"></a>  componente <span class="op">=</span> Markdown(<span class="st">'$y$'</span>)</span>
-<span id="cb30-100"><a href="#cb30-100" aria-hidden="true" tabindex="-1"></a>hojas <span class="op">=</span> np.where(arbol.tree_.feature <span class="op">==</span> <span class="op">-</span><span class="dv">2</span>)[<span class="dv">0</span>]</span>
-<span id="cb30-101"><a href="#cb30-101" aria-hidden="true" tabindex="-1"></a>hojas_f <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'#</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> hojas[:<span class="op">-</span><span class="dv">1</span>]])</span>
-<span id="cb30-102"><a href="#cb30-102" aria-hidden="true" tabindex="-1"></a>hojas_f <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>hojas_f<span class="sc">}</span><span class="ss">, y #</span><span class="sc">{</span>hojas[<span class="op">-</span><span class="dv">1</span>]<span class="sc">}</span><span class="ss">'</span></span>
-<span id="cb30-103"><a href="#cb30-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-104"><a href="#cb30-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-105"><a href="#cb30-105" aria-hidden="true" tabindex="-1"></a>Por ejemplo el nodo raíz del árbol tiene una entropía de <span class="in">`{python} entropia_raiz`</span>, la función de decisión es <span class="in">`{python} funcion_decision`</span> que indica que todos los elementos con un valor en <span class="in">`{python} componente`</span> menor o igual del valor calculado están del lado izquierdo. Los hojas (nodos <span class="in">`{python} hojas_f`</span>) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es $0$, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple. </span>
-<span id="cb30-106"><a href="#cb30-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-109"><a href="#cb30-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-110"><a href="#cb30-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb30-111"><a href="#cb30-111" aria-hidden="true" tabindex="-1"></a>nodos <span class="op">=</span> np.where(arbol.tree_.n_node_samples <span class="op">&lt;</span> <span class="dv">3</span>)[<span class="dv">0</span>]</span>
-<span id="cb30-112"><a href="#cb30-112" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> nodos.shape[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb30-113"><a href="#cb30-113" aria-hidden="true" tabindex="-1"></a>  desc <span class="op">=</span> Markdown(<span class="ss">f'el nodo #</span><span class="sc">{</span>nodos[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb30-114"><a href="#cb30-114" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb30-115"><a href="#cb30-115" aria-hidden="true" tabindex="-1"></a>  nodos <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'#</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> nodos])</span>
-<span id="cb30-116"><a href="#cb30-116" aria-hidden="true" tabindex="-1"></a>  desc <span class="op">=</span> Markdown(<span class="ss">f'los nodos [</span><span class="sc">{</span>nodos<span class="sc">}</span><span class="ss">]'</span>)</span>
-<span id="cb30-117"><a href="#cb30-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-118"><a href="#cb30-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-119"><a href="#cb30-119" aria-hidden="true" tabindex="-1"></a>La siguiente @fig-arboles-arbol-decision-funcion muestra el árbol generado cuando se remueven <span class="in">`{python} desc`</span>. Se observa un árbol con menos nodos, aunque la entropía en es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo. </span>
-<span id="cb30-120"><a href="#cb30-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-123"><a href="#cb30-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-124"><a href="#cb30-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb30-125"><a href="#cb30-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb30-126"><a href="#cb30-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Árbol de decisión y función</span></span>
-<span id="cb30-127"><a href="#cb30-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-arbol-decision-funcion</span></span>
-<span id="cb30-128"><a href="#cb30-128" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb30-129"><a href="#cb30-129" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>, min_samples_split<span class="op">=</span><span class="dv">1003</span>).fit(X, y)</span>
-<span id="cb30-130"><a href="#cb30-130" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb30-131"><a href="#cb30-131" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
-<span id="cb30-132"><a href="#cb30-132" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb30-133"><a href="#cb30-133" aria-hidden="true" tabindex="-1"></a>DecisionBoundaryDisplay.from_estimator(arbol, X, cmap<span class="op">=</span>plt.cm.RdYlBu,</span>
-<span id="cb30-134"><a href="#cb30-134" aria-hidden="true" tabindex="-1"></a>                                       response_method<span class="op">=</span><span class="st">'predict'</span>,</span>
-<span id="cb30-135"><a href="#cb30-135" aria-hidden="true" tabindex="-1"></a>                                       ax<span class="op">=</span>ax, xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span>
-<span id="cb30-136"><a href="#cb30-136" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, color <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="st">'ryb'</span>):</span>
-<span id="cb30-137"><a href="#cb30-137" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> y <span class="op">==</span> (i <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb30-138"><a href="#cb30-138" aria-hidden="true" tabindex="-1"></a>  plt.scatter(X[mask, <span class="dv">0</span>], X[mask, <span class="dv">1</span>], c<span class="op">=</span>color,</span>
-<span id="cb30-139"><a href="#cb30-139" aria-hidden="true" tabindex="-1"></a>              label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>, cmap<span class="op">=</span>plt.cm.RdYlBu, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
-<span id="cb30-140"><a href="#cb30-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-141"><a href="#cb30-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-142"><a href="#cb30-142" aria-hidden="true" tabindex="-1"></a><span class="fu">### Predicción { #sec-arboles-prediccion }</span></span>
-<span id="cb30-143"><a href="#cb30-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-146"><a href="#cb30-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-147"><a href="#cb30-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb30-148"><a href="#cb30-148" aria-hidden="true" tabindex="-1"></a>camino <span class="op">=</span> arbol.decision_path([[<span class="op">-</span><span class="dv">3</span>, <span class="fl">0.5</span>]]).toarray()[<span class="dv">0</span>]</span>
-<span id="cb30-149"><a href="#cb30-149" aria-hidden="true" tabindex="-1"></a>camino <span class="op">=</span> np.where(camino)[<span class="dv">0</span>]</span>
-<span id="cb30-150"><a href="#cb30-150" aria-hidden="true" tabindex="-1"></a>camino_f <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'#</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> camino[:<span class="op">-</span><span class="dv">1</span>]])</span>
-<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-152"><a href="#cb30-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-153"><a href="#cb30-153" aria-hidden="true" tabindex="-1"></a>Utilizando el árbol y la función de decisión mostrada en @fig-arboles-arbol-decision-funcion, se puede explicar el proceso de clasificar un nuevo elemento. Por ejemplo, el elemento $\mathbf u=(x=-3, y=0.5)$ pasaría por los nodos <span class="in">`{python} camino_f`</span> y <span class="in">`{python} f'#{camino[-1]}'`</span> para llegar a la clase correspondiente. </span>
-<span id="cb30-154"><a href="#cb30-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-155"><a href="#cb30-155" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entrenamiento { #sec-clasificacion-entrenamiento }</span></span>
-<span id="cb30-156"><a href="#cb30-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-157"><a href="#cb30-157" aria-hidden="true" tabindex="-1"></a>Existen diferentes sistemas para la generación de un árbol de decisión (e.g., @Quinlan1986) la mayoría de ellos comparten las siguiente estructura general. La construcción un árbol se realiza mediante un procedimiento recursivo en donde se aplica la función de corte $f_m(\mathbf x) = x_i \leq a$ en el nodo $m$, donde el parámetro $a$ y la componente $x_i$ se identifican utilizando los datos que llegan al nodo $m$ de tal manera que se maximice una función de costo.</span>
-<span id="cb30-158"><a href="#cb30-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-159"><a href="#cb30-159" aria-hidden="true" tabindex="-1"></a>Una función de costo podría estar basada en la entropía, es decir, para cada posible corte se mide la entropía en los nodos generados y se calcula la esperanza de la entropía de la siguiente manera. </span>
-<span id="cb30-160"><a href="#cb30-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-161"><a href="#cb30-161" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb30-162"><a href="#cb30-162" aria-hidden="true" tabindex="-1"></a>L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),</span>
-<span id="cb30-163"><a href="#cb30-163" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb30-164"><a href="#cb30-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-165"><a href="#cb30-165" aria-hidden="true" tabindex="-1"></a>donde $H(\mathcal D_h)$ es la entropía de las etiquetas del conjunto $\mathcal D_h$, la entropía se puede calcular con la siguiente función. La función recibe un arreglo con las clases, está protegida para calcular $0 \log 0 = 0$ y finalmente regresa la entropía de <span class="in">`arr`</span>.</span>
-<span id="cb30-166"><a href="#cb30-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-169"><a href="#cb30-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-170"><a href="#cb30-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-171"><a href="#cb30-171" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> H(arr):</span>
-<span id="cb30-172"><a href="#cb30-172" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> np.unique(arr, return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb30-173"><a href="#cb30-173" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">/</span> b.<span class="bu">sum</span>()</span>
-<span id="cb30-174"><a href="#cb30-174" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (b <span class="op">*</span> np.log2(b, where<span class="op">=</span>b <span class="op">!=</span> <span class="dv">0</span>)).<span class="bu">sum</span>()</span>
-<span id="cb30-175"><a href="#cb30-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-176"><a href="#cb30-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-177"><a href="#cb30-177" aria-hidden="true" tabindex="-1"></a>La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento <span class="in">`corte_var`</span>. Este procedimiento asume que las etiquetas (<span class="in">`labels`</span>) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable <span class="in">`mejor`</span> para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función <span class="in">`np.diff`</span>; dado que está quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calculan el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. </span>
-<span id="cb30-178"><a href="#cb30-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-179"><a href="#cb30-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-182"><a href="#cb30-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-183"><a href="#cb30-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-184"><a href="#cb30-184" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(labels):</span>
-<span id="cb30-185"><a href="#cb30-185" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
-<span id="cb30-186"><a href="#cb30-186" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> labels.shape[<span class="dv">0</span>]</span>
-<span id="cb30-187"><a href="#cb30-187" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(labels))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb30-188"><a href="#cb30-188" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
-<span id="cb30-189"><a href="#cb30-189" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> labels[:j]</span>
-<span id="cb30-190"><a href="#cb30-190" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> labels[j:]</span>
-<span id="cb30-191"><a href="#cb30-191" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(izq)</span>
-<span id="cb30-192"><a href="#cb30-192" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(der)</span>
-<span id="cb30-193"><a href="#cb30-193" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb30-194"><a href="#cb30-194" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
-<span id="cb30-195"><a href="#cb30-195" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
-<span id="cb30-196"><a href="#cb30-196" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor</span>
-<span id="cb30-197"><a href="#cb30-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-198"><a href="#cb30-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-201"><a href="#cb30-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-202"><a href="#cb30-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb30-203"><a href="#cb30-203" aria-hidden="true" tabindex="-1"></a>perf, index <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span>
-<span id="cb30-204"><a href="#cb30-204" aria-hidden="true" tabindex="-1"></a>perf_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>perf<span class="sc">:0.4}</span><span class="ss">$'</span>)</span>
-<span id="cb30-205"><a href="#cb30-205" aria-hidden="true" tabindex="-1"></a>index_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>index<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb30-206"><a href="#cb30-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-207"><a href="#cb30-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-208"><a href="#cb30-208" aria-hidden="true" tabindex="-1"></a>En el siguiente ejemplo se usa la función <span class="in">`corte_var`</span>; la función regresa un costo de <span class="in">`{python} perf_f`</span> y el punto de corte es el elemento <span class="in">`{python} index_f`</span>, se puede observar que es el mejor punto de corte en el arreglo dado. </span>
-<span id="cb30-209"><a href="#cb30-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-212"><a href="#cb30-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-213"><a href="#cb30-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-214"><a href="#cb30-214" aria-hidden="true" tabindex="-1"></a>costo, indice <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span>
-<span id="cb30-215"><a href="#cb30-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-216"><a href="#cb30-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-217"><a href="#cb30-217" aria-hidden="true" tabindex="-1"></a>Con la función <span class="in">`corte_var`</span> se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento <span class="in">`corte`</span> encuentra el mínimo con respecto de $x_i$, está función recibe los índices (<span class="in">`idx`</span>) donde se buscará estos valores, en un inicio <span class="in">`idx`</span> es un arreglo de $0$ al número de elemento del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función <span class="in">`corte_var`</span> donde se observa como las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en <span class="in">`mejor`</span>. Finalmente, se regresa <span class="in">`mejor`</span> y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  </span>
-<span id="cb30-218"><a href="#cb30-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-221"><a href="#cb30-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-222"><a href="#cb30-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-223"><a href="#cb30-223" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte(idx):</span>
-<span id="cb30-224"><a href="#cb30-224" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>, <span class="va">None</span>)</span>
-<span id="cb30-225"><a href="#cb30-225" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> np.argsort(X[idx], axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb30-226"><a href="#cb30-226" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> y[idx]</span>
-<span id="cb30-227"><a href="#cb30-227" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(orden.T):</span>
-<span id="cb30-228"><a href="#cb30-228" aria-hidden="true" tabindex="-1"></a>        comp <span class="op">=</span> corte_var(labels[x])</span>
-<span id="cb30-229"><a href="#cb30-229" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> comp[<span class="dv">0</span>] <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
-<span id="cb30-230"><a href="#cb30-230" aria-hidden="true" tabindex="-1"></a>            mejor <span class="op">=</span> (comp[<span class="dv">0</span>], i, comp[<span class="dv">1</span>])</span>
-<span id="cb30-231"><a href="#cb30-231" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor, idx[orden[:, mejor[<span class="dv">1</span>]]]</span>
-<span id="cb30-232"><a href="#cb30-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>    </span>
-<span id="cb30-233"><a href="#cb30-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-234"><a href="#cb30-234" aria-hidden="true" tabindex="-1"></a>Con la función <span class="in">`corte`</span> se puede encontrar los parámetros de la función de corte $f_m(\mathbf x) = x_i \leq a$ para cada nodo del árbol completo del ejemplo anterior. Por ejemplo, los parámetros de la función de decisión para la raíz (#0) que se observa en la @fig-arboles-arbol-decision-funcion se puede obtener con el siguiente código. </span>
-<span id="cb30-235"><a href="#cb30-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-238"><a href="#cb30-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-239"><a href="#cb30-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-240"><a href="#cb30-240" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(np.arange(X.shape[<span class="dv">0</span>]))</span>
-<span id="cb30-241"><a href="#cb30-241" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
-<span id="cb30-242"><a href="#cb30-242" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb30-243"><a href="#cb30-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-244"><a href="#cb30-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-245"><a href="#cb30-245" aria-hidden="true" tabindex="-1"></a>La variable <span class="in">`orden`</span> tiene la información para dividir el conjunto dado, lo cual se realiza en las siguientes instrucciones, donde <span class="in">`idx_i`</span> corresponde a los elementos a la izquierda y <span class="in">`idx_d`</span> son los de la derecha. </span>
-<span id="cb30-246"><a href="#cb30-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-249"><a href="#cb30-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-250"><a href="#cb30-250" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-251"><a href="#cb30-251" aria-hidden="true" tabindex="-1"></a>idx_i <span class="op">=</span> orden[:j]</span>
-<span id="cb30-252"><a href="#cb30-252" aria-hidden="true" tabindex="-1"></a>idx_d <span class="op">=</span> orden[j:]</span>
-<span id="cb30-253"><a href="#cb30-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-254"><a href="#cb30-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-255"><a href="#cb30-255" aria-hidden="true" tabindex="-1"></a>Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros de la función de corte del nodo #1 los cuales se pueden calcular con las siguientes instrucciones. </span>
-<span id="cb30-256"><a href="#cb30-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-259"><a href="#cb30-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-260"><a href="#cb30-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-261"><a href="#cb30-261" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(idx_i)</span>
-<span id="cb30-262"><a href="#cb30-262" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
-<span id="cb30-263"><a href="#cb30-263" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb30-264"><a href="#cb30-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-265"><a href="#cb30-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-266"><a href="#cb30-266" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb30-267"><a href="#cb30-267" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`corte`</span> no verifica que se esté en una hoja, entonces si se hace el corte en una hora regresará <span class="in">`(np.inf, none, None)`</span></span>
-<span id="cb30-268"><a href="#cb30-268" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb30-269"><a href="#cb30-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-270"><a href="#cb30-270" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Breast Cancer Wisconsin</span></span>
-<span id="cb30-271"><a href="#cb30-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-272"><a href="#cb30-272" aria-hidden="true" tabindex="-1"></a>Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.</span>
-<span id="cb30-273"><a href="#cb30-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-276"><a href="#cb30-276" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-277"><a href="#cb30-277" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-278"><a href="#cb30-278" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb30-279"><a href="#cb30-279" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb30-280"><a href="#cb30-280" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-281"><a href="#cb30-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-282"><a href="#cb30-282" aria-hidden="true" tabindex="-1"></a>La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada @sec-entropia-cruzada (_Log-loss_). </span>
-<span id="cb30-283"><a href="#cb30-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-286"><a href="#cb30-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-287"><a href="#cb30-287" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-288"><a href="#cb30-288" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(T, y_t)</span>
-<span id="cb30-289"><a href="#cb30-289" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-290"><a href="#cb30-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-291"><a href="#cb30-291" aria-hidden="true" tabindex="-1"></a>Como es de esperarse la predicción se realiza con el método <span class="in">`predict`</span> como se ve a continuación. </span>
-<span id="cb30-292"><a href="#cb30-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-295"><a href="#cb30-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-296"><a href="#cb30-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-297"><a href="#cb30-297" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(G)</span>
-<span id="cb30-298"><a href="#cb30-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-299"><a href="#cb30-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-302"><a href="#cb30-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-303"><a href="#cb30-303" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb30-304"><a href="#cb30-304" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>(y_g <span class="op">!=</span> hy)<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb30-305"><a href="#cb30-305" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-306"><a href="#cb30-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-307"><a href="#cb30-307" aria-hidden="true" tabindex="-1"></a>El error en el conjunto de prueba $\mathcal G$ es <span class="in">`{python} error_f`</span>, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (@sec-gaussina-perf-breast_cancer). La siguiente instrucción muestra el cálculo del error. </span>
-<span id="cb30-308"><a href="#cb30-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-311"><a href="#cb30-311" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-312"><a href="#cb30-312" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-313"><a href="#cb30-313" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span>
-<span id="cb30-314"><a href="#cb30-314" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-315"><a href="#cb30-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-316"><a href="#cb30-316" aria-hidden="true" tabindex="-1"></a>Un dato interesante, considerando los parámetros con los que se inicializó el árbol, entonces este hizo que todas las hojas fueran puras, es decir, con entropía cero. Por lo tanto el error de clasificación en el conjunto de entrenamiento $\mathcal T$ es cero, como se puede verificar con el siguiente código. </span>
-<span id="cb30-317"><a href="#cb30-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-320"><a href="#cb30-320" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-321"><a href="#cb30-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-322"><a href="#cb30-322" aria-hidden="true" tabindex="-1"></a>(y_t <span class="op">!=</span> arbol.predict(T)).mean()</span>
-<span id="cb30-323"><a href="#cb30-323" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-324"><a href="#cb30-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-325"><a href="#cb30-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-326"><a href="#cb30-326" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regresión</span></span>
-<span id="cb30-327"><a href="#cb30-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-328"><a href="#cb30-328" aria-hidden="true" tabindex="-1"></a>Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético; el cual corresponde a la suma de un seno y un coseno como se muestra a continuación. </span>
-<span id="cb30-329"><a href="#cb30-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-332"><a href="#cb30-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-333"><a href="#cb30-333" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-334"><a href="#cb30-334" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
-<span id="cb30-335"><a href="#cb30-335" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span>
-<span id="cb30-336"><a href="#cb30-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-337"><a href="#cb30-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-338"><a href="#cb30-338" aria-hidden="true" tabindex="-1"></a>Con este problema se genera un árbol de decisión utilizando la siguiente instrucción. El método <span class="in">`fit`</span> espera recibir un arreglo en dos dimensiones por eso se usa la función <span class="in">`np.atleast_2d`</span> y se calcula la transpuesta siguiendo el formato esperado. Se observa el uso del parámetro <span class="in">`max_depth`</span> para limitar la profundidad del árbol de decisión. </span>
-<span id="cb30-339"><a href="#cb30-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-342"><a href="#cb30-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-343"><a href="#cb30-343" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-344"><a href="#cb30-344" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">3</span>).fit(np.atleast_2d(X).T, y)</span>
-<span id="cb30-345"><a href="#cb30-345" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-346"><a href="#cb30-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-347"><a href="#cb30-347" aria-hidden="true" tabindex="-1"></a>El árbol de decisión obtenido se muestra en la @fig-arboles-regresion. La información que se muestra en cada nodo interno es equivalente a la mostrada en los árboles de clasificación. La diferencia es que en los árboles de regresión se muestra el promedio (<span class="in">`value`</span>) de las salidas que llegan a ese nodo y en regresión es la frecuencia de clases. Se observa que si la entrada es $x=-4.5$ entonces la respuesta la da el nodo #4 con un valor de $1.088.$</span>
-<span id="cb30-348"><a href="#cb30-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-351"><a href="#cb30-351" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-352"><a href="#cb30-352" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb30-353"><a href="#cb30-353" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Árbol de Regresión</span></span>
-<span id="cb30-354"><a href="#cb30-354" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-regresion</span></span>
-<span id="cb30-355"><a href="#cb30-355" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb30-356"><a href="#cb30-356" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
-<span id="cb30-357"><a href="#cb30-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-358"><a href="#cb30-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-359"><a href="#cb30-359" aria-hidden="true" tabindex="-1"></a><span class="fu">### Predicción</span></span>
-<span id="cb30-360"><a href="#cb30-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-361"><a href="#cb30-361" aria-hidden="true" tabindex="-1"></a>El árbol anterior se usa para predecir todos los puntos del conjunto de entrenamiento, el resultado se muestra en la @fig-arboles-regresion-func. Se observa que la predicción es discreta, son escalones y esto es porque las hojas predicen el promedio de los valores que llegaron hasta ahí, en este caso el árbol tiene 8 hojas entonces a lo más ese árbol puede predecir 8 valores distintos. </span>
-<span id="cb30-362"><a href="#cb30-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-365"><a href="#cb30-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-366"><a href="#cb30-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb30-367"><a href="#cb30-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Problema de regresión</span></span>
-<span id="cb30-368"><a href="#cb30-368" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-regresion-func</span></span>
-<span id="cb30-369"><a href="#cb30-369" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(X<span class="op">=</span>X, y<span class="op">=</span>y, </span>
-<span id="cb30-370"><a href="#cb30-370" aria-hidden="true" tabindex="-1"></a>                       predicción<span class="op">=</span>arbol.predict(np.atleast_2d(X).T)))</span>
-<span id="cb30-371"><a href="#cb30-371" aria-hidden="true" tabindex="-1"></a>df.set_index(<span class="st">'X'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb30-372"><a href="#cb30-372" aria-hidden="true" tabindex="-1"></a>sns.relplot(df, kind<span class="op">=</span><span class="st">'line'</span>)</span>
-<span id="cb30-373"><a href="#cb30-373" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-374"><a href="#cb30-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-375"><a href="#cb30-375" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entrenamiento</span></span>
-<span id="cb30-376"><a href="#cb30-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-377"><a href="#cb30-377" aria-hidden="true" tabindex="-1"></a>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran en las siguientes instrucciones. </span>
-<span id="cb30-378"><a href="#cb30-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-381"><a href="#cb30-381" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-382"><a href="#cb30-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-383"><a href="#cb30-383" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb30-384"><a href="#cb30-384" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb30-385"><a href="#cb30-385" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-386"><a href="#cb30-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-387"><a href="#cb30-387" aria-hidden="true" tabindex="-1"></a>Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestran la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho. </span>
-<span id="cb30-388"><a href="#cb30-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-391"><a href="#cb30-391" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-392"><a href="#cb30-392" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-393"><a href="#cb30-393" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(T, y_t)</span>
-<span id="cb30-394"><a href="#cb30-394" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, max_depth<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb30-395"><a href="#cb30-395" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-396"><a href="#cb30-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-397"><a href="#cb30-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-398"><a href="#cb30-398" aria-hidden="true" tabindex="-1"></a>El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función <span class="in">`corte_var`</span> definida en clasificación (@sec-arboles-clasificacion) es que la entropía <span class="in">`H`</span> se cambia por la varianza <span class="in">`np.var`</span>. </span>
-<span id="cb30-399"><a href="#cb30-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-402"><a href="#cb30-402" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-403"><a href="#cb30-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-404"><a href="#cb30-404" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(response):</span>
-<span id="cb30-405"><a href="#cb30-405" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
-<span id="cb30-406"><a href="#cb30-406" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> response.shape[<span class="dv">0</span>]</span>
-<span id="cb30-407"><a href="#cb30-407" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(response))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb30-408"><a href="#cb30-408" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
-<span id="cb30-409"><a href="#cb30-409" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> response[:j]</span>
-<span id="cb30-410"><a href="#cb30-410" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> response[j:]</span>
-<span id="cb30-411"><a href="#cb30-411" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(izq)</span>
-<span id="cb30-412"><a href="#cb30-412" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(der)</span>
-<span id="cb30-413"><a href="#cb30-413" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb30-414"><a href="#cb30-414" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
-<span id="cb30-415"><a href="#cb30-415" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
-<span id="cb30-416"><a href="#cb30-416" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor    </span>
-<span id="cb30-417"><a href="#cb30-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-418"><a href="#cb30-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-419"><a href="#cb30-419" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`corte_var`</span> de regresión se utiliza para encontrar el punto de corte en los datos del conjunto de entrenamiento de la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables independientes para calcular el corte con costo mínimo. </span>
-<span id="cb30-420"><a href="#cb30-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-423"><a href="#cb30-423" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb30-424"><a href="#cb30-424" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb30-425"><a href="#cb30-425" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> T.argsort(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb30-426"><a href="#cb30-426" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> [corte_var(y_t[orden[:, x]]) <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)]</span>
-<span id="cb30-427"><a href="#cb30-427" aria-hidden="true" tabindex="-1"></a>res</span>
-<span id="cb30-428"><a href="#cb30-428" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-429"><a href="#cb30-429" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-430"><a href="#cb30-430" aria-hidden="true" tabindex="-1"></a>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice <span class="in">`{python} np.argmin(res, axis=0)[0]`</span> tal y como se muestra en la figura anterior nodo derecho de la raíz. </span>
+<div class="sourceCode" id="cb29" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Árboles de Decisión {#sec-arboles-decision}</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar árboles de decisión a problemas de clasificación y </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>regresión.</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer, load_diabetes</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> DecisionBoundaryDisplay</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/HhLRmQWV9h0 width="560" height="315" &gt;}}</span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-08}</span></span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a>Los árboles de decisión son una estructura de datos jerárquica, la cual se construye utilizando una estrategia de divide y vencerás. Los árboles son un método no paramétrico diseñado para problemas de regresión y clasificación. </span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una regla que muestra el camino de acuerdo a la entrada y la hoja indica la clase o respuesta que corresponde a la entrada.</span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clasificación { #sec-arboles-clasificacion }</span></span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=<span class="co">[</span><span class="ot">5, 5</span><span class="co">]</span>^\intercal$, $\mu_2=<span class="co">[</span><span class="ot">-5, -10</span><span class="co">]</span>^\intercal$ y $\mu_3=<span class="co">[</span><span class="ot">15, -6</span><span class="co">]</span>^\intercal$; utilizando las matrices de covarianza originales.</span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Tres distribuciones Gausianas</span></span>
+<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-tres-distribuciones</span></span>
+<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
+<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span>seed,</span>
+<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(<span class="dv">1000</span>)</span>
+<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="op">-</span><span class="dv">5</span>, <span class="op">-</span><span class="dv">10</span>],</span>
+<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span>seed,</span>
+<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">3</span>]]).rvs(<span class="dv">1000</span>)</span>
+<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="op">-</span><span class="dv">6</span>],</span>
+<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a>                          seed<span class="op">=</span>seed,</span>
+<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">3</span>, <span class="dv">7</span>]]).rvs(<span class="dv">1000</span>)</span>
+<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span><span class="dv">1</span>) <span class="cf">for</span> x, y <span class="kw">in</span> X_1] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a>                  [<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span><span class="dv">2</span>) <span class="cf">for</span> x, y <span class="kw">in</span> X_2] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a>                  [<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span><span class="dv">3</span>) <span class="cf">for</span> x, y <span class="kw">in</span> X_3])</span>
+<span id="cb29-69"><a href="#cb29-69" aria-hidden="true" tabindex="-1"></a>sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
+<span id="cb29-70"><a href="#cb29-70" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span>
+<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a>Con estas tres poblaciones, donde cada distribución genera una clase se crea un árbol de decisión. El árbol se muestra en la @fig-arboles-arbol-decision, donde se observa, en cada nodo interno, la siguiente información. La primera línea muestra el identificador del nodo, la segunda corresponde a la función de corte, la tercera línea es la entropía ($H(\mathcal Y) = -\sum_{y \in \mathcal Y} \mathbb P(\mathcal Y=y) \log_2 \mathbb P(\mathcal Y=y)$), la cuarta es el número de elementos que llegaron al nodo y la última la frecuencia de cada clase en ese nodo. </span>
+<span id="cb29-75"><a href="#cb29-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-78"><a href="#cb29-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-79"><a href="#cb29-79" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-80"><a href="#cb29-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Árbol de decisión</span></span>
+<span id="cb29-81"><a href="#cb29-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-arbol-decision</span></span>
+<span id="cb29-82"><a href="#cb29-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-83"><a href="#cb29-83" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3), axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb29-84"><a href="#cb29-84" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
+<span id="cb29-85"><a href="#cb29-85" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(X, y)</span>
+<span id="cb29-86"><a href="#cb29-86" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb29-87"><a href="#cb29-87" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
+<span id="cb29-88"><a href="#cb29-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-89"><a href="#cb29-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-92"><a href="#cb29-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-93"><a href="#cb29-93" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-94"><a href="#cb29-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-95"><a href="#cb29-95" aria-hidden="true" tabindex="-1"></a>entropia_raiz <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>impurity[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-96"><a href="#cb29-96" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> arbol.tree_.feature[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb29-97"><a href="#cb29-97" aria-hidden="true" tabindex="-1"></a>  funcion_decision <span class="op">=</span> Markdown(<span class="ss">f'$x </span><span class="ch">\\</span><span class="ss">leq </span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>threshold[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-98"><a href="#cb29-98" aria-hidden="true" tabindex="-1"></a>  componente <span class="op">=</span> Markdown(<span class="st">'$x$'</span>)</span>
+<span id="cb29-99"><a href="#cb29-99" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb29-100"><a href="#cb29-100" aria-hidden="true" tabindex="-1"></a>  funcion_decision <span class="op">=</span> Markdown(<span class="ss">f'$y </span><span class="ch">\\</span><span class="ss">leq </span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>threshold[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)    </span>
+<span id="cb29-101"><a href="#cb29-101" aria-hidden="true" tabindex="-1"></a>  componente <span class="op">=</span> Markdown(<span class="st">'$y$'</span>)</span>
+<span id="cb29-102"><a href="#cb29-102" aria-hidden="true" tabindex="-1"></a>hojas <span class="op">=</span> np.where(arbol.tree_.feature <span class="op">==</span> <span class="op">-</span><span class="dv">2</span>)[<span class="dv">0</span>]</span>
+<span id="cb29-103"><a href="#cb29-103" aria-hidden="true" tabindex="-1"></a>hojas_f <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'#</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> hojas[:<span class="op">-</span><span class="dv">1</span>]])</span>
+<span id="cb29-104"><a href="#cb29-104" aria-hidden="true" tabindex="-1"></a>hojas_f <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>hojas_f<span class="sc">}</span><span class="ss">, y #</span><span class="sc">{</span>hojas[<span class="op">-</span><span class="dv">1</span>]<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb29-105"><a href="#cb29-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-106"><a href="#cb29-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-107"><a href="#cb29-107" aria-hidden="true" tabindex="-1"></a>Por ejemplo el nodo raíz del árbol tiene una entropía de <span class="in">`{python} entropia_raiz`</span>, la función de decisión es <span class="in">`{python} funcion_decision`</span> que indica que todos los elementos con un valor en <span class="in">`{python} componente`</span> menor o igual del valor calculado están del lado izquierdo. Los hojas (nodos <span class="in">`{python} hojas_f`</span>) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es $0$, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple. </span>
+<span id="cb29-108"><a href="#cb29-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-111"><a href="#cb29-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-112"><a href="#cb29-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-113"><a href="#cb29-113" aria-hidden="true" tabindex="-1"></a>nodos <span class="op">=</span> np.where(arbol.tree_.n_node_samples <span class="op">&lt;</span> <span class="dv">3</span>)[<span class="dv">0</span>]</span>
+<span id="cb29-114"><a href="#cb29-114" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> nodos.shape[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb29-115"><a href="#cb29-115" aria-hidden="true" tabindex="-1"></a>  desc <span class="op">=</span> Markdown(<span class="ss">f'el nodo #</span><span class="sc">{</span>nodos[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb29-116"><a href="#cb29-116" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb29-117"><a href="#cb29-117" aria-hidden="true" tabindex="-1"></a>  nodos <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'#</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> nodos])</span>
+<span id="cb29-118"><a href="#cb29-118" aria-hidden="true" tabindex="-1"></a>  desc <span class="op">=</span> Markdown(<span class="ss">f'los nodos [</span><span class="sc">{</span>nodos<span class="sc">}</span><span class="ss">]'</span>)</span>
+<span id="cb29-119"><a href="#cb29-119" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-120"><a href="#cb29-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-121"><a href="#cb29-121" aria-hidden="true" tabindex="-1"></a>La siguiente @fig-arboles-arbol-decision-funcion muestra el árbol generado cuando se remueven <span class="in">`{python} desc`</span>. Se observa un árbol con menos nodos, aunque la entropía en es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo. </span>
+<span id="cb29-122"><a href="#cb29-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-125"><a href="#cb29-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-126"><a href="#cb29-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-127"><a href="#cb29-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb29-128"><a href="#cb29-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Árbol de decisión y función</span></span>
+<span id="cb29-129"><a href="#cb29-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-arbol-decision-funcion</span></span>
+<span id="cb29-130"><a href="#cb29-130" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb29-131"><a href="#cb29-131" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>, min_samples_split<span class="op">=</span><span class="dv">1003</span>).fit(X, y)</span>
+<span id="cb29-132"><a href="#cb29-132" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb29-133"><a href="#cb29-133" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
+<span id="cb29-134"><a href="#cb29-134" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb29-135"><a href="#cb29-135" aria-hidden="true" tabindex="-1"></a>DecisionBoundaryDisplay.from_estimator(arbol, X, cmap<span class="op">=</span>plt.cm.RdYlBu,</span>
+<span id="cb29-136"><a href="#cb29-136" aria-hidden="true" tabindex="-1"></a>                                       response_method<span class="op">=</span><span class="st">'predict'</span>,</span>
+<span id="cb29-137"><a href="#cb29-137" aria-hidden="true" tabindex="-1"></a>                                       ax<span class="op">=</span>ax, xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb29-138"><a href="#cb29-138" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, color <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="st">'ryb'</span>):</span>
+<span id="cb29-139"><a href="#cb29-139" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> y <span class="op">==</span> (i <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb29-140"><a href="#cb29-140" aria-hidden="true" tabindex="-1"></a>  plt.scatter(X[mask, <span class="dv">0</span>], X[mask, <span class="dv">1</span>], c<span class="op">=</span>color,</span>
+<span id="cb29-141"><a href="#cb29-141" aria-hidden="true" tabindex="-1"></a>              label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>, cmap<span class="op">=</span>plt.cm.RdYlBu, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb29-142"><a href="#cb29-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-143"><a href="#cb29-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-144"><a href="#cb29-144" aria-hidden="true" tabindex="-1"></a><span class="fu">### Predicción { #sec-arboles-prediccion }</span></span>
+<span id="cb29-145"><a href="#cb29-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-150"><a href="#cb29-150" aria-hidden="true" tabindex="-1"></a>camino <span class="op">=</span> arbol.decision_path([[<span class="op">-</span><span class="dv">3</span>, <span class="fl">0.5</span>]]).toarray()[<span class="dv">0</span>]</span>
+<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a>camino <span class="op">=</span> np.where(camino)[<span class="dv">0</span>]</span>
+<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a>camino_f <span class="op">=</span> <span class="st">', '</span>.join([<span class="ss">f'#</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> camino[:<span class="op">-</span><span class="dv">1</span>]])</span>
+<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-154"><a href="#cb29-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-155"><a href="#cb29-155" aria-hidden="true" tabindex="-1"></a>Utilizando el árbol y la función de decisión mostrada en @fig-arboles-arbol-decision-funcion, se puede explicar el proceso de clasificar un nuevo elemento. Por ejemplo, el elemento $\mathbf u=(x=-3, y=0.5)$ pasaría por los nodos <span class="in">`{python} camino_f`</span> y <span class="in">`{python} f'#{camino[-1]}'`</span> para llegar a la clase correspondiente. </span>
+<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-157"><a href="#cb29-157" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entrenamiento { #sec-clasificacion-entrenamiento }</span></span>
+<span id="cb29-158"><a href="#cb29-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-159"><a href="#cb29-159" aria-hidden="true" tabindex="-1"></a>Existen diferentes sistemas para la generación de un árbol de decisión (e.g., @Quinlan1986) la mayoría de ellos comparten las siguiente estructura general. La construcción un árbol se realiza mediante un procedimiento recursivo en donde se aplica la función de corte $f_m(\mathbf x) = x_i \leq a$ en el nodo $m$, donde el parámetro $a$ y la componente $x_i$ se identifican utilizando los datos que llegan al nodo $m$ de tal manera que se maximice una función de costo.</span>
+<span id="cb29-160"><a href="#cb29-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-161"><a href="#cb29-161" aria-hidden="true" tabindex="-1"></a>Una función de costo podría estar basada en la entropía, es decir, para cada posible corte se mide la entropía en los nodos generados y se calcula la esperanza de la entropía de la siguiente manera. </span>
+<span id="cb29-162"><a href="#cb29-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-163"><a href="#cb29-163" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-164"><a href="#cb29-164" aria-hidden="true" tabindex="-1"></a>L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),</span>
+<span id="cb29-165"><a href="#cb29-165" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-166"><a href="#cb29-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-167"><a href="#cb29-167" aria-hidden="true" tabindex="-1"></a>donde $H(\mathcal D_h)$ es la entropía de las etiquetas del conjunto $\mathcal D_h$, la entropía se puede calcular con la siguiente función. La función recibe un arreglo con las clases, está protegida para calcular $0 \log 0 = 0$ y finalmente regresa la entropía de <span class="in">`arr`</span>.</span>
+<span id="cb29-168"><a href="#cb29-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-171"><a href="#cb29-171" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-172"><a href="#cb29-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-173"><a href="#cb29-173" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> H(arr):</span>
+<span id="cb29-174"><a href="#cb29-174" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> np.unique(arr, return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-175"><a href="#cb29-175" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">/</span> b.<span class="bu">sum</span>()</span>
+<span id="cb29-176"><a href="#cb29-176" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (b <span class="op">*</span> np.log2(b, where<span class="op">=</span>b <span class="op">!=</span> <span class="dv">0</span>)).<span class="bu">sum</span>()</span>
+<span id="cb29-177"><a href="#cb29-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-178"><a href="#cb29-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-179"><a href="#cb29-179" aria-hidden="true" tabindex="-1"></a>La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento <span class="in">`corte_var`</span>. Este procedimiento asume que las etiquetas (<span class="in">`labels`</span>) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable <span class="in">`mejor`</span> para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función <span class="in">`np.diff`</span>; dado que está quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calculan el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. </span>
+<span id="cb29-180"><a href="#cb29-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-181"><a href="#cb29-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-184"><a href="#cb29-184" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-185"><a href="#cb29-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-186"><a href="#cb29-186" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(labels):</span>
+<span id="cb29-187"><a href="#cb29-187" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
+<span id="cb29-188"><a href="#cb29-188" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> labels.shape[<span class="dv">0</span>]</span>
+<span id="cb29-189"><a href="#cb29-189" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(labels))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb29-190"><a href="#cb29-190" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
+<span id="cb29-191"><a href="#cb29-191" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> labels[:j]</span>
+<span id="cb29-192"><a href="#cb29-192" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> labels[j:]</span>
+<span id="cb29-193"><a href="#cb29-193" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(izq)</span>
+<span id="cb29-194"><a href="#cb29-194" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> H(der)</span>
+<span id="cb29-195"><a href="#cb29-195" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
+<span id="cb29-196"><a href="#cb29-196" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
+<span id="cb29-197"><a href="#cb29-197" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
+<span id="cb29-198"><a href="#cb29-198" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor</span>
+<span id="cb29-199"><a href="#cb29-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-200"><a href="#cb29-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-203"><a href="#cb29-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-204"><a href="#cb29-204" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-205"><a href="#cb29-205" aria-hidden="true" tabindex="-1"></a>perf, index <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span>
+<span id="cb29-206"><a href="#cb29-206" aria-hidden="true" tabindex="-1"></a>perf_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>perf<span class="sc">:0.4}</span><span class="ss">$'</span>)</span>
+<span id="cb29-207"><a href="#cb29-207" aria-hidden="true" tabindex="-1"></a>index_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>index<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-208"><a href="#cb29-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-209"><a href="#cb29-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-210"><a href="#cb29-210" aria-hidden="true" tabindex="-1"></a>En el siguiente ejemplo se usa la función <span class="in">`corte_var`</span>; la función regresa un costo de <span class="in">`{python} perf_f`</span> y el punto de corte es el elemento <span class="in">`{python} index_f`</span>, se puede observar que es el mejor punto de corte en el arreglo dado. </span>
+<span id="cb29-211"><a href="#cb29-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-214"><a href="#cb29-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-215"><a href="#cb29-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-216"><a href="#cb29-216" aria-hidden="true" tabindex="-1"></a>costo, indice <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span>
+<span id="cb29-217"><a href="#cb29-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-218"><a href="#cb29-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-219"><a href="#cb29-219" aria-hidden="true" tabindex="-1"></a>Con la función <span class="in">`corte_var`</span> se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento <span class="in">`corte`</span> encuentra el mínimo con respecto de $x_i$, está función recibe los índices (<span class="in">`idx`</span>) donde se buscará estos valores, en un inicio <span class="in">`idx`</span> es un arreglo de $0$ al número de elemento del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función <span class="in">`corte_var`</span> donde se observa como las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en <span class="in">`mejor`</span>. Finalmente, se regresa <span class="in">`mejor`</span> y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  </span>
+<span id="cb29-220"><a href="#cb29-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-223"><a href="#cb29-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-224"><a href="#cb29-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-225"><a href="#cb29-225" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte(idx):</span>
+<span id="cb29-226"><a href="#cb29-226" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>, <span class="va">None</span>)</span>
+<span id="cb29-227"><a href="#cb29-227" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> np.argsort(X[idx], axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb29-228"><a href="#cb29-228" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> y[idx]</span>
+<span id="cb29-229"><a href="#cb29-229" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(orden.T):</span>
+<span id="cb29-230"><a href="#cb29-230" aria-hidden="true" tabindex="-1"></a>        comp <span class="op">=</span> corte_var(labels[x])</span>
+<span id="cb29-231"><a href="#cb29-231" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> comp[<span class="dv">0</span>] <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
+<span id="cb29-232"><a href="#cb29-232" aria-hidden="true" tabindex="-1"></a>            mejor <span class="op">=</span> (comp[<span class="dv">0</span>], i, comp[<span class="dv">1</span>])</span>
+<span id="cb29-233"><a href="#cb29-233" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor, idx[orden[:, mejor[<span class="dv">1</span>]]]</span>
+<span id="cb29-234"><a href="#cb29-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>    </span>
+<span id="cb29-235"><a href="#cb29-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-236"><a href="#cb29-236" aria-hidden="true" tabindex="-1"></a>Con la función <span class="in">`corte`</span> se puede encontrar los parámetros de la función de corte $f_m(\mathbf x) = x_i \leq a$ para cada nodo del árbol completo del ejemplo anterior. Por ejemplo, los parámetros de la función de decisión para la raíz (#0) que se observa en la @fig-arboles-arbol-decision-funcion se puede obtener con el siguiente código. </span>
+<span id="cb29-237"><a href="#cb29-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-240"><a href="#cb29-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-241"><a href="#cb29-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-242"><a href="#cb29-242" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(np.arange(X.shape[<span class="dv">0</span>]))</span>
+<span id="cb29-243"><a href="#cb29-243" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
+<span id="cb29-244"><a href="#cb29-244" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb29-245"><a href="#cb29-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-246"><a href="#cb29-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-247"><a href="#cb29-247" aria-hidden="true" tabindex="-1"></a>La variable <span class="in">`orden`</span> tiene la información para dividir el conjunto dado, lo cual se realiza en las siguientes instrucciones, donde <span class="in">`idx_i`</span> corresponde a los elementos a la izquierda y <span class="in">`idx_d`</span> son los de la derecha. </span>
+<span id="cb29-248"><a href="#cb29-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-251"><a href="#cb29-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-252"><a href="#cb29-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-253"><a href="#cb29-253" aria-hidden="true" tabindex="-1"></a>idx_i <span class="op">=</span> orden[:j]</span>
+<span id="cb29-254"><a href="#cb29-254" aria-hidden="true" tabindex="-1"></a>idx_d <span class="op">=</span> orden[j:]</span>
+<span id="cb29-255"><a href="#cb29-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-256"><a href="#cb29-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-257"><a href="#cb29-257" aria-hidden="true" tabindex="-1"></a>Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros de la función de corte del nodo #1 los cuales se pueden calcular con las siguientes instrucciones. </span>
+<span id="cb29-258"><a href="#cb29-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-261"><a href="#cb29-261" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-262"><a href="#cb29-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-263"><a href="#cb29-263" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(idx_i)</span>
+<span id="cb29-264"><a href="#cb29-264" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
+<span id="cb29-265"><a href="#cb29-265" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb29-266"><a href="#cb29-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-267"><a href="#cb29-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`corte`</span> no verifica que se esté en una hoja, entonces si se hace el corte en una hora regresará <span class="in">`(np.inf, none, None)`</span></span>
+<span id="cb29-270"><a href="#cb29-270" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Breast Cancer Wisconsin</span></span>
+<span id="cb29-273"><a href="#cb29-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-274"><a href="#cb29-274" aria-hidden="true" tabindex="-1"></a>Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.</span>
+<span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-278"><a href="#cb29-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-279"><a href="#cb29-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-280"><a href="#cb29-280" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-281"><a href="#cb29-281" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb29-282"><a href="#cb29-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-283"><a href="#cb29-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-284"><a href="#cb29-284" aria-hidden="true" tabindex="-1"></a>La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada @sec-entropia-cruzada (_Log-loss_). </span>
+<span id="cb29-285"><a href="#cb29-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-288"><a href="#cb29-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-289"><a href="#cb29-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-290"><a href="#cb29-290" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>).fit(T, y_t)</span>
+<span id="cb29-291"><a href="#cb29-291" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-292"><a href="#cb29-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-293"><a href="#cb29-293" aria-hidden="true" tabindex="-1"></a>Como es de esperarse la predicción se realiza con el método <span class="in">`predict`</span> como se ve a continuación. </span>
+<span id="cb29-294"><a href="#cb29-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-297"><a href="#cb29-297" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-298"><a href="#cb29-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-299"><a href="#cb29-299" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(G)</span>
+<span id="cb29-300"><a href="#cb29-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-301"><a href="#cb29-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-304"><a href="#cb29-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-305"><a href="#cb29-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-306"><a href="#cb29-306" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>(y_g <span class="op">!=</span> hy)<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-307"><a href="#cb29-307" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-308"><a href="#cb29-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-309"><a href="#cb29-309" aria-hidden="true" tabindex="-1"></a>El error en el conjunto de prueba $\mathcal G$ es <span class="in">`{python} error_f`</span>, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (@sec-gaussina-perf-breast_cancer). La siguiente instrucción muestra el cálculo del error. </span>
+<span id="cb29-310"><a href="#cb29-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-313"><a href="#cb29-313" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-314"><a href="#cb29-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-315"><a href="#cb29-315" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span>
+<span id="cb29-316"><a href="#cb29-316" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-317"><a href="#cb29-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-318"><a href="#cb29-318" aria-hidden="true" tabindex="-1"></a>Un dato interesante, considerando los parámetros con los que se inicializó el árbol, entonces este hizo que todas las hojas fueran puras, es decir, con entropía cero. Por lo tanto el error de clasificación en el conjunto de entrenamiento $\mathcal T$ es cero, como se puede verificar con el siguiente código. </span>
+<span id="cb29-319"><a href="#cb29-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-322"><a href="#cb29-322" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-323"><a href="#cb29-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-324"><a href="#cb29-324" aria-hidden="true" tabindex="-1"></a>(y_t <span class="op">!=</span> arbol.predict(T)).mean()</span>
+<span id="cb29-325"><a href="#cb29-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-326"><a href="#cb29-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-327"><a href="#cb29-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-328"><a href="#cb29-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regresión</span></span>
+<span id="cb29-329"><a href="#cb29-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-330"><a href="#cb29-330" aria-hidden="true" tabindex="-1"></a>Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético; el cual corresponde a la suma de un seno y un coseno como se muestra a continuación. </span>
+<span id="cb29-331"><a href="#cb29-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-334"><a href="#cb29-334" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-335"><a href="#cb29-335" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-336"><a href="#cb29-336" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
+<span id="cb29-337"><a href="#cb29-337" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span>
+<span id="cb29-338"><a href="#cb29-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-339"><a href="#cb29-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-340"><a href="#cb29-340" aria-hidden="true" tabindex="-1"></a>Con este problema se genera un árbol de decisión utilizando la siguiente instrucción. El método <span class="in">`fit`</span> espera recibir un arreglo en dos dimensiones por eso se usa la función <span class="in">`np.atleast_2d`</span> y se calcula la transpuesta siguiendo el formato esperado. Se observa el uso del parámetro <span class="in">`max_depth`</span> para limitar la profundidad del árbol de decisión. </span>
+<span id="cb29-341"><a href="#cb29-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-344"><a href="#cb29-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-345"><a href="#cb29-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-346"><a href="#cb29-346" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">3</span>).fit(np.atleast_2d(X).T, y)</span>
+<span id="cb29-347"><a href="#cb29-347" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-348"><a href="#cb29-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-349"><a href="#cb29-349" aria-hidden="true" tabindex="-1"></a>El árbol de decisión obtenido se muestra en la @fig-arboles-regresion. La información que se muestra en cada nodo interno es equivalente a la mostrada en los árboles de clasificación. La diferencia es que en los árboles de regresión se muestra el promedio (<span class="in">`value`</span>) de las salidas que llegan a ese nodo y en regresión es la frecuencia de clases. Se observa que si la entrada es $x=-4.5$ entonces la respuesta la da el nodo #4 con un valor de $1.088.$</span>
+<span id="cb29-350"><a href="#cb29-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-353"><a href="#cb29-353" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-354"><a href="#cb29-354" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-355"><a href="#cb29-355" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Árbol de Regresión</span></span>
+<span id="cb29-356"><a href="#cb29-356" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-regresion</span></span>
+<span id="cb29-357"><a href="#cb29-357" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, node_ids<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb29-358"><a href="#cb29-358" aria-hidden="true" tabindex="-1"></a>                   feature_names<span class="op">=</span>[<span class="st">'x'</span>], label<span class="op">=</span><span class="st">'root'</span>)</span>
+<span id="cb29-359"><a href="#cb29-359" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-360"><a href="#cb29-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a><span class="fu">### Predicción</span></span>
+<span id="cb29-362"><a href="#cb29-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-363"><a href="#cb29-363" aria-hidden="true" tabindex="-1"></a>El árbol anterior se usa para predecir todos los puntos del conjunto de entrenamiento, el resultado se muestra en la @fig-arboles-regresion-func. Se observa que la predicción es discreta, son escalones y esto es porque las hojas predicen el promedio de los valores que llegaron hasta ahí, en este caso el árbol tiene 8 hojas entonces a lo más ese árbol puede predecir 8 valores distintos. </span>
+<span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Problema de regresión</span></span>
+<span id="cb29-370"><a href="#cb29-370" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-arboles-regresion-func</span></span>
+<span id="cb29-371"><a href="#cb29-371" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(X<span class="op">=</span>X, y<span class="op">=</span>y, </span>
+<span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a>                       predicción<span class="op">=</span>arbol.predict(np.atleast_2d(X).T)))</span>
+<span id="cb29-373"><a href="#cb29-373" aria-hidden="true" tabindex="-1"></a>df.set_index(<span class="st">'X'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a>sns.relplot(df, kind<span class="op">=</span><span class="st">'line'</span>)</span>
+<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-376"><a href="#cb29-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-377"><a href="#cb29-377" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entrenamiento</span></span>
+<span id="cb29-378"><a href="#cb29-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-379"><a href="#cb29-379" aria-hidden="true" tabindex="-1"></a>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran en las siguientes instrucciones. </span>
+<span id="cb29-380"><a href="#cb29-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-383"><a href="#cb29-383" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-384"><a href="#cb29-384" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-385"><a href="#cb29-385" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb29-386"><a href="#cb29-386" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb29-387"><a href="#cb29-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-388"><a href="#cb29-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-389"><a href="#cb29-389" aria-hidden="true" tabindex="-1"></a>Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestran la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho. </span>
+<span id="cb29-390"><a href="#cb29-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-393"><a href="#cb29-393" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-394"><a href="#cb29-394" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-395"><a href="#cb29-395" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(T, y_t)</span>
+<span id="cb29-396"><a href="#cb29-396" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, max_depth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb29-397"><a href="#cb29-397" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-398"><a href="#cb29-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-399"><a href="#cb29-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-400"><a href="#cb29-400" aria-hidden="true" tabindex="-1"></a>El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función <span class="in">`corte_var`</span> definida en clasificación (@sec-arboles-clasificacion) es que la entropía <span class="in">`H`</span> se cambia por la varianza <span class="in">`np.var`</span>. </span>
+<span id="cb29-401"><a href="#cb29-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-404"><a href="#cb29-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-405"><a href="#cb29-405" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-406"><a href="#cb29-406" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(response):</span>
+<span id="cb29-407"><a href="#cb29-407" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
+<span id="cb29-408"><a href="#cb29-408" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> response.shape[<span class="dv">0</span>]</span>
+<span id="cb29-409"><a href="#cb29-409" aria-hidden="true" tabindex="-1"></a>    corte <span class="op">=</span> np.where(np.diff(response))[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb29-410"><a href="#cb29-410" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> corte:</span>
+<span id="cb29-411"><a href="#cb29-411" aria-hidden="true" tabindex="-1"></a>        izq <span class="op">=</span> response[:j]</span>
+<span id="cb29-412"><a href="#cb29-412" aria-hidden="true" tabindex="-1"></a>        der <span class="op">=</span> response[j:]</span>
+<span id="cb29-413"><a href="#cb29-413" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> (izq.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(izq)</span>
+<span id="cb29-414"><a href="#cb29-414" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> (der.shape[<span class="dv">0</span>] <span class="op">/</span> D_m) <span class="op">*</span> np.var(der)</span>
+<span id="cb29-415"><a href="#cb29-415" aria-hidden="true" tabindex="-1"></a>        perf <span class="op">=</span> a <span class="op">+</span> b</span>
+<span id="cb29-416"><a href="#cb29-416" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> perf <span class="op">&lt;</span> mejor[<span class="dv">0</span>]:</span>
+<span id="cb29-417"><a href="#cb29-417" aria-hidden="true" tabindex="-1"></a>          mejor <span class="op">=</span> (perf, j)</span>
+<span id="cb29-418"><a href="#cb29-418" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor    </span>
+<span id="cb29-419"><a href="#cb29-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-420"><a href="#cb29-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-421"><a href="#cb29-421" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`corte_var`</span> de regresión se utiliza para encontrar el punto de corte en los datos del conjunto de entrenamiento de la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables independientes para calcular el corte con costo mínimo. </span>
+<span id="cb29-422"><a href="#cb29-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-425"><a href="#cb29-425" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-426"><a href="#cb29-426" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-427"><a href="#cb29-427" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> T.argsort(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb29-428"><a href="#cb29-428" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> [corte_var(y_t[orden[:, x]]) <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)]</span>
+<span id="cb29-429"><a href="#cb29-429" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb29-430"><a href="#cb29-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-431"><a href="#cb29-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-432"><a href="#cb29-432" aria-hidden="true" tabindex="-1"></a>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice <span class="in">`{python} np.argmin(res, axis=0)[0]`</span> tal y como se muestra en la figura anterior nodo derecho de la raíz. </span>
 </code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
