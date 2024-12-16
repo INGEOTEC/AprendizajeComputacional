@@ -103,7 +103,7 @@ Para graficar estas tres nubes de puntos se puede hacer uso del siguiente códig
 ```{python}
 #| label: fig-gaussian-3classes
 #| warning: false
-#| fig-cap: "Muestras de 3 distribuciones gausianas"
+#| fig-cap: "Muestras de 3 distribuciones Gausianas"
 #| echo: true
 D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
@@ -114,7 +114,29 @@ _ = sns.relplot(data=df, kind='scatter', x='x',
                 y='y', hue='clase')     
 ```               
 
-El resultado del código anterior se muestra en la @fig-gaussian-3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase. 
+El resultado del código anterior se muestra en la @fig-gaussian-3classes, donde se puede visualizar las tres nubes de puntos, donde el color indica la clase.
+
+::: {.callout-tip collapse="true"}
+#### Actividad
+
+Generar una nube de puntos similar a la que se muestra en la @fig-guasiana-alargada-x. Observar que ambos ejes de la figura están en el rango $[-20, 20].$
+
+```{python} 
+#| label: fig-guasiana-alargada-x
+#| fig-cap: "Distribución Gausiana"
+#| echo: false
+ejemplo = multivariate_normal(mean=[5, 5],
+                              cov=[[20, -5], [-5, 2]])
+X_e = ejemplo.rvs(size=1000)
+df = pd.DataFrame(X_e, columns=['x', 'y'])
+sns.set_style('whitegrid')
+fig = sns.relplot(data=df, kind='scatter', x='x',
+                y='y')
+fig.ax.set_xlim(-20, 20)
+fig.ax.set_ylim(-20, 20)
+```                         
+:::
+
 
 ### Predicción {#sec-prediccion-normal}
 
@@ -300,3 +322,166 @@ $$
 Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.
 
 En esta circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$
+
+
+### Ejemplo 
+
+El siguiente ejemplo ilustra el comportamiento de seleccionar la clase considerando que se tiene un riesgo en la acción nula. Lo primero es generar dos conjuntos de datos uno para la clase positiva y otro para la negativa, tal y como lo indica el siguiente código. `p1` y `p1` son distribuciones Gausianas, los elementos generados por `p1` serán asociados a la clase positiva y los generados por `p2` a la clase negativa. 
+
+```{python} 
+#| echo: true
+
+p1 = multivariate_normal(mean=[5, 5],
+                              cov=[[20, -5],
+                                   [-5, 2]])
+p2 = multivariate_normal(mean=[-5, 0],
+                              cov=[[20, 5],
+                                   [5, 2]])
+X1 = p1.rvs(size=1000)
+X2 = p2.rvs(size=1000)
+X = np.concatenate((X1, X2))
+y = np.array(['P'] * 1000 + ['N'] * 1000)
+```
+
+La @fig-2-guasiana-alargada-x muestra el conjunto de datos donde se realizará el ejemplo de seleccionar la clase considerando el riesgo. 
+
+
+```{python} 
+#| label: fig-2-guasiana-alargada-x
+#| fig-cap: "Dos distribución Gausianas asociadas a dos clases"
+#| code-fold: true
+#| echo: true
+
+df = pd.DataFrame(X, columns=['x', 'y'])
+df['Clase'] = y
+sns.set_style('whitegrid')
+fig = sns.relplot(data=df, kind='scatter', x='x',
+                y='y', hue='Clase')
+# fig.ax.set_xlim(-20, 20)
+# fig.ax.set_ylim(-20, 20)
+```
+
+Para no introducir ningún error adicional con la estimación de parámetros, se utilizan los parámetros con los que se generaron los datos para calcular $\mathbb P(\mathcal Y \mid \mathcal X)$ tal y como lo muestra el siguiente código. 
+
+
+```{python} 
+#| echo: true
+
+posterior = np.c_[p1.pdf(X), p2.pdf(X)] * 1 / 2
+evidencia = posterior.sum(axis=1)
+posterior = posterior / np.c_[evidencia]
+```
+
+Habiendo calculado la probabilidad de cada clase en todos los elementos de `X`, es momento de predecir la clase y calcular el error del proceso de clasificación. 
+
+```{python} 
+#| echo: true
+
+m = {0: 'P', 1: 'N'}
+hy = np.array([m[i]
+               for i in posterior.argmax(axis=1)])
+error = f'{(y != hy).mean():0.4f}'
+```
+
+El error que se tiene corresponde a `{python} error`. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuales son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
+
+```{python} 
+#| echo: true
+
+riesgo = 0.20
+valid = posterior.max(axis=1) > 1 - riesgo
+```
+
+Utilizando `valid` se puede calcular el error de aquellos elementos los cuales tiene una clase positiva o negativa. El siguiente código calcula el error. 
+
+```{python}
+#| echo: true
+
+error = f'{(y[valid] != hy[valid]).mean(): 0.4f}'
+```
+
+El error obtenido con los elementos válidos es `{python} error`, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es `{python} valid.sum()`. 
+
+Para completar el ejemplo, la @fig-2-guasiana-original-reducido muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se pueden observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula. 
+
+
+```{python} 
+#| label: fig-2-guasiana-original-reducido
+#| fig-cap: "Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula"
+#| code-fold: true
+#| echo: true
+
+y_error = y.copy()
+y_error[y != hy] = 'E'
+df = pd.DataFrame(X, columns=['x', 'y'])
+df['Clase'] = y_error
+df['Conjunto'] = 'Original'
+df2 = pd.DataFrame(X[valid], columns=['x', 'y'])
+df2['Clase'] = y_error[valid]
+df2['Conjunto'] = 'Reducido'
+color=sns.color_palette()
+palette = dict(P=color[0], N=color[1], E=color[3])
+
+sns.set_style('whitegrid')
+fig = sns.relplot(data=pd.concat((df, df2)), kind='scatter', x='x',
+                  palette=palette,
+                  y='y', hue='Clase', col='Conjunto')
+```
+
+
+::: {.callout-tip collapse="true"}
+#### Actividad
+
+Utilizando los siguientes parámetros $\mathbf \mu = [5, 5]^\intercal = \mu_1 = \mu_2$, $\Sigma_1 = \begin{pmatrix} 20 & -5 \\ -5 & 2 \\ \end{pmatrix}$ y $\Sigma_2 = \begin{pmatrix} 20 & -5 \\ -5 & 2 \\ \end{pmatrix}$, generar 1,000 muestras de las siguientes distribuciones $\mathcal N_1(\mu, \Sigma_1)$ y $\mathcal N_2(\mu, \Sigma_2)$. Asociar, a los datos generados por la primera distribución, la clase positiva y los elementos negativos corresponden a los 1,000 elementos generados mediante $\mathcal N_2$. 
+
+La actividad corresponde en calcular el error y el número de elementos que no están asociados a la clase nula cuando $\lambda = 0.2$. La @fig-2-guasiana-alargada-actividad muestra los datos generados y los datos válidos considerando el nivel de riesgo solicitado así como los errores en la predicción. 
+
+```{python} 
+#| label: fig-2-guasiana-alargada-actividad
+#| fig-cap: "Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula"
+#| echo: false
+
+p1 = multivariate_normal(mean=[5, 5],
+                              cov=[[20, -5],
+                                   [-5, 2]])
+p2 = multivariate_normal(mean=[5, 5],
+                              cov=[[20, 5],
+                                   [5, 2]])
+X1 = p1.rvs(size=1000)
+X2 = p2.rvs(size=1000)
+X = np.concatenate((X1, X2))
+y = np.array(['P'] * 1000 + ['N'] * 1000)
+
+# fig.ax.set_xlim(-20, 20)
+# fig.ax.set_ylim(-20, 20)
+
+posterior = np.c_[p1.pdf(X), p2.pdf(X)] * 1 / 2
+evidencia = posterior.sum(axis=1)
+posterior = posterior / np.c_[evidencia]
+
+m = {0: 'P', 1: 'N'}
+hy = np.array([m[i]
+               for i in posterior.argmax(axis=1)])
+error1 = f'{(y != hy).mean():0.4f}'
+
+riesgo = 0.20
+valid = posterior.max(axis=1) > 1 - riesgo
+error2 = f'{(y[valid] != hy[valid]).mean(): 0.4f}'
+
+y_error = y.copy()
+y_error[y != hy] = 'E'
+
+df = pd.DataFrame(X, columns=['x', 'y'])
+df['Clase'] = y_error
+df['Conjunto'] = 'Original'
+df2 = pd.DataFrame(X[valid], columns=['x', 'y'])
+df2['Clase'] = y_error[valid]
+df2['Conjunto'] = 'Reducido'
+
+sns.set_style('whitegrid')
+fig = sns.relplot(data=pd.concat((df, df2)), kind='scatter', x='x',
+                  palette=palette,
+                  y='y', hue='Clase', col='Conjunto')
+```
+
+::: 

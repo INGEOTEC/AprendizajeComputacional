@@ -71,6 +71,7 @@ Con estas tres poblaciones, donde cada distribución genera una clase se crea un
 #| code-fold: true
 #| fig-cap: Árbol de decisión
 #| label: fig-arboles-arbol-decision
+
 X = np.concatenate((X_1, X_2, X_3), axis=0)
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(X, y)
@@ -80,12 +81,13 @@ _ = tree.plot_tree(arbol, node_ids=True,
 
 ```{python}
 #| echo: false
+
 entropia_raiz = Markdown(f'${arbol.tree_.impurity[0]:0.4f}$')
 if arbol.tree_.feature[0] == 0:
-  funcion_decision = Markdown(f'$x \leq {arbol.tree_.threshold[0]:0.4f}$')
+  funcion_decision = Markdown(f'$x \\leq {arbol.tree_.threshold[0]:0.4f}$')
   componente = Markdown('$x$')
 else:
-  funcion_decision = Markdown(f'$y \leq {arbol.tree_.threshold[0]:0.4f}$')    
+  funcion_decision = Markdown(f'$y \\leq {arbol.tree_.threshold[0]:0.4f}$')    
   componente = Markdown('$y$')
 hojas = np.where(arbol.tree_.feature == -2)[0]
 hojas_f = ', '.join([f'#{x}' for x in hojas[:-1]])

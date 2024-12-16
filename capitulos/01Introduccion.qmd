@@ -14,11 +14,23 @@ El **objetivo** de la unidad es explicar el área de aprendizaje computacional, 
 
 Utilizando la descripción de @langley1986machine, se puede definir el **aprendizaje computacional** como una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el paso del tiempo. En sus inicios, el campo estaba enfocado al desarrollo de representaciones simbólicas, de la misma manera que la IA, sin prohibir las representaciones numéricas. Actualmente, el campo ha cambiado de dirección privilegiando las representaciones numéricas a las simbólicas, en particular, este documento se enfoca solamente a representaciones numéricas. 
 
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Leer la carta editorial de @langley1986machine para conocer la visión que se tenía de aprendizaje computacional en esa época y contrastarla con la visión actual. 
+:::
+
 De acuerdo a @breiman2001statistical, existen dos metas al analizar datos donde es posible identificar valores de entrada y su respuesta. Estos objetivos son el **predecir** la respuesta de futuros eventos y el segundo es **extraer conocimiento** del proceso o fenómeno. Estas metas han dado origen a dos culturas en el modelado de los datos: la cultura del modelado de datos y la cultura del modelado de algoritmos. 
 
 En la cultura del modelado de datos, se asume que los datos provienen de una función que dependen de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos se estiman los parámetros y si los datos cumplen con las condiciones impuestas a la función, entonces se conoce el procedimiento que genera los datos y se está en la posición de obtener conocimiento del sistema, es decir se atacó la segunda meta. Dado que se tienen los parámetros y la estructura de la función es factible hacer predicciones de futuros eventos (primera meta).
 
 En la cultura del modelado del algoritmo, no se asume ninguna estructura al sistema que genera los datos, el procedimiento es diseñar un algoritmo que replique la respuesta dada las entradas. Considerando que no se está asumiendo ningún modelo particular entonces el obtener conocimiento del sistema no es un prioridad. Por otro lado, es una prioridad encontrar el algoritmo que mejor se reproduzca los datos y por lo tanto se desarrollan diferentes estrategias para medir el rendimiento del algoritmo y poder estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura. 
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Leer el artículo de @breiman2001statistical para profundizar en las ventajas y desventajas de cada una de las culturas y como estas influyen en la forma de abordar un problema. En este momento no es necesario detenerse en la parte técnica de los algoritmos descritos en el artículo. 
+:::
 
 Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
 
@@ -110,7 +122,38 @@ fig.set(xlabel=None, ylabel=None)
 plt.grid()
 ```
     
-Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los colores azul, naranja y verde. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos de color verde y el segundo sería el grupo formado por los puntos azules y naranjas. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
+Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los colores diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Generar la figura anterior para el conjunto de datos de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin). Es necesario considerar que ese problema solamente tiene dos clases y el problema del Iris (@sec-iris) tiene tres clases, entonces se tienen que hacer las modificaciones para atender este cambio. 
+
+El procedimiento desarrollado debe de generar una figura similar a la mostrada en la @fig-kmeans-breast-cancer
+
+```{python}
+#| label: fig-kmeans-breast-cancer
+#| fig-cap: "Proyección de agrupar los datos de Breast Cancer Wisconsin usando K-medias"
+#| echo: false
+from sklearn.datasets import load_breast_cancer
+
+D, y = load_breast_cancer(return_X_y=True)
+m = KMeans(n_clusters=2, n_init='auto').fit(D)
+cl = m.predict(D)
+pca = decomposition.PCA(n_components=2).fit(D)
+Dn = pca.transform(D)
+Dn = np.concatenate((Dn, np.atleast_2d(y).T,
+                     np.atleast_2d(cl).T), axis=1)
+df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase', 'Grupo'])
+fig = sns.relplot(data=df, kind='scatter',
+                  x='x', y='y', hue='Grupo')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)
+plt.grid()
+```
+:::
 
 ## Aprendizaje Supervisado {#sec-aprendizaje-supervisado}
 
@@ -169,6 +212,30 @@ fig.tick_params(bottom=False, top=False,
 fig.set(xlabel=None, ylabel=None)
 plt.grid()
 ```
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Generar la figura anterior para el conjunto de datos de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin). Como se mencionó, el problema tiene dos clases entonces no se necesita ningún tipo de transformación en el número de clases como se hizo en el ejemplo anterior. La @fig-breast-cancer muestra el resultado de la actividad. 
+
+```{python}
+#| label: fig-breast-cancer
+#| fig-cap: "Proyección de los datos de Breast Cancer Wisconsin."
+#| echo: false
+D, cl = load_breast_cancer(return_X_y=True)
+pca = decomposition.PCA(n_components=2).fit(D)
+Dn = pca.transform(D)
+Dn = np.concatenate((Dn, np.atleast_2d(cl).T), axis=1)
+df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase'])
+fig = sns.relplot(data=df, kind='scatter',
+                  x='x', y='y', hue='Clase')
+fig.tick_params(bottom=False, top=False, 
+                left=False, right=False,
+                labelbottom=False, labelleft=False)
+fig.set(xlabel=None, ylabel=None)
+plt.grid()
+```
+:::
 
 Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple línea recta podría separar estos puntos. La @fig-iris-2clases-df muestra un ejemplo de lo que haría un clasificador representado por la línea; la clase es dada por el signo de  $ax + by + c$, donde  $a$, $b$ y $c$ son parámetros identificados a partir de  $\mathcal D$.
 
@@ -261,26 +328,6 @@ Se puede asumir que existe una función $f$ que genera la relación entrada sali
 Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funciones), $\mathcal H$, que se considera puede aproximar $f$; una función de error, $L$; y el error empírico $E(h \mid \mathcal T) = \sum_{(x, y) \in \mathcal T} L(y, h(x))$. Utilizando estos elementos la función buscada es: $h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal T)$.
 
 El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
-
-### Características de la hipótesis
-
-Continuando con algunas definiciones, en la búsqueda de encontrar $h^*$ se puede elegir por aquella que captura todos los datos de entrenamiento siendo muy específica. Para poder explicar mejor este concepto se usa la @fig-hipotesis-esp que muestra un ejemplo sintético.
-
-![Hipótesis mas específica](/docs/assets/images/clases-sh.png){#fig-hipotesis-esp}
-
-Los puntos naranja representan una clase y los puntos azules son la otra clase, el clasificador es mostrado en el rectángulo. Para completar el funcionamiento de este clasificador falta mencionar que cualquier nuevo punto que esté dentro del rectángulo será calificado como clase azul y naranja si se encuentra fuera del rectángulo. Como se puede observar, el rectángulo contiene todos los elementos de una clase y en alguno de sus lados toca con uno de los puntos del conjunto de entrenamiento de la clase data.
-
-En este momento, es posible visualizar que el complemento de ser muy específico es ser lo mas general posible. La @fig-hipotesis-general muestra un clasificador que es lo mas general. Se observa que el rectángulo casi toca uno de los puntos del conjunto de entrenamiento de la clase contraria, esto lo hace del lado exterior y el procedimiento para clasificar continua siendo el que se mencionó anteriormente.
-
-![Hipótesis más general](/docs/assets/images/clases-gh.png){#fig-hipotesis-general}
-
-Es factible también elegir una hipótesis que se encuentre entre la hipótesis mas general y la más específica, esto también se puede visualizar en la @fig-hipotesis-media. Donde todas las hipótesis se encuentran representadas en gris.
-
-![Clases de hipótesis](/docs/assets/images/clases-ch.png){#fig-hipotesis-media}
-
-Finalmente, para poder describir mejor el comportamiento de un clasificador se hace uso de la distancia que hay entre la hipótesis mas general y específica y la hipótesis utilizada. El margen se puede visualizar en la @fig-hipotesis-margen, donde la hipótesis más general es mostrada en verde, la más específica en morada y la hipótesis utilizada en negro.
-
-![Margen entre la clases](/docs/assets/images/clases-margen.png){#fig-hipotesis-margen}
 
 ### Estilos de Aprendizaje
 
