@@ -317,7 +317,7 @@ R(\alpha_{K+1} \mid x) &= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \
 \end{split}
 $$
 
-## Seleccionando la acción
+## Seleccionando la acción {#sec-seleccion-accion-nula}
 
 Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.
 
@@ -380,10 +380,10 @@ Habiendo calculado la probabilidad de cada clase en todos los elementos de `X`, 
 m = {0: 'P', 1: 'N'}
 hy = np.array([m[i]
                for i in posterior.argmax(axis=1)])
-error = f'{(y != hy).mean():0.4f}'
+error = (y != hy).mean()
 ```
 
-El error que se tiene corresponde a `{python} error`. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuales son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
+El error que se tiene corresponde a `{python} Markdown(f'{error:0.4f}')`. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuales son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
 
 ```{python} 
 #| echo: true
@@ -397,10 +397,10 @@ Utilizando `valid` se puede calcular el error de aquellos elementos los cuales t
 ```{python}
 #| echo: true
 
-error = f'{(y[valid] != hy[valid]).mean(): 0.4f}'
+error = (y[valid] != hy[valid]).mean()
 ```
 
-El error obtenido con los elementos válidos es `{python} error`, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es `{python} valid.sum()`. 
+El error obtenido con los elementos válidos es `{python} Markdown(f'${error:0.4f}$')`, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es `{python} valid.sum()`. 
 
 Para completar el ejemplo, la @fig-2-guasiana-original-reducido muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se pueden observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula. 
 
