@@ -258,6 +258,21 @@ auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 
 Medir el rendimiento del clasificador `GaussianNB` en el problema del Iris (ver @sec-iris).
 
+. ```{python}
+#| echo: false
+
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+T, G, y_t, y_g = train_test_split(D, y, 
+                                  random_state=0,  
+                                  test_size=0.2)
+gaussian = GaussianBayes().fit(T, y_t)
+hy_gaussian = gaussian.predict(G)
+```
+
+El rendimiento
+
 :::
 
 ## Regresión {#sec-rendimiento-regresion}
