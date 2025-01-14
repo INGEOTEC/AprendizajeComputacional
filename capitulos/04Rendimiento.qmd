@@ -203,7 +203,7 @@ f1 = metrics.f1_score(y_g, hy_gaussian,
 #| label: tbl-performance
 #| tbl-cap: Rendimiento
 #| echo: false
-headers = '|        |$\mathcal Y=0$ | $\mathcal Y=1$|Macro|'
+headers = '|        |$\\mathcal Y=0$ | $\\mathcal Y=1$|Macro|'
 linea =   '|----------------------|----------------------|----------------------|----------------------|'
 recall_f = ' | '.join([f'${x:0.4f}$' for x in recall.tolist() + [np.mean(recall)]])
 precision_f = ' | '.join([f'${x:0.4f}$' for x in precision.tolist() + [np.mean(precision)]])
@@ -252,6 +252,47 @@ Teniendo un valor de área bajo la curva (`auc_score`) de `{python} auc_score_f`
 ```python
 auc_score = metrics.roc_auc_score(y_g, prob[:, 1])
 ```
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Medir el rendimiento del Clasificador Gausiano Ingenuo (@sec-cl-bayesiano-ingenuo) en el problema del del Iris (ver @sec-iris) utilizando la función $F_\beta$ (@sec-f1) variando $\beta$ entre $[0, 1],$ tal y como se muestra en la @fig-actividad-fbeta
+
+```{python}
+#| label: fig-actividad-fbeta
+#| fig-cap: "Rendimiento de un Clasificador Bayesiano Ingenuo en el problema del Iris estimado mediante una validación cruzada estratificada."
+#| echo: false
+
+from sklearn.datasets import load_iris
+from sklearn.metrics import recall_score, precision_score
+from sklearn.model_selection import StratifiedKFold
+import seaborn as sns
+import pandas as pd
+
+X, y = load_iris(return_X_y=True)
+hy = np.empty_like(y)
+skf = StratifiedKFold()
+for tr, vs in skf.split(X, y):
+    gaussian = GaussianBayes().fit(X[tr], y[tr])
+    hy[vs] = gaussian.predict(X[vs])
+
+beta = np.linspace(0, 1, 10)**2
+pre = precision_score(y, hy, average=None)
+recall = recall_score(y, hy, average=None)
+
+num = np.atleast_2d(1 + beta).T * pre * recall
+den = np.atleast_2d(beta).T * pre + recall
+f1_beta = num / den
+
+data = load_iris()
+df = pd.DataFrame(np.c_[f1_beta, beta],
+                  columns=data.target_names.tolist() + ['Beta^2'])
+df.set_index('Beta^2', inplace=True)
+df2 = df.melt(value_name='F-Beta', ignore_index=False,
+              var_name='Clase')
+sns.relplot(df2.reset_index(), kind='line', x='Beta^2', hue='Clase', y='F-Beta')
+```
+:::
 
 ## Regresión {#sec-rendimiento-regresion}
 
