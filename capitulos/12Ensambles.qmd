@@ -90,7 +90,7 @@ Esto quiere decir que si se tienen $M$ regresores independientes, entonces el er
 
 Tanto en el caso de clasificación como en el caso del error cuadrado, es poco probable contar con clasificadores y regresores que sean completamente independientes, entonces sus predicciones van a estar relacionadas en algún grado y no se podrá llegar a las reducciones obtenidas en el procedimiento presentado. 
 
-## Bagging
+## Bagging {#sec-bagging}
 
 Siguiendo con la idea de combinar $M$ instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa la técnica de Bootstrap (@sec-bootstrap) para generar $M$ instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.
 
@@ -298,6 +298,30 @@ df = pd.DataFrame(dict(error=p, ensamble=M))
 sns.relplot(data=df, x='ensamble', y='error', kind='line')
 
 ``` 
+
+::: {.callout-note} 
+
+Las clases `BaggingClassifier` y `BaggingRegressor` implementan el ensamble de Bagging. Estas clases tienen parámetros que permiten ejecutar variaciones de la idea original. El uso de la clase `BaggingRegressor` se ilustra con el siguiente código,
+
+```{python}
+#| echo: true
+
+tree_ins = DecisionTreeRegressor(min_samples_split=9)
+ens = BaggingRegressor(tree_ins).fit(T, y_t)
+hy = ens.predict(G)
+```
+
+donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}$")`
+
+:::
+
+## Bosques Aleatorios (Random Forest) 
+
+En la sección anterior se vió como se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general los ensambles creados con árboles de decisión se les conoce como bosques aleatorios. @breiman2001randomforest propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación. 
+
+La idea de bosques aleatorios se puede relacionar con el método de Bagging (@sec-bagging) cuando el estimador es una árbol de decisión, tal como los algoritmos de clasificación y regresión que se implementaron previamente. 
+
+
 
 ## Stack Generalization
 
