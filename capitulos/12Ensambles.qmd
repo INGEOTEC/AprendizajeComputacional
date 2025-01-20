@@ -12,6 +12,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC, LinearSVR, SVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import BaggingRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import recall_score, mean_absolute_percentage_error
 from collections import Counter
@@ -311,17 +313,52 @@ ens = BaggingRegressor(tree_ins).fit(T, y_t)
 hy = ens.predict(G)
 ```
 
-donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}$")`
+donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
 
 :::
 
 ## Bosques Aleatorios (Random Forest) 
 
-En la sección anterior se vió como se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general los ensambles creados con árboles de decisión se les conoce como bosques aleatorios. @breiman2001randomforest propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación. 
+En la sección anterior se vió como se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general Bagging (@sec-bagging) creado con árboles de decisión se les conoce como bosques aleatorios. @breiman2001randomforest propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación. 
 
-La idea de bosques aleatorios se puede relacionar con el método de Bagging (@sec-bagging) cuando el estimador es una árbol de decisión, tal como los algoritmos de clasificación y regresión que se implementaron previamente. 
+El uso de árboles aleatorios es directo mediante las clases `RandomForestClassifier` y `RandomForestRegressor` tal y como se muestra en el siguiente código:  
 
+```{python}
+#| echo: true
 
+ens = RandomForestRegressor(min_samples_split=9)
+ens.fit(T, y_t)
+hy = ens.predict(G)
+```
+
+donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
+
+::: {.callout-tip collapse="true"}
+### Actividad 
+
+```{python}
+#| echo: false
+#| label: fig-actividad-forest-classifier
+#| fig-cap: Cambio del rendimiento cuando el parámetro que controla el número de muestras para realizar la partición (i.e., min_samples_split) varía.
+
+X, y = load_digits(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y,
+                                  test_size=0.2,
+                                  random_state=0)
+
+perf = []
+min_samples_split = list(range(2, 105, 5))
+for min_split in min_samples_split:
+    ens = RandomForestClassifier(min_samples_split=min_split).fit(T, y_t)
+    hy = ens.predict(G)
+    perf.append(recall_score(y_g, hy, average="macro"))
+
+df = pd.DataFrame({'Macro-Recall': perf,
+                   'Min Samples Split': min_samples_split})
+sns.relplot(data=df, x='Min Samples Split',
+           y='Macro-Recall', kind='line')
+```
+:::
 
 ## Stack Generalization
 
