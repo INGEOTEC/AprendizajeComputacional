@@ -12,7 +12,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC, LinearSVR, SVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import BaggingRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import StackingRegressor
 from sklearn.metrics import recall_score, mean_absolute_percentage_error
 from collections import Counter
 from matplotlib import pylab as plt
@@ -37,7 +40,7 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-12}
 
-Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gausiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesgo este mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
+Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gaussiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesgo este mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
 
 ## Fundamentos {#sec-fundamentos}
 
@@ -90,7 +93,7 @@ Esto quiere decir que si se tienen $M$ regresores independientes, entonces el er
 
 Tanto en el caso de clasificación como en el caso del error cuadrado, es poco probable contar con clasificadores y regresores que sean completamente independientes, entonces sus predicciones van a estar relacionadas en algún grado y no se podrá llegar a las reducciones obtenidas en el procedimiento presentado. 
 
-## Bagging
+## Bagging {#sec-bagging}
 
 Siguiendo con la idea de combinar $M$ instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa la técnica de Bootstrap (@sec-bootstrap) para generar $M$ instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.
 
@@ -299,11 +302,72 @@ sns.relplot(data=df, x='ensamble', y='error', kind='line')
 
 ``` 
 
+::: {.callout-note} 
+
+Las clases `BaggingClassifier` y `BaggingRegressor` implementan el ensamble de Bagging. Estas clases tienen parámetros que permiten ejecutar variaciones de la idea original. El uso de la clase `BaggingRegressor` se ilustra con el siguiente código,
+
+```{python}
+#| echo: true
+
+tree_ins = DecisionTreeRegressor(min_samples_split=9)
+ens = BaggingRegressor(tree_ins).fit(T, y_t)
+hy = ens.predict(G)
+```
+
+donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
+
+:::
+
+## Bosques Aleatorios (Random Forest) 
+
+En la sección anterior se vió como se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general Bagging (@sec-bagging) creado con árboles de decisión se les conoce como bosques aleatorios. @breiman2001randomforest propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación. 
+
+El uso de árboles aleatorios es directo mediante las clases `RandomForestClassifier` y `RandomForestRegressor` tal y como se muestra en el siguiente código:  
+
+```{python}
+#| echo: true
+
+ens = RandomForestRegressor(min_samples_split=9)
+ens.fit(T, y_t)
+hy = ens.predict(G)
+```
+
+donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
+
+::: {.callout-tip collapse="true"}
+### Actividad 
+
+Visualizar el efecto que tiene el parámetro `min_samples_split` en el algoritmo `RandomForestClassifier` cuando este varía como se muestra en @fig-actividad-forest-classifier. El problema utilizado es el de dígitos (@sec-digitos) con una partición de 80% para entrenamiento y 20% para validación. 
+
+```{python}
+#| echo: false
+#| label: fig-actividad-forest-classifier
+#| fig-cap: Cambio del rendimiento cuando el parámetro que controla el número de muestras para realizar la partición (i.e., min_samples_split) varía.
+
+X_d, y_d = load_digits(return_X_y=True)
+T_d, G_d, yd_t, yd_g = train_test_split(X_d, y_d,
+                                  test_size=0.2,
+                                  random_state=0)
+
+perf = []
+min_samples_split = list(range(2, 105, 5))
+for min_split in min_samples_split:
+    ens = RandomForestClassifier(min_samples_split=min_split).fit(T_d, yd_t)
+    hy = ens.predict(G_d)
+    perf.append(recall_score(yd_g, hy, average="macro"))
+
+df = pd.DataFrame({'Macro-Recall': perf,
+                   'Min Samples Split': min_samples_split})
+sns.relplot(data=df, x='Min Samples Split',
+           y='Macro-Recall', kind='line')
+```
+:::
+
 ## Stack Generalization
 
 Continuando con la descripción de ensambles, se puede observar que Bagging en el caso de la media se puede representar como $\sum_i^M \frac{1}{M} \hat y^i,$ donde el factor $\frac{1}{M}$ se puede observar como un parámetro a identificar. Entonces la idea siguiente sería como se podría estimar parámetros para cada uno de los estimadores bases, e.g., $\sum_i^M w_i \hat y^i$ donde $w_i$ para bagging corresponde a $\frac{1}{M}.$ Se podría ir más allá y pensar que las predicciones $\mathbf y=(\hat y^1, \ldots, \hat y^M)$ podrían ser la entrada a otro estimador. 
 
-Esa es la idea detrás de Stack Generalization, la idea es utilizar las predicciones de los estimadores bases como las entradas de otro estimador. Para poder llevar este proceso es necesario contar con un conjunto independiente del conjunto de entrenamiento para encontrar los parámetros del estimador que combina las predicciones. 
+Esa es la idea detrás de Stack Generalization, @WOLPERT1992241 propone utilizar las predicciones de los estimadores bases como las entradas de otro estimador. Para poder llevar este proceso es necesario contar con un conjunto independiente del conjunto de entrenamiento para encontrar los parámetros del estimador que combina las predicciones. 
 
 ### Ejemplo: Diabetes
 
@@ -357,7 +421,7 @@ _ = mean_absolute_percentage_error(y_g, hy)
 mape3_f = Markdown(f'${_:0.4f}$')
 ```
 
-El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases, por ejemplo, en las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
+El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
 
 ```{python}
 #| echo: true
@@ -367,4 +431,22 @@ hy = st_trees.predict(np.vstack(G_stack))
 mape = mean_absolute_percentage_error(y_g, hy)
 ```
 
-El rendimiento de este cambio es `{python} Markdown(f"${mape:0.4f}$")` lo cual es mayor que el error obtenido por los estimadores base. 
+El rendimiento de este cambio es `{python} Markdown(f"${mape:0.4f}$")`.
+
+::: {.callout-note}
+
+Las classes `StackingClassifier` y `StackingRegressor` implementan la idea de Stack Generalization. El siguiente código muestra su uso en el ejemplo de diabetes, utilizando los algoritmos de vecinos cercanos y máquinas de soporte vectorial. 
+
+```{python}
+#| echo: true
+
+models = [(f'KNN-{n}', KNeighborsRegressor(n_neighbors=n))
+          for n in [7, 9]]
+final_estimator = SVR(kernel='poly', degree=2)
+stack = StackingRegressor(models, final_estimator=final_estimator).fit(T, y_t)
+hy = stack.predict(G)
+```
+
+El promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
+:::
+
