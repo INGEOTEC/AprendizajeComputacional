@@ -5,7 +5,8 @@ El **objetivo** es contrastar las características de diferentes medidas de rend
 ## Paquetes usados {.unnumbered}
 ```{python}
 #| echo: true
-from EvoMSA.model import GaussianBayes
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_breast_cancer,\
@@ -172,7 +173,7 @@ D, y = load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(D, y, 
                                   random_state=0,  
                                   test_size=0.2)
-gaussian = GaussianBayes().fit(T, y_t)
+gaussian = QuadraticDiscriminantAnalysis().fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 ```
 
@@ -274,7 +275,7 @@ X, y = load_iris(return_X_y=True)
 hy = np.empty_like(y)
 skf = StratifiedKFold()
 for tr, vs in skf.split(X, y):
-    gaussian = GaussianBayes().fit(X[tr], y[tr])
+    gaussian = QuadraticDiscriminantAnalysis().fit(X[tr], y[tr])
     hy[vs] = gaussian.predict(X[vs])
 
 beta = np.linspace(0, 1, 10)**2
@@ -419,7 +420,7 @@ T, V, y_t, y_v = train_test_split(T, y_t,
 
 ```{python}
 #| echo: false
-gaussian = GaussianBayes().fit(T, y_t)
+gaussian = QuadraticDiscriminantAnalysis().fit(T, y_t)
 hy_gaussian = gaussian.predict(V)
 score = recall_score(y_v, hy_gaussian, average=None)
 score = [f'{x:0.4f}' for x in score]
@@ -431,14 +432,14 @@ En este momento ya se tienen todos los elementos para medir el rendimiento de ca
 
 ```{python}
 #| echo: true
-gaussian = GaussianBayes().fit(T, y_t)
+gaussian = QuadraticDiscriminantAnalysis().fit(T, y_t)
 hy_gaussian = gaussian.predict(V)
 recall = recall_score(y_v, hy_gaussian, average=None)
 ```
 
 ```{python}
 #| echo: false
-ingenuo = GaussianBayes(naive=True).fit(T, y_t)
+ingenuo = QuadraticDiscriminantAnalysis().fit(T, y_t)
 hy_ingenuo = ingenuo.predict(V)
 score = recall_score(y_v, hy_ingenuo, average=None)
 score = [f'{x:0.4f}' for x in score]
@@ -449,15 +450,15 @@ La segunda opción es utilizar un clasificador Bayesiano Ingenuo, el cual se esp
 
 ```{python}
 #| echo: true
-ingenuo = GaussianBayes(naive=True).fit(T, y_t)
+ingenuo = GaussianNB().fit(T, y_t)
 hy_ingenuo = ingenuo.predict(V)
 score = recall_score(y_v, hy_ingenuo, average=None)
 ```
 
 ```{python}
 #| echo: false
-gaussian = GaussianBayes().fit(np.concatenate((T, V)),
-                               np.concatenate((y_t, y_v)))
+gaussian = QuadraticDiscriminantAnalysis().fit(np.concatenate((T, V)),
+                                               np.concatenate((y_t, y_v)))
 hy_gaussian = gaussian.predict(G)
 score = recall_score(y_g, hy_gaussian, average=None)
 score = [f'{x:0.4f}' for x in score]
@@ -468,8 +469,8 @@ Comparando el rendimiento de los dos hiperparámetros se observa cual de los dos
 
 ```{python}
 #| echo: true
-gaussian = GaussianBayes().fit(np.concatenate((T, V)),
-                               np.concatenate((y_t, y_v)))
+gaussian = QuadraticDiscriminantAnalysis().fit(np.concatenate((T, V)),
+                                               np.concatenate((y_t, y_v)))
 hy_gaussian = gaussian.predict(G)
 score = recall_score(y_g, hy_gaussian, average=None)
 ```
@@ -506,11 +507,11 @@ perf = []
 perf2 = []
 kfold = KFold(shuffle=True, random_state=0)
 for ts, vs in kfold.split(T):
-    gaussian = GaussianBayes().fit(T[ts], y_t[ts])
+    gaussian = QuadraticDiscriminantAnalysis().fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf.append(_)
-    gaussian = GaussianBayes(naive=True).fit(T[ts], y_t[ts])
+    gaussian = GaussianNB().fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf2.append(_)
@@ -531,7 +532,7 @@ La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` 
 perf = []
 kfold = KFold(shuffle=True, random_state=0)
 for ts, vs in kfold.split(T):
-    gaussian = GaussianBayes().fit(T[ts], y_t[ts])
+    gaussian = QuadraticDiscriminantAnalysis().fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf.append(_)
@@ -545,7 +546,7 @@ Un procedimiento equivalente se realiza para el caso del clasificador Bayesiano 
 perf = []
 kfold = KFold(shuffle=True)
 for ts, vs in kfold.split(T):
-    gaussian = GaussianBayes(naive=True).fit(T[ts], y_t[ts])
+    gaussian = GaussianNB().fit(T[ts], y_t[ts])
     hy_gaussian = gaussian.predict(T[vs])
     _ = recall_score(y_t[vs], hy_gaussian, average=None)    
     perf.append(_)
