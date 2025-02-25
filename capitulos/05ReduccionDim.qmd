@@ -23,7 +23,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import StandardScaler
 from sklearn import decomposition
-from EvoMSA.model import GaussianBayes
 import umap
 import numpy as np
 import pandas as pd
@@ -35,6 +34,7 @@ import seaborn as sns
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+np.set_printoptions(precision=4)
 sns.set_style('whitegrid')
 ```
 
@@ -186,7 +186,7 @@ D, y = load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
 ```
 
-El primer paso es medir el rendimiento cuando solamente una variable interviene en el proceso. Como inicialmente $\pi^0 = \emptyset $ entonces solo es necesario generar un clasificador cuando sola una variable está involucrada. El rendimiento de cada variable se guarda en la variable `perf`, se puede observar que el primer ciclo (línea 3) itera por todas las variables en la representación, para cada una se seleccionan los datos solo con esa variable `T1 = T[:, np.array([var])]` después se hacen $k$-iteraciones de validación cruzada y finalmente se guarda el rendimiento. El rendimiento que se está calculando es macro-recall. 
+El primer paso es medir el rendimiento cuando solamente una variable interviene en el proceso. Como inicialmente $\pi^0 = \emptyset$ entonces solo es necesario generar un clasificador cuando sola una variable está involucrada. El rendimiento de cada variable se guarda en la variable `perf`, se puede observar que el primer ciclo (línea 3) itera por todas las variables en la representación, para cada una se seleccionan los datos solo con esa variable `T1 = T[:, np.array([var])]` después se hacen $k$-iteraciones de validación cruzada y finalmente se guarda el rendimiento. El rendimiento que se está calculando es macro-recall. 
 
 ```{python}
 #| echo: true
