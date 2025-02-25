@@ -40,18 +40,18 @@ Es importante conocer el rendimiento del algoritmo de aprendizaje computacional 
 
 ## Clasificación {#sec-clasificacion}
 
-En clasificación existen diferentes medidas de rendimiento, algunas de ellas son exactitud (*accuracy*), precisión (*precision*), recall, y $F_1$, entre otras. @10.1145/2808194.2809449 describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores. 
+En clasificación existen diferentes medidas de rendimiento, algunas de ellas son exactitud (*accuracy*), precisión (*precision*), cobertura (*recall*), y $F_1$, entre otras. @10.1145/2808194.2809449 describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores. 
 
 Varias de las medidas de rendimiento toman como insume la **Tabla de Confusión** (@tbl-confusion), la cual contiene la información del proceso de clasificación. La siguiente tabla muestra la estructura de esta tabla para un problema binario, donde se tiene una clase positiva identificada con $p$ y una clase negativa ($n$). La variable $\mathcal Y$ indica las clases reales y la variable $\mathcal{\hat Y}$ representa la estimación (predicción) hecha por el clasificador. Adicionalmente, la tabla se puede extender a $K$ clases siguiendo la misma estructura; la diagonal contienen los elementos correctamente identificados y los elementos fuera de la diagonal muestra los errores. 
 
-|                |$\mathcal{\hat Y}=p$|$\mathcal{\hat Y}=n$|
-|----------------|----------------------|----------------------|
+|              |$\mathcal{\hat Y}=p$  |$\mathcal{\hat Y}=n$  |
+|--------------|----------------------|----------------------|
 |$\mathcal Y=p$|Verdaderos Pos.       |Falsos Neg.           |
 |$\mathcal Y=n$|Falsos Pos.           |Verdaderos Neg.       |
 
 : Tabla de Confusión {#tbl-confusion}
 
-La tabla se puede ver como valores nominales, es decir contar el número de ejemplos clasificados como verdaderos positivos o como proporción de tal manera que las cuatro celdas sumen $1$. En esta descripción se asume que son proporcionen, esto porque se seguirá una interpretación probabilística descrita en [este artículo](https://link.springer.com/chapter/10.1007/978-3-540-31865-1_25) para presentar las diferentes medidas de rendimiento.
+La tabla se puede ver como valores nominales, es decir contar el número de ejemplos clasificados como verdaderos positivos o como proporción de tal manera que las cuatro celdas sumen $1$. En esta descripción se asume que son proporcionen, esto porque se seguirá una interpretación probabilística, descrita por @10.1007/978-3-540-31865-1_25, para presentar las diferentes medidas de rendimiento.
 
 Viendo la @tbl-confusion como una proporción y combinando con la interpretación probabilística la tabla quedaría de la siguiente manera.
 
@@ -446,7 +446,7 @@ score = [f'{x:0.4f}' for x in score]
 score = Markdown(f'[{", ".join(score)}]')
 ```
 
-La segunda opción es utilizar un clasificador Bayesiano Ingenuo, el cual se especifica con el parámetro `naive` tal y como se muestra en las siguientes instrucciones. El recall en las dos clases es `{python} score`.  
+La segunda opción es utilizar un clasificador Bayesiano Ingenuo, usando `GaussianNB`, tal y como se muestra en las siguientes instrucciones. El recall en las dos clases es `{python} score`.  
 
 ```{python}
 #| echo: true
