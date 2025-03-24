@@ -18,6 +18,7 @@ from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from CompStats.metrics import accuracy_score, mean_squared_error
 ```
 
 ```{python}
@@ -489,7 +490,7 @@ naive.var_
 
 ## Ejemplo: Breast Cancer Wisconsin {#sec-ejemplo-breast-cancer-wisconsin}
 
-Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos (Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y Bayesiano Ingenuo) del conjunto de datos de *Breast Cancer Wisconsin.* Estos datos se pueden obtener utilizando la función `load_breast_cancer` tal y como se muestra a continuación.
+Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos; Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y Bayesiano Ingenuo en el conjunto de datos de *Breast Cancer Wisconsin.* Estos datos se pueden obtener utilizando la función `load_breast_cancer` tal y como se muestra a continuación.
 
 ```{python}
 #| echo: true
@@ -594,6 +595,29 @@ conf = Markdown(f'${int((1 - p_value) * 100)}$%')
 ```
 
 teniendo el valor de `{python} p_value_f`, lo que significa que se tiene una confianza del `{python} conf` de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento. 
+
+
+::: {.callout-note}
+El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería `CompStats`, en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera linea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última linea grafica el rendimiento. 
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento entre QDA y Naive Bayes.
+#| label: fig-redimiento-acc
+
+score = accuracy_score(y_g, hy_qda, name='QDA')
+score(hy_naive, name='Naive')
+score.plot(comp_legend='Comparación',
+           winner_legend='Mejor',
+           tie_legend='Equivalente',
+           loser_legend='Diferente',
+           alg_legend='Algoritmo',
+           var_name='Rendimiento')
+```
+
+En la @fig-redimiento-acc se observa el rendimiento, con su intervalo de confianza al 95%. También se incluye, el resultado de comparar estadisticamente (95%) la diferencia de rendimiento mediante el color. 
+
+:::
 
 ## Regresión {#sec-regresion-ols}
 
@@ -784,3 +808,23 @@ Finalmente, se calcula el área bajo la curva a la izquierda del cero, teniendo 
 dist = norm(loc=diff, scale=se)
 p_value = dist.cdf(0)
 ```
+
+::: {.callout-note}
+
+Utilizando la librería `CompStats` se puede hacer una comparación del rendimiento de la regresión logística utilizando todas las variables y solo aquellas que son estadísticamente significantes, tal y como se muetra en la @fig-rendimiento-ols-compstats
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento entre modelo con variables originales y selección de variables.
+#| label: fig-rendimiento-ols-compstats
+
+mse = mean_squared_error(y_g, hy, name='Completo')
+mse(hy2, name='Reducido')
+mse.plot(comp_legend='Comparación',
+         winner_legend='Mejor',
+         tie_legend='Equivalente',
+         loser_legend='Diferente',
+         alg_legend='Algoritmo',
+         var_name='Rendimiento')
+```
+:::
