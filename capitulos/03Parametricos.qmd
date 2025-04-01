@@ -168,10 +168,12 @@ Habiendo descrito el proceso para estimar los parámetros de una distribución, 
 La metodología de clasificación se ilustra utilizando el problema sintético (ver @sec-tres-normales) de tres clases que se presentó en el @sec-teoria-decision-bayesianas. 
 
 
+::: {.content-visible when-format="html"} 
 ::: {.callout-note}
 ### Problema sintético  
 ```{python}
 #| code-fold: true
+#| echo: true
 
 seed = 0
 p1 = multivariate_normal(mean=[5, 5],
@@ -187,6 +189,7 @@ X_1 = p1.rvs(size=1000)
 X_2 = p2.rvs(size=1000)
 X_3 = p3.rvs(size=1000)                         
 ```
+:::
 :::
 
 Específicamente, las entradas que definían a cada clase están en la variables `X_1`, `X_2` y `X_3`. Entonces las clases se pueden colocar en la variable `y` tal como se indica a continuación. 
@@ -596,15 +599,15 @@ teniendo el valor de `{python} p_value_f`, lo que significa que se tiene una con
 
 
 ::: {.callout-note}
-El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería `CompStats`, en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera linea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última linea grafica el rendimiento. 
+El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) (@Nava2024), en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera linea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última linea grafica el rendimiento. 
 
 ```{python}
 #| echo: true
-#| fig-cap: Rendimiento entre QDA y Naive Bayes.
+#| fig-cap: Rendimiento entre QDA y Bayesiano Ingenuo.
 #| label: fig-redimiento-acc
 
 score = accuracy_score(y_g, hy_qda, name='QDA')
-score(hy_naive, name='Naive')
+score(hy_naive, name='Bayesiano Ingenuo')
 score.plot(comp_legend='Comparación',
            winner_legend='Mejor',
            tie_legend='Equivalente',
