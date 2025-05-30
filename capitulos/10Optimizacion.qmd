@@ -184,9 +184,9 @@ donde la función `sin_sq` tiene la composición de $g \circ f.$ Ahora la deriva
 
 El ejemplo anterior se puede extender para cualquier composición de funciones, pero ese ejemplo no deja claro lo que pasaría con una función de dos o más variables, como por ejemplo, $h(x, y) = x \times y.$ En este caso, el objetivo es calcular tanto $\frac{d}{dx} h$ como $\frac{d}{dy} h.$
 
-El procedimiento es similar, con el ingrediente extra de que se tiene que recordar la función y la posición del argumento, es decir, para $h(2, 5)$ se asocia el valor $\frac{d}{dx} h$ con el primer argumento de la función $h$ y $\frac{d}{dx} h$ con el segundo argumento de la función $h$. Para $h'(2, 5)$ se asocia el valor de $5$ 
+El procedimiento es similar, con el ingrediente extra de que se tiene que recordar la función y la posición del argumento, es decir, para $h(2, 5)$ se asocia el valor $\frac{\partial}{\partial x} h$ con el primer argumento de la función $h$ y $\frac{\partial}{\partial x} h$ con el segundo argumento de la función $h$. Para $h'(2, 5)$ se asocia el valor de $5$ 
 con el primer argumento de $h$ y $2$ con el segundo argumento de $h.$
-Se puede observar que los valores guardados corresponden a $\frac{d}{dx}h(2, 5)=y=5$ y $\frac{d}{dy}h(2, 5)=x=2.$ Escribiendo este ejemplo en Python quedaría como 
+Se puede observar que los valores guardados corresponden a $\frac{\partial}{\partial x}h(2, 5)=y=5$ y $\frac{\partial}{\partial y}h(2, 5)=x=2.$ Escribiendo este ejemplo en Python quedaría como 
 
 ```{python}
 #| echo: true
@@ -324,7 +324,7 @@ params_f = Markdown(f'[{_}]')
 
 Optimizando los parámetros de la regresión logística utilizando el procedimiento de diferenciación automática se obtiene `{python} params_f`. 
 
-En Discriminantes Lineales (@sec-discriminantes-lineales) se presento el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción. 
+En Discriminantes Lineales (@sec-discriminantes-lineales) se presentó el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción. 
 
 ```{python}
 #| echo: true
@@ -339,12 +339,14 @@ params_lr_f = Markdown(f'[{_}]')
 error_f = Markdown(f'${error[-1]:0.4f}$')
 ```
 
-Los parámetros son `{python} params_lr_f`. El error en el conjunto se entrenamiento es  se puede calcular de la siguiente manera. En comparación el error obtenido por diferenciación automática es `{python} error_f`, por supuesto este puede variar cambiando el número de iteraciones. 
+Los parámetros son `{python} params_lr_f`. El error en el conjunto de entrenamiento se puede calcular utilizando el siguiente código.
 
 ```{python}
 _ = jnp.array([lr.coef_[0, 0], lr.coef_[0, 1], lr.intercept_[0]])
 suma_entropia_cruzada(_, T, y_t)
 ```
+
+En comparación el error obtenido por diferenciación automática es `{python} error_f`, por supuesto este puede variar cambiando el número de iteraciones. 
 
 ## Actualización de Parámetros {#sec-actualizacion-parametros}
 
