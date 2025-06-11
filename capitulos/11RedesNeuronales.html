@@ -341,7 +341,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación.</p>
 <section id="paquetes-usados" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">11.1</span> Paquetes usados</h2>
-<div id="4b9401d9" class="cell" data-execution_count="1">
+<div id="74562945" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.lax <span class="im">as</span> lax</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
@@ -369,7 +369,7 @@ window.Quarto = {
 \mathbf v_i = \frac{\exp \mathbf v_i}{\sum_{j=1}^K \exp \mathbf v_j}.
 \]</span></p>
 <p>La función <code>jax.nn.softmax</code> implementa <span class="math inline">\(\textsf{softmax}\)</span>; en el siguiente ejemplo se calcula para el vector <code>[2, 1, 3]</code></p>
-<div id="3bc8a215" class="cell" data-execution_count="3">
+<div id="454b4aff" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jax.nn.softmax(np.array([<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>Array([0.24472848, 0.09003057, 0.66524094], dtype=float32)</code></pre>
@@ -377,13 +377,13 @@ window.Quarto = {
 </div>
 <p>Se puede observar que <span class="math inline">\(\textsf{softmax}\)</span> transforma los valores del vector <span class="math inline">\(\mathbf v\)</span> en probabilidades.</p>
 <p>Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno.</p>
-<div id="93217143" class="cell" data-execution_count="4">
+<div id="437a2ef8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(D)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> normalize.transform(D)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes <span class="math inline">\(W \in \mathbb R^{K \times d}\)</span> y <span class="math inline">\(\mathbf w_0 \in \mathbb R^d.\)</span> Los parámetros iniciales se puede generar con la función <code>parametros_iniciales</code> tal y como se muestra a continuación.</p>
-<div id="b85a3d56" class="cell" data-execution_count="5">
+<div id="e587f2e6" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(key<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
@@ -399,7 +399,7 @@ window.Quarto = {
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Utilizando los parámetros en el formato anterior, hace que el modelo se pueda implementar con las siguientes instrucciones. Donde el ciclo es por cada uno de los parámetros de las <span class="math inline">\(K\)</span> clases y la última línea calcula el <span class="math inline">\(\textsf{softmax}.\)</span></p>
-<div id="57135168" class="cell" data-execution_count="6">
+<div id="5dbeb00e" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modelo(params, X):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> []</span>
@@ -408,11 +408,11 @@ window.Quarto = {
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.softmax(jnp.array(o), axis<span class="op">=</span><span class="dv">0</span>).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad <span class="math inline">\(1\)</span> corresponde a la clase, esto se puede realizar con el siguiente código.</p>
-<div id="ae70635a" class="cell" data-execution_count="7">
+<div id="d7c8c948" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>y_oh <span class="op">=</span> jax.nn.one_hot(y, n_labels)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento.</p>
-<div id="b5148c3c" class="cell" data-execution_count="8">
+<div id="443c36e9" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, X, y_oh):</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> modelo(params, X)</span>
@@ -422,7 +422,7 @@ window.Quarto = {
 <h3 data-number="11.3.1" class="anchored" data-anchor-id="optimización"><span class="header-section-number">11.3.1</span> Optimización</h3>
 <p>El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( <a href="10Optimizacion.html#sec-regresion-logistica-optimizacion" class="quarto-xref"><span>Sección 10.5</span></a>) con algunos ajustes. Lo primero es que se desarrolla todo en una función <code>fit</code> que recibe el parámetro <span class="math inline">\(\eta\)</span>, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento.</p>
 <p>Dentro de la función <code>fit</code>se observa la función <code>update</code> que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función <code>update</code> genera la función que calculará el valor y el gradiente de la función <code>media_entropia_cruzada</code>. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época.</p>
-<div id="97e3b02f" class="cell" data-execution_count="9">
+<div id="8a4d0ba1" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(eta, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, eta, X, y_oh):</span>
@@ -442,7 +442,7 @@ window.Quarto = {
 <h3 data-number="11.3.2" class="anchored" data-anchor-id="sec-adam"><span class="header-section-number">11.3.2</span> Optimización Método Adam</h3>
 <p>Como se había visto en la <a href="10Optimizacion.html#sec-actualizacion-parametros" class="quarto-xref"><span>Sección 10.6</span></a> existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería <a href="https://optax.readthedocs.io">optax</a>) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales.</p>
 <p>Siguiendo la misma estructura que la función <code>fit</code>, la función <code>adam</code> recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función <code>update</code> (que se encuentra en <code>adam</code>) calcula el valor de la función de error y su gradiente, estos son utilizados por <code>optimizer.update</code> para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de <code>update</code> inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función <code>media_entropia_cruzada</code>. El ciclo llama la función <code>update</code> y guarda el error encontrado en cada época.</p>
-<div id="42efc56c" class="cell" data-execution_count="10">
+<div id="73b5d679" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, opt_state, X, y_oh):</span>
@@ -470,14 +470,16 @@ window.Quarto = {
 <section id="comparación-entre-optimizadores" class="level3" data-number="11.3.3">
 <h3 data-number="11.3.3" class="anchored" data-anchor-id="comparación-entre-optimizadores"><span class="header-section-number">11.3.3</span> Comparación entre Optimizadores</h3>
 <p>Los optimizadores descritos anteriormente se pueden utilizar con el siguiente código, donde la primera línea calcula los parámetros iniciales, después se llama a la función <code>fit</code> para encontrar los parámetros con el primer método. La tercera línea genera una instancia del optimizador Adam; el cual se pasa a la función <code>adam</code> para encontrar los parámetros con este método.</p>
-<div id="c02daa2c" class="cell" data-execution_count="11">
+<div id="75daf35e" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>p1, error1 <span class="op">=</span> fit(<span class="fl">1e-2</span>, params)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>p2, error2 <span class="op">=</span> adam(optimizer, params)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_42054/2693901055.py:5: DeprecationWarning: jax.tree_map is deprecated: use jax.tree.map (jax v0.4.25 or newer) or jax.tree_util.tree_map (any JAX version).
-  return _, jax.tree_map(lambda p, g: p - eta * g,</code></pre>
+<pre><code>/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_62093/2693901055.py:5: DeprecationWarning:
+
+jax.tree_map is deprecated: use jax.tree.map (jax v0.4.25 or newer) or jax.tree_util.tree_map (any JAX version).
+</code></pre>
 </div>
 </div>
 <p>La <a href="#fig-redes-neuronales-adam" class="quarto-xref">Figura&nbsp;<span>11.1</span></a> muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método <code>adam</code> converge más rápido y llega a un valor menor de Entropía Cruzada.</p>
@@ -557,7 +559,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <h3 data-number="11.5.1" class="anchored" data-anchor-id="desvanecimiento-del-gradiente"><span class="header-section-number">11.5.1</span> Desvanecimiento del Gradiente</h3>
 <p>Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función <span class="math inline">\(\phi\)</span> es la función <span class="math inline">\(\textsf{sigmoid},\)</span> aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones <span class="math inline">\(g_1(x) = w_1 x + 1.0\)</span> y <span class="math inline">\(g_1(x) = w_2 x + 1.0;\)</span> haciéndose la composición de estas dos funciones <span class="math inline">\(g=g_2 \circ g_1.\)</span></p>
 <p>Las siguientes instrucciones implementan las funciones anteriores utilizando la librería <a href="https://jax.readthedocs.io">JAX</a>.</p>
-<div id="a9b1bfd7" class="cell" data-execution_count="14">
+<div id="5949c13a" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g_1(params, x):</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.sigmoid(params[<span class="st">'w1'</span>] <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.0</span>)</span>
@@ -571,7 +573,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> g_2(params, g_1(params, x))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Utilizando unos parámetros aleatorios generados con el siguiente código</p>
-<div id="f2647dd2" class="cell" data-execution_count="15">
+<div id="da5d5ea7" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>key, subkey1, subkey2 <span class="op">=</span> jax.random.split(key, num<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> <span class="bu">dict</span>(w1<span class="op">=</span>jax.random.normal(subkey1),</span>
@@ -584,18 +586,18 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <section id="ejemplo-dígitos" class="level2" data-number="11.6">
 <h2 data-number="11.6" class="anchored" data-anchor-id="ejemplo-dígitos"><span class="header-section-number">11.6</span> Ejemplo: Dígitos</h2>
 <p>Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones.</p>
-<div id="9674ce52" class="cell" data-execution_count="17">
+<div id="ed51b7ec" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase <code>StandardScaler</code> se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (<code>T</code>) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba <code>G</code>.</p>
-<div id="20fb911e" class="cell" data-execution_count="18">
+<div id="6365342e" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(T)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> normalize.transform(T)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> normalize.transform(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor <span class="math inline">\(1\)</span> representa la clase, esto se realiza con las siguientes instrucciones.</p>
-<div id="cbd62877" class="cell" data-execution_count="19">
+<div id="0e0fee24" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>yt_oh <span class="op">=</span> jax.nn.one_hot(y_t, n_labels)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -617,11 +619,11 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 \end{split},
 \]</span></p>
 <p>donde la suma con el término <span class="math inline">\(\mathbf w_0\)</span> se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación.</p>
-<div id="3a7092a1" class="cell" data-execution_count="21">
+<div id="e6b1f3c3" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> [<span class="dv">64</span>, <span class="dv">32</span>, <span class="dv">16</span>, <span class="dv">10</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de <code>d</code> creando pares, para generar las dimensiones adecuadas para las matrices <span class="math inline">\(W.\)</span></p>
-<div id="be680820" class="cell" data-execution_count="22">
+<div id="bb15723f" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(d, key<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> []</span>
@@ -633,7 +635,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación <span class="math inline">\(\phi\)</span> seleccionada fue <span class="math inline">\(\textsf{ReLU}\)</span> que está implementada en la función <code>jax.nn.relu</code>.</p>
-<div id="4deabbc4" class="cell" data-execution_count="23">
+<div id="63a268ad" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ann(params, D):</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    y1 <span class="op">=</span> jax.nn.relu(D <span class="op">@</span> params[<span class="dv">0</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">0</span>][<span class="st">'w0'</span>])</span>
@@ -641,14 +643,14 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y2 <span class="op">@</span> params[<span class="dv">2</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">2</span>][<span class="st">'w0'</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como medida de error se usa la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>) tal y como se implementa a continuación. El caso <span class="math inline">\(0 \log 0\)</span> corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa <code>jnp.nansum</code> que trata los valores no definidos como ceros.</p>
-<div id="e7992720" class="cell" data-execution_count="24">
+<div id="8d87e5b4" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, D, y_oh):</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> jax.nn.softmax(ann(params, D), axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> jnp.nansum(y_oh <span class="op">*</span> jnp.log(hy), axis<span class="op">=</span><span class="dv">1</span>).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función <code>update_finite</code> que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior.</p>
-<div id="a7e17716" class="cell" data-execution_count="25">
+<div id="5b3a849b" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_finite(a, b):</span>
@@ -672,16 +674,12 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.</p>
-<div id="45290b4f" class="cell" data-execution_count="26">
+<div id="68ee117d" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales(d)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>p, error <span class="op">=</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_42054/978170560.py:19: DeprecationWarning: jax.tree_map is deprecated: use jax.tree.map (jax v0.4.25 or newer) or jax.tree_util.tree_map (any JAX version).
-  params = jax.tree_map(update_finite, params, p)</code></pre>
 </div>
-</div>
-<p>El resultado de esta red, es que el error en el conjunto de prueba es <span class="math inline">\(0.0528\)</span> calculado con la siguiente instrucción <code>(ann(p, G).argmax(axis=1) != y_g).mean()</code>.</p>
+<p>El resultado de esta red, es que el error en el conjunto de prueba es <span class="math inline">\(0.0250\)</span> calculado con la siguiente instrucción <code>(ann(p, G).argmax(axis=1) != y_g).mean()</code>.</p>
 
 
 <!-- -->
@@ -1169,458 +1167,460 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb26" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Redes Neuronales</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación.</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.lax <span class="im">as</span> lax</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optax</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris, load_digits</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
-<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/5C9wNeDQ5eU width="560" height="315" &gt;}}</span>
-<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-11}</span></span>
-<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.</span>
-<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regresión Logística Multinomial {#sec-regresion-logistica-multinomial}</span></span>
-<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a>La idea de regresión logística es modelar $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Ber}(y \mid \textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0)),$ es decir, que la </span>
-<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a>clase $y$ esta modelada como una distribución Bernoulli con parámetro $\textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0).$ Siguiendo está definición que es equivalente a la mostrada <span class="co">[</span><span class="ot">anteriormente</span><span class="co">](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion)</span>, se puede modelar a un problema de multiples clases como $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Cat}(y \mid \textsf{softmax}(W \mathbf x + \mathbf w_0)),$ es decir, que la clase proviene de una distribución Categórica con parámetros $\textsf{softmax}(W \mathbf x + \mathbf w_0),$ donde $W \in \mathbb R^{K \times d},$ $\mathbf x \in \mathbb R^d$ y $\mathbf w_0 \in \mathbb R^d.$ </span>
-<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>La función $\textsf{softmax}(\mathbf v)$, donde $\mathbf v = W \mathbf x + \mathbf w_0$ está definida como:</span>
-<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>\mathbf v_i = \frac{\exp \mathbf v_i}{\sum_{j=1}^K \exp \mathbf v_j}.</span>
-<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`jax.nn.softmax`</span> implementa $\textsf{softmax}$; en el siguiente ejemplo se calcula para el vector <span class="in">`[2, 1, 3]`</span> </span>
-<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a>jax.nn.softmax(np.array([<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>]))</span>
-<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a>Se puede observar que $\textsf{softmax}$ transforma los valores del vector $\mathbf v$ en probabilidades. </span>
-<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a>Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno. </span>
-<span id="cb26-66"><a href="#cb26-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(D)</span>
-<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> normalize.transform(D)</span>
-<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a>El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d.$ Los parámetros iniciales se puede generar con la función <span class="in">`parametros_iniciales`</span> tal y como se muestra a continuación.</span>
-<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a><span class="co">#|  echo: true</span></span>
-<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
-<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(key<span class="op">=</span><span class="dv">0</span>):</span>
-<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
-<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> D.shape[<span class="dv">1</span>]</span>
-<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> []</span>
-<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a>    normal <span class="op">=</span> jax.random.normal</span>
-<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a>    sqrt <span class="op">=</span> jnp.sqrt</span>
-<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_labels):</span>
-<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a>        key, subkey <span class="op">=</span> jax.random.split(key)</span>
-<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=</span> <span class="bu">dict</span>(w<span class="op">=</span>normal(subkey, (d, )) <span class="op">*</span> sqrt(<span class="dv">2</span> <span class="op">/</span> d),</span>
-<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a>                 w0<span class="op">=</span>jnp.ones(<span class="dv">1</span>))</span>
-<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a>        params.append(_)</span>
-<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span>
-<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-97"><a href="#cb26-97" aria-hidden="true" tabindex="-1"></a>Utilizando los parámetros en el formato anterior, hace que el modelo se pueda implementar con las siguientes instrucciones. Donde el ciclo es por cada uno de los parámetros de las $K$ clases y la última línea calcula el $\textsf{softmax}.$</span>
-<span id="cb26-98"><a href="#cb26-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-101"><a href="#cb26-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-102"><a href="#cb26-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-103"><a href="#cb26-103" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-104"><a href="#cb26-104" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modelo(params, X):</span>
-<span id="cb26-105"><a href="#cb26-105" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> []</span>
-<span id="cb26-106"><a href="#cb26-106" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> params:</span>
-<span id="cb26-107"><a href="#cb26-107" aria-hidden="true" tabindex="-1"></a>        o.append(X <span class="op">@</span> p[<span class="st">'w'</span>] <span class="op">+</span> p[<span class="st">'w0'</span>])</span>
-<span id="cb26-108"><a href="#cb26-108" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.softmax(jnp.array(o), axis<span class="op">=</span><span class="dv">0</span>).T</span>
-<span id="cb26-109"><a href="#cb26-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-110"><a href="#cb26-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-111"><a href="#cb26-111" aria-hidden="true" tabindex="-1"></a>Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (@sec-entropia-cruzada), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad $1$ corresponde a la clase, esto se puede realizar con el siguiente código. </span>
-<span id="cb26-112"><a href="#cb26-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-115"><a href="#cb26-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-116"><a href="#cb26-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-117"><a href="#cb26-117" aria-hidden="true" tabindex="-1"></a>y_oh <span class="op">=</span> jax.nn.one_hot(y, n_labels)</span>
-<span id="cb26-118"><a href="#cb26-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-119"><a href="#cb26-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-120"><a href="#cb26-120" aria-hidden="true" tabindex="-1"></a>Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento. </span>
-<span id="cb26-121"><a href="#cb26-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-124"><a href="#cb26-124" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-125"><a href="#cb26-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-126"><a href="#cb26-126" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-127"><a href="#cb26-127" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, X, y_oh):</span>
-<span id="cb26-128"><a href="#cb26-128" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> modelo(params, X)</span>
-<span id="cb26-129"><a href="#cb26-129" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (y_oh <span class="op">*</span> jnp.log(hy)).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>).mean()</span>
-<span id="cb26-130"><a href="#cb26-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-131"><a href="#cb26-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-132"><a href="#cb26-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-133"><a href="#cb26-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optimización</span></span>
-<span id="cb26-134"><a href="#cb26-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-135"><a href="#cb26-135" aria-hidden="true" tabindex="-1"></a>El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( @sec-regresion-logistica-optimizacion) con algunos ajustes. Lo primero es que se desarrolla todo en una función <span class="in">`fit`</span> que recibe el parámetro $\eta$, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento. </span>
-<span id="cb26-136"><a href="#cb26-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-137"><a href="#cb26-137" aria-hidden="true" tabindex="-1"></a>Dentro de la función <span class="in">`fit`</span>se observa la función <span class="in">`update`</span> que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función <span class="in">`update`</span> genera la función que calculará el valor y el gradiente de la función <span class="in">`media_entropia_cruzada`</span>. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época. </span>
-<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-141"><a href="#cb26-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-142"><a href="#cb26-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-143"><a href="#cb26-143" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(eta, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
-<span id="cb26-144"><a href="#cb26-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
-<span id="cb26-145"><a href="#cb26-145" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, eta, X, y_oh):</span>
-<span id="cb26-146"><a href="#cb26-146" aria-hidden="true" tabindex="-1"></a>        _ , gs <span class="op">=</span> error_grad(params, X, y_oh)</span>
-<span id="cb26-147"><a href="#cb26-147" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> _, jax.tree_map(<span class="kw">lambda</span> p, g: p <span class="op">-</span> eta <span class="op">*</span> g,</span>
-<span id="cb26-148"><a href="#cb26-148" aria-hidden="true" tabindex="-1"></a>                               params, gs)</span>
-<span id="cb26-149"><a href="#cb26-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-150"><a href="#cb26-150" aria-hidden="true" tabindex="-1"></a>    error_grad  <span class="op">=</span> jax.value_and_grad(media_entropia_cruzada)</span>
-<span id="cb26-151"><a href="#cb26-151" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> []</span>
-<span id="cb26-152"><a href="#cb26-152" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(epocas):</span>
-<span id="cb26-153"><a href="#cb26-153" aria-hidden="true" tabindex="-1"></a>        _, params <span class="op">=</span> update(params, eta, D, y_oh)</span>
-<span id="cb26-154"><a href="#cb26-154" aria-hidden="true" tabindex="-1"></a>        error.append(_)</span>
-<span id="cb26-155"><a href="#cb26-155" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span>
-<span id="cb26-156"><a href="#cb26-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-157"><a href="#cb26-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-158"><a href="#cb26-158" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optimización Método Adam {#sec-adam}</span></span>
-<span id="cb26-159"><a href="#cb26-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-160"><a href="#cb26-160" aria-hidden="true" tabindex="-1"></a>Como se había visto en la @sec-actualizacion-parametros existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería <span class="co">[</span><span class="ot">optax</span><span class="co">](https://optax.readthedocs.io)</span>) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales. </span>
-<span id="cb26-161"><a href="#cb26-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a>Siguiendo la misma estructura que la función <span class="in">`fit`</span>, la función <span class="in">`adam`</span> recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función <span class="in">`update`</span> (que se encuentra en <span class="in">`adam`</span>) calcula el valor de la función de error y su gradiente, estos son utilizados por <span class="in">`optimizer.update`</span> para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de <span class="in">`update`</span> inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función <span class="in">`media_entropia_cruzada`</span>. El ciclo llama la función <span class="in">`update`</span> y guarda el error encontrado en cada época. </span>
-<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
-<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
-<span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, opt_state, X, y_oh):</span>
-<span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a>        loss_value, grads <span class="op">=</span> error_grad(params,</span>
-<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a>                                       X,</span>
-<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a>                                       y_oh)</span>
-<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a>        updates, opt_state <span class="op">=</span> optimizer.update(grads,</span>
-<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a>                                              opt_state,</span>
-<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a>                                              params)</span>
-<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a>        params <span class="op">=</span> optax.apply_updates(params, updates)</span>
-<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> params, opt_state, loss_value</span>
-<span id="cb26-180"><a href="#cb26-180" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb26-181"><a href="#cb26-181" aria-hidden="true" tabindex="-1"></a>    opt_state <span class="op">=</span> optimizer.init(params)</span>
-<span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a>    error_grad  <span class="op">=</span> jax.value_and_grad(media_entropia_cruzada)    </span>
-<span id="cb26-183"><a href="#cb26-183" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> []</span>
-<span id="cb26-184"><a href="#cb26-184" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(epocas):</span>
-<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>        params, opt_state, loss_value <span class="op">=</span> update(params,</span>
-<span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a>                                               opt_state,</span>
-<span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a>                                               D,</span>
-<span id="cb26-188"><a href="#cb26-188" aria-hidden="true" tabindex="-1"></a>                                               y_oh)</span>
-<span id="cb26-189"><a href="#cb26-189" aria-hidden="true" tabindex="-1"></a>        error.append(loss_value)</span>
-<span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span>
-<span id="cb26-191"><a href="#cb26-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-192"><a href="#cb26-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-193"><a href="#cb26-193" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparación entre Optimizadores</span></span>
-<span id="cb26-194"><a href="#cb26-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-195"><a href="#cb26-195" aria-hidden="true" tabindex="-1"></a>Los optimizadores descritos anteriormente se pueden utilizar con el siguiente código, donde la primera línea calcula los parámetros iniciales, después se llama a la función <span class="in">`fit`</span> para encontrar los parámetros con el primer método. La tercera línea genera una instancia del optimizador Adam; el cual se pasa a la función <span class="in">`adam`</span> para encontrar los parámetros con este método. </span>
-<span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales()</span>
-<span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a>p1, error1 <span class="op">=</span> fit(<span class="fl">1e-2</span>, params)</span>
-<span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
-<span id="cb26-205"><a href="#cb26-205" aria-hidden="true" tabindex="-1"></a>p2, error2 <span class="op">=</span> adam(optimizer, params)</span>
-<span id="cb26-206"><a href="#cb26-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-207"><a href="#cb26-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-208"><a href="#cb26-208" aria-hidden="true" tabindex="-1"></a>La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método <span class="in">`adam`</span> converge más rápido y llega a un valor menor de Entropía Cruzada. </span>
-<span id="cb26-209"><a href="#cb26-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Comparación de diferentes optimizadores.</span></span>
-<span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-redes-neuronales-adam</span></span>
-<span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(entropia<span class="op">=</span>np.array(error1),</span>
-<span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a>                       optimizador<span class="op">=</span><span class="st">'fit'</span>,</span>
-<span id="cb26-218"><a href="#cb26-218" aria-hidden="true" tabindex="-1"></a>                       epoca<span class="op">=</span>np.arange(<span class="dv">1</span>, <span class="dv">501</span>)))</span>
-<span id="cb26-219"><a href="#cb26-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-220"><a href="#cb26-220" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat((df, pd.DataFrame(<span class="bu">dict</span>(entropia<span class="op">=</span>np.array(error2),</span>
-<span id="cb26-221"><a href="#cb26-221" aria-hidden="true" tabindex="-1"></a>                                      optimizador<span class="op">=</span><span class="st">'adam'</span>,</span>
-<span id="cb26-222"><a href="#cb26-222" aria-hidden="true" tabindex="-1"></a>                                      epoca<span class="op">=</span>np.arange(<span class="dv">1</span>, <span class="dv">501</span>)))))</span>
-<span id="cb26-223"><a href="#cb26-223" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'epoca'</span>, y<span class="op">=</span><span class="st">'entropia'</span>, hue<span class="op">=</span><span class="st">'optimizador'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span>
-<span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>  </span>
-<span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-228"><a href="#cb26-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-229"><a href="#cb26-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-230"><a href="#cb26-230" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> (y <span class="op">==</span> modelo(p1, D).argmax(axis<span class="op">=</span><span class="dv">1</span>)).mean()</span>
-<span id="cb26-231"><a href="#cb26-231" aria-hidden="true" tabindex="-1"></a>acc_fit_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>_<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb26-232"><a href="#cb26-232" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> (y <span class="op">==</span> modelo(p2, D).argmax(axis<span class="op">=</span><span class="dv">1</span>)).mean()</span>
-<span id="cb26-233"><a href="#cb26-233" aria-hidden="true" tabindex="-1"></a>acc_adam_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>_<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb26-234"><a href="#cb26-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-235"><a href="#cb26-235" aria-hidden="true" tabindex="-1"></a>Finalmente la exactitud (@sec-accuracy) en el conjunto de entrenamiento del modelo estimado con <span class="in">`fit`</span> es <span class="in">`{python} acc_fit_f`</span> (i.e., <span class="in">`(y == modelo(p1, D).argmax(axis=1)).mean()`</span>) y del estimado con <span class="in">`adam`</span> es <span class="in">`{python} acc_adam_f`</span>.</span>
-<span id="cb26-236"><a href="#cb26-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-237"><a href="#cb26-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## Perceptrón {#sec-preceptron}</span></span>
-<span id="cb26-238"><a href="#cb26-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-239"><a href="#cb26-239" aria-hidden="true" tabindex="-1"></a>La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de Discriminantes Lineales (@sec-discriminantes-lineales), es decir,  $g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.$ En problemas de clasificación binaria se encuentran los parámetros de $g(\mathbf x)$ de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de Regresión (@sec-regresion-ols) los parámetros de $g(\mathbf x)$ se encuentran utilizando mínimos cuadrados. </span>
-<span id="cb26-240"><a href="#cb26-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-241"><a href="#cb26-241" aria-hidden="true" tabindex="-1"></a>En el case de tener $K&gt;2$ clases entonces el problema se puede afrontar entrenando $g_k(\mathbf x)$ perceptrones ($k=1, \ldots, K$) tal y como se realizó Discriminantes Lineales (@sec-multiples-clases). De manera concisa se puede definir a $g: \mathbb R^d \rightarrow \mathbb R^K$, es decir, $g(\mathbf x)=W \mathbf x + \mathbf w_0$ tal y como se realizó en Regresión Logística Multinomial (@sec-regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$ y en el caso multiclase $g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$</span>
-<span id="cb26-242"><a href="#cb26-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-243"><a href="#cb26-243" aria-hidden="true" tabindex="-1"></a><span class="fu">### Composición de Perceptrones Lineales</span></span>
-<span id="cb26-244"><a href="#cb26-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-245"><a href="#cb26-245" aria-hidden="true" tabindex="-1"></a>Se puede realizar una composición de perceptrones de la siguiente manera, sea $g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$ y $g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$ es decir $g = g_2 \circ g_1.$ Realizando está composición en las ecuaciones descritas anteriormente se tiene </span>
-<span id="cb26-246"><a href="#cb26-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-247"><a href="#cb26-247" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-248"><a href="#cb26-248" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb26-249"><a href="#cb26-249" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= g_1(\mathbf x) <span class="sc">\\</span></span>
-<span id="cb26-250"><a href="#cb26-250" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= g_2(\hat{\mathbf{y}}_1)</span>
-<span id="cb26-251"><a href="#cb26-251" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb26-252"><a href="#cb26-252" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-253"><a href="#cb26-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-254"><a href="#cb26-254" aria-hidden="true" tabindex="-1"></a>Expandiendo las ecuaciones anteriores se tiene </span>
-<span id="cb26-255"><a href="#cb26-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-256"><a href="#cb26-256" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-257"><a href="#cb26-257" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb26-258"><a href="#cb26-258" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= W_1 \mathbf x + \mathbf w_{1_0}<span class="sc">\\</span></span>
-<span id="cb26-259"><a href="#cb26-259" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0}<span class="sc">\\</span></span>
-<span id="cb26-260"><a href="#cb26-260" aria-hidden="true" tabindex="-1"></a>&amp;= W_2 (W_1 \mathbf x + \mathbf w_{1_0}) + \mathbf w_{2_0}<span class="sc">\\</span></span>
-<span id="cb26-261"><a href="#cb26-261" aria-hidden="true" tabindex="-1"></a>&amp;= W_2 W_1 \mathbf x + W_2 \mathbf w_{1_0} + \mathbf w_{2_0}<span class="sc">\\</span></span>
-<span id="cb26-262"><a href="#cb26-262" aria-hidden="true" tabindex="-1"></a>&amp;= W \mathbf x + \mathbf w_0</span>
-<span id="cb26-263"><a href="#cb26-263" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb26-264"><a href="#cb26-264" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-265"><a href="#cb26-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-266"><a href="#cb26-266" aria-hidden="true" tabindex="-1"></a>como se puede observar la composición realizada da como resultado una red donde se tienen que identificar $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d,$ es decir, son $K$ perceptrones equivalentes al modelado de Regresión Logística Multinomial. Esto es porque la composición fue con funciones lineales.</span>
-<span id="cb26-267"><a href="#cb26-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-268"><a href="#cb26-268" aria-hidden="true" tabindex="-1"></a><span class="fu">## Perceptrón Multicapa</span></span>
-<span id="cb26-269"><a href="#cb26-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-270"><a href="#cb26-270" aria-hidden="true" tabindex="-1"></a>Para evitar que la composición de perceptrones colapsen a una función equivalente, es necesario incluir una función no lineal, sea $\phi$ esta función no lineal, (a esta función se le conoce como **función de activación**) entonces se puede observar que la composición $g=g_2 \circ g_1$ donde $g_1 = \phi(W_1 \mathbf x + \mathbf w_{1_0})$ resulta en</span>
-<span id="cb26-271"><a href="#cb26-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-272"><a href="#cb26-272" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-273"><a href="#cb26-273" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb26-274"><a href="#cb26-274" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= \phi(W_1 \mathbf x + \mathbf w_{1_0}) <span class="sc">\\</span></span>
-<span id="cb26-275"><a href="#cb26-275" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0}</span>
-<span id="cb26-276"><a href="#cb26-276" aria-hidden="true" tabindex="-1"></a>\end{split}.</span>
-<span id="cb26-277"><a href="#cb26-277" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-278"><a href="#cb26-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-279"><a href="#cb26-279" aria-hidden="true" tabindex="-1"></a>A la estructura anterior se le conoce como una red neuronal de una capa oculta, la salida de la capa oculta está en $\hat{\mathbf{y}}_1$ y la salida de la red es $\hat{\mathbf y}.$ Siguiendo la notación anterior se puede definir una red neuronal con dos capas ocultas de la siguiente manera</span>
-<span id="cb26-280"><a href="#cb26-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-281"><a href="#cb26-281" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-282"><a href="#cb26-282" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb26-283"><a href="#cb26-283" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= \phi(W_1 \mathbf x + \mathbf w_{1_0}) <span class="sc">\\</span></span>
-<span id="cb26-284"><a href="#cb26-284" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y}_2 &amp;= \phi_2(W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0})<span class="sc">\\</span></span>
-<span id="cb26-285"><a href="#cb26-285" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= (W_3 \hat{\mathbf{y}}_2 + \mathbf w_{3_0})</span>
-<span id="cb26-286"><a href="#cb26-286" aria-hidden="true" tabindex="-1"></a>\end{split},</span>
-<span id="cb26-287"><a href="#cb26-287" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-288"><a href="#cb26-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-289"><a href="#cb26-289" aria-hidden="true" tabindex="-1"></a>donde la salida de la primera capa oculta ($\hat{\mathbf{y}}_1$) es la entrada de la segunda capa oculta y su salida ($\hat{\mathbf{y}}_2$) se convierte en la entrada de la capa de salida. </span>
-<span id="cb26-290"><a href="#cb26-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-291"><a href="#cb26-291" aria-hidden="true" tabindex="-1"></a><span class="fu">### Desvanecimiento del Gradiente</span></span>
-<span id="cb26-292"><a href="#cb26-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-293"><a href="#cb26-293" aria-hidden="true" tabindex="-1"></a>Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función $\phi$ es la función $\textsf{sigmoid},$ aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones $g_1(x) = w_1 x + 1.0$ y $g_1(x) = w_2 x + 1.0;$ haciéndose la composición de estas dos funciones $g=g_2 \circ g_1.$ </span>
-<span id="cb26-294"><a href="#cb26-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-295"><a href="#cb26-295" aria-hidden="true" tabindex="-1"></a>Las siguientes instrucciones implementan las funciones anteriores utilizando la librería <span class="co">[</span><span class="ot">JAX</span><span class="co">](https://jax.readthedocs.io)</span>.</span>
-<span id="cb26-296"><a href="#cb26-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-299"><a href="#cb26-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-300"><a href="#cb26-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-301"><a href="#cb26-301" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-302"><a href="#cb26-302" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g_1(params, x):</span>
-<span id="cb26-303"><a href="#cb26-303" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.sigmoid(params[<span class="st">'w1'</span>] <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.0</span>)</span>
-<span id="cb26-304"><a href="#cb26-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-305"><a href="#cb26-305" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-306"><a href="#cb26-306" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g_2(params, x):</span>
-<span id="cb26-307"><a href="#cb26-307" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.sigmoid(params[<span class="st">'w2'</span>] <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.0</span>)</span>
-<span id="cb26-308"><a href="#cb26-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-309"><a href="#cb26-309" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-310"><a href="#cb26-310" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g(params, x):</span>
-<span id="cb26-311"><a href="#cb26-311" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> g_2(params, g_1(params, x))</span>
-<span id="cb26-312"><a href="#cb26-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-313"><a href="#cb26-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-314"><a href="#cb26-314" aria-hidden="true" tabindex="-1"></a>Utilizando unos parámetros aleatorios generados con el siguiente código </span>
-<span id="cb26-315"><a href="#cb26-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-318"><a href="#cb26-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-319"><a href="#cb26-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-320"><a href="#cb26-320" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
-<span id="cb26-321"><a href="#cb26-321" aria-hidden="true" tabindex="-1"></a>key, subkey1, subkey2 <span class="op">=</span> jax.random.split(key, num<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb26-322"><a href="#cb26-322" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> <span class="bu">dict</span>(w1<span class="op">=</span>jax.random.normal(subkey1),</span>
-<span id="cb26-323"><a href="#cb26-323" aria-hidden="true" tabindex="-1"></a>              w2<span class="op">=</span>jax.random.normal(subkey2))</span>
-<span id="cb26-324"><a href="#cb26-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-325"><a href="#cb26-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-326"><a href="#cb26-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-329"><a href="#cb26-329" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-330"><a href="#cb26-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-331"><a href="#cb26-331" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> jax.grad(g_1)(params, <span class="fl">1.0</span>)</span>
-<span id="cb26-332"><a href="#cb26-332" aria-hidden="true" tabindex="-1"></a>g1_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>_[<span class="st">"w1"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
-<span id="cb26-333"><a href="#cb26-333" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> jax.grad(g_2)(params, <span class="fl">1.0</span>)</span>
-<span id="cb26-334"><a href="#cb26-334" aria-hidden="true" tabindex="-1"></a>g2_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>_[<span class="st">"w2"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
-<span id="cb26-335"><a href="#cb26-335" aria-hidden="true" tabindex="-1"></a>tot <span class="op">=</span> jax.grad(g)(params, <span class="fl">1.0</span>)</span>
-<span id="cb26-336"><a href="#cb26-336" aria-hidden="true" tabindex="-1"></a>g12_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>tot[<span class="st">"w1"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
-<span id="cb26-337"><a href="#cb26-337" aria-hidden="true" tabindex="-1"></a>g22_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>tot[<span class="st">"w2"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
-<span id="cb26-338"><a href="#cb26-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-339"><a href="#cb26-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-340"><a href="#cb26-340" aria-hidden="true" tabindex="-1"></a>se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., <span class="in">`jax.grad(g_1)(params, 1.0)`</span>) y $g_2$ con respecto a $w_2$ (i.e., <span class="in">`jax.grad(g_2)(params, 1.0)`</span>) es <span class="in">`{python} g1_f`</span> y <span class="in">`{python} g2_f`</span>, respectivamente. El problema viene cuando se calcula $\frac{\partial g}{\partial w_1}$ en este caso se obsevar que el gradiente es pequeño comparado con el gradiente obtenido en $\frac{d g}{d w_1},$ i.e., <span class="in">`jax.grad(g)(params, 1.0)`</span>, donde se observa que el gradiente para $w_1$ corresponde a <span class="in">`{python} g12_f`</span>, el gradiente de $w_2$ sigue en la misma mágnitud teniendo un valor de <span class="in">`{python} g22_f`</span>. </span>
-<span id="cb26-341"><a href="#cb26-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-342"><a href="#cb26-342" aria-hidden="true" tabindex="-1"></a>El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de manera exponencial, entonces los pesos asociados a las capas alejadas de la capa de salida reciben un gradiente equivalente a cero y no se cuenta con información para actualizar sus pesos. Por este motivo es recomendable utilizar funciones de activación que no presenten esta característica, una muy utilizada es $\textsf{ReLU}(x) = \max(0, x)$.</span>
-<span id="cb26-343"><a href="#cb26-343" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-344"><a href="#cb26-344" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejemplo: Dígitos</span></span>
-<span id="cb26-345"><a href="#cb26-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-346"><a href="#cb26-346" aria-hidden="true" tabindex="-1"></a>Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones. </span>
-<span id="cb26-347"><a href="#cb26-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-350"><a href="#cb26-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-351"><a href="#cb26-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-352"><a href="#cb26-352" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-353"><a href="#cb26-353" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb26-354"><a href="#cb26-354" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-355"><a href="#cb26-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-356"><a href="#cb26-356" aria-hidden="true" tabindex="-1"></a>Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase <span class="in">`StandardScaler`</span> se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (<span class="in">`T`</span>) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba <span class="in">`G`</span>. </span>
-<span id="cb26-357"><a href="#cb26-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-360"><a href="#cb26-360" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-361"><a href="#cb26-361" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-362"><a href="#cb26-362" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(T)</span>
-<span id="cb26-363"><a href="#cb26-363" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> normalize.transform(T)</span>
-<span id="cb26-364"><a href="#cb26-364" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> normalize.transform(G)</span>
-<span id="cb26-365"><a href="#cb26-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-366"><a href="#cb26-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-367"><a href="#cb26-367" aria-hidden="true" tabindex="-1"></a>Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor $1$ representa la clase, esto se realiza con las siguientes instrucciones. </span>
-<span id="cb26-368"><a href="#cb26-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-371"><a href="#cb26-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-372"><a href="#cb26-372" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-373"><a href="#cb26-373" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
-<span id="cb26-374"><a href="#cb26-374" aria-hidden="true" tabindex="-1"></a>yt_oh <span class="op">=</span> jax.nn.one_hot(y_t, n_labels)</span>
-<span id="cb26-375"><a href="#cb26-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-376"><a href="#cb26-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-379"><a href="#cb26-379" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-380"><a href="#cb26-380" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-381"><a href="#cb26-381" aria-hidden="true" tabindex="-1"></a>t_shape_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>T<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb26-382"><a href="#cb26-382" aria-hidden="true" tabindex="-1"></a>n_labels_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>n_labels<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb26-383"><a href="#cb26-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-384"><a href="#cb26-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-385"><a href="#cb26-385" aria-hidden="true" tabindex="-1"></a>Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en esta caso corresponde a <span class="in">`{python} t_shape_f`</span> (<span class="in">`T.shape[1]`</span>) y la última capa tiene que tener de salida el número de clases, en este caso <span class="in">`{python} n_labels_f`</span> (<span class="in">`n_labels`</span>), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que la dimensiones sean coherentes con la operación que se va a realizar. </span>
-<span id="cb26-386"><a href="#cb26-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-387"><a href="#cb26-387" aria-hidden="true" tabindex="-1"></a>La red que se va a implementar es la siguiente, como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. </span>
-<span id="cb26-388"><a href="#cb26-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-389"><a href="#cb26-389" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-390"><a href="#cb26-390" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb26-391"><a href="#cb26-391" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1^{32} &amp;= \phi(W^{32\times 64} \mathbf x^{64} + \mathbf w_{1_0}^{32})<span class="sc">\\</span></span>
-<span id="cb26-392"><a href="#cb26-392" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_2^{16} &amp;= \phi(W^{16\times 32} \hat{\mathbf{y}}_1^{32} + \mathbf w_{2_0}^{16})<span class="sc">\\</span></span>
-<span id="cb26-393"><a href="#cb26-393" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}^{10} &amp;= W^{10\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{10}</span>
-<span id="cb26-394"><a href="#cb26-394" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb26-395"><a href="#cb26-395" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-396"><a href="#cb26-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-397"><a href="#cb26-397" aria-hidden="true" tabindex="-1"></a>Considerando que las entradas se encuentran en una matrix $X^{N\times64},$ entonces se puede definir esta estructura en términos de múltiplicación de matrices, lo cual queda como</span>
-<span id="cb26-398"><a href="#cb26-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-399"><a href="#cb26-399" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-400"><a href="#cb26-400" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb26-401"><a href="#cb26-401" aria-hidden="true" tabindex="-1"></a>\hat{Y}_1^{N\times 32} &amp;= \phi(X^{N\times 64} W^{64\times 32} + \mathbf w_{1_0}^{32})<span class="sc">\\</span></span>
-<span id="cb26-402"><a href="#cb26-402" aria-hidden="true" tabindex="-1"></a>\hat{Y}_2^{N\times 16} &amp;= \phi(\hat{Y}_1^{N\times 32} W^{32\times 16} + \mathbf w_{2_0}^{16})<span class="sc">\\</span></span>
-<span id="cb26-403"><a href="#cb26-403" aria-hidden="true" tabindex="-1"></a>\hat{Y}^{N\times 10} &amp;= \hat{Y}_2^{N\times 16} W^{16\times 10} + \mathbf w_{3_0}^{10}<span class="sc">\\</span></span>
-<span id="cb26-404"><a href="#cb26-404" aria-hidden="true" tabindex="-1"></a>\end{split},</span>
-<span id="cb26-405"><a href="#cb26-405" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-406"><a href="#cb26-406" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-407"><a href="#cb26-407" aria-hidden="true" tabindex="-1"></a>donde la suma con el término $\mathbf w_0$ se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación. </span>
-<span id="cb26-408"><a href="#cb26-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-411"><a href="#cb26-411" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-412"><a href="#cb26-412" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-413"><a href="#cb26-413" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> [<span class="dv">64</span>, <span class="dv">32</span>, <span class="dv">16</span>, <span class="dv">10</span>]</span>
-<span id="cb26-414"><a href="#cb26-414" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-415"><a href="#cb26-415" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-416"><a href="#cb26-416" aria-hidden="true" tabindex="-1"></a>Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de <span class="in">`d`</span> creando pares, para generar las dimensiones adecuadas para las matrices $W.$</span>
-<span id="cb26-417"><a href="#cb26-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-420"><a href="#cb26-420" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-421"><a href="#cb26-421" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-422"><a href="#cb26-422" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(d, key<span class="op">=</span><span class="dv">0</span>):</span>
-<span id="cb26-423"><a href="#cb26-423" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
-<span id="cb26-424"><a href="#cb26-424" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> []</span>
-<span id="cb26-425"><a href="#cb26-425" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> init, end <span class="kw">in</span> <span class="bu">zip</span>(d, d[<span class="dv">1</span>:]):</span>
-<span id="cb26-426"><a href="#cb26-426" aria-hidden="true" tabindex="-1"></a>        key, subkey1, subkey2 <span class="op">=</span> jax.random.split(key, num<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb26-427"><a href="#cb26-427" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=</span> <span class="bu">dict</span>(w<span class="op">=</span>jax.random.normal(subkey1, (init, end)) <span class="op">*</span> jnp.sqrt(<span class="dv">2</span> <span class="op">/</span> (init <span class="op">*</span> end)),</span>
-<span id="cb26-428"><a href="#cb26-428" aria-hidden="true" tabindex="-1"></a>                 w0<span class="op">=</span>jax.random.normal(subkey2, (end, )) <span class="op">*</span> jnp.sqrt(<span class="dv">2</span> <span class="op">/</span> end))</span>
-<span id="cb26-429"><a href="#cb26-429" aria-hidden="true" tabindex="-1"></a>        params.append(_)</span>
-<span id="cb26-430"><a href="#cb26-430" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span>
-<span id="cb26-431"><a href="#cb26-431" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-432"><a href="#cb26-432" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-433"><a href="#cb26-433" aria-hidden="true" tabindex="-1"></a>Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación $\phi$ seleccionada fue $\textsf{ReLU}$ que está implementada en la función <span class="in">`jax.nn.relu`</span>.</span>
-<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-437"><a href="#cb26-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-438"><a href="#cb26-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-439"><a href="#cb26-439" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-440"><a href="#cb26-440" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ann(params, D):</span>
-<span id="cb26-441"><a href="#cb26-441" aria-hidden="true" tabindex="-1"></a>    y1 <span class="op">=</span> jax.nn.relu(D <span class="op">@</span> params[<span class="dv">0</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">0</span>][<span class="st">'w0'</span>])</span>
-<span id="cb26-442"><a href="#cb26-442" aria-hidden="true" tabindex="-1"></a>    y2 <span class="op">=</span> jax.nn.relu(y1 <span class="op">@</span> params[<span class="dv">1</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">1</span>][<span class="st">'w0'</span>])</span>
-<span id="cb26-443"><a href="#cb26-443" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y2 <span class="op">@</span> params[<span class="dv">2</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">2</span>][<span class="st">'w0'</span>]</span>
-<span id="cb26-444"><a href="#cb26-444" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-445"><a href="#cb26-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-446"><a href="#cb26-446" aria-hidden="true" tabindex="-1"></a>Como medida de error se usa la Entropía Cruzada (@sec-entropia-cruzada) tal y como se implementa a continuación. El caso $0 \log 0$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa <span class="in">`jnp.nansum`</span> que trata los valores no definidos como ceros. </span>
-<span id="cb26-447"><a href="#cb26-447" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-450"><a href="#cb26-450" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-451"><a href="#cb26-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-452"><a href="#cb26-452" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
-<span id="cb26-453"><a href="#cb26-453" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, D, y_oh):</span>
-<span id="cb26-454"><a href="#cb26-454" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> jax.nn.softmax(ann(params, D), axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb26-455"><a href="#cb26-455" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> jnp.nansum(y_oh <span class="op">*</span> jnp.log(hy), axis<span class="op">=</span><span class="dv">1</span>).mean()</span>
-<span id="cb26-456"><a href="#cb26-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-457"><a href="#cb26-457" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-458"><a href="#cb26-458" aria-hidden="true" tabindex="-1"></a>En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función <span class="in">`update_finite`</span> que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior. </span>
-<span id="cb26-459"><a href="#cb26-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-462"><a href="#cb26-462" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-463"><a href="#cb26-463" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-464"><a href="#cb26-464" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
-<span id="cb26-465"><a href="#cb26-465" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
-<span id="cb26-466"><a href="#cb26-466" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_finite(a, b):</span>
-<span id="cb26-467"><a href="#cb26-467" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> jnp.isfinite(b)</span>
-<span id="cb26-468"><a href="#cb26-468" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.where(m, b, a)</span>
-<span id="cb26-469"><a href="#cb26-469" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb26-470"><a href="#cb26-470" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
-<span id="cb26-471"><a href="#cb26-471" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, opt_state, X, y_oh):</span>
-<span id="cb26-472"><a href="#cb26-472" aria-hidden="true" tabindex="-1"></a>        loss_value, grads <span class="op">=</span> error_grad(params, X, y_oh)</span>
-<span id="cb26-473"><a href="#cb26-473" aria-hidden="true" tabindex="-1"></a>        updates, opt_state <span class="op">=</span> optimizer.update(grads, opt_state, params)</span>
-<span id="cb26-474"><a href="#cb26-474" aria-hidden="true" tabindex="-1"></a>        params <span class="op">=</span> optax.apply_updates(params, updates)</span>
-<span id="cb26-475"><a href="#cb26-475" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> params, opt_state, loss_value</span>
-<span id="cb26-476"><a href="#cb26-476" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb26-477"><a href="#cb26-477" aria-hidden="true" tabindex="-1"></a>    opt_state <span class="op">=</span> optimizer.init(params)</span>
-<span id="cb26-478"><a href="#cb26-478" aria-hidden="true" tabindex="-1"></a>    error_grad  <span class="op">=</span> jax.value_and_grad(media_entropia_cruzada)    </span>
-<span id="cb26-479"><a href="#cb26-479" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> []</span>
-<span id="cb26-480"><a href="#cb26-480" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(epocas):</span>
-<span id="cb26-481"><a href="#cb26-481" aria-hidden="true" tabindex="-1"></a>        p, opt_state, loss_value <span class="op">=</span> update(params, opt_state, T, yt_oh)</span>
-<span id="cb26-482"><a href="#cb26-482" aria-hidden="true" tabindex="-1"></a>        params <span class="op">=</span> jax.tree_map(update_finite, params, p)</span>
-<span id="cb26-483"><a href="#cb26-483" aria-hidden="true" tabindex="-1"></a>        error.append(loss_value)</span>
-<span id="cb26-484"><a href="#cb26-484" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span>
-<span id="cb26-485"><a href="#cb26-485" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-486"><a href="#cb26-486" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-487"><a href="#cb26-487" aria-hidden="true" tabindex="-1"></a>Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.</span>
-<span id="cb26-488"><a href="#cb26-488" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-491"><a href="#cb26-491" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-492"><a href="#cb26-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-493"><a href="#cb26-493" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales(d)</span>
-<span id="cb26-494"><a href="#cb26-494" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
-<span id="cb26-495"><a href="#cb26-495" aria-hidden="true" tabindex="-1"></a>p, error <span class="op">=</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>)</span>
-<span id="cb26-496"><a href="#cb26-496" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-497"><a href="#cb26-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-500"><a href="#cb26-500" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb26-501"><a href="#cb26-501" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-502"><a href="#cb26-502" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> (ann(p, G).argmax(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">!=</span> y_g).mean()</span>
-<span id="cb26-503"><a href="#cb26-503" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>error_f<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb26-504"><a href="#cb26-504" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-505"><a href="#cb26-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-506"><a href="#cb26-506" aria-hidden="true" tabindex="-1"></a>El resultado de esta red, es que el error en el conjunto de prueba es <span class="in">`{python} error_f`</span> calculado con la siguiente instrucción <span class="in">`(ann(p, G).argmax(axis=1) != y_g).mean()`</span>. </span>
+<div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Redes Neuronales</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación.</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.lax <span class="im">as</span> lax</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optax</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris, load_digits</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/5C9wNeDQ5eU width="560" height="315" &gt;}}</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-11}</span></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regresión Logística Multinomial {#sec-regresion-logistica-multinomial}</span></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>La idea de regresión logística es modelar $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Ber}(y \mid \textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0)),$ es decir, que la </span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>clase $y$ esta modelada como una distribución Bernoulli con parámetro $\textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0).$ Siguiendo está definición que es equivalente a la mostrada <span class="co">[</span><span class="ot">anteriormente</span><span class="co">](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion)</span>, se puede modelar a un problema de multiples clases como $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Cat}(y \mid \textsf{softmax}(W \mathbf x + \mathbf w_0)),$ es decir, que la clase proviene de una distribución Categórica con parámetros $\textsf{softmax}(W \mathbf x + \mathbf w_0),$ donde $W \in \mathbb R^{K \times d},$ $\mathbf x \in \mathbb R^d$ y $\mathbf w_0 \in \mathbb R^d.$ </span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>La función $\textsf{softmax}(\mathbf v)$, donde $\mathbf v = W \mathbf x + \mathbf w_0$ está definida como:</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>\mathbf v_i = \frac{\exp \mathbf v_i}{\sum_{j=1}^K \exp \mathbf v_j}.</span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`jax.nn.softmax`</span> implementa $\textsf{softmax}$; en el siguiente ejemplo se calcula para el vector <span class="in">`[2, 1, 3]`</span> </span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>jax.nn.softmax(np.array([<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>]))</span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>Se puede observar que $\textsf{softmax}$ transforma los valores del vector $\mathbf v$ en probabilidades. </span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno. </span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(D)</span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> normalize.transform(D)</span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a>El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d.$ Los parámetros iniciales se puede generar con la función <span class="in">`parametros_iniciales`</span> tal y como se muestra a continuación.</span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a><span class="co">#|  echo: true</span></span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(key<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> D.shape[<span class="dv">1</span>]</span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> []</span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>    normal <span class="op">=</span> jax.random.normal</span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a>    sqrt <span class="op">=</span> jnp.sqrt</span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_labels):</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a>        key, subkey <span class="op">=</span> jax.random.split(key)</span>
+<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=</span> <span class="bu">dict</span>(w<span class="op">=</span>normal(subkey, (d, )) <span class="op">*</span> sqrt(<span class="dv">2</span> <span class="op">/</span> d),</span>
+<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a>                 w0<span class="op">=</span>jnp.ones(<span class="dv">1</span>))</span>
+<span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a>        params.append(_)</span>
+<span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span>
+<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>Utilizando los parámetros en el formato anterior, hace que el modelo se pueda implementar con las siguientes instrucciones. Donde el ciclo es por cada uno de los parámetros de las $K$ clases y la última línea calcula el $\textsf{softmax}.$</span>
+<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modelo(params, X):</span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> []</span>
+<span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> params:</span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>        o.append(X <span class="op">@</span> p[<span class="st">'w'</span>] <span class="op">+</span> p[<span class="st">'w0'</span>])</span>
+<span id="cb25-108"><a href="#cb25-108" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.softmax(jnp.array(o), axis<span class="op">=</span><span class="dv">0</span>).T</span>
+<span id="cb25-109"><a href="#cb25-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-110"><a href="#cb25-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-111"><a href="#cb25-111" aria-hidden="true" tabindex="-1"></a>Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (@sec-entropia-cruzada), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad $1$ corresponde a la clase, esto se puede realizar con el siguiente código. </span>
+<span id="cb25-112"><a href="#cb25-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-115"><a href="#cb25-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-116"><a href="#cb25-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-117"><a href="#cb25-117" aria-hidden="true" tabindex="-1"></a>y_oh <span class="op">=</span> jax.nn.one_hot(y, n_labels)</span>
+<span id="cb25-118"><a href="#cb25-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-120"><a href="#cb25-120" aria-hidden="true" tabindex="-1"></a>Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento. </span>
+<span id="cb25-121"><a href="#cb25-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-124"><a href="#cb25-124" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-125"><a href="#cb25-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-126"><a href="#cb25-126" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-127"><a href="#cb25-127" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, X, y_oh):</span>
+<span id="cb25-128"><a href="#cb25-128" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> modelo(params, X)</span>
+<span id="cb25-129"><a href="#cb25-129" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (y_oh <span class="op">*</span> jnp.log(hy)).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>).mean()</span>
+<span id="cb25-130"><a href="#cb25-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-131"><a href="#cb25-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-132"><a href="#cb25-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-133"><a href="#cb25-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optimización</span></span>
+<span id="cb25-134"><a href="#cb25-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-135"><a href="#cb25-135" aria-hidden="true" tabindex="-1"></a>El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( @sec-regresion-logistica-optimizacion) con algunos ajustes. Lo primero es que se desarrolla todo en una función <span class="in">`fit`</span> que recibe el parámetro $\eta$, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento. </span>
+<span id="cb25-136"><a href="#cb25-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-137"><a href="#cb25-137" aria-hidden="true" tabindex="-1"></a>Dentro de la función <span class="in">`fit`</span>se observa la función <span class="in">`update`</span> que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función <span class="in">`update`</span> genera la función que calculará el valor y el gradiente de la función <span class="in">`media_entropia_cruzada`</span>. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época. </span>
+<span id="cb25-138"><a href="#cb25-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-141"><a href="#cb25-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-142"><a href="#cb25-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-143"><a href="#cb25-143" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(eta, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
+<span id="cb25-144"><a href="#cb25-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
+<span id="cb25-145"><a href="#cb25-145" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, eta, X, y_oh):</span>
+<span id="cb25-146"><a href="#cb25-146" aria-hidden="true" tabindex="-1"></a>        _ , gs <span class="op">=</span> error_grad(params, X, y_oh)</span>
+<span id="cb25-147"><a href="#cb25-147" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> _, jax.tree_map(<span class="kw">lambda</span> p, g: p <span class="op">-</span> eta <span class="op">*</span> g,</span>
+<span id="cb25-148"><a href="#cb25-148" aria-hidden="true" tabindex="-1"></a>                               params, gs)</span>
+<span id="cb25-149"><a href="#cb25-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-150"><a href="#cb25-150" aria-hidden="true" tabindex="-1"></a>    error_grad  <span class="op">=</span> jax.value_and_grad(media_entropia_cruzada)</span>
+<span id="cb25-151"><a href="#cb25-151" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> []</span>
+<span id="cb25-152"><a href="#cb25-152" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(epocas):</span>
+<span id="cb25-153"><a href="#cb25-153" aria-hidden="true" tabindex="-1"></a>        _, params <span class="op">=</span> update(params, eta, D, y_oh)</span>
+<span id="cb25-154"><a href="#cb25-154" aria-hidden="true" tabindex="-1"></a>        error.append(_)</span>
+<span id="cb25-155"><a href="#cb25-155" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span>
+<span id="cb25-156"><a href="#cb25-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-157"><a href="#cb25-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-158"><a href="#cb25-158" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optimización Método Adam {#sec-adam}</span></span>
+<span id="cb25-159"><a href="#cb25-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-160"><a href="#cb25-160" aria-hidden="true" tabindex="-1"></a>Como se había visto en la @sec-actualizacion-parametros existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería <span class="co">[</span><span class="ot">optax</span><span class="co">](https://optax.readthedocs.io)</span>) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales. </span>
+<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-162"><a href="#cb25-162" aria-hidden="true" tabindex="-1"></a>Siguiendo la misma estructura que la función <span class="in">`fit`</span>, la función <span class="in">`adam`</span> recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función <span class="in">`update`</span> (que se encuentra en <span class="in">`adam`</span>) calcula el valor de la función de error y su gradiente, estos son utilizados por <span class="in">`optimizer.update`</span> para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de <span class="in">`update`</span> inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función <span class="in">`media_entropia_cruzada`</span>. El ciclo llama la función <span class="in">`update`</span> y guarda el error encontrado en cada época. </span>
+<span id="cb25-163"><a href="#cb25-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-166"><a href="#cb25-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-167"><a href="#cb25-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-168"><a href="#cb25-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-169"><a href="#cb25-169" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
+<span id="cb25-170"><a href="#cb25-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
+<span id="cb25-171"><a href="#cb25-171" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, opt_state, X, y_oh):</span>
+<span id="cb25-172"><a href="#cb25-172" aria-hidden="true" tabindex="-1"></a>        loss_value, grads <span class="op">=</span> error_grad(params,</span>
+<span id="cb25-173"><a href="#cb25-173" aria-hidden="true" tabindex="-1"></a>                                       X,</span>
+<span id="cb25-174"><a href="#cb25-174" aria-hidden="true" tabindex="-1"></a>                                       y_oh)</span>
+<span id="cb25-175"><a href="#cb25-175" aria-hidden="true" tabindex="-1"></a>        updates, opt_state <span class="op">=</span> optimizer.update(grads,</span>
+<span id="cb25-176"><a href="#cb25-176" aria-hidden="true" tabindex="-1"></a>                                              opt_state,</span>
+<span id="cb25-177"><a href="#cb25-177" aria-hidden="true" tabindex="-1"></a>                                              params)</span>
+<span id="cb25-178"><a href="#cb25-178" aria-hidden="true" tabindex="-1"></a>        params <span class="op">=</span> optax.apply_updates(params, updates)</span>
+<span id="cb25-179"><a href="#cb25-179" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> params, opt_state, loss_value</span>
+<span id="cb25-180"><a href="#cb25-180" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-181"><a href="#cb25-181" aria-hidden="true" tabindex="-1"></a>    opt_state <span class="op">=</span> optimizer.init(params)</span>
+<span id="cb25-182"><a href="#cb25-182" aria-hidden="true" tabindex="-1"></a>    error_grad  <span class="op">=</span> jax.value_and_grad(media_entropia_cruzada)    </span>
+<span id="cb25-183"><a href="#cb25-183" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> []</span>
+<span id="cb25-184"><a href="#cb25-184" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(epocas):</span>
+<span id="cb25-185"><a href="#cb25-185" aria-hidden="true" tabindex="-1"></a>        params, opt_state, loss_value <span class="op">=</span> update(params,</span>
+<span id="cb25-186"><a href="#cb25-186" aria-hidden="true" tabindex="-1"></a>                                               opt_state,</span>
+<span id="cb25-187"><a href="#cb25-187" aria-hidden="true" tabindex="-1"></a>                                               D,</span>
+<span id="cb25-188"><a href="#cb25-188" aria-hidden="true" tabindex="-1"></a>                                               y_oh)</span>
+<span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a>        error.append(loss_value)</span>
+<span id="cb25-190"><a href="#cb25-190" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span>
+<span id="cb25-191"><a href="#cb25-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-192"><a href="#cb25-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-193"><a href="#cb25-193" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparación entre Optimizadores</span></span>
+<span id="cb25-194"><a href="#cb25-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-195"><a href="#cb25-195" aria-hidden="true" tabindex="-1"></a>Los optimizadores descritos anteriormente se pueden utilizar con el siguiente código, donde la primera línea calcula los parámetros iniciales, después se llama a la función <span class="in">`fit`</span> para encontrar los parámetros con el primer método. La tercera línea genera una instancia del optimizador Adam; el cual se pasa a la función <span class="in">`adam`</span> para encontrar los parámetros con este método. </span>
+<span id="cb25-196"><a href="#cb25-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-199"><a href="#cb25-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-200"><a href="#cb25-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-201"><a href="#cb25-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-202"><a href="#cb25-202" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales()</span>
+<span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a>p1, error1 <span class="op">=</span> fit(<span class="fl">1e-2</span>, params)</span>
+<span id="cb25-204"><a href="#cb25-204" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
+<span id="cb25-205"><a href="#cb25-205" aria-hidden="true" tabindex="-1"></a>p2, error2 <span class="op">=</span> adam(optimizer, params)</span>
+<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método <span class="in">`adam`</span> converge más rápido y llega a un valor menor de Entropía Cruzada. </span>
+<span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-212"><a href="#cb25-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-213"><a href="#cb25-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb25-214"><a href="#cb25-214" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Comparación de diferentes optimizadores.</span></span>
+<span id="cb25-215"><a href="#cb25-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-redes-neuronales-adam</span></span>
+<span id="cb25-216"><a href="#cb25-216" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(entropia<span class="op">=</span>np.array(error1),</span>
+<span id="cb25-217"><a href="#cb25-217" aria-hidden="true" tabindex="-1"></a>                       optimizador<span class="op">=</span><span class="st">'fit'</span>,</span>
+<span id="cb25-218"><a href="#cb25-218" aria-hidden="true" tabindex="-1"></a>                       epoca<span class="op">=</span>np.arange(<span class="dv">1</span>, <span class="dv">501</span>)))</span>
+<span id="cb25-219"><a href="#cb25-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-220"><a href="#cb25-220" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat((df, pd.DataFrame(<span class="bu">dict</span>(entropia<span class="op">=</span>np.array(error2),</span>
+<span id="cb25-221"><a href="#cb25-221" aria-hidden="true" tabindex="-1"></a>                                      optimizador<span class="op">=</span><span class="st">'adam'</span>,</span>
+<span id="cb25-222"><a href="#cb25-222" aria-hidden="true" tabindex="-1"></a>                                      epoca<span class="op">=</span>np.arange(<span class="dv">1</span>, <span class="dv">501</span>)))))</span>
+<span id="cb25-223"><a href="#cb25-223" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'epoca'</span>, y<span class="op">=</span><span class="st">'entropia'</span>, hue<span class="op">=</span><span class="st">'optimizador'</span>, kind<span class="op">=</span><span class="st">'line'</span>)</span>
+<span id="cb25-224"><a href="#cb25-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>  </span>
+<span id="cb25-225"><a href="#cb25-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-228"><a href="#cb25-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-229"><a href="#cb25-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-230"><a href="#cb25-230" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> (y <span class="op">==</span> modelo(p1, D).argmax(axis<span class="op">=</span><span class="dv">1</span>)).mean()</span>
+<span id="cb25-231"><a href="#cb25-231" aria-hidden="true" tabindex="-1"></a>acc_fit_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>_<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb25-232"><a href="#cb25-232" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> (y <span class="op">==</span> modelo(p2, D).argmax(axis<span class="op">=</span><span class="dv">1</span>)).mean()</span>
+<span id="cb25-233"><a href="#cb25-233" aria-hidden="true" tabindex="-1"></a>acc_adam_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>_<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb25-234"><a href="#cb25-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-235"><a href="#cb25-235" aria-hidden="true" tabindex="-1"></a>Finalmente la exactitud (@sec-accuracy) en el conjunto de entrenamiento del modelo estimado con <span class="in">`fit`</span> es <span class="in">`{python} acc_fit_f`</span> (i.e., <span class="in">`(y == modelo(p1, D).argmax(axis=1)).mean()`</span>) y del estimado con <span class="in">`adam`</span> es <span class="in">`{python} acc_adam_f`</span>.</span>
+<span id="cb25-236"><a href="#cb25-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-237"><a href="#cb25-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## Perceptrón {#sec-preceptron}</span></span>
+<span id="cb25-238"><a href="#cb25-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-239"><a href="#cb25-239" aria-hidden="true" tabindex="-1"></a>La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de Discriminantes Lineales (@sec-discriminantes-lineales), es decir,  $g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.$ En problemas de clasificación binaria se encuentran los parámetros de $g(\mathbf x)$ de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de Regresión (@sec-regresion-ols) los parámetros de $g(\mathbf x)$ se encuentran utilizando mínimos cuadrados. </span>
+<span id="cb25-240"><a href="#cb25-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-241"><a href="#cb25-241" aria-hidden="true" tabindex="-1"></a>En el case de tener $K&gt;2$ clases entonces el problema se puede afrontar entrenando $g_k(\mathbf x)$ perceptrones ($k=1, \ldots, K$) tal y como se realizó Discriminantes Lineales (@sec-multiples-clases). De manera concisa se puede definir a $g: \mathbb R^d \rightarrow \mathbb R^K$, es decir, $g(\mathbf x)=W \mathbf x + \mathbf w_0$ tal y como se realizó en Regresión Logística Multinomial (@sec-regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$ y en el caso multiclase $g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$</span>
+<span id="cb25-242"><a href="#cb25-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-243"><a href="#cb25-243" aria-hidden="true" tabindex="-1"></a><span class="fu">### Composición de Perceptrones Lineales</span></span>
+<span id="cb25-244"><a href="#cb25-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-245"><a href="#cb25-245" aria-hidden="true" tabindex="-1"></a>Se puede realizar una composición de perceptrones de la siguiente manera, sea $g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$ y $g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$ es decir $g = g_2 \circ g_1.$ Realizando está composición en las ecuaciones descritas anteriormente se tiene </span>
+<span id="cb25-246"><a href="#cb25-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-247"><a href="#cb25-247" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-248"><a href="#cb25-248" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb25-249"><a href="#cb25-249" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= g_1(\mathbf x) <span class="sc">\\</span></span>
+<span id="cb25-250"><a href="#cb25-250" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= g_2(\hat{\mathbf{y}}_1)</span>
+<span id="cb25-251"><a href="#cb25-251" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb25-252"><a href="#cb25-252" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-253"><a href="#cb25-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-254"><a href="#cb25-254" aria-hidden="true" tabindex="-1"></a>Expandiendo las ecuaciones anteriores se tiene </span>
+<span id="cb25-255"><a href="#cb25-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= W_1 \mathbf x + \mathbf w_{1_0}<span class="sc">\\</span></span>
+<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0}<span class="sc">\\</span></span>
+<span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a>&amp;= W_2 (W_1 \mathbf x + \mathbf w_{1_0}) + \mathbf w_{2_0}<span class="sc">\\</span></span>
+<span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a>&amp;= W_2 W_1 \mathbf x + W_2 \mathbf w_{1_0} + \mathbf w_{2_0}<span class="sc">\\</span></span>
+<span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a>&amp;= W \mathbf x + \mathbf w_0</span>
+<span id="cb25-263"><a href="#cb25-263" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb25-264"><a href="#cb25-264" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-265"><a href="#cb25-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-266"><a href="#cb25-266" aria-hidden="true" tabindex="-1"></a>como se puede observar la composición realizada da como resultado una red donde se tienen que identificar $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d,$ es decir, son $K$ perceptrones equivalentes al modelado de Regresión Logística Multinomial. Esto es porque la composición fue con funciones lineales.</span>
+<span id="cb25-267"><a href="#cb25-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-268"><a href="#cb25-268" aria-hidden="true" tabindex="-1"></a><span class="fu">## Perceptrón Multicapa</span></span>
+<span id="cb25-269"><a href="#cb25-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-270"><a href="#cb25-270" aria-hidden="true" tabindex="-1"></a>Para evitar que la composición de perceptrones colapsen a una función equivalente, es necesario incluir una función no lineal, sea $\phi$ esta función no lineal, (a esta función se le conoce como **función de activación**) entonces se puede observar que la composición $g=g_2 \circ g_1$ donde $g_1 = \phi(W_1 \mathbf x + \mathbf w_{1_0})$ resulta en</span>
+<span id="cb25-271"><a href="#cb25-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-272"><a href="#cb25-272" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-273"><a href="#cb25-273" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb25-274"><a href="#cb25-274" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= \phi(W_1 \mathbf x + \mathbf w_{1_0}) <span class="sc">\\</span></span>
+<span id="cb25-275"><a href="#cb25-275" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0}</span>
+<span id="cb25-276"><a href="#cb25-276" aria-hidden="true" tabindex="-1"></a>\end{split}.</span>
+<span id="cb25-277"><a href="#cb25-277" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-278"><a href="#cb25-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-279"><a href="#cb25-279" aria-hidden="true" tabindex="-1"></a>A la estructura anterior se le conoce como una red neuronal de una capa oculta, la salida de la capa oculta está en $\hat{\mathbf{y}}_1$ y la salida de la red es $\hat{\mathbf y}.$ Siguiendo la notación anterior se puede definir una red neuronal con dos capas ocultas de la siguiente manera</span>
+<span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-281"><a href="#cb25-281" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-282"><a href="#cb25-282" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1 &amp;= \phi(W_1 \mathbf x + \mathbf w_{1_0}) <span class="sc">\\</span></span>
+<span id="cb25-284"><a href="#cb25-284" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y}_2 &amp;= \phi_2(W_2 \hat{\mathbf{y}}_1 + \mathbf w_{2_0})<span class="sc">\\</span></span>
+<span id="cb25-285"><a href="#cb25-285" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf y} &amp;= (W_3 \hat{\mathbf{y}}_2 + \mathbf w_{3_0})</span>
+<span id="cb25-286"><a href="#cb25-286" aria-hidden="true" tabindex="-1"></a>\end{split},</span>
+<span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-289"><a href="#cb25-289" aria-hidden="true" tabindex="-1"></a>donde la salida de la primera capa oculta ($\hat{\mathbf{y}}_1$) es la entrada de la segunda capa oculta y su salida ($\hat{\mathbf{y}}_2$) se convierte en la entrada de la capa de salida. </span>
+<span id="cb25-290"><a href="#cb25-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a><span class="fu">### Desvanecimiento del Gradiente</span></span>
+<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a>Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función $\phi$ es la función $\textsf{sigmoid},$ aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones $g_1(x) = w_1 x + 1.0$ y $g_1(x) = w_2 x + 1.0;$ haciéndose la composición de estas dos funciones $g=g_2 \circ g_1.$ </span>
+<span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a>Las siguientes instrucciones implementan las funciones anteriores utilizando la librería <span class="co">[</span><span class="ot">JAX</span><span class="co">](https://jax.readthedocs.io)</span>.</span>
+<span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-299"><a href="#cb25-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-300"><a href="#cb25-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-301"><a href="#cb25-301" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-302"><a href="#cb25-302" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g_1(params, x):</span>
+<span id="cb25-303"><a href="#cb25-303" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.sigmoid(params[<span class="st">'w1'</span>] <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.0</span>)</span>
+<span id="cb25-304"><a href="#cb25-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-305"><a href="#cb25-305" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-306"><a href="#cb25-306" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g_2(params, x):</span>
+<span id="cb25-307"><a href="#cb25-307" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.sigmoid(params[<span class="st">'w2'</span>] <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.0</span>)</span>
+<span id="cb25-308"><a href="#cb25-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-309"><a href="#cb25-309" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-310"><a href="#cb25-310" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g(params, x):</span>
+<span id="cb25-311"><a href="#cb25-311" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> g_2(params, g_1(params, x))</span>
+<span id="cb25-312"><a href="#cb25-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-313"><a href="#cb25-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-314"><a href="#cb25-314" aria-hidden="true" tabindex="-1"></a>Utilizando unos parámetros aleatorios generados con el siguiente código </span>
+<span id="cb25-315"><a href="#cb25-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-318"><a href="#cb25-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-319"><a href="#cb25-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-320"><a href="#cb25-320" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
+<span id="cb25-321"><a href="#cb25-321" aria-hidden="true" tabindex="-1"></a>key, subkey1, subkey2 <span class="op">=</span> jax.random.split(key, num<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb25-322"><a href="#cb25-322" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> <span class="bu">dict</span>(w1<span class="op">=</span>jax.random.normal(subkey1),</span>
+<span id="cb25-323"><a href="#cb25-323" aria-hidden="true" tabindex="-1"></a>              w2<span class="op">=</span>jax.random.normal(subkey2))</span>
+<span id="cb25-324"><a href="#cb25-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-325"><a href="#cb25-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-326"><a href="#cb25-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-329"><a href="#cb25-329" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-330"><a href="#cb25-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-331"><a href="#cb25-331" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> jax.grad(g_1)(params, <span class="fl">1.0</span>)</span>
+<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a>g1_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>_[<span class="st">"w1"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
+<span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> jax.grad(g_2)(params, <span class="fl">1.0</span>)</span>
+<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a>g2_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>_[<span class="st">"w2"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
+<span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a>tot <span class="op">=</span> jax.grad(g)(params, <span class="fl">1.0</span>)</span>
+<span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a>g12_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>tot[<span class="st">"w1"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
+<span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a>g22_f <span class="op">=</span> Markdown(<span class="ss">f'</span><span class="sc">{</span>tot[<span class="st">"w2"</span>]<span class="sc">:0.4f}</span><span class="ss">'</span>)</span>
+<span id="cb25-338"><a href="#cb25-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-339"><a href="#cb25-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-340"><a href="#cb25-340" aria-hidden="true" tabindex="-1"></a>se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., <span class="in">`jax.grad(g_1)(params, 1.0)`</span>) y $g_2$ con respecto a $w_2$ (i.e., <span class="in">`jax.grad(g_2)(params, 1.0)`</span>) es <span class="in">`{python} g1_f`</span> y <span class="in">`{python} g2_f`</span>, respectivamente. El problema viene cuando se calcula $\frac{\partial g}{\partial w_1}$ en este caso se obsevar que el gradiente es pequeño comparado con el gradiente obtenido en $\frac{d g}{d w_1},$ i.e., <span class="in">`jax.grad(g)(params, 1.0)`</span>, donde se observa que el gradiente para $w_1$ corresponde a <span class="in">`{python} g12_f`</span>, el gradiente de $w_2$ sigue en la misma mágnitud teniendo un valor de <span class="in">`{python} g22_f`</span>. </span>
+<span id="cb25-341"><a href="#cb25-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-342"><a href="#cb25-342" aria-hidden="true" tabindex="-1"></a>El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de manera exponencial, entonces los pesos asociados a las capas alejadas de la capa de salida reciben un gradiente equivalente a cero y no se cuenta con información para actualizar sus pesos. Por este motivo es recomendable utilizar funciones de activación que no presenten esta característica, una muy utilizada es $\textsf{ReLU}(x) = \max(0, x)$.</span>
+<span id="cb25-343"><a href="#cb25-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-344"><a href="#cb25-344" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejemplo: Dígitos</span></span>
+<span id="cb25-345"><a href="#cb25-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-346"><a href="#cb25-346" aria-hidden="true" tabindex="-1"></a>Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones. </span>
+<span id="cb25-347"><a href="#cb25-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-350"><a href="#cb25-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-351"><a href="#cb25-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-352"><a href="#cb25-352" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-353"><a href="#cb25-353" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb25-354"><a href="#cb25-354" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-355"><a href="#cb25-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-356"><a href="#cb25-356" aria-hidden="true" tabindex="-1"></a>Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase <span class="in">`StandardScaler`</span> se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (<span class="in">`T`</span>) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba <span class="in">`G`</span>. </span>
+<span id="cb25-357"><a href="#cb25-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-360"><a href="#cb25-360" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-361"><a href="#cb25-361" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(T)</span>
+<span id="cb25-363"><a href="#cb25-363" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> normalize.transform(T)</span>
+<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> normalize.transform(G)</span>
+<span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a>Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor $1$ representa la clase, esto se realiza con las siguientes instrucciones. </span>
+<span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-371"><a href="#cb25-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-372"><a href="#cb25-372" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-373"><a href="#cb25-373" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
+<span id="cb25-374"><a href="#cb25-374" aria-hidden="true" tabindex="-1"></a>yt_oh <span class="op">=</span> jax.nn.one_hot(y_t, n_labels)</span>
+<span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a>t_shape_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>T<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb25-382"><a href="#cb25-382" aria-hidden="true" tabindex="-1"></a>n_labels_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>n_labels<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb25-383"><a href="#cb25-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-384"><a href="#cb25-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-385"><a href="#cb25-385" aria-hidden="true" tabindex="-1"></a>Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en esta caso corresponde a <span class="in">`{python} t_shape_f`</span> (<span class="in">`T.shape[1]`</span>) y la última capa tiene que tener de salida el número de clases, en este caso <span class="in">`{python} n_labels_f`</span> (<span class="in">`n_labels`</span>), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que la dimensiones sean coherentes con la operación que se va a realizar. </span>
+<span id="cb25-386"><a href="#cb25-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-387"><a href="#cb25-387" aria-hidden="true" tabindex="-1"></a>La red que se va a implementar es la siguiente, como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. </span>
+<span id="cb25-388"><a href="#cb25-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-389"><a href="#cb25-389" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-390"><a href="#cb25-390" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb25-391"><a href="#cb25-391" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_1^{32} &amp;= \phi(W^{32\times 64} \mathbf x^{64} + \mathbf w_{1_0}^{32})<span class="sc">\\</span></span>
+<span id="cb25-392"><a href="#cb25-392" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}_2^{16} &amp;= \phi(W^{16\times 32} \hat{\mathbf{y}}_1^{32} + \mathbf w_{2_0}^{16})<span class="sc">\\</span></span>
+<span id="cb25-393"><a href="#cb25-393" aria-hidden="true" tabindex="-1"></a>\hat{\mathbf{y}}^{10} &amp;= W^{10\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{10}</span>
+<span id="cb25-394"><a href="#cb25-394" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb25-395"><a href="#cb25-395" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-396"><a href="#cb25-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-397"><a href="#cb25-397" aria-hidden="true" tabindex="-1"></a>Considerando que las entradas se encuentran en una matrix $X^{N\times64},$ entonces se puede definir esta estructura en términos de múltiplicación de matrices, lo cual queda como</span>
+<span id="cb25-398"><a href="#cb25-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-399"><a href="#cb25-399" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-400"><a href="#cb25-400" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb25-401"><a href="#cb25-401" aria-hidden="true" tabindex="-1"></a>\hat{Y}_1^{N\times 32} &amp;= \phi(X^{N\times 64} W^{64\times 32} + \mathbf w_{1_0}^{32})<span class="sc">\\</span></span>
+<span id="cb25-402"><a href="#cb25-402" aria-hidden="true" tabindex="-1"></a>\hat{Y}_2^{N\times 16} &amp;= \phi(\hat{Y}_1^{N\times 32} W^{32\times 16} + \mathbf w_{2_0}^{16})<span class="sc">\\</span></span>
+<span id="cb25-403"><a href="#cb25-403" aria-hidden="true" tabindex="-1"></a>\hat{Y}^{N\times 10} &amp;= \hat{Y}_2^{N\times 16} W^{16\times 10} + \mathbf w_{3_0}^{10}<span class="sc">\\</span></span>
+<span id="cb25-404"><a href="#cb25-404" aria-hidden="true" tabindex="-1"></a>\end{split},</span>
+<span id="cb25-405"><a href="#cb25-405" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb25-406"><a href="#cb25-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-407"><a href="#cb25-407" aria-hidden="true" tabindex="-1"></a>donde la suma con el término $\mathbf w_0$ se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación. </span>
+<span id="cb25-408"><a href="#cb25-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-411"><a href="#cb25-411" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-412"><a href="#cb25-412" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-413"><a href="#cb25-413" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> [<span class="dv">64</span>, <span class="dv">32</span>, <span class="dv">16</span>, <span class="dv">10</span>]</span>
+<span id="cb25-414"><a href="#cb25-414" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-415"><a href="#cb25-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-416"><a href="#cb25-416" aria-hidden="true" tabindex="-1"></a>Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de <span class="in">`d`</span> creando pares, para generar las dimensiones adecuadas para las matrices $W.$</span>
+<span id="cb25-417"><a href="#cb25-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-420"><a href="#cb25-420" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-421"><a href="#cb25-421" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-422"><a href="#cb25-422" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(d, key<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb25-423"><a href="#cb25-423" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
+<span id="cb25-424"><a href="#cb25-424" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> []</span>
+<span id="cb25-425"><a href="#cb25-425" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> init, end <span class="kw">in</span> <span class="bu">zip</span>(d, d[<span class="dv">1</span>:]):</span>
+<span id="cb25-426"><a href="#cb25-426" aria-hidden="true" tabindex="-1"></a>        key, subkey1, subkey2 <span class="op">=</span> jax.random.split(key, num<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb25-427"><a href="#cb25-427" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=</span> <span class="bu">dict</span>(w<span class="op">=</span>jax.random.normal(subkey1, (init, end)) <span class="op">*</span> jnp.sqrt(<span class="dv">2</span> <span class="op">/</span> (init <span class="op">*</span> end)),</span>
+<span id="cb25-428"><a href="#cb25-428" aria-hidden="true" tabindex="-1"></a>                 w0<span class="op">=</span>jax.random.normal(subkey2, (end, )) <span class="op">*</span> jnp.sqrt(<span class="dv">2</span> <span class="op">/</span> end))</span>
+<span id="cb25-429"><a href="#cb25-429" aria-hidden="true" tabindex="-1"></a>        params.append(_)</span>
+<span id="cb25-430"><a href="#cb25-430" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span>
+<span id="cb25-431"><a href="#cb25-431" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-432"><a href="#cb25-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-433"><a href="#cb25-433" aria-hidden="true" tabindex="-1"></a>Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación $\phi$ seleccionada fue $\textsf{ReLU}$ que está implementada en la función <span class="in">`jax.nn.relu`</span>.</span>
+<span id="cb25-434"><a href="#cb25-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-437"><a href="#cb25-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-438"><a href="#cb25-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-439"><a href="#cb25-439" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-440"><a href="#cb25-440" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ann(params, D):</span>
+<span id="cb25-441"><a href="#cb25-441" aria-hidden="true" tabindex="-1"></a>    y1 <span class="op">=</span> jax.nn.relu(D <span class="op">@</span> params[<span class="dv">0</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">0</span>][<span class="st">'w0'</span>])</span>
+<span id="cb25-442"><a href="#cb25-442" aria-hidden="true" tabindex="-1"></a>    y2 <span class="op">=</span> jax.nn.relu(y1 <span class="op">@</span> params[<span class="dv">1</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">1</span>][<span class="st">'w0'</span>])</span>
+<span id="cb25-443"><a href="#cb25-443" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y2 <span class="op">@</span> params[<span class="dv">2</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">2</span>][<span class="st">'w0'</span>]</span>
+<span id="cb25-444"><a href="#cb25-444" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-445"><a href="#cb25-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-446"><a href="#cb25-446" aria-hidden="true" tabindex="-1"></a>Como medida de error se usa la Entropía Cruzada (@sec-entropia-cruzada) tal y como se implementa a continuación. El caso $0 \log 0$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa <span class="in">`jnp.nansum`</span> que trata los valores no definidos como ceros. </span>
+<span id="cb25-447"><a href="#cb25-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-450"><a href="#cb25-450" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-451"><a href="#cb25-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-452"><a href="#cb25-452" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
+<span id="cb25-453"><a href="#cb25-453" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, D, y_oh):</span>
+<span id="cb25-454"><a href="#cb25-454" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> jax.nn.softmax(ann(params, D), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb25-455"><a href="#cb25-455" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> jnp.nansum(y_oh <span class="op">*</span> jnp.log(hy), axis<span class="op">=</span><span class="dv">1</span>).mean()</span>
+<span id="cb25-456"><a href="#cb25-456" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-457"><a href="#cb25-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-458"><a href="#cb25-458" aria-hidden="true" tabindex="-1"></a>En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función <span class="in">`update_finite`</span> que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior. </span>
+<span id="cb25-459"><a href="#cb25-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-462"><a href="#cb25-462" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-463"><a href="#cb25-463" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-464"><a href="#cb25-464" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
+<span id="cb25-465"><a href="#cb25-465" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
+<span id="cb25-466"><a href="#cb25-466" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_finite(a, b):</span>
+<span id="cb25-467"><a href="#cb25-467" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> jnp.isfinite(b)</span>
+<span id="cb25-468"><a href="#cb25-468" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.where(m, b, a)</span>
+<span id="cb25-469"><a href="#cb25-469" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-470"><a href="#cb25-470" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
+<span id="cb25-471"><a href="#cb25-471" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, opt_state, X, y_oh):</span>
+<span id="cb25-472"><a href="#cb25-472" aria-hidden="true" tabindex="-1"></a>        loss_value, grads <span class="op">=</span> error_grad(params, X, y_oh)</span>
+<span id="cb25-473"><a href="#cb25-473" aria-hidden="true" tabindex="-1"></a>        updates, opt_state <span class="op">=</span> optimizer.update(grads, opt_state, params)</span>
+<span id="cb25-474"><a href="#cb25-474" aria-hidden="true" tabindex="-1"></a>        params <span class="op">=</span> optax.apply_updates(params, updates)</span>
+<span id="cb25-475"><a href="#cb25-475" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> params, opt_state, loss_value</span>
+<span id="cb25-476"><a href="#cb25-476" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-477"><a href="#cb25-477" aria-hidden="true" tabindex="-1"></a>    opt_state <span class="op">=</span> optimizer.init(params)</span>
+<span id="cb25-478"><a href="#cb25-478" aria-hidden="true" tabindex="-1"></a>    error_grad  <span class="op">=</span> jax.value_and_grad(media_entropia_cruzada)    </span>
+<span id="cb25-479"><a href="#cb25-479" aria-hidden="true" tabindex="-1"></a>    error <span class="op">=</span> []</span>
+<span id="cb25-480"><a href="#cb25-480" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(epocas):</span>
+<span id="cb25-481"><a href="#cb25-481" aria-hidden="true" tabindex="-1"></a>        p, opt_state, loss_value <span class="op">=</span> update(params, opt_state, T, yt_oh)</span>
+<span id="cb25-482"><a href="#cb25-482" aria-hidden="true" tabindex="-1"></a>        params <span class="op">=</span> jax.tree_map(update_finite, params, p)</span>
+<span id="cb25-483"><a href="#cb25-483" aria-hidden="true" tabindex="-1"></a>        error.append(loss_value)</span>
+<span id="cb25-484"><a href="#cb25-484" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span>
+<span id="cb25-485"><a href="#cb25-485" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-486"><a href="#cb25-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-487"><a href="#cb25-487" aria-hidden="true" tabindex="-1"></a>Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.</span>
+<span id="cb25-488"><a href="#cb25-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-491"><a href="#cb25-491" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-492"><a href="#cb25-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb25-493"><a href="#cb25-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb25-494"><a href="#cb25-494" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales(d)</span>
+<span id="cb25-495"><a href="#cb25-495" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
+<span id="cb25-496"><a href="#cb25-496" aria-hidden="true" tabindex="-1"></a>p, error <span class="op">=</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb25-497"><a href="#cb25-497" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-498"><a href="#cb25-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-501"><a href="#cb25-501" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-502"><a href="#cb25-502" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-503"><a href="#cb25-503" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb25-504"><a href="#cb25-504" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> (ann(p, G).argmax(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">!=</span> y_g).mean()</span>
+<span id="cb25-505"><a href="#cb25-505" aria-hidden="true" tabindex="-1"></a>error_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>error_f<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb25-506"><a href="#cb25-506" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-507"><a href="#cb25-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-508"><a href="#cb25-508" aria-hidden="true" tabindex="-1"></a>El resultado de esta red, es que el error en el conjunto de prueba es <span class="in">`{python} error_f`</span> calculado con la siguiente instrucción <span class="in">`(ann(p, G).argmax(axis=1) != y_g).mean()`</span>. </span>
 </code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
