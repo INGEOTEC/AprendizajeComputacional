@@ -12,7 +12,7 @@ El **objetivo** de la unidad es explicar el área de aprendizaje computacional, 
 
 ## Aprendizaje Computacional
 
-Utilizando la descripción de @langley1986machine, se puede definir el **aprendizaje computacional** como una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el paso del tiempo. En sus inicios, el campo estaba enfocado al desarrollo de representaciones simbólicas, de la misma manera que la IA, sin prohibir las representaciones numéricas. Actualmente, el campo ha cambiado de dirección privilegiando las representaciones numéricas a las simbólicas, en particular, este documento se enfoca solamente a representaciones numéricas. 
+Según la descripción de @langley1986machine, el **aprendizaje computacional** es una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el tiempo. Inicialmente, el campo se centraba en el desarrollo de representaciones simbólicas, al igual que la IA, aunque también permitía representaciones numéricas. Actualmente, el enfoque ha cambiado, privilegiando las representaciones numéricas sobre las simbólicas. Este documento se centra exclusivamente en las representaciones numéricas.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
@@ -20,11 +20,11 @@ Utilizando la descripción de @langley1986machine, se puede definir el **aprendi
 Leer la carta editorial de @langley1986machine para conocer la visión que se tenía de aprendizaje computacional en esa época y contrastarla con la visión actual. 
 :::
 
-De acuerdo a @breiman2001statistical, existen dos metas al analizar datos donde es posible identificar valores de entrada y su respuesta. Estos objetivos son el **predecir** la respuesta de futuros eventos y el segundo es **extraer conocimiento** del proceso o fenómeno. Estas metas han dado origen a dos culturas en el modelado de los datos: la cultura del modelado de datos y la cultura del modelado de algoritmos. 
+Según @breiman2001statistical, al analizar datos con valores de entrada y respuesta, existen dos objetivos principales: **predecir** la respuesta de futuros eventos y **extraer conocimiento** del proceso o fenómeno. Estos objetivos han dado origen a dos enfoques en el modelado de datos: la cultura del modelado de datos y la cultura del modelado de algoritmos.
 
-En la cultura del modelado de datos, se asume que los datos provienen de una función que dependen de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos se estiman los parámetros y si los datos cumplen con las condiciones impuestas a la función, entonces se conoce el procedimiento que genera los datos y se está en la posición de obtener conocimiento del sistema, es decir se atacó la segunda meta. Dado que se tienen los parámetros y la estructura de la función es factible hacer predicciones de futuros eventos (primera meta).
+En la cultura del modelado de datos, se asume que los datos provienen de una función que depende de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos, se estiman los parámetros y, si los datos cumplen con las condiciones impuestas a la función, se puede conocer el procedimiento que genera los datos, logrando así la segunda meta. Con los parámetros y la estructura de la función, es posible hacer predicciones de futuros eventos (primera meta).
 
-En la cultura del modelado del algoritmo, no se asume ninguna estructura al sistema que genera los datos, el procedimiento es diseñar un algoritmo que replique la respuesta dada las entradas. Considerando que no se está asumiendo ningún modelo particular entonces el obtener conocimiento del sistema no es un prioridad. Por otro lado, es una prioridad encontrar el algoritmo que mejor reproduzca los datos y por lo tanto se desarrollan diferentes estrategias para medir el rendimiento del algoritmo y poder estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura. 
+En la cultura del modelado de algoritmos, no se asume ninguna estructura para el sistema que genera los datos. El enfoque es diseñar un algoritmo que replique la respuesta dada las entradas. Dado que no se asume ningún modelo particular, obtener conocimiento del sistema no es una prioridad. En cambio, la prioridad es encontrar el algoritmo que mejor reproduzca los datos, desarrollando diversas estrategias para medir el rendimiento del algoritmo y estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
@@ -110,9 +110,9 @@ m = KMeans(n_clusters=3, n_init='auto').fit(D)
 cl = m.predict(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(y).T,
-                     np.atleast_2d(cl).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase', 'Grupo'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = y.astype(str)
+df['Grupo'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Grupo')
 fig.tick_params(bottom=False, top=False, 
@@ -142,9 +142,9 @@ m = KMeans(n_clusters=2, n_init='auto').fit(D)
 cl = m.predict(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(y).T,
-                     np.atleast_2d(cl).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase', 'Grupo'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = y.astype(str)
+df['Grupo'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Grupo')
 fig.tick_params(bottom=False, top=False, 
@@ -225,8 +225,8 @@ Generar la figura anterior para el conjunto de datos de Breast Cancer Wisconsin 
 D, cl = load_breast_cancer(return_X_y=True)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(cl).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Clase')
 fig.tick_params(bottom=False, top=False, 
@@ -328,6 +328,45 @@ Se puede asumir que existe una función $f$ que genera la relación entrada sali
 Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funciones), $\mathcal H$, que se considera puede aproximar $f$; una función de error, $L$; y el error empírico $E(h \mid \mathcal T) = \sum_{(x, y) \in \mathcal T} L(y, h(x))$. Utilizando estos elementos la función buscada es: $h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal T)$.
 
 El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
+
+El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y comparar el rendimiento de diferentes algoritmos, permitiendo seleccionar el que tenga las mejores características. La @fig-comparacion-intro muestra el rendimiento utilizando el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap). En la figura se observa el rendimiento de clasificadores Gaussianos Ingenuo, LDA y QDA (@sec-metodos-parametricos), Máquinas de Soporte Vectorial lineal (M.S.V., ver @sec-discriminantes-lineales), Vecinos Cercanos (@sec-metodos-no-parametricos) y Árboles Aleatorios (@sec-ensambles). Se destaca que la M.S.V. presentó el mejor rendimiento, aunque estadísticamente es equivalente a algunos algoritmos marcados con la etiqueta *Equivalente* y es estadísticamente mejor que otros algoritmos marcados con la etiqueta *Diferente*.
+
+```{python}
+#| label: fig-comparacion-intro
+#| code-fold: true
+#| warning: false
+#| fig-cap: Comparación del rendimiento de algoritmos de clasificación en el conjunto de prueba.
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import Normalizer
+from sklearn.pipeline import make_pipeline
+from CompStats.metrics import recall_score
+
+bioresponse = fetch_openml(data_id=1464)
+y = bioresponse.target.to_numpy()
+D = bioresponse.data.to_numpy()
+Xtrain, Xtest, ytrain, ytest = train_test_split(D, np.array(y), random_state=13)
+names = ['Ingenuo', 'LDA', 'QDA', 'M.S.V', 'Vecinos', 'Bosques']
+algs = [GaussianNB(), LDA(), QDA(),
+        make_pipeline(Normalizer(), LinearSVC(class_weight='balanced')),
+        KNeighborsClassifier(),
+        RandomForestClassifier(class_weight='balanced')]
+score = recall_score(ytest, average='macro', use_tqdm=False)
+for name, alg in zip(names, algs):
+    alg.fit(Xtrain, ytrain)
+    score(alg.predict(Xtest), name=name)
+score.plot(value_name='Cobertura (promedio)', alg_legend='Algoritmos',
+           comp_legend='Comparación',
+           winner_legend='Mejor',
+           tie_legend='Equivalente',
+           loser_legend='Diferente')
+```
 
 ### Estilos de Aprendizaje
 
