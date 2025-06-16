@@ -6,13 +6,13 @@ El **objetivo** de la unidad es conocer y aplicar diferentes métodos lineales d
 
 ```{python}
 #| echo: true
-from sklearn.svm import LinearSVC, SVC
+from sklearn.svm import LinearSVC, SVC, LinearSVR
 from sklearn.linear_model import LogisticRegression
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, recall_score, precision_score
+from sklearn.metrics import f1_score, recall_score, precision_score, r2_score
 from scipy.stats import multivariate_normal
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_iris, load_diabetes
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
@@ -469,6 +469,27 @@ _ = plt.tight_layout()
 ```  
 
 
+### Regresión
+
+Las máquinas de soporte vectorial también se pueden utilizar para resolver problemas de regresión; su uso se ejemplifica utilizando el problema de Diabetes (@sec-diabetes), como se muestra en las siguiente dos instrucciones. 
+
+```{python}
+#| echo: True
+X, y = load_diabetes(return_X_y=True)
+Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, random_state=13)
+```
+
+La clase `LinearSVR` implementa la máquina de soporte vectorial lineal y su uso sigue la misma dinámica que en el case de clasificación, e.g.,
+
+```{python}
+#| echo: true
+svr = LinearSVR(C=100).fit(Xtrain, ytrain)
+hy_svr = svr.predict(Xtest)
+```
+
+donde la varianza capturada por el modelo (@eq-r2) es: `{python} Markdown(f'{r2_score(ytest, hy_svr):0.4f}')`.
+
+
 ## Regresión Logística {#sec-regresion-logistica}
 
 En clasificación binaria (@sec-binaria) se describió que la función discriminante se puede definir como la resta, i.e., $g_1(\mathbf x) - g_2(\mathbf x);$ equivalentemente se pudo haber seleccionado la división ($\frac{g_1(\mathbf x)}{g_2(\mathbf x)}$) para generar la función discriminante o el logaritmo de la división, i.e., $\log \frac{g_1(\mathbf x)}{g_2(\mathbf x)}.$ Esta última ecuación en el caso de $g_i(\mathbf x)=\mathbb P(\mathcal Y=i \mid \mathcal X=\mathbf x)$ corresponde a la función $\textsf{logit}$, tal y como se muestra a continuación.
@@ -504,7 +525,7 @@ $$
 
 donde $\mathbf w=\Sigma^{-1}(\mathbf \mu_1 - \mathbf \mu_2)$ y $w_0=-\frac{1}{2}(\mathbf \mu_1 + \mathbf \mu_2)^\intercal \Sigma^{-1}(\mathbf \mu_1 + \mathbf \mu_2)+ \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$
 
-En el caso de regresión logística, se asume que $\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) = \mathbf w \cdot \mathbf x + w_0$ y se realiza ninguna asunción sobre la distribución que tienen los datos. Equivalentemente, se puede asumir que $\log\frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)} = \mathbf w \cdot \mathbf x + w_0^0,$ realizando algunas substituciones se puede ver que $w_0 = w_0^0 + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$
+En el caso de regresión logística, se asume que $\textsf{logit}(\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)) = \mathbf w \cdot \mathbf x + w_0$ y no se asume nada con respecto a la distribución que tienen los datos. Equivalentemente, se puede asumir que $\log\frac{\mathbb P(\mathcal Y=1 \mid \mathcal X=\mathbf x)}{\mathbb P(\mathcal Y=2 \mid \mathcal X=\mathbf x)} = \mathbf w \cdot \mathbf x + w_0^0,$ realizando algunas substituciones se puede ver que $w_0 = w_0^0 + \log\frac{\mathbb P(\mathcal Y=1)}{\mathbb P(\mathcal Y=2)}.$
 
 ### Optimización
 
