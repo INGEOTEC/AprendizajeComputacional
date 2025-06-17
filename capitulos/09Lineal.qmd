@@ -10,9 +10,12 @@ from sklearn.svm import LinearSVC, SVC, LinearSVR
 from sklearn.linear_model import LogisticRegression
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, recall_score, precision_score, r2_score
+from sklearn.metrics import r2_score
+from sklearn.pipeline import make_pipeline
 from scipy.stats import multivariate_normal
-from sklearn.datasets import load_iris, load_diabetes
+from sklearn.preprocessing import Normalizer
+from sklearn.datasets import load_iris, load_diabetes, load_digits
+from CompStats.metrics import recall_score, f1_score, precision_score
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
@@ -286,7 +289,7 @@ _ = ax.axis('equal')
 
 ## Máquinas de Soporte Vectorial {#sec-svm}
 
-Es momento de describir algunos algoritmos para estimar los parámetros $\mathbf w$, y $w_0$ empezando por las máquinas de soporte vectorial. En este clasificador se asume un problema binario y las clases están representadas por $-1$ y $1$, es decir, $y \in \{-1, 1\}$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
+Es momento de describir algunos algoritmos para estimar los parámetros $\mathbf w$, y $w_0$ empezando por las Máquinas de Soporte Vectorial (MSV) propuestas por @cortes1995support. En este clasificador se asume un problema binario y las clases están representadas por $-1$ y $1$, es decir, $y \in \{-1, 1\}$. Entonces, las máquinas de soporte vectorial tratan de encontrar una función con las siguientes características. 
 
 Sea $\mathbf x_i$ un ejemplo que corresponde a la clase $1$ entonces se busca $\mathbf w$ tal que
 
@@ -409,11 +412,60 @@ for k, (C, legend) in enumerate(zip([1, 0.01], [False, True])):
           sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 0.65))
 _ = plt.tight_layout()
 ```  
-</details>
 
+Continuando con el comportamiento de las MSV lineales, está se encuentra implementada en la clase `LinearSVC` y su uso se ejemplifica utilizando el problema de dígitos (@sec-digitos); los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba utilizando las siguientes instrucciones. 
 
-Este problema de optimización cumple con todas las características para poder encontrar su solución optimizando el problema dual. El problema dual corresponde a maximizar $f_p$ con respecto a $\alpha_i,$ sujeto a que las restricciones de que el gradiente de $f_p$ con respecto a $\mid\mid\mathbf w \mid\mid$, $w_0$ y $\xi_i$ sean cero. Utilizando estas características el problema dual corresponde a 
+```{python}
+D, y = load_digits(return_X_y=True)
+Xtrain, Xtest, ytrain, ytest = train_test_split(D, y,
+                                                random_state=21)
+```
 
+El modelo se entrena siguiendo un procedimiento equivalente al de los otros modelos de clasificación vistos hasta ahora, tal y como se muestra a continuación.
+
+```{python}
+#| echo: true
+
+svm = LinearSVC().fit(Xtrain, ytrain)
+svm_n = make_pipeline(Normalizer(),
+                      LinearSVC()).fit(Xtrain,
+                                       ytrain)
+```
+
+En algunas ocasiones el rendimiento de MSV mejora cuando las entradas están normalizadas a tener una longitud uno.
+
+En algunas ocasiones, el rendimiento de las MSV mejora cuando las entradas están normalizadas a tener una longitud unitaria. El siguiente código muestra un flujo de trabajo donde el primer paso es normalizar las entradas para tener una longitud unitaria y, posteriormente, se entrena una MSV.
+
+```{python}
+#| echo: true
+svm_n = make_pipeline(Normalizer(),
+                      LinearSVC()).fit(Xtrain,
+                                       ytrain)
+```
+
+La @fig-comp-svm-norm muestra el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap) entre las MSV sin la normalización (MSV) y cuando las entradas están normalizadas (MSV (Norm.)). Se observa que el mejor rendimiento corresponde a la MSV normalizada aunque es estadísticamente equivalente a la máquina con las entradas originales.
+
+```{python}
+#| echo: true
+#| code-fold: true
+#| label: fig-comp-svm-norm
+#| fig-cap: Comparación entre MSV con y sin normalización
+
+score = recall_score(ytest, average='macro',
+                     use_tqdm=False)
+score(svm.predict(Xtest), name='MSV')
+score(svm_n.predict(Xtest), name='MSV (Norm.)')
+score.plot(value_name='Cobertura (promedio)',
+           alg_legend='Algoritmos',
+           comp_legend='Comparación',
+           winner_legend='Mejor',
+           tie_legend='Equivalente',
+           loser_legend='Diferente')
+```
+
+### Kernel
+
+El problema de optimización de la MSV cumple con todas las características para poder encontrar su solución optimizando el problema dual. El problema dual corresponde a maximizar $f_p$ con respecto a $\alpha_i,$ sujeto a que las restricciones de que el gradiente de $f_p$ con respecto a $\mid\mid\mathbf w \mid\mid$, $w_0$ y $\xi_i$ sean cero. Utilizando estas características el problema dual corresponde a 
 
 $$
 f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j \mathbf x_i \cdot \mathbf x_j,
@@ -422,8 +474,6 @@ $$
 sujeto a las restricciones $\sum_i^N \alpha_i y_i = 0$ y $0 \leq \alpha_i \leq C.$
 
 El problema de optimización dual tiene unas características que lo hacen deseable en ciertos casos, por ejemplo, el problema depende del número de ejemplos ($N$) en lugar de la dimensión. Entonces en problemas donde $d > N$ es más conveniente utilizar el dual.
-
-### Kernel
 
 La otra característica del problema dual es que permite visualizar lo siguiente. Suponiendo que se usa una función $\phi: \mathbb R^d \leftarrow \mathbf R^{\hat d},$ de tal manera, que en el espacio $\phi$ se puede encontrar un hiperplano que separa las clases. Incorporando la función $\phi$ produce la siguiente función a optimizar 
 
@@ -469,6 +519,29 @@ _ = plt.tight_layout()
 ```  
 
 
+El uso de la MSV con un kernel polinomial de grado dos se ejemplifica en el siguiente código.
+
+```{python}
+svm_k = SVC(kernel='poly', degree=2).fit(Xtrain, ytrain)
+```
+
+La @fig-comp-svm-todos muestra el rendimiento de las MSV lineal con entradas originales y normalizadas, y una MSV con un kernel estimado en el paso anterior; se observa que el el kernel hace que el rendimiento sea estadísticamente superior a las MSV lineales. 
+
+```{python}
+#| echo: true
+#| code-fold: true
+#| label: fig-comp-svm-todos
+#| fig-cap: Comparación entre MSV lineales y con kernel polinomial de grado dos. 
+
+score(svm_k.predict(Xtest), name='MSV (Kernel)')
+score.plot(value_name='Cobertura (promedio)',
+           alg_legend='Algoritmos',
+           comp_legend='Comparación',
+           winner_legend='Mejor',
+           tie_legend='Equivalente',
+           loser_legend='Diferente')
+```
+
 ### Regresión
 
 Las máquinas de soporte vectorial también se pueden utilizar para resolver problemas de regresión; su uso se ejemplifica utilizando el problema de Diabetes (@sec-diabetes), como se muestra en las siguiente dos instrucciones. 
@@ -488,7 +561,6 @@ hy_svr = svr.predict(Xtest)
 ```
 
 donde la varianza capturada por el modelo (@eq-r2) es: `{python} Markdown(f'{r2_score(ytest, hy_svr):0.4f}')`.
-
 
 ## Regresión Logística {#sec-regresion-logistica}
 
@@ -617,7 +689,7 @@ hy_lr = lr.predict(G)
 cdn = ''
 for hyx, system in zip([hy_svm, hy_k, hy_lr],
                        ['MSV - Lineal', 'MSV - Kernel', 'RL']):
-  perfs = [f'${func(y_g, hyx, average="macro"):0.4f}$'
+  perfs = [f'${func(y_g, hyx, average="macro").statistic:0.4f}$'
            for func in [precision_score, recall_score, f1_score]]
   cdn += f'{system}|' + '|'.join(perfs) + '|\n'
 Markdown(f'{headers}\n{linea}\n{cdn}')  
