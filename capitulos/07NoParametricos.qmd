@@ -228,7 +228,7 @@ _ = sns.relplot(data, kind='line')
 
 ## Clasificador de vecinos cercanos
 
-El clasificador de vecinos cercanos es un clasificador simple de entender, la idea es utilizar el conjunto de entrenamiento y una función de distancia para asignar la clase de acuerdo a los k-vecinos más cercanos al objeto deseado.
+El clasificador de vecinos cercanos (@fix1951discriminatory) es un clasificador simple de entender, la idea es utilizar el conjunto de entrenamiento y una función de distancia para asignar la clase de acuerdo a los k-vecinos más cercanos al objeto deseado.
 
 Utilizando la notación $kNN(x)$ se define el volumen de $kNN(x)$ como $V(x)$ y $N_c(x)=\sum_{x_{\pi} \in \textsf{kNN}(x)} 1(y_\pi=c)$ donde $y_\pi$ es la salida asociada a $x_\pi$. $N_c(x)$ corresponde al número de vecinos de $x$ que pertenecen a la clase $c$. Con esta notación se define la verosimilitud como:
 
@@ -328,13 +328,17 @@ hy = np.array([x.most_common(n=1)[0][0] for x in nc])
 error = (y_g != hy).mean()
 ```
 
-Una implementación del clasificador de vecinos cercanos usando métodos eficientes para calcular $\textsf{kNN}$ se encuentra en la clase `KNeighborsClassifier` la cual se puede utilizar de la siguiente manera. 
+::: {.callout-note}
+
+La información dada hasta el momento tiene la finalidad de explicar el funcionamiento del algoritmo, una implementación del clasificador de vecinos cercanos usando métodos eficientes para calcular $\textsf{kNN}$ se encuentra en la clase `KNeighborsClassifier` la cual se puede utilizar de la siguiente manera. 
 
 ```{python}
 #| echo: true
 kcl = KNeighborsClassifier().fit(T, y_t)
 hy = kcl.predict(G)
 ```
+
+:::
 
 ## Regresión {#sec-regresion}
 
