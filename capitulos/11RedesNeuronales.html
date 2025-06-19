@@ -341,7 +341,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación.</p>
 <section id="paquetes-usados" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">11.1</span> Paquetes usados</h2>
-<div id="74562945" class="cell" data-execution_count="1">
+<div id="2bb41149" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.lax <span class="im">as</span> lax</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
@@ -369,7 +369,7 @@ window.Quarto = {
 \mathbf v_i = \frac{\exp \mathbf v_i}{\sum_{j=1}^K \exp \mathbf v_j}.
 \]</span></p>
 <p>La función <code>jax.nn.softmax</code> implementa <span class="math inline">\(\textsf{softmax}\)</span>; en el siguiente ejemplo se calcula para el vector <code>[2, 1, 3]</code></p>
-<div id="454b4aff" class="cell" data-execution_count="3">
+<div id="427ceda4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jax.nn.softmax(np.array([<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>Array([0.24472848, 0.09003057, 0.66524094], dtype=float32)</code></pre>
@@ -377,13 +377,13 @@ window.Quarto = {
 </div>
 <p>Se puede observar que <span class="math inline">\(\textsf{softmax}\)</span> transforma los valores del vector <span class="math inline">\(\mathbf v\)</span> en probabilidades.</p>
 <p>Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno.</p>
-<div id="437a2ef8" class="cell" data-execution_count="4">
+<div id="0e972f32" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(D)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> normalize.transform(D)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes <span class="math inline">\(W \in \mathbb R^{K \times d}\)</span> y <span class="math inline">\(\mathbf w_0 \in \mathbb R^d.\)</span> Los parámetros iniciales se puede generar con la función <code>parametros_iniciales</code> tal y como se muestra a continuación.</p>
-<div id="e587f2e6" class="cell" data-execution_count="5">
+<div id="17c5d724" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(key<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
@@ -399,7 +399,7 @@ window.Quarto = {
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Utilizando los parámetros en el formato anterior, hace que el modelo se pueda implementar con las siguientes instrucciones. Donde el ciclo es por cada uno de los parámetros de las <span class="math inline">\(K\)</span> clases y la última línea calcula el <span class="math inline">\(\textsf{softmax}.\)</span></p>
-<div id="5dbeb00e" class="cell" data-execution_count="6">
+<div id="ee76589c" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modelo(params, X):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> []</span>
@@ -408,11 +408,11 @@ window.Quarto = {
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.softmax(jnp.array(o), axis<span class="op">=</span><span class="dv">0</span>).T</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad <span class="math inline">\(1\)</span> corresponde a la clase, esto se puede realizar con el siguiente código.</p>
-<div id="d7c8c948" class="cell" data-execution_count="7">
+<div id="643b5d65" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>y_oh <span class="op">=</span> jax.nn.one_hot(y, n_labels)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento.</p>
-<div id="443c36e9" class="cell" data-execution_count="8">
+<div id="bea5c270" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, X, y_oh):</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> modelo(params, X)</span>
@@ -422,7 +422,7 @@ window.Quarto = {
 <h3 data-number="11.3.1" class="anchored" data-anchor-id="optimización"><span class="header-section-number">11.3.1</span> Optimización</h3>
 <p>El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( <a href="10Optimizacion.html#sec-regresion-logistica-optimizacion" class="quarto-xref"><span>Sección 10.5</span></a>) con algunos ajustes. Lo primero es que se desarrolla todo en una función <code>fit</code> que recibe el parámetro <span class="math inline">\(\eta\)</span>, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento.</p>
 <p>Dentro de la función <code>fit</code>se observa la función <code>update</code> que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función <code>update</code> genera la función que calculará el valor y el gradiente de la función <code>media_entropia_cruzada</code>. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época.</p>
-<div id="8a4d0ba1" class="cell" data-execution_count="9">
+<div id="8e4fbd2e" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(eta, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, eta, X, y_oh):</span>
@@ -442,7 +442,7 @@ window.Quarto = {
 <h3 data-number="11.3.2" class="anchored" data-anchor-id="sec-adam"><span class="header-section-number">11.3.2</span> Optimización Método Adam</h3>
 <p>Como se había visto en la <a href="10Optimizacion.html#sec-actualizacion-parametros" class="quarto-xref"><span>Sección 10.6</span></a> existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería <a href="https://optax.readthedocs.io">optax</a>) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales.</p>
 <p>Siguiendo la misma estructura que la función <code>fit</code>, la función <code>adam</code> recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función <code>update</code> (que se encuentra en <code>adam</code>) calcula el valor de la función de error y su gradiente, estos son utilizados por <code>optimizer.update</code> para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de <code>update</code> inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función <code>media_entropia_cruzada</code>. El ciclo llama la función <code>update</code> y guarda el error encontrado en cada época.</p>
-<div id="73b5d679" class="cell" data-execution_count="10">
+<div id="744cccf6" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update(params, opt_state, X, y_oh):</span>
@@ -470,13 +470,13 @@ window.Quarto = {
 <section id="comparación-entre-optimizadores" class="level3" data-number="11.3.3">
 <h3 data-number="11.3.3" class="anchored" data-anchor-id="comparación-entre-optimizadores"><span class="header-section-number">11.3.3</span> Comparación entre Optimizadores</h3>
 <p>Los optimizadores descritos anteriormente se pueden utilizar con el siguiente código, donde la primera línea calcula los parámetros iniciales, después se llama a la función <code>fit</code> para encontrar los parámetros con el primer método. La tercera línea genera una instancia del optimizador Adam; el cual se pasa a la función <code>adam</code> para encontrar los parámetros con este método.</p>
-<div id="75daf35e" class="cell" data-execution_count="11">
+<div id="0dd1458f" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>p1, error1 <span class="op">=</span> fit(<span class="fl">1e-2</span>, params)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>p2, error2 <span class="op">=</span> adam(optimizer, params)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_62093/2693901055.py:5: DeprecationWarning:
+<pre><code>/var/folders/wk/rlx2pk5j42v6mpjfd_0842c00000gn/T/ipykernel_76576/2693901055.py:5: DeprecationWarning:
 
 jax.tree_map is deprecated: use jax.tree.map (jax v0.4.25 or newer) or jax.tree_util.tree_map (any JAX version).
 </code></pre>
@@ -559,7 +559,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <h3 data-number="11.5.1" class="anchored" data-anchor-id="desvanecimiento-del-gradiente"><span class="header-section-number">11.5.1</span> Desvanecimiento del Gradiente</h3>
 <p>Por lo expuesto hasta el momento se podría pensar que una candidata para ser la función <span class="math inline">\(\phi\)</span> es la función <span class="math inline">\(\textsf{sigmoid},\)</span> aunque esto es factible, esta presenta el problema de desvanecimiento del gradiente. Para ejemplificar este problema, se utilizan dos funciones <span class="math inline">\(g_1(x) = w_1 x + 1.0\)</span> y <span class="math inline">\(g_1(x) = w_2 x + 1.0;\)</span> haciéndose la composición de estas dos funciones <span class="math inline">\(g=g_2 \circ g_1.\)</span></p>
 <p>Las siguientes instrucciones implementan las funciones anteriores utilizando la librería <a href="https://jax.readthedocs.io">JAX</a>.</p>
-<div id="5949c13a" class="cell" data-execution_count="14">
+<div id="cc440abc" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g_1(params, x):</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jax.nn.sigmoid(params[<span class="st">'w1'</span>] <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.0</span>)</span>
@@ -573,7 +573,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> g_2(params, g_1(params, x))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Utilizando unos parámetros aleatorios generados con el siguiente código</p>
-<div id="da5d5ea7" class="cell" data-execution_count="15">
+<div id="f156d3c2" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">0</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>key, subkey1, subkey2 <span class="op">=</span> jax.random.split(key, num<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> <span class="bu">dict</span>(w1<span class="op">=</span>jax.random.normal(subkey1),</span>
@@ -586,18 +586,18 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <section id="ejemplo-dígitos" class="level2" data-number="11.6">
 <h2 data-number="11.6" class="anchored" data-anchor-id="ejemplo-dígitos"><span class="header-section-number">11.6</span> Ejemplo: Dígitos</h2>
 <p>Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones.</p>
-<div id="ed51b7ec" class="cell" data-execution_count="17">
+<div id="6d1a55c4" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase <code>StandardScaler</code> se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (<code>T</code>) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba <code>G</code>.</p>
-<div id="6365342e" class="cell" data-execution_count="18">
+<div id="08ab2c0e" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>normalize <span class="op">=</span> StandardScaler().fit(T)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> normalize.transform(T)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> normalize.transform(G)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor <span class="math inline">\(1\)</span> representa la clase, esto se realiza con las siguientes instrucciones.</p>
-<div id="0e0fee24" class="cell" data-execution_count="19">
+<div id="8afa04ba" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>n_labels <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>yt_oh <span class="op">=</span> jax.nn.one_hot(y_t, n_labels)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -619,11 +619,11 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 \end{split},
 \]</span></p>
 <p>donde la suma con el término <span class="math inline">\(\mathbf w_0\)</span> se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación.</p>
-<div id="e6b1f3c3" class="cell" data-execution_count="21">
+<div id="9e3d9792" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> [<span class="dv">64</span>, <span class="dv">32</span>, <span class="dv">16</span>, <span class="dv">10</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de <code>d</code> creando pares, para generar las dimensiones adecuadas para las matrices <span class="math inline">\(W.\)</span></p>
-<div id="bb15723f" class="cell" data-execution_count="22">
+<div id="36f99df4" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parametros_iniciales(d, key<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    key <span class="op">=</span> jax.random.PRNGKey(key)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> []</span>
@@ -635,7 +635,7 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación <span class="math inline">\(\phi\)</span> seleccionada fue <span class="math inline">\(\textsf{ReLU}\)</span> que está implementada en la función <code>jax.nn.relu</code>.</p>
-<div id="63a268ad" class="cell" data-execution_count="23">
+<div id="17810007" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ann(params, D):</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    y1 <span class="op">=</span> jax.nn.relu(D <span class="op">@</span> params[<span class="dv">0</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">0</span>][<span class="st">'w0'</span>])</span>
@@ -643,14 +643,14 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y2 <span class="op">@</span> params[<span class="dv">2</span>][<span class="st">'w'</span>] <span class="op">+</span> params[<span class="dv">2</span>][<span class="st">'w0'</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como medida de error se usa la Entropía Cruzada (<a href="04Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 4.2.7</span></a>) tal y como se implementa a continuación. El caso <span class="math inline">\(0 \log 0\)</span> corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa <code>jnp.nansum</code> que trata los valores no definidos como ceros.</p>
-<div id="8d87e5b4" class="cell" data-execution_count="24">
+<div id="396368cb" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="at">@jax.jit</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> media_entropia_cruzada(params, D, y_oh):</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> jax.nn.softmax(ann(params, D), axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> jnp.nansum(y_oh <span class="op">*</span> jnp.log(hy), axis<span class="op">=</span><span class="dv">1</span>).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función <code>update_finite</code> que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior.</p>
-<div id="5b3a849b" class="cell" data-execution_count="25">
+<div id="68c98314" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@jax.jit</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_finite(a, b):</span>
@@ -674,12 +674,12 @@ Figura&nbsp;11.1: Comparación de diferentes optimizadores.
 <span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> params, error</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.</p>
-<div id="68ee117d" class="cell" data-execution_count="26">
+<div id="ee9f351a" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> parametros_iniciales(d)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optax.adam(learning_rate<span class="op">=</span><span class="fl">1e-2</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>p, error <span class="op">=</span> adam(optimizer, params, epocas<span class="op">=</span><span class="dv">500</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El resultado de esta red, es que el error en el conjunto de prueba es <span class="math inline">\(0.0250\)</span> calculado con la siguiente instrucción <code>(ann(p, G).argmax(axis=1) != y_g).mean()</code>.</p>
+<p>El resultado de esta red, es que el error en el conjunto de prueba es <span class="math inline">\(0.0500\)</span> calculado con la siguiente instrucción <code>(ann(p, G).argmax(axis=1) != y_g).mean()</code>.</p>
 
 
 <!-- -->

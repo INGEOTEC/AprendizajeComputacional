@@ -363,7 +363,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar diferentes métodos lineales de discriminación para atacar problemas de clasificación.</p>
 <section id="paquetes-usados" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">9.1</span> Paquetes usados</h2>
-<div id="ba61d2ab" class="cell" data-execution_count="1">
+<div id="fdb89ff3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> LinearSVC, SVC, LinearSVR</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
@@ -793,13 +793,13 @@ Figura&nbsp;9.8: Hiperplanos para diferentes valores de <span class="math inline
 </div>
 </div>
 <p>Continuando con el comportamiento de las MSV lineales, está se encuentra implementada en la clase <code>LinearSVC</code> y su uso se ejemplifica utilizando el problema de dígitos (<a href="16ConjuntosDatos.html#sec-digitos" class="quarto-xref"><span>Sección B.3.3</span></a>); los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba utilizando las siguientes instrucciones.</p>
-<div id="64008754" class="cell" data-execution_count="11">
+<div id="290b9e00" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Xtrain, Xtest, ytrain, ytest <span class="op">=</span> train_test_split(D, y,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                                                random_state<span class="op">=</span><span class="dv">21</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El modelo se entrena siguiendo un procedimiento equivalente al de los otros modelos de clasificación vistos hasta ahora, tal y como se muestra a continuación.</p>
-<div id="4ec701f4" class="cell" data-execution_count="12">
+<div id="da24b3d3" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>svm <span class="op">=</span> LinearSVC().fit(Xtrain, ytrain)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>svm_n <span class="op">=</span> make_pipeline(Normalizer(),</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                      LinearSVC()).fit(Xtrain,</span>
@@ -807,7 +807,7 @@ Figura&nbsp;9.8: Hiperplanos para diferentes valores de <span class="math inline
 </div>
 <p>En algunas ocasiones el rendimiento de MSV mejora cuando las entradas están normalizadas a tener una longitud uno.</p>
 <p>En algunas ocasiones, el rendimiento de las MSV mejora cuando las entradas están normalizadas a tener una longitud unitaria. El siguiente código muestra un flujo de trabajo donde el primer paso es normalizar las entradas para tener una longitud unitaria y, posteriormente, se entrena una MSV.</p>
-<div id="f8d92cf9" class="cell" data-execution_count="13">
+<div id="5a1dc3df" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>svm_n <span class="op">=</span> make_pipeline(Normalizer(),</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                      LinearSVC()).fit(Xtrain,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                       ytrain)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -897,7 +897,7 @@ Figura&nbsp;9.10: Visualización de los vectores de soporte usando PCA.
 </div>
 </div>
 <p>El uso de la MSV con un kernel polinomial de grado dos se ejemplifica en el siguiente código.</p>
-<div id="cad46f32" class="cell" data-execution_count="16">
+<div id="c2494cd4" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>svm_k <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>).fit(Xtrain, ytrain)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La <a href="#fig-comp-svm-todos" class="quarto-xref">Figura&nbsp;<span>9.11</span></a> muestra el rendimiento de las MSV lineal con entradas originales y normalizadas, y una MSV con un kernel estimado en el paso anterior; se observa que el el kernel hace que el rendimiento sea estadísticamente superior a las MSV lineales.</p>
@@ -929,16 +929,16 @@ Figura&nbsp;9.11: Comparación entre MSV lineales y con kernel polinomial de gra
 <section id="regresión" class="level3" data-number="9.4.3">
 <h3 data-number="9.4.3" class="anchored" data-anchor-id="regresión"><span class="header-section-number">9.4.3</span> Regresión</h3>
 <p>Las máquinas de soporte vectorial también se pueden utilizar para resolver problemas de regresión; su uso se ejemplifica utilizando el problema de Diabetes (<a href="03Parametricos.html#sec-diabetes" class="quarto-xref"><span>Sección 3.10.1</span></a>), como se muestra en las siguiente dos instrucciones.</p>
-<div id="24d47e13" class="cell" data-execution_count="18">
+<div id="14106521" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>Xtrain, Xtest, ytrain, ytest <span class="op">=</span> train_test_split(X, y, random_state<span class="op">=</span><span class="dv">13</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La clase <code>LinearSVR</code> implementa la máquina de soporte vectorial lineal y su uso sigue la misma dinámica que en el case de clasificación, e.g.,</p>
-<div id="8e008da5" class="cell" data-execution_count="19">
+<div id="33e97107" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>svr <span class="op">=</span> LinearSVR(C<span class="op">=</span><span class="dv">100</span>).fit(Xtrain, ytrain)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hy_svr <span class="op">=</span> svr.predict(Xtest)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>donde la varianza capturada por el modelo (<a href="04Rendimiento.html#eq-r2" class="quarto-xref">Ecuación&nbsp;<span>4.7</span></a>) es: 0.4341.</p>
+<p>donde la varianza capturada por el modelo (<a href="04Rendimiento.html#eq-r2" class="quarto-xref">Ecuación&nbsp;<span>4.7</span></a>) es: 0.4330.</p>
 </section>
 </section>
 <section id="sec-regresion-logistica" class="level2" data-number="9.5">
@@ -1025,14 +1025,14 @@ Figura&nbsp;9.12: Comparación de dos métodos lineales
 </div>
 </div>
 <p>Complementando la comparación anterior con los datos del iris que se pueden obtener con las siguientes dos instrucciones.</p>
-<div id="ba69ba8b" class="cell" data-execution_count="21">
+<div id="bd1c4b33" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(D, y,</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.4</span>,</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Los clasificadores a comparar son una máquina de soporte vectorial lineal, una máquina de soporte vectorial usando un kernel polinomial de grado <span class="math inline">\(1\)</span> y una regresión logística, tal y como se muestra en el siguiente código.</p>
-<div id="b752a87e" class="cell" data-execution_count="22">
+<div id="3a13d247" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>svm <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T, y_t)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>svm_k <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">1</span>).fit(T, y_t)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> LogisticRegression().fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
