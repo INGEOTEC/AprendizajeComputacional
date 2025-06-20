@@ -126,7 +126,7 @@ def fit(eta, params, epocas=500):
     @jax.jit
     def update(params, eta, X, y_oh):
         _ , gs = error_grad(params, X, y_oh)
-        return _, jax.tree_map(lambda p, g: p - eta * g,
+        return _, jax.tree.map(lambda p, g: p - eta * g,
                                params, gs)
 
     error_grad  = jax.value_and_grad(media_entropia_cruzada)
@@ -429,7 +429,7 @@ def adam(optimizer, params, epocas=500):
     error = []
     for i in range(epocas):
         p, opt_state, loss_value = update(params, opt_state, T, yt_oh)
-        params = jax.tree_map(update_finite, params, p)
+        params = jax.tree.map(update_finite, params, p)
         error.append(loss_value)
     return params, error
 ```
