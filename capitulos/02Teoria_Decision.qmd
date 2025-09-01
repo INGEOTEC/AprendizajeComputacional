@@ -16,6 +16,7 @@ import seaborn as sns
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
@@ -109,7 +110,6 @@ D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
 D = np.concatenate((D, np.atleast_2d(clase).T), axis=1)
 df = pd.DataFrame(D, columns=['x', 'y', 'clase'])
-sns.set_style('whitegrid')
 _ = sns.relplot(data=df, kind='scatter', x='x',
                 y='y', hue='clase')     
 ```               
@@ -129,7 +129,6 @@ ejemplo = multivariate_normal(mean=[5, 5],
                               cov=[[20, -5], [-5, 2]])
 X_e = ejemplo.rvs(size=1000)
 df = pd.DataFrame(X_e, columns=['x', 'y'])
-sns.set_style('whitegrid')
 fig = sns.relplot(data=df, kind='scatter', x='x',
                 y='y')
 fig.ax.set_xlim(-20, 20)
@@ -196,7 +195,6 @@ Teniendo las predicciones y los valores de reales de las clases, lo que se busca
 _ = [dict(x=x, y=y, error=error) 
      for (x, y), error in zip(X, y != prediccion)]
 df_error = pd.DataFrame(_)
-sns.set_style('whitegrid')
 _ = sns.relplot(data=df_error, kind='scatter',
                 x='x', y='y', hue='error')
 ```
@@ -260,7 +258,6 @@ en la lista `B`.
 #| fig-cap: "Distribución del error de clasificación"
 #| warning: false
 #| echo: true
-sns.set_style('whitegrid')
 _ = sns.displot(B, kde=True)
 ```
 
@@ -354,7 +351,6 @@ La @fig-2-guasiana-alargada-x muestra el conjunto de datos donde se realizará e
 
 df = pd.DataFrame(X, columns=['x', 'y'])
 df['Clase'] = y
-sns.set_style('whitegrid')
 fig = sns.relplot(data=df, kind='scatter', x='x',
                 y='y', hue='Clase')
 # fig.ax.set_xlim(-20, 20)
@@ -422,7 +418,6 @@ df2['Conjunto'] = 'Reducido'
 color=sns.color_palette()
 palette = dict(P=color[0], N=color[1], E=color[3])
 
-sns.set_style('whitegrid')
 fig = sns.relplot(data=pd.concat((df, df2)), kind='scatter', x='x',
                   palette=palette,
                   y='y', hue='Clase', col='Conjunto')
@@ -478,7 +473,6 @@ df2 = pd.DataFrame(X[valid], columns=['x', 'y'])
 df2['Clase'] = y_error[valid]
 df2['Conjunto'] = 'Reducido'
 
-sns.set_style('whitegrid')
 fig = sns.relplot(data=pd.concat((df, df2)), kind='scatter', x='x',
                   palette=palette,
                   y='y', hue='Clase', col='Conjunto')

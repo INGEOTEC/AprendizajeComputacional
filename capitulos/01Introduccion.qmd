@@ -2,6 +2,38 @@
 
 El **objetivo** de la unidad es explicar el área de aprendizaje computacional, los diferentes tipos de aprendizaje que la componen, la metodología general del área y su relación con otras áreas del conocimiento. 
 
+## Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+import numpy as np
+import pandas as pd
+from matplotlib import pylab as plt
+import seaborn as sns
+from CompStats.metrics import recall_score
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import fetch_openml
+from sklearn.preprocessing import Normalizer
+from sklearn.pipeline import make_pipeline
+from sklearn.cluster import KMeans
+from sklearn import decomposition
+from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import tree
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+sns.set_style('whitegrid')
+```
+
 ::: {.content-visible when-format="html"}
 ---
 
@@ -68,13 +100,6 @@ Regresando a la representación vectorial, existen casos donde se pueden visuali
 #| label: fig-puntos-iris
 #| fig-cap: "Proyección de los datos del Iris en dos dimensiones"
 #| code-fold: true
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 pca = decomposition.PCA(n_components=2).fit(D)
@@ -87,7 +112,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 En la @fig-puntos-iris se pueden observar dos o tres grupos de puntos, entonces el objetivo sería crear el algoritmo que dado $\mathcal D$ regrese un identificador por cada elemento, dicho identificador representa el grupo al que pertenece el elemento en cuestión. Esta tarea se le conoce como agrupamiento (Clustering). Asumiendo que se aplica un algoritmo de agrupamiento a los datos anteriores; entonces, dado que podemos visualizar los datos, es factible representar el resultado del algoritmo si a cada punto se le asigna un color dependiendo de la clase a la que pertenece. La @fig-kmeans-iris muestra el resultado de este procedimiento. 
@@ -96,14 +120,6 @@ En la @fig-puntos-iris se pueden observar dos o tres grupos de puntos, entonces 
 #| label: fig-kmeans-iris
 #| fig-cap: "Proyección de agrupar los datos del Iris usando K-medias"
 #| code-fold: true
-from sklearn.cluster import KMeans
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 m = KMeans(n_clusters=3, n_init='auto').fit(D)
@@ -119,7 +135,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
     
 Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
@@ -135,7 +150,6 @@ El procedimiento desarrollado debe de generar una figura similar a la mostrada e
 #| label: fig-kmeans-breast-cancer
 #| fig-cap: "Proyección de agrupar los datos de Breast Cancer Wisconsin usando K-medias"
 #| echo: false
-from sklearn.datasets import load_breast_cancer
 
 D, y = load_breast_cancer(return_X_y=True)
 m = KMeans(n_clusters=2, n_init='auto').fit(D)
@@ -151,7 +165,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 :::
 
@@ -187,14 +200,6 @@ Al igual que en aprendizaje no supervisado, en algunos casos es posible visualiz
 #| label: fig-iris-2clases
 #| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
 #| code-fold: true
-from sklearn.cluster import KMeans
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 mask = y <= 1
@@ -210,7 +215,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 ::: {.callout-tip collapse="true"}
@@ -233,7 +237,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 :::
 
@@ -243,15 +246,6 @@ Usando esta representación es sencillo imaginar que el problema de clasificaci�
 #| label: fig-iris-2clases-df
 #| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
 #| code-fold: true
-from sklearn.cluster import KMeans
-from sklearn.svm import LinearSVC
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 mask = y <= 1
@@ -275,7 +269,6 @@ ax.tick_params(axis="both", which="both", bottom=False,
                 top=False, left=False, right=False,
                 labelbottom=False, labelleft=False)
 ax.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x,$ y el otro eje es la salida, i.e. $y.$ La @fig-regresion muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
@@ -284,10 +277,6 @@ Siguiendo en esta misma línea, también es posible observar los puntos en un pr
 #| label: fig-regresion
 #| fig-cap: "Problema de regresión"
 #| code-fold: true
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
 
 x = np.linspace(-1, 1, 100)
 y = 12.3 * x**2 - 3.2 * x + 1.2
@@ -299,7 +288,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
 
 El problema de regresión es muy conocido y seguramente ya se imaginaron que la respuesta sería encontrar los parámetros de una parábola. La @fig-regresion-2 muestra una visualización del regresor, mostrado en color negro y los datos de entrenamiento en color azul.
@@ -314,7 +302,6 @@ fig.tick_params(axis="both", which="both", bottom=False,
                 top=False, left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
 
 Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, pero si permite ganar intuición sobre la forma en que trabajan estos algoritmos.
@@ -336,17 +323,6 @@ El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y c
 #| code-fold: true
 #| warning: false
 #| fig-cap: Comparación del rendimiento de algoritmos de clasificación en el conjunto de prueba.
-from sklearn.datasets import fetch_openml
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.svm import LinearSVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import Normalizer
-from sklearn.pipeline import make_pipeline
-from CompStats.metrics import recall_score
 
 bioresponse = fetch_openml(data_id=1464)
 y = bioresponse.target.to_numpy()
@@ -388,7 +364,7 @@ La @fig-sobre-aprendizaje muestra el comportamiento de un algoritmo que sobre-ap
 #| label: fig-sobre-aprendizaje
 #| fig-cap: "Sobre-aprendizaje en un problema de regresión"
 #| code-fold: true
-from sklearn import tree
+
 arbol = tree.DecisionTreeRegressor().fit(np.atleast_2d(x).T, ym)
 hy = arbol.predict(np.atleast_2d(x).T)
 df['arbol'] = hy
@@ -398,7 +374,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
 
 ### Sub-aprendizaje
@@ -409,7 +384,7 @@ Por otro lado existen problemas donde el conjunto de algoritmos $\mathcal H$ no 
 #| label: fig-sub-aprendizaje
 #| fig-cap: "Sub-aprendizaje en un problema de regresión"
 #| code-fold: true
-from sklearn import tree
+
 arbol = tree.DecisionTreeRegressor(max_depth=2).fit(np.atleast_2d(x).T, ym)
 hy = arbol.predict(np.atleast_2d(x).T)
 df['arbol'] = hy
@@ -419,5 +394,4 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
