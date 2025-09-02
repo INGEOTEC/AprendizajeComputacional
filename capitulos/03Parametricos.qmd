@@ -17,6 +17,7 @@ from scipy.stats import norm, multivariate_normal
 from scipy.special import logsumexp
 from matplotlib import pylab as plt
 import numpy as np
+import cvxpy as cp
 import pandas as pd
 import seaborn as sns
 from CompStats.metrics import accuracy_score, mean_squared_error
@@ -819,16 +820,16 @@ Complementando el ejemplo anterior, se realiza un modelo que primero elimina las
 ```{python}
 #| echo: true
 mask = np.fabs(m.coef_ / se) >= 2
-T = np.concatenate((T[:, mask], T[:, mask]**2), axis=1)
-G = np.concatenate((G[:, mask], G[:, mask]**2), axis=1)
+T2 = np.concatenate((T[:, mask], T[:, mask]**2), axis=1)
+G2 = np.concatenate((G[:, mask], G[:, mask]**2), axis=1)
 ```
 
 Se observa que la identificación de los coeficientes $\mathbf w$ sigue siendo lineal aun y cuando la representación ya no es lineal por incluir el cuadrado. Siguiendo los pasos descritos previamente, se inicializa el modelo y después se realiza la predicción.
 
 ```{python}
 #| echo: true
-m2 = LinearRegression().fit(T, y_t)
-hy2 = m2.predict(G)
+m2 = LinearRegression().fit(T2, y_t)
+hy2 = m2.predict(G2)
 ```
 
 ```{python}
@@ -888,3 +889,102 @@ mse.plot(comp_legend='Comparación',
          var_name='Rendimiento')
 ```
 :::
+
+### Optimización 
+
+Otra manera de ver el problema de regresión es como un problema de optimización, tal y como se muestra en @eq-min-l2; cabe resaltar que el problema mostrado en @eq-min-l2 tiene una solución análita y no es necesario utilizar un sistema de optimización. 
+
+$$
+\min \mid\mid \mathbf y - (X \mathbf w + w_0) \mid\mid_2 
+$$ {#eq-min-l2}
+
+donde $X$ corresponde a las observaciones en el conjunto de entrenamiento y $\mathbf y$ es el valor medido; con esta información y la librería [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy), el problema de la @eq-min-l2 se puede codificar con los siguientes pasos. En primer lugar se crean las variables del problema de optimización, i.e., $\mathbf w$ y $w_0$.
+
+```{python}
+#| echo: true
+w = cp.Variable(T.shape[1])
+w0 = cp.Variable(1)
+```
+
+La función objetivo se genera, con la función `cp.norm` como se muestra a continuación
+
+```{python}
+#| echo: true
+norm = cp.norm(y_t - (T@w + w0), 2)
+```
+
+Las últimas instrucciones corresponden a indicar que se está desea minimizar la función objetivo, construir el problema de optimización y pasarle el problema al optimizador tal y como se observa en el siguiente código. 
+
+```{python}
+#| echo: true
+obj = cp.Minimize(norm)
+prob = cp.Problem(obj)
+valor = prob.solve()
+```
+
+Habiendo descrito el uso de la norma $L_2$ la cual tiene una solución análita es cuestión de cambiar el parámetro en la función `cp.norm` para estimar los coeficientes $\mathbf w$ y $w_0$ usando la norma $L_1$, como se muestra en la siguientes instrucciones. 
+
+
+```{python}
+#| echo: true
+norm = cp.norm(y_t - (T@w + w0), 1)
+obj = cp.Minimize(norm)
+prob = cp.Problem(obj)
+valor = prob.solve()
+```
+
+La @fig-rendimiento-ols-l1-l2 muestra el rendimiento del uso de la norma $L_2$ (Completo), la norma $L_1$ y el modelo que se obtiene quitando aquellos elementos que son estadisticamente equivalentes a cero. 
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento entre modelo con variables originales, con la norma $L_1$ y selección de variables.
+#| label: fig-rendimiento-ols-l1-l2
+
+mse(G @ w.value + w0.value, name='L1')
+mse.plot(comp_legend='Comparación',
+         winner_legend='Mejor',
+         tie_legend='Equivalente',
+         loser_legend='Diferente',
+         alg_legend='Algoritmo',
+         var_name='Rendimiento')
+```
+
+Tener el problema de regresión como un problema de optimización, permite incluir de manera eficiente restricciones que pueden mejorar el rendimiento del regresor. Por ejemplo se podría restringir la norma de los coeficientes i.e., $\mathbf w$ para que sea menor que un parámetros, tal y como se muestra en la @eq-min-restricciones donde la norma $L_1$ de los coeficientes debe de ser menor al parámetro $\gamma$. 
+
+$$
+\begin{split}
+\min & \mid\mid \mathbf y - (X \mathbf w + w_0) \mid\mid_2 \\
+\text{sujeto a} & \\
+& \mid \mid \mathbf w \mid \mid_1 \leq \gamma \\
+\end{split}
+$$ {#eq-min-restricciones}
+
+El siguiente código muestra las instrucciones para codificar y resuelver el problema descrito en la @eq-min-restricciones utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). La primera instrucción genera el parámetro $\gamma$, poniendole el valor $1500$ en la segunda linea, el resto de las lineas se han visto previamente, la única diferencia es la restricción $\mid\mid \mathbf w \mid\mid_1 \leq \gamma$ que se observa en la penúltima linea. 
+
+```{python}
+#| echo: true
+gamma = cp.Parameter()
+gamma.value = 1500
+norm = cp.norm(y_t - (T@w + w0), 2)
+obj = cp.Minimize(norm)
+prob = cp.Problem(obj, [cp.norm(w, 1) <= gamma])
+value = prob.solve()
+```
+
+Se decició utilizar la norma $L_1$ en la restricción porque esa norma hace que algunos de los coeficientes estimados sean cero o muy cercanos a cero, por ejemplo con el valor de $\gamma$ seleccionado se tienen `{python} (np.fabs(w.value)<1e-5).sum()` coeficientes menores que $10^{-5}$. En el siguiente código, la primera linea reemplaza los coeficientes cercanos a cero por ese valor y se genera la figura que presenta el rendimiento de los sistemas evaluados.
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento entre diferentes modelos.
+#| label: fig-rendimiento-ols-l1-l2-gamma 
+w.value[np.fabs(w.value)<1e-5] = 0
+mse(G @ w.value + w0.value, name=f'gamma').plot(
+    comp_legend='Comparación',
+    winner_legend='Mejor',
+    tie_legend='Equivalente',
+    loser_legend='Diferente',
+    alg_legend='Algoritmo',
+    var_name='Rendimiento')
+```
+
+En la @fig-rendimiento-ols-l1-l2-gamma se observa que el mejor rendimiento se obtiene con el sistema donde los coeficientes son seleccionados con la restricción de la norma $L_1$, aunque cabe mencionar que todos los sitemas son estadisticamente equivalentes entre si. 
