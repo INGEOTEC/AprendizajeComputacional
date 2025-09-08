@@ -18,6 +18,7 @@ from sklearn.datasets import load_iris, load_diabetes, load_digits
 from CompStats.metrics import recall_score, f1_score, precision_score
 from matplotlib import pylab as plt
 import numpy as np
+import cvxpy as cp
 import pandas as pd
 import seaborn as sns
 ```
@@ -320,26 +321,123 @@ $$
 Entonces, se puede ver que lo que se busca es encontrar $\mathbf w$ de tal manera que cualquier punto $\mathbf x_i$ esté lo mas alejada posible del discriminante, esto se logra minimizando $\mathbf w$, es decir, resolviendo el siguiente problema de optimización:
 
 $$
-\min \frac{1}{2} \mid\mid\mathbf w \mid\mid
+\begin{split}
+\min & \frac{1}{2} \mid\mid\mathbf w \mid\mid \\
+\text{sujeto a} & \\
+& (\mathbf w \cdot \mathbf x_i + w_0) y_i \geq 1 \\
+\end{split}
+$$ {#eq-svm-separable}
+
+El problema de optimización de la @eq-svm-separable tiene solución solamente que los ejemplos sean linealmente separables. El siguiente código muestra la códificación de la @eq-svm-separable utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). Las primeras dos lineas corresponden a los datos de clasificación, `X` tiene las variables independientes y `y` corresponde a la clase. Las variables del problema de optimización están en `w` y `w0`; las restricciones están codificadas en la variable `constraints`y la función objetivo en la variable `obj`. La penúltima linea genera el problema de optimización y se resuelve en la última instrucción. 
+
+```{python}
+#| echo: true
+
+X = np.concatenate((X_1, X_2))
+y = np.array([1] * X_1.shape[0] + [-1] * X_2.shape[0])
+w = cp.Variable(X.shape[1])
+w0 = cp.Variable()
+constraints = [cp.multiply(X @ w + w0, y) >= 1]
+obj = cp.norm(w) / 2
+prob = cp.Problem(cp.Minimize(obj), constraints=constraints)
+_ = prob.solve()
+```
+
+::: {.callout-tip collapse="true"}
+#### Actividad
+
+Graficar la función de decisión encontrada al optimizar la @eq-svm-separable. La función de decisión se observa en color verde con la leyenda $g(x)$; además se incluye la función encontrada por una MSV lineal identificada con la leyenda $g_{\textsf{msv}}.$ Modificar el parámetro `C` (utilizar un número cercano a cero y un número considerablemente grande e.g. $1^{10}$) de la clase `LinearSVC` y grafique nuevamente las funciones de decisión para tener una intución de lo que está haciendo ese parámetro. 
+
+```{python}
+#| echo: false
+
+w_1, w_2 = w.value
+w_0 = w0.value
+g_0 = [dict(x1=x, x2=y, tipo='g(x)=0')
+       for x, y in zip(X[:, 0], (-w_0 - w_1 * X[:, 0]) / w_2)]
+svm = LinearSVC().fit(X, y)
+w_1, w_2 = svm.coef_[0]
+w_0 = svm.intercept_[0]
+g_svm = [dict(x1=x, x2=y, tipo='g_msv(x)=0')
+         for x, y in zip(X[:, 0], (-w_0 - w_1 * X[:, 0]) / w_2)]
+
+df = pd.DataFrame(g_0 + g_svm +\
+                  [dict(x1=x, x2=y, clase='P') for x, y in X_1] + \
+                  [dict(x1=x, x2=y, clase='N') for x, y in X_2]
+                 )
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='clase', legend=True)
+sns.lineplot(data=df, x='x1', y='x2', ax=ax,
+             hue='tipo', palette=['g', 'k'], legend=True)
+_ = ax.axis('equal')
+```
+:::
+
+El problema de clasificación anterior se puede modificar para generar un problema que no sea linealmente separable, una manera es cambiar un ejemplo de clase tal y como se muestra en la siguiente instrucción. 
+
+```{python}
+#| echo: true
+
+y[-1] = 1
+```
+
+Con la modificación anterior el problema de optimización se vuelve infactible tal y como se puede observar al ejecutar el siguiente código, 
+
+```{python}
+constraints = [cp.multiply(X @ w + w0, y) >= 1]
+obj = cp.norm(w) / 2
+prob = cp.Problem(cp.Minimize(obj), constraints=constraints)
+_ = prob.solve()
+```
+
+donde el atributo `prob.status` regresa el valor de `{python} prob.status`.
+
+Para que este problema tenga una solución factible es necesario relajar las restricciones permitiendo que algunas de las restricciones no se cumplan, esto se realiza utilizando una variable $\xi_i$ la cual sea no negativa (i.e., $\xi_i \geq 0$), de tal manera que si todas las restricciones se cumplen se llega a la @eq-svm-separable. Adicionalmente, se requiere incluir el peso de las restricciones que no se han cumplido, esto se hace incorporando $\sum_i \xi$ y pesando el término por un parámetro $C > 0$. El resultado final se observa en la @eq-svm, donde se incluye utiliza $\mathbf w \cdot \mathbf w$, en lugar de $\mid\mid\mathbf w \mid\mid$ para seguir la formulación propuesta en @cortes1995support. 
+
 $$
+\begin{split}
+\min & \frac{1}{2} \mathbf w \cdot \mathbf w  + C \sum_i \xi_i \\
+\text{sujeto a} & \\
+& (\mathbf w \cdot \mathbf x_i + w_0) y_i \geq 1 - \xi_i\\
+& \xi_i \geq 0\\
+\end{split}
+$$ {#eq-svm}
 
-sujeto a $(\mathbf w \cdot \mathbf x_i + w_0) y_i \geq +1, \forall (\mathbf x_i, y_i) \in \mathcal D.$
+La @eq-svm se códifica utilizando las siguientes instrucciones. El producto punto $\mathbf w \cdot \mathbf w$ se codifica utilizando la función `cp.quad_over_lin`, se observa que la variable $\xi_i$ está en el arreglo `xi`, que el parámetro $C$ está en una variable con el mismo nombre y que se le asigna el valor de $1$. 
 
-### Optimización
+```{python}
+C = cp.Parameter(pos=True)
+xi = cp.Variable(y.shape[0], nonneg=True)
+constraints = [cp.multiply(X @ w + w0, y) >= 1 - xi]
+obj = cp.quad_over_lin(w, 1) / 2 + C * cp.sum(xi)
+prob = cp.Problem(cp.Minimize(obj), constraints=constraints)
+C.value = 1
+_ = prob.solve(solver='SCS')
+```
 
-Este es un problema de optimización que se puede resolver utilizando multiplicadores de Lagrange lo cual quedaría como 
+al ejecutar el código anterior se obtiene en el atributo `prob.status` el valor de `{python} prob.status`.
+
+El hiperplano que se encuentra en `w` se codifica como 
 
 $$
-f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdot \mathbf x_i + w_0) y_i - 1),
-$$
+\mathbf w = \sum_i \alpha_i y_i \mathbf x_i,
+$$ {#eq-hiperplano}
 
-donde el mínimo corresponde a maximizar con respecto a $\alpha_i \geq 0$ y minimizar con respecto a $\mathbf w$ y $w_0.$ En esta formulación existe el problema para aquellos problemas donde no es posible encontrar un hiperplano que separa las dos clases. Para estos casos donde no es posible encontrar una separación perfecta se propone utilizar 
+donde $\alpha_i$ son los valores de las variables duales de las restricciones. Para comprobar la @eq-hiperplano, el siguiente código muestra en la variable `alpha` los valores de las variables duales y la variable `w_codificado` tiene el valor del hiperplano, lo cual se puede comparar con el valor que está en el atributo `w.value`. 
 
-$$
-(\mathbf w \cdot \mathbf x_i + w_0) y_i \geq 1 - \xi_i,
-$$ 
+```{python}
+#| echo: true
 
-donde $\xi$ captura los errores empezando por aquellos elementos que están del lado correcto del hiperplano, pero que no son mayores a $1$. La @fig-lineal-xi muestra un ejemplo donde existe un elemento negativo que se encuentra entre la función de decisión y el hiperplano de margen, i.e., el que corresponde a la restricción $\mathbf w \cdot \mathbf x_i + w_0 \geq 1$, es decir ese punto tiene un $0 < \xi < 1.$ También se observa un elemento positivo que está muy cerca a $g(\mathbf x) = 1.$
+alpha = constraints[0].dual_value
+w_codificado = (np.c_[alpha * y] * X).sum(axis=0)
+```
+
+::: {.callout-tip collapse="true"}
+#### Actividad
+
+Comparar los valores estimados para $\mathbf w$ y $w_0$ cuando el problema es linealmente separable y cuando fue modificado con el cambio `y[-1]=1`. 
+:::
+
+La @fig-lineal-xi muestra un ejemplo donde existe un elemento negativo que se encuentra entre la función de decisión y el hiperplano de margen, i.e., el que corresponde a la restricción $\mathbf w \cdot \mathbf x_i + w_0 \geq 1$, es decir ese punto tiene un $0 < \xi < 1.$ También se observa un elemento positivo que está muy cerca a $g(\mathbf x) = 1.$
 
 ```{python}
 #| code-fold: true
@@ -373,14 +471,7 @@ _ = ax.axis('equal')
 ```  
 
 
-Continuando con el problema de optimización, en las condiciones anteriores la función a optimizar es $\min \frac{1}{2} \mid\mid\mathbf w \mid\mid + C \sum_i^N \xi_i,$ utilizando multiplicadores de Lagrange queda como
-
-$$
-f_p = \frac{1}{2}\mid\mid\mathbf w \mid\mid - \sum_i^N \alpha_i ((\mathbf w \cdot \mathbf x_i + w_0) y_i - 1 + \xi_i) - \sum_i^N \beta_i \xi_i.
-$$
-
-Se observa que el parámetro $C$ controla la penalización que se hace a los elementos que se encuentran en el lado incorrecto del hiperplano o dentro del margen. La @fig-lineal-hip-c muestra el hiperplano generado utilizando $C=1$ y $C=0.01.$ Se observa como el elemento que está correctamente clasificado en $C=1$ pasa al lado incorrecto del hiperplano, ademas se ve como la función de decisión rota cuando el valor cambia. 
-
+Continuando con el análisis del problema de optimización (@eq-svm), se puede observar que el parámetro $C$ controla la penalización que se hace a los elementos que se encuentran en el lado incorrecto del hiperplano o dentro del margen. La @fig-lineal-hip-c muestra el hiperplano generado utilizando $C=1$ y $C=0.01$, en la figura se aprecia como el elemento que está correctamente clasificado en $C=1$ pasa al lado incorrecto del hiperplano, ademas la función de decisión rota cuando el valor de $C$ cambia. 
 
 ```{python}
 #| code-fold: true
@@ -465,29 +556,9 @@ score.plot(value_name='Cobertura (promedio)',
 
 ### Kernel
 
-El problema de optimización de la MSV cumple con todas las características para poder encontrar su solución optimizando el problema dual. El problema dual corresponde a maximizar $f_p$ con respecto a $\alpha_i,$ sujeto a que las restricciones de que el gradiente de $f_p$ con respecto a $\mid\mid\mathbf w \mid\mid$, $w_0$ y $\xi_i$ sean cero. Utilizando estas características el problema dual corresponde a 
+En lugar de utilizar directamente las características $\mathbf x$ se puede realizar una transformación $\phi$ a estas características, esto haría que el hiperplano (@eq-hiperplano) quede cómo $\mathbf w = \sum_i \alpha_i y_i \phi(\mathbf x_i)$, pasando esto a la función discrimintante $g$ queda como $g(\mathbf x) = \sum_i \alpha_i y_i \phi(\mathbf x_i) \cdot \phi(x) + w_0.$ El producto punto se puede cambiar por una función **Kernel**, i.e., $K(\mathbf x_i, \mathbf x_j) = \phi(\mathbf x_i) \cdot \phi(\mathbf x_j)$ lo cual hace que innecesaria la transformación al espacio $\phi.$ 
 
-$$
-f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j \mathbf x_i \cdot \mathbf x_j,
-$$
-
-sujeto a las restricciones $\sum_i^N \alpha_i y_i = 0$ y $0 \leq \alpha_i \leq C.$
-
-El problema de optimización dual tiene unas características que lo hacen deseable en ciertos casos, por ejemplo, el problema depende del número de ejemplos ($N$) en lugar de la dimensión. Entonces en problemas donde $d > N$ es más conveniente utilizar el dual.
-
-La otra característica del problema dual es que permite visualizar lo siguiente. Suponiendo que se usa una función $\phi: \mathbb R^d \leftarrow \mathbf R^{\hat d},$ de tal manera, que en el espacio $\phi$ se puede encontrar un hiperplano que separa las clases. Incorporando la función $\phi$ produce la siguiente función a optimizar 
-
-$$
-f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j \phi(\mathbf x_i) \cdot \phi(\mathbf x_j),
-$$
-
-donde primero se transforman todos los datos al espacio generado por $\phi$ y después se calcula el producto punto. El producto punto se puede cambiar por una función **Kernel**, i.e., $K(\mathbf x_i, \mathbf x_j) = \phi(\mathbf x_i) \cdot \phi(\mathbf x_j)$ lo cual hace que innecesaria la transformación al espacio $\phi.$ Utilizando la función de kernel, el problema de optimización dual queda como:
-
-$$
-f_d = \sum_i^N \alpha_i - \frac{1}{2} \sum_i^N \sum_j^N \alpha_i \alpha_j y_i y_j K(\mathbf x_i, \mathbf x_j).
-$$
-
-La función discriminante está dada por $g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x),$ donde aquellos elementos donde $\alpha \neq 0$ se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.
+La función discriminante está dada por $g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x) + w_0,$ donde aquellos elementos donde $\alpha_i > 0$ se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.
 
 La @fig-lineal-kernel muestra los datos del iris (proyectados con Análisis de Componentes Principales @sec-pca), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. 
 
