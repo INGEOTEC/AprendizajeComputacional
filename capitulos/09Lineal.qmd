@@ -690,6 +690,63 @@ Es importante notar que la ecuación anterior corresponde a Entropía cruzada (@
 
 Otra característica de $E(\mathbf w, w_0 \mid \mathcal D)$ es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización (@sec-optimizacion) para encontrar los parámetros $\mathbf w$ y $w_0$. 
 
+En el caso de regresión logística, el logaritmo de la verosimilitud está dada por la @eq-log-likelihood-logistica; esta función es cóncava, lo cual hace que pueda ser maximizada por algún algoritmo de optimización convexa. 
+
+$$
+\log \ell(\mathbf w, w_0) = \sum_i y_i \mathbf w \cdot \mathbf x_i + w_0 - \log (1 + \exp^{\mathbf w \cdot \mathbf x_i + w_0})
+$$ {#eq-log-likelihood-logistica}
+
+Normalmente, se suele incluir una función que penaliza la complejidad del modelo, normalmente utilizando alguna norma sobre los parámetros. Siguiendo esta idea la @eq-reg-logistica muestra el problema de optimización que se sigue en la regresión logística, donde el parámetro $C$ pesa el término que mide la complejidad del modelo, i.e., $\mid\mid \mathbf w \mid\mid$.
+
+$$
+\begin{split}
+\max & ~\log \ell(\mathbf w, w_0) - C \mid\mid \mathbf w \mid\mid \\
+\end{split}
+$$ {#eq-reg-logistica}
+
+La @eq-reg-logistica se puede codificar [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy) utilizando las siguientes instrucciones. Las primeras dos líneas ponen en la variable `X` las variables independientes y en `y` la clase. En `w` y `w0` están las parámetros del modelo, es decir, las variables a optimizar, siguiendo por el parámetro `C` que penaliza la complejidad. La variable `verosimilitud` calcula la @eq-log-likelihood-logistica, el problema de optimización se encuentra en la variable `prob` y se optimiza la última línea. 
+
+```{python}
+#| echo: true
+
+X = np.concatenate((X_1, X_2))
+y = np.array([1] * X_1.shape[0] + [0] * X_2.shape[0])
+w = cp.Variable(X.shape[1])
+w0 = cp.Variable()
+C = cp.Parameter(pos=True)
+hy = X @ w + w0
+verosimilitud = cp.mean(cp.multiply(hy, y) - cp.logistic(hy))
+prob = cp.Problem(cp.Maximize(verosimilitud - C * cp.norm(w)))
+C.value = 1
+_ = prob.solve(solver='SCS')
+```
+
+### Múltiples classes
+
+En el caso de tener múltiples clases, en el caso de regresión logística, se puede modelar con una función categórica, donde el logaritmo de la verosimilitud esta dado por 
+
+$$
+\log \ell(W, W_0) = \sum_i \log \mathbb{\hat P}(\mathcal Y=y_i \mid \mathcal X=\mathbf x_i)
+$$ {#eq-log-likelihood-multinomial}
+
+y $\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0)$ (ver @eq-softmax). Siguiendo el procedimiento anterior el siguiente código códifica en [CVXPY](https://www.cvxpy.org/index.html) el problema de regresión logística multinomial. 
+
+En la primera línea se cargan los datos del problema de clasificación, en las variables `X` y `y`, la segunda línea cuenta el número de clases. La variable `Wt` y `W0` contienen los parámetros del modelo es decir $W^\intercal$ y $W_0$, `den` calcula el valor del denominador de la función $\textsf{softmax}$ y `logit` corresponde al numerador solamente de la clase medida. La variable `verosimilitud` contienen el valor calculado en la @eq-log-likelihood-multinomial, el problema de optimización está en `prob` y se ejecuta en la última linea. 
+
+```{python}
+X, y = load_iris(return_X_y=True)
+nclasses = np.unique(y).shape[0]
+Wt = cp.Variable((X.shape[1], nclasses))
+W0 = cp.Variable(nclasses)
+C = cp.Parameter(pos=True)
+hy = X @ Wt + W0
+den = cp.log_sum_exp(hy, axis=1)
+logit = hy[np.arange(y.shape[0]), y]
+verosimilitud = cp.mean(logit - den)
+prob = cp.Problem(cp.Maximize(verosimilitud - C * cp.norm(W, 'fro')))
+C.value = 0.01
+_ = prob.solve(solver='SCS')
+```
 
 ## Comparación
 
