@@ -35,11 +35,8 @@ sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
----
 
 {{< video https://www.youtube.com/embed/FlipLNC36Zo width="560" height="315" >}}
-
----
 :::
 
 ## Aprendizaje Computacional
@@ -316,7 +313,7 @@ Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funcio
 
 El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
 
-El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y comparar el rendimiento de diferentes algoritmos, permitiendo seleccionar el que tenga las mejores características. La @fig-comparacion-intro muestra el rendimiento utilizando el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap). En la figura se observa el rendimiento de clasificadores Gaussianos Ingenuo, LDA y QDA (@sec-metodos-parametricos), Máquinas de Soporte Vectorial lineal (M.S.V., ver @sec-discriminantes-lineales), Vecinos Cercanos (@sec-metodos-no-parametricos) y Árboles Aleatorios (@sec-ensambles). Se destaca que la M.S.V. presentó el mejor rendimiento, aunque estadísticamente es equivalente a algunos algoritmos marcados con la etiqueta *Equivalente* y es estadísticamente mejor que otros algoritmos marcados con la etiqueta *Diferente*.
+El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y comparar el rendimiento de diferentes algoritmos, permitiendo seleccionar el que tenga las mejores características. La @fig-comparacion-intro muestra el rendimiento utilizando el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap). En la figura se observa el rendimiento de clasificadores Gaussianos Ingenuo, LDA (@sec-metodos-parametricos), Máquinas de Soporte Vectorial lineal (M.S.V., ver @sec-discriminantes-lineales), Vecinos Cercanos (@sec-metodos-no-parametricos) y Árboles Aleatorios (@sec-ensambles). Se destaca que la M.S.V. presentó el mejor rendimiento, aunque estadísticamente es equivalente a algunos algoritmos marcados con la etiqueta *Equivalente* y es estadísticamente mejor que otros algoritmos marcados con la etiqueta *Diferente*.
 
 ```{python}
 #| label: fig-comparacion-intro
@@ -325,11 +322,12 @@ El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y c
 #| fig-cap: Comparación del rendimiento de algoritmos de clasificación en el conjunto de prueba.
 
 bioresponse = fetch_openml(data_id=1464)
-y = bioresponse.target.to_numpy()
+y = bioresponse.target.to_numpy().astype(int)
 D = bioresponse.data.to_numpy()
 Xtrain, Xtest, ytrain, ytest = train_test_split(D, np.array(y), random_state=13)
-names = ['Ingenuo', 'LDA', 'QDA', 'M.S.V', 'Vecinos', 'Bosques']
-algs = [GaussianNB(), LDA(), QDA(),
+names = ['Ingenuo', 'LDA', # 'QDA',
+         'M.S.V', 'Vecinos', 'Bosques']
+algs = [GaussianNB(), LDA(), # QDA(),
         make_pipeline(Normalizer(), LinearSVC(class_weight='balanced')),
         KNeighborsClassifier(),
         RandomForestClassifier(class_weight='balanced')]

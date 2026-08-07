@@ -30,11 +30,8 @@ sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
----
 
 {{< video https://www.youtube.com/embed/NUbGplcMRmw width="560" height="315" >}}
-
----
 :::
 
 ## Introducción {#sec-intro-04}
@@ -175,7 +172,7 @@ D, y = load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(D, y, 
                                   random_state=0,  
                                   test_size=0.2)
-gaussian = QuadraticDiscriminantAnalysis().fit(T, y_t)
+gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 ```
 
@@ -280,7 +277,7 @@ def grafica():
     hy = np.empty_like(y)
     skf = StratifiedKFold()
     for tr, vs in skf.split(X, y):
-        gaussian = QuadraticDiscriminantAnalysis().fit(X[tr], y[tr])
+        gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(X[tr], y[tr])
         hy[vs] = gaussian.predict(X[vs])
 
     beta = np.linspace(0, 1, 10)**2
@@ -481,7 +478,7 @@ En este momento ya se tienen todos los elementos para medir el rendimiento de ca
 
 ```{python}
 #| echo: true
-gaussian = QuadraticDiscriminantAnalysis().fit(T, y_t)
+gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(T, y_t)
 hy_gaussian = gaussian.predict(V)
 recall = recall_score(y_v, hy_gaussian, average='macro', name='QDA')
 ```
@@ -519,7 +516,7 @@ Comparando el rendimiento de los dos hiperparámetros se observa cual de los dos
 
 ```{python}
 #| echo: true
-gaussian = QuadraticDiscriminantAnalysis().fit(np.concatenate((T, V)),
+gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(np.concatenate((T, V)),
                                                np.concatenate((y_t, y_v)))
 hy_gaussian = gaussian.predict(G)
 recall = recall_score(y_g, hy_gaussian, average='macro')
@@ -560,7 +557,7 @@ La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` 
 hy_gaussian = np.zeros_like(y_t)
 kfold = KFold(shuffle=True, random_state=0)
 for ts, vs in kfold.split(T):
-    gaussian = QuadraticDiscriminantAnalysis().fit(T[ts], y_t[ts])
+    gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(T[ts], y_t[ts])
     hy_gaussian[vs] = gaussian.predict(T[vs])
 recall = recall_score(y_t, hy_gaussian, average='macro', name="QDA")    
 ```
