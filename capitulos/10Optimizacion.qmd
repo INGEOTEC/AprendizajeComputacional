@@ -225,14 +225,14 @@ Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente
 
 ```{python}
 #| echo: true
-eta = 0.0001
+eta = 1e-5
 delta = np.inf
 params = jnp.array([5.3, -5.1])
 x = jnp.array(x)
 y = jnp.array(y)
 D = [params]
 error_grad = grad(error)
-while delta > 0.0001:
+while delta > 0.01:
     params -= eta * error_grad(params, x, y)
     D.append(params)
     delta = jnp.fabs(D[-1] - D[-2]).mean()
@@ -367,8 +367,6 @@ error_bfgs = Markdown(f'${float(error_bfgs):0.4f}$')
 Se observa como se usa la misma función de error (`suma_entropia_cruzada`) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son `{python} params_bfgs_f` y tiene un error `{python} error_bfgs`.
 
 La @fig-optimizacion-comparacion muestra la función discriminantes obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librearía `sklearn` y el algoritmo `BFGS`. Se puede observar que el plano de `sklearn` y `BFGS` son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, `BFGS`. Por supuesto la implementaciones tiene algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros $\mathbf w$ para que tengan una longitud de $1$ se observaría que `sklearn` y `BFGS` se tocan.
-
-
 
 ```{python}
 #| code-fold: true
