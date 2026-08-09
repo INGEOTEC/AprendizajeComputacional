@@ -64,7 +64,7 @@ $$
 \ell(\theta) = \log \mathcal L(\theta) = \sum_{x \in \mathcal D} \log f_\theta (x).
 $$
 
-### Distribución de Bernoulli {#sec-distribucción-de-bernoulli}
+### Distribución de Bernoulli {#sec-distribuccion-de-bernoulli}
 
 La verosimilitud se ejemplifica con la identificación del parámetro $p$ de una distribución Bernoulli. Una distribución Bernoulli modela dos estados, por un lado se tiene la clase negativa identificada por $0$; identificando la clase positiva como $1$. Entonces, la probabilidad de observar $1$ es $\mathbb P(X=1) = p$ y $\mathbb P(X=0) = 1 - p$. Estas ecuaciones se pueden combinar para definir $f_\theta(x) = p^x (1 - p)^{1-x}.$
 
@@ -92,9 +92,9 @@ $$
 \hat p = \frac{1}{N}\sum_{i=1}^N x_i.
 $$
 
-### Ejemplo: Distribución Gausiana {#sec-estimacion-distribucion-gausiana}
+### Ejemplo: Distribución Gaussiana {#sec-estimacion-distribucion-gausiana}
 
-Esta sección sigue un camino práctico, presentando el código para estimar los parámetros de una distribución Gausiana donde se conocen todos los parámetros. La distribución se usa para generar 1000 muestras y después de esta población se estiman los parámetros; de estas manera se tienen todos los elementos para comparar los parámetros reales $\theta$ de los parámetros estimados $\hat \theta.$
+Esta sección sigue un camino práctico, presentando el código para estimar los parámetros de una distribución Gaussiana donde se conocen todos los parámetros. La distribución se usa para generar 1000 muestras y después de esta población se estiman los parámetros; de estas manera se tienen todos los elementos para comparar los parámetros reales $\theta$ de los parámetros estimados $\hat \theta.$
 
 La distribución que se usará se utilizó para generar un problema sintético (ver @sec-tres-normales) de tres clases. Los parámetros de la distribución son: $\mathbf \mu = [5, 5]^\intercal$ y  $\Sigma = \begin{pmatrix} 4 & 0 \\ 0 & 2 \\ \end{pmatrix}.$ La siguiente instrucción se puede utilizar para generar 1000 muestras de esa distribución. 
 
@@ -156,7 +156,7 @@ Markdown(f"Se puede observar que la función `np.cov` se ejecuta utilizando la m
 
 ## Metodología de Clasificación
 
-Habiendo descrito el proceso para estimar los parámetros de una distribución, por un lado se presentó de manera teórica con la distribución Bernoulli (ver @sec-distribucción-de-bernoulli) y de manera práctica con una distribución Gausiana (ver @sec-estimacion-distribucion-gausiana), se está en la posición de usar todos estos elementos para presentar el proceso completo de clasificación. La metodología general de aprendizaje supervisado (ver @sec-metodologia-general) está definida por cinco pasos, estos pasos se especializan para el problema de clasificación y regresión, utilizando modelos paramétricos, de la siguiente manera. 
+Habiendo descrito el proceso para estimar los parámetros de una distribución, por un lado se presentó de manera teórica con la distribución Bernoulli (ver @sec-distribuccion-de-bernoulli) y de manera práctica con una distribución Gaussiana (ver @sec-estimacion-distribucion-gausiana), se está en la posición de usar todos estos elementos para presentar el proceso completo de clasificación. La metodología general de aprendizaje supervisado (ver @sec-metodologia-general) está definida por cinco pasos, estos pasos se especializan para el problema de clasificación y regresión, utilizando modelos paramétricos, de la siguiente manera. 
 
 1. Todo empieza con un conjunto de datos $\mathcal D$ que tiene la información del fenómeno de interés.
 2. Se selecciona el conjunto $\mathcal T \subset \mathcal D,$ el procedimiento se describe en la @sec-conjunto-entre-prueba. 
@@ -219,11 +219,11 @@ El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathca
 
 ## Clasificador {#sec-model-clasificacion}
 
-El inicio de métodos paramétricos es el Teorema de Bayes (@eq-teorema-bayes) $\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$ donde se usa la verosimilitud $\mathbb P(\mathcal X \mid \mathcal Y)$ y el prior $\mathbb P(\mathcal Y)$ para definir la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$. En métodos paramétricos se asume que se puede modelar la verosimilitud con una distribución particular, que por lo generar es una distribución Gausiana multivariada. Es decir, la variable aleatoria $\mathcal X$ dado $\mathcal Y$ (i.e., $\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde se observa que los parámetros de la distribución Gausiana dependen de la variable aleatoria $\mathcal Y$ y estos pueden ser identificados cuando $\mathcal Y$ tiene un valor específico. 
+El inicio de métodos paramétricos es el Teorema de Bayes (@eq-teorema-bayes) $\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$ donde se usa la verosimilitud $\mathbb P(\mathcal X \mid \mathcal Y)$ y el prior $\mathbb P(\mathcal Y)$ para definir la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$. En métodos paramétricos se asume que se puede modelar la verosimilitud con una distribución particular, que por lo generar es una distribución Gaussiana multivariada. Es decir, la variable aleatoria $\mathcal X$ dado $\mathcal Y$ (i.e., $\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde se observa que los parámetros de la distribución Gaussiana dependen de la variable aleatoria $\mathcal Y$ y estos pueden ser identificados cuando $\mathcal Y$ tiene un valor específico. 
 
 ### Estimación de Parámetros {#sec-estimacion-parametros}
 
-Dado que por definición del problema (ver @sec-tres-normales) se conoce que la verosimilitud para cada clase proviene de una Gausiana, i.e., $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ en esta sección se estimarán los parámetros utilizando este conocimiento. 
+Dado que por definición del problema (ver @sec-tres-normales) se conoce que la verosimilitud para cada clase proviene de una Gaussiana, i.e., $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ en esta sección se estimarán los parámetros utilizando este conocimiento. 
 
 El primer paso en la estimación de parámetros es calcular el prior $\mathbb P(\mathcal Y)$, el cual corresponde a clasificar el evento sin observar el valor de $\mathcal X.$ Esto se puede modelar mediante una distribución Categórica con parámetros $p_i$ donde $\sum_i^K p_i = 1$. Estos parámetros se pueden estimar utilizando la función `np.unique` de la siguiente manera
 
@@ -235,7 +235,7 @@ prior = counts / counts.sum()
 
 La variable `prior` contiene en el primer elemento `{python} Markdown(f'$\mathbb P(\mathcal Y=1) = {prior[0]:0.4f},$')` en el segundo `{python} Markdown(f'$\mathbb P(\mathcal Y=2) = {prior[1]:0.4f}$')` y en el tercero `{python} Markdown(f'$\mathbb P(\mathcal Y=3) = {prior[2]:0.4f}$')` que es aproximadamente $\frac{1}{3}$ el cual es el valor real del prior. 
 
-Siguiendo los pasos en estimación de parámetros de una Gausiana (@sec-estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gausiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3.$ El algoritmo de clasificación que estima $\mu$ y $\Sigma$ para cada clase se le conoce como **Analizador Discriminante Cuadrático** implementando en la clase `QuadraticDiscriminantAnalysis`.
+Siguiendo los pasos en estimación de parámetros de una Gaussiana (@sec-estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gaussiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3.$ El algoritmo de clasificación que estima $\mu$ y $\Sigma$ para cada clase se le conoce como **Analizador Discriminante Cuadrático** implementando en la clase `QuadraticDiscriminantAnalysis`.
 
 Una implementación directa para la estimación de los parámetros se puede realizar iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en el slice de la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal` para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista `likelihood`.
 
@@ -262,7 +262,7 @@ for cov in likelihood:
 Markdown(f"Los valores estimados para la media, en cada clase son: $\\hat \\mu_1 = [{mus[0]}]^\\intercal,$ $\\hat \\mu_2 = [{mus[1]}]^\\intercal$ y $\\hat \\mu_3 = [{mus[2]}]^\\intercal$. Para las matrices de covarianza, los valores estimados corresponden a $\\hat \\Sigma_1 = \\begin{{pmatrix}} {mm[0]} \\\\ \\end{{pmatrix}},$ $\\hat \\Sigma_2 = \\begin{{pmatrix}} {mm[1]} \\\\ \\end{{pmatrix}}$ y $\\hat \\Sigma_3 = \\begin{{pmatrix}} {mm[2]} \\\\ \\end{{pmatrix}}.$")
 ```
 
-Estas estimaciones se pueden comparar con los parámetros reales (@sec-tres-normales). También se puede calcular su error estándar para identificar si el parámetro real, $\theta$, se encuentra en el intervalo definido por $\hat \theta - 2\hat{se} \leq \hat \theta \leq \hat \theta + 2 \hat{se}$ que corresponde aproximadamente al 95% de confianza asumiendo que la distribución de la estimación del parámetro es Gausiana.
+Estas estimaciones se pueden comparar con los parámetros reales (@sec-tres-normales). También se puede calcular su error estándar para identificar si el parámetro real, $\theta$, se encuentra en el intervalo definido por $\hat \theta - 2\hat{se} \leq \hat \theta \leq \hat \theta + 2 \hat{se}$ que corresponde aproximadamente al 95% de confianza asumiendo que la distribución de la estimación del parámetro es Gaussiana.
 
 
 ::: {.callout-note}
@@ -456,7 +456,7 @@ El error estándar calculado con los datos mostrados en la figura anterior es `{
 
 Uno de los clasificadores mas utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. En la @sec-model-clasificacion se asumió que la variable aleatoria $\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde $\mu_{\mathcal Y} \in \mathbb R^d$, $\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}$ y $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ es la función de densidad de probabilidad conjunta.
 
-En el clasificador Bayesiano Ingenuo se asume que las variables $\mathcal X_i$ y $\mathcal X_j$ para $i \neq j$ son independientes, esto trae como consecuencia que $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).$ Esto quiere decir que cada variable está definida como una Gausina donde se tiene que identificar $\mu$ y $\sigma^2.$
+En el clasificador Bayesiano Ingenuo se asume que las variables $\mathcal X_i$ y $\mathcal X_j$ para $i \neq j$ son independientes, esto trae como consecuencia que $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).$ Esto quiere decir que cada variable está definida como una Gaussiana donde se tiene que identificar $\mu$ y $\sigma^2.$
 
 La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que en se calcula $\sigma^2$ de cada variable en lugar de la covarianza $\Sigma$, esto se puede observar en la quinta línea donde se usa la función `np.var` en el primer eje. El resto del código es equivalente al usado en la @sec-estimacion-parametros.
 
@@ -532,7 +532,7 @@ Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos; 
 X, y = load_breast_cancer(return_X_y=True)
 ```
 
-El primer paso es contar con los conjuntos de [entrenamiento y prueba](/AprendizajeComputacional/capitulos/03Parametricos/#conjunto-de-entrenamiento-y-prueba) para poder realizar de manera completa la evaluación del proceso de clasificación. Esto se realiza ejecutando la siguiente instrucción.
+El primer paso es contar con los conjuntos de entrenamiento y prueba para poder realizar de manera completa la evaluación del proceso de clasificación. Esto se realiza ejecutando la siguiente instrucción.
 
 ```{python}
 #| echo: true
@@ -572,7 +572,7 @@ error_qda = (y_g != hy_qda).mean()
 error_naive = (y_g != hy_naive).mean()
 ```
 
-El clasificador Bayesiano Gausiano tiene un error de `{python} Markdown(f'${error_qda:0.4f}$')` y el error de Bayesiano Ingenuo es `{python} Markdown(f'${error_naive:0.4f}.$')` Se ha visto que el error es una variable aleatoria, entonces la pregunta es saber si esta diferencia en rendimiento es significativa o es una diferencia que proviene de la aleatoriedad de los datos. 
+El clasificador Bayesiano Gaussiano tiene un error de `{python} Markdown(f'${error_qda:0.4f}$')` y el error de Bayesiano Ingenuo es `{python} Markdown(f'${error_naive:0.4f}.$')` Se ha visto que el error es una variable aleatoria, entonces la pregunta es saber si esta diferencia en rendimiento es significativa o es una diferencia que proviene de la aleatoriedad de los datos. 
 
 ## Diferencias en Rendimiento 
 
@@ -604,9 +604,9 @@ B = [diff_f(s) for s in S]
 se = np.std(B, axis=0)
 ```
 
-El error estándar de la diferencia de rendimiento es de `{python} Markdown(f'${se:0.4f}$')`, una procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de `{python} Markdown(f'${diff / se:0.4f}$')`. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gausiana. 
+El error estándar de la diferencia de rendimiento es de `{python} Markdown(f'${se:0.4f}$')`, una procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de `{python} Markdown(f'${diff / se:0.4f}$')`. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gaussiana. 
 
-El histograma de los datos que se tienen en la variable `B` se observa en la @fig-diff-cl-bayesianos. Se puede ver que la forma del histograma asemeja una distribución Gausiana y que el cero esta en el cuerpo de la Gausiana, tal y como lo confirmó el cociente que se calculado.
+El histograma de los datos que se tienen en la variable `B` se observa en la @fig-diff-cl-bayesianos. Se puede ver que la forma del histograma asemeja una distribución Gaussiana y que el cero esta en el cuerpo de la Gaussiana, tal y como lo confirmó el cociente que se calculado.
 
 ```{python}
 #| label: fig-diff-cl-bayesianos
@@ -634,7 +634,7 @@ teniendo el valor de `{python} p_value_f`, lo que significa que se tiene una con
 
 
 ::: {.callout-note}
-El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) (@Nava2024), en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera linea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última linea grafica el rendimiento. 
+El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) (@Nava2024), en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera linea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última linea gráfica el rendimiento. 
 
 ```{python}
 #| echo: true
@@ -651,7 +651,7 @@ score.plot(comp_legend='Comparación',
            var_name='Rendimiento')
 ```
 
-En la @fig-redimiento-acc se observa el rendimiento, con su intervalo de confianza al 95%. También se incluye, el resultado de comparar estadisticamente (95%) la diferencia de rendimiento mediante el color. 
+En la @fig-redimiento-acc se observa el rendimiento, con su intervalo de confianza al 95%. También se incluye, el resultado de comparar estadísticamente (95%) la diferencia de rendimiento mediante el color. 
 
 :::
 
@@ -685,7 +685,7 @@ El procedimiento de regresión que se describe en esta sección es regresión de
 
 Trabajando con $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)],$ se considera lo siguiente $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x, 0) + \mathcal N(0, \sigma^2)]$ que implica que el error $\epsilon$ es independiente de $\mathbf x$, lo cual se transforma en $y = \mathbf w \cdot \mathbf x + \mathbb E[\epsilon],$ donde $\mathbb E[\epsilon]=0.$ Por lo tanto $y = \mathbf w \cdot \mathbf x.$
 
-La función de densidad de probabilidad de una Gausiana corresponde a
+La función de densidad de probabilidad de una Gaussiana corresponde a
 
 $$
 f(\alpha) = \frac{1}{\sigma \sqrt{2 \pi}} \exp{-\frac{1}{2} (\frac{\alpha -  \mu}{\sigma})^2},
@@ -869,7 +869,7 @@ p_value = dist.cdf(0)
 
 ::: {.callout-note}
 
-Utilizando la librería `CompStats` se puede hacer una comparación del rendimiento de la regresión logística utilizando todas las variables y solo aquellas que son estadísticamente significantes, tal y como se muetra en la @fig-rendimiento-ols-compstats
+Utilizando la librería `CompStats` se puede hacer una comparación del rendimiento de la regresión logística utilizando todas las variables y solo aquellas que son estadísticamente significantes, tal y como se muestra en la @fig-rendimiento-ols-compstats
 
 ```{python}
 #| echo: true
@@ -889,7 +889,7 @@ mse.plot(comp_legend='Comparación',
 
 ### Optimización 
 
-Otra manera de ver el problema de regresión es como un problema de optimización, tal y como se muestra en @eq-min-l2; cabe resaltar que el problema mostrado en @eq-min-l2 tiene una solución análita y no es necesario utilizar un sistema de optimización. 
+Otra manera de ver el problema de regresión es como un problema de optimización, tal y como se muestra en @eq-min-l2; cabe resaltar que el problema mostrado en @eq-min-l2 tiene una solución analítica y no es necesario utilizar un sistema de optimización. 
 
 $$
 \min \mid\mid \mathbf y - (X \mathbf w + w_0) \mid\mid_2 
@@ -910,7 +910,7 @@ La función objetivo se genera, con la función `cp.norm` como se muestra a cont
 norm = cp.norm(y_t - (T@w + w0), 2)
 ```
 
-Las últimas instrucciones corresponden a indicar que se está desea minimizar la función objetivo, construir el problema de optimización y pasarle el problema al optimizador tal y como se observa en el siguiente código. 
+Las últimas instrucciones corresponden a indicar que se está desea minimizar la función objetivo, construir el problema de optimización e introducir el problema al optimizador tal y como se observa en el siguiente código. 
 
 ```{python}
 #| echo: true
@@ -919,7 +919,7 @@ prob = cp.Problem(obj)
 valor = prob.solve()
 ```
 
-Habiendo descrito el uso de la norma $L_2$ la cual tiene una solución análita es cuestión de cambiar el parámetro en la función `cp.norm` para estimar los coeficientes $\mathbf w$ y $w_0$ usando la norma $L_1$, como se muestra en la siguientes instrucciones. 
+Habiendo descrito el uso de la norma $L_2$ la cual tiene una solución analítica es cuestión de cambiar el parámetro en la función `cp.norm` para estimar los coeficientes $\mathbf w$ y $w_0$ usando la norma $L_1$, como se muestra en la siguientes instrucciones. 
 
 
 ```{python}
@@ -930,7 +930,7 @@ prob = cp.Problem(obj)
 valor = prob.solve()
 ```
 
-La @fig-rendimiento-ols-l1-l2 muestra el rendimiento del uso de la norma $L_2$ (Completo), la norma $L_1$ y el modelo que se obtiene quitando aquellos elementos que son estadisticamente equivalentes a cero. 
+La @fig-rendimiento-ols-l1-l2 muestra el rendimiento del uso de la norma $L_2$ (Completo), la norma $L_1$ y el modelo que se obtiene quitando aquellos elementos que son estadísticamente equivalentes a cero. 
 
 ```{python}
 #| echo: true
@@ -956,7 +956,7 @@ $$
 \end{split}
 $$ {#eq-min-restricciones}
 
-El siguiente código muestra las instrucciones para codificar y resuelver el problema descrito en la @eq-min-restricciones utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). La primera instrucción genera el parámetro $\gamma$, poniendole el valor $1500$ en la segunda linea, el resto de las lineas se han visto previamente, la única diferencia es la restricción $\mid\mid \mathbf w \mid\mid_1 \leq \gamma$ que se observa en la penúltima linea. 
+El siguiente código muestra las instrucciones para codificar y resolver el problema descrito en la @eq-min-restricciones utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). La primera instrucción genera el parámetro $\gamma$ con el valor $1500$ (segunda linea), el resto de las lineas se han visto previamente, la única diferencia es la restricción $\mid\mid \mathbf w \mid\mid_1 \leq \gamma$ que se observa en la penúltima linea. 
 
 ```{python}
 #| echo: true
@@ -968,7 +968,7 @@ prob = cp.Problem(obj, [cp.norm(w, 1) <= gamma])
 value = prob.solve()
 ```
 
-Se decició utilizar la norma $L_1$ en la restricción porque esa norma hace que algunos de los coeficientes estimados sean cero o muy cercanos a cero, por ejemplo con el valor de $\gamma$ seleccionado se tienen `{python} (np.fabs(w.value)<1e-5).sum()` coeficientes menores que $10^{-5}$. En el siguiente código, la primera linea reemplaza los coeficientes cercanos a cero por ese valor y se genera la figura que presenta el rendimiento de los sistemas evaluados.
+Se decidió utilizar la norma $L_1$ en la restricción porque esa norma hace que algunos de los coeficientes estimados sean cero o muy cercanos a cero, por ejemplo con el valor de $\gamma$ seleccionado se tienen `{python} (np.fabs(w.value)<1e-5).sum()` coeficientes menores que $10^{-5}$. En el siguiente código, la primera linea reemplaza los coeficientes cercanos a cero por ese valor y se genera la figura que presenta el rendimiento de los sistemas evaluados.
 
 ```{python}
 #| echo: true
@@ -984,4 +984,4 @@ mse(G @ w.value + w0.value, name=f'gamma').plot(
     var_name='Rendimiento')
 ```
 
-En la @fig-rendimiento-ols-l1-l2-gamma se observa que el mejor rendimiento se obtiene con el sistema donde los coeficientes son seleccionados con la restricción de la norma $L_1$, aunque cabe mencionar que todos los sitemas son estadisticamente equivalentes entre si. 
+En la @fig-rendimiento-ols-l1-l2-gamma se observa que el mejor rendimiento se obtiene con el sistema donde los coeficientes son seleccionados con la restricción de la norma $L_1$, aunque cabe mencionar que todos los sistemas son estadísticamente equivalentes entre si. 

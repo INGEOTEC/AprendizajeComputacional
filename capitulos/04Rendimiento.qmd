@@ -516,8 +516,10 @@ Comparando el rendimiento de los dos hiperparámetros se observa cual de los dos
 
 ```{python}
 #| echo: true
-gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(np.concatenate((T, V)),
-                                               np.concatenate((y_t, y_v)))
+gaussian = QuadraticDiscriminantAnalysis(
+    reg_param=1e-3
+).fit(np.concatenate((T, V)),
+      np.concatenate((y_t, y_v)))
 hy_gaussian = gaussian.predict(G)
 recall = recall_score(y_g, hy_gaussian, average='macro')
 ```
@@ -557,7 +559,9 @@ La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` 
 hy_gaussian = np.zeros_like(y_t)
 kfold = KFold(shuffle=True, random_state=0)
 for ts, vs in kfold.split(T):
-    gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(T[ts], y_t[ts])
+    gaussian = QuadraticDiscriminantAnalysis(
+        reg_param=1e-3
+    ).fit(T[ts], y_t[ts])
     hy_gaussian[vs] = gaussian.predict(T[vs])
 recall = recall_score(y_t, hy_gaussian, average='macro', name="QDA")    
 ```
