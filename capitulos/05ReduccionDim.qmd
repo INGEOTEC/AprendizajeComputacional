@@ -39,11 +39,8 @@ sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
----
 
 {{< video https://www.youtube.com/embed/mNrDb9YSK8A width="560" height="315" >}}
-
----
 :::
 
 ## Introducción {#sec-intro-05}
@@ -122,7 +119,7 @@ _ = ', '.join(_)
 p_f = Markdown(f'$[{_}]$')
 ```
 
-La prueba Kruskal-Wallis identifica si un conjunto de muestras independientes provienen de la misma distribución. La hipótesis nula es que las muestras provienen de la misma distribución. La función `kruskal` implementa esta prueba y recibe tantas muestras como argumentos. En el siguiente código ilustra su uso, se observa que se llama a la función `kruskal` para cada columna en `D` y se calcula su valor $p$. Los valores $p$ obtenidos son: `{python} p_f` lo cual indica que para las primeras dos variables la hipótesis nula se puede rechazar y por el otro lado la hipótesis nula es factible para la tercera variable con un valor `{python} ultimo`.
+La prueba Kruskal-Wallis identifica si existen diferencias entre las medias de un conjunto de muestras independientes. La hipótesis nula es que las muestras tienen la misma media. La función `kruskal` implementa esta prueba y recibe tantas muestras como argumentos. En el siguiente código ilustra su uso, se observa que se llama a la función `kruskal` para cada columna en `D` y se calcula su valor $p$. Los valores $p$ obtenidos son: `{python} p_f` lo cual indica que para las primeras dos variables la hipótesis nula se puede rechazar y por el otro lado la hipótesis nula es factible para la tercera variable con un valor `{python} ultimo`.
 
 ```{python}
 #| echo: true
@@ -174,7 +171,7 @@ Un procedimiento que pone en el centro del proceso de selección al algoritmo de
 
 En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = \{(x_i, y_i)\},$ con una función $L$ que mide el rendimiento del algoritmo de aprendizaje $\mathcal H.$ La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización del algoritmo se pueden realizar de diferentes maneras, una es mediante la división de $\mathcal X$ en dos conjuntos: entrenamiento y validación; y la segunda manera corresponde a utilizar $k$-iteraciones de validación cruzada.  
 
-Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando está notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset $, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continua si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
+Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando está notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset$, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continua si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
 
 Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.
 
@@ -222,6 +219,8 @@ plt.xlabel('Variable')
 fig = plt.ylabel('Macro-Recall')
 ```
 
+::: {.callout-note}
+
 El algoritmo de selección hacia atrás y adelante se implementa en 
 la clase `SequentialFeatureSelector` y su uso se observa en las siguientes
 instrucciones. 
@@ -255,6 +254,7 @@ index2 = Markdown(f'$[{index2}]$')
 Al igual que en el algoritmo de `SelectKBest` las variables seleccionadas se pueden observar con la función `get_support`. En este caso las variables seleccionadas son: `{python} index`.
 
 Utilizando el parámetro `direction='backward'` para utilizar selección hacia atrás en el mismo conjunto de datos, da como resultado la siguiente selección `{python} index2`. Se puede observar que las variables seleccionadas por los métodos son diferentes. Esto es factible porque los algoritmos solo aseguran llegar a un máximo local y no está garantizado que el máximo local corresponda al máximo global. 
+:::
 
 ### Ventajas y Limitaciones
 

@@ -2,17 +2,46 @@
 
 El **objetivo** de la unidad es explicar el área de aprendizaje computacional, los diferentes tipos de aprendizaje que la componen, la metodología general del área y su relación con otras áreas del conocimiento. 
 
+## Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+import numpy as np
+import pandas as pd
+from matplotlib import pylab as plt
+import seaborn as sns
+from CompStats.metrics import recall_score
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import fetch_openml
+from sklearn.preprocessing import Normalizer
+from sklearn.pipeline import make_pipeline
+from sklearn.cluster import KMeans
+from sklearn import decomposition
+from sklearn.svm import LinearSVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import tree
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+sns.set_style('whitegrid')
+```
+
 ::: {.content-visible when-format="html"}
----
 
 {{< video https://www.youtube.com/embed/FlipLNC36Zo width="560" height="315" >}}
-
----
 :::
 
 ## Aprendizaje Computacional
 
-Utilizando la descripción de @langley1986machine, se puede definir el **aprendizaje computacional** como una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el paso del tiempo. En sus inicios, el campo estaba enfocado al desarrollo de representaciones simbólicas, de la misma manera que la IA, sin prohibir las representaciones numéricas. Actualmente, el campo ha cambiado de dirección privilegiando las representaciones numéricas a las simbólicas, en particular, este documento se enfoca solamente a representaciones numéricas. 
+Según la descripción de @langley1986machine, el **aprendizaje computacional** es una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el tiempo. Inicialmente, el campo se centraba en el desarrollo de representaciones simbólicas, al igual que la IA, aunque también permitía representaciones numéricas. Actualmente, el enfoque ha cambiado, privilegiando las representaciones numéricas sobre las simbólicas. Este documento se centra exclusivamente en las representaciones numéricas.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
@@ -20,11 +49,11 @@ Utilizando la descripción de @langley1986machine, se puede definir el **aprendi
 Leer la carta editorial de @langley1986machine para conocer la visión que se tenía de aprendizaje computacional en esa época y contrastarla con la visión actual. 
 :::
 
-De acuerdo a @breiman2001statistical, existen dos metas al analizar datos donde es posible identificar valores de entrada y su respuesta. Estos objetivos son el **predecir** la respuesta de futuros eventos y el segundo es **extraer conocimiento** del proceso o fenómeno. Estas metas han dado origen a dos culturas en el modelado de los datos: la cultura del modelado de datos y la cultura del modelado de algoritmos. 
+Según @breiman2001statistical, al analizar datos con valores de entrada y respuesta, existen dos objetivos principales: **predecir** la respuesta de futuros eventos y **extraer conocimiento** del proceso o fenómeno. Estos objetivos han dado origen a dos enfoques en el modelado de datos: la cultura del modelado de datos y la cultura del modelado de algoritmos.
 
-En la cultura del modelado de datos, se asume que los datos provienen de una función que dependen de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos se estiman los parámetros y si los datos cumplen con las condiciones impuestas a la función, entonces se conoce el procedimiento que genera los datos y se está en la posición de obtener conocimiento del sistema, es decir se atacó la segunda meta. Dado que se tienen los parámetros y la estructura de la función es factible hacer predicciones de futuros eventos (primera meta).
+En la cultura del modelado de datos, se asume que los datos provienen de una función que depende de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos, se estiman los parámetros y, si los datos cumplen con las condiciones impuestas a la función, se puede conocer el procedimiento que genera los datos, logrando así la segunda meta. Con los parámetros y la estructura de la función, es posible hacer predicciones de futuros eventos (primera meta).
 
-En la cultura del modelado del algoritmo, no se asume ninguna estructura al sistema que genera los datos, el procedimiento es diseñar un algoritmo que replique la respuesta dada las entradas. Considerando que no se está asumiendo ningún modelo particular entonces el obtener conocimiento del sistema no es un prioridad. Por otro lado, es una prioridad encontrar el algoritmo que mejor reproduzca los datos y por lo tanto se desarrollan diferentes estrategias para medir el rendimiento del algoritmo y poder estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura. 
+En la cultura del modelado de algoritmos, no se asume ninguna estructura para el sistema que genera los datos. El enfoque es diseñar un algoritmo que replique la respuesta dada las entradas. Dado que no se asume ningún modelo particular, obtener conocimiento del sistema no es una prioridad. En cambio, la prioridad es encontrar el algoritmo que mejor reproduzca los datos, desarrollando diversas estrategias para medir el rendimiento del algoritmo y estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
@@ -46,9 +75,9 @@ En el área de aprendizaje, hay una tendencia de utilizar plataformas donde dife
 
 En el ámbito científico también se han generado este tipo de plataformas aunque su objetivo es ligeramente diferente, lo que se busca es tener una medida objetiva de diferentes soluciones y en algunos casos facilitar la reproducibilidad de las soluciones. Ver por ejemplo [http://codalab.org](http://codalab.org).
 
-## Metodología General en Aprendizaje Supervisado y No Supervisado {#sec-metodologia-general }
+## Metodología General en Aprendizaje Supervisado y No Supervisado {#sec-metodologia-general}
 
-Antes de continuar con la descripción de los diferentes tipos de aprendizaje es importante mencionar la metodología que se sigue en los problemas de aprendizaje supervisado y no supervidado
+Antes de continuar con la descripción de los diferentes tipos de aprendizaje es importante mencionar la metodología que se sigue en los problemas de aprendizaje supervisado y no supervisado
 
 1. Todo empieza con un conjunto de datos $\mathcal D$ que tiene la información del fenómeno de interés.
 2. Se selecciona el conjunto de entrenamiento $\mathcal T \subseteq \mathcal D$.
@@ -68,13 +97,6 @@ Regresando a la representación vectorial, existen casos donde se pueden visuali
 #| label: fig-puntos-iris
 #| fig-cap: "Proyección de los datos del Iris en dos dimensiones"
 #| code-fold: true
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 pca = decomposition.PCA(n_components=2).fit(D)
@@ -87,7 +109,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 En la @fig-puntos-iris se pueden observar dos o tres grupos de puntos, entonces el objetivo sería crear el algoritmo que dado $\mathcal D$ regrese un identificador por cada elemento, dicho identificador representa el grupo al que pertenece el elemento en cuestión. Esta tarea se le conoce como agrupamiento (Clustering). Asumiendo que se aplica un algoritmo de agrupamiento a los datos anteriores; entonces, dado que podemos visualizar los datos, es factible representar el resultado del algoritmo si a cada punto se le asigna un color dependiendo de la clase a la que pertenece. La @fig-kmeans-iris muestra el resultado de este procedimiento. 
@@ -96,30 +117,21 @@ En la @fig-puntos-iris se pueden observar dos o tres grupos de puntos, entonces 
 #| label: fig-kmeans-iris
 #| fig-cap: "Proyección de agrupar los datos del Iris usando K-medias"
 #| code-fold: true
-from sklearn.cluster import KMeans
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 m = KMeans(n_clusters=3, n_init='auto').fit(D)
 cl = m.predict(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(y).T,
-                     np.atleast_2d(cl).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase', 'Grupo'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = y.astype(str)
+df['Grupo'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Grupo')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
     
 Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
@@ -135,23 +147,21 @@ El procedimiento desarrollado debe de generar una figura similar a la mostrada e
 #| label: fig-kmeans-breast-cancer
 #| fig-cap: "Proyección de agrupar los datos de Breast Cancer Wisconsin usando K-medias"
 #| echo: false
-from sklearn.datasets import load_breast_cancer
 
 D, y = load_breast_cancer(return_X_y=True)
 m = KMeans(n_clusters=2, n_init='auto').fit(D)
 cl = m.predict(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(y).T,
-                     np.atleast_2d(cl).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase', 'Grupo'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = y.astype(str)
+df['Grupo'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Grupo')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 :::
 
@@ -187,14 +197,6 @@ Al igual que en aprendizaje no supervisado, en algunos casos es posible visualiz
 #| label: fig-iris-2clases
 #| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
 #| code-fold: true
-from sklearn.cluster import KMeans
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 mask = y <= 1
@@ -210,7 +212,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 ::: {.callout-tip collapse="true"}
@@ -225,15 +226,14 @@ Generar la figura anterior para el conjunto de datos de Breast Cancer Wisconsin 
 D, cl = load_breast_cancer(return_X_y=True)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(cl).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
+df['Clase'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Clase')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 :::
 
@@ -243,15 +243,6 @@ Usando esta representación es sencillo imaginar que el problema de clasificaci�
 #| label: fig-iris-2clases-df
 #| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
 #| code-fold: true
-from sklearn.cluster import KMeans
-from sklearn.svm import LinearSVC
-from sklearn import decomposition
-from sklearn.datasets import load_iris
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
 
 D, y = load_iris(return_X_y=True)
 mask = y <= 1
@@ -275,7 +266,6 @@ ax.tick_params(axis="both", which="both", bottom=False,
                 top=False, left=False, right=False,
                 labelbottom=False, labelleft=False)
 ax.set(xlabel=None, ylabel=None)
-plt.grid()
 ```
 
 Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x,$ y el otro eje es la salida, i.e. $y.$ La @fig-regresion muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
@@ -284,10 +274,6 @@ Siguiendo en esta misma línea, también es posible observar los puntos en un pr
 #| label: fig-regresion
 #| fig-cap: "Problema de regresión"
 #| code-fold: true
-from matplotlib import pylab as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
 
 x = np.linspace(-1, 1, 100)
 y = 12.3 * x**2 - 3.2 * x + 1.2
@@ -299,7 +285,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
 
 El problema de regresión es muy conocido y seguramente ya se imaginaron que la respuesta sería encontrar los parámetros de una parábola. La @fig-regresion-2 muestra una visualización del regresor, mostrado en color negro y los datos de entrenamiento en color azul.
@@ -314,20 +299,48 @@ fig.tick_params(axis="both", which="both", bottom=False,
                 top=False, left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
 
 Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, pero si permite ganar intuición sobre la forma en que trabajan estos algoritmos.
 
 ## Definiciones de Aprendizaje Supervisado {#sec-definiciones-aprendizaje-supervisado}
 
-El primer paso es empezar a definir los diferentes conjuntos con los que se trabaja en aprendizeje computacional. Todo inicia con el **conjunto de entrenamiento** identificado en este documento como $\mathcal T$. Este conjunto se utiliza para estimar los parámetros o en general buscar un algoritmo que tenga el comportamiento esperado.
+El primer paso es empezar a definir los diferentes conjuntos con los que se trabaja en aprendizaje computacional. Todo inicia con el **conjunto de entrenamiento** identificado en este documento como $\mathcal T$. Este conjunto se utiliza para estimar los parámetros o en general buscar un algoritmo que tenga el comportamiento esperado.
 
 Se puede asumir que existe una función $f$ que genera la relación entrada salida mostrada en $\mathcal T$, es decir, idealmente se tiene que $\forall_{(x, y) \in \mathcal D} f(x) = y$. En este contexto, aprendizaje supervisado se entiende como el proceso de encontrar una función $h^*$ que se comporta similar a $f$.
 
 Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funciones), $\mathcal H$, que se considera puede aproximar $f$; una función de error, $L$; y el error empírico $E(h \mid \mathcal T) = \sum_{(x, y) \in \mathcal T} L(y, h(x))$. Utilizando estos elementos la función buscada es: $h^* = \textsf{argmin}_{h \in \mathcal{H}} E(h \mid \mathcal T)$.
 
 El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
+
+El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y comparar el rendimiento de diferentes algoritmos, permitiendo seleccionar el que tenga las mejores características. La @fig-comparacion-intro muestra el rendimiento utilizando el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap). En la figura se observa el rendimiento de clasificadores Gaussianos Ingenuo, LDA (@sec-metodos-parametricos), Máquinas de Soporte Vectorial lineal (M.S.V., ver @sec-discriminantes-lineales), Vecinos Cercanos (@sec-metodos-no-parametricos) y Árboles Aleatorios (@sec-ensambles). Se destaca que la M.S.V. presentó el mejor rendimiento, aunque estadísticamente es equivalente a algunos algoritmos marcados con la etiqueta *Equivalente* y es estadísticamente mejor que otros algoritmos marcados con la etiqueta *Diferente*.
+
+```{python}
+#| label: fig-comparacion-intro
+#| code-fold: true
+#| warning: false
+#| fig-cap: Comparación del rendimiento de algoritmos de clasificación en el conjunto de prueba.
+
+bioresponse = fetch_openml(data_id=1464)
+y = bioresponse.target.to_numpy().astype(int)
+D = bioresponse.data.to_numpy()
+Xtrain, Xtest, ytrain, ytest = train_test_split(D, np.array(y), random_state=13)
+names = ['Ingenuo', 'LDA', # 'QDA',
+         'M.S.V', 'Vecinos', 'Bosques']
+algs = [GaussianNB(), LDA(), # QDA(),
+        make_pipeline(Normalizer(), LinearSVC(class_weight='balanced')),
+        KNeighborsClassifier(),
+        RandomForestClassifier(class_weight='balanced')]
+score = recall_score(ytest, average='macro', use_tqdm=False)
+for name, alg in zip(names, algs):
+    alg.fit(Xtrain, ytrain)
+    score(alg.predict(Xtest), name=name)
+score.plot(value_name='Cobertura (promedio)', alg_legend='Algoritmos',
+           comp_legend='Comparación',
+           winner_legend='Mejor',
+           tie_legend='Equivalente',
+           loser_legend='Diferente')
+```
 
 ### Estilos de Aprendizaje
 
@@ -349,7 +362,7 @@ La @fig-sobre-aprendizaje muestra el comportamiento de un algoritmo que sobre-ap
 #| label: fig-sobre-aprendizaje
 #| fig-cap: "Sobre-aprendizaje en un problema de regresión"
 #| code-fold: true
-from sklearn import tree
+
 arbol = tree.DecisionTreeRegressor().fit(np.atleast_2d(x).T, ym)
 hy = arbol.predict(np.atleast_2d(x).T)
 df['arbol'] = hy
@@ -359,7 +372,6 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```
 
 ### Sub-aprendizaje
@@ -370,7 +382,7 @@ Por otro lado existen problemas donde el conjunto de algoritmos $\mathcal H$ no 
 #| label: fig-sub-aprendizaje
 #| fig-cap: "Sub-aprendizaje en un problema de regresión"
 #| code-fold: true
-from sklearn import tree
+
 arbol = tree.DecisionTreeRegressor(max_depth=2).fit(np.atleast_2d(x).T, ym)
 hy = arbol.predict(np.atleast_2d(x).T)
 df['arbol'] = hy
@@ -380,5 +392,4 @@ fig.tick_params(bottom=False, top=False,
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
-plt.grid()
 ```

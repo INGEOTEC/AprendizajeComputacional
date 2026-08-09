@@ -26,11 +26,8 @@ sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
----
 
 {{< video https://www.youtube.com/embed/oxUDZFgdo-U width="560" height="315" >}}
-
----
 :::
 
 ## Introducción {#sec-intro-10}
@@ -184,9 +181,9 @@ donde la función `sin_sq` tiene la composición de $g \circ f.$ Ahora la deriva
 
 El ejemplo anterior se puede extender para cualquier composición de funciones, pero ese ejemplo no deja claro lo que pasaría con una función de dos o más variables, como por ejemplo, $h(x, y) = x \times y.$ En este caso, el objetivo es calcular tanto $\frac{d}{dx} h$ como $\frac{d}{dy} h.$
 
-El procedimiento es similar, con el ingrediente extra de que se tiene que recordar la función y la posición del argumento, es decir, para $h(2, 5)$ se asocia el valor $\frac{d}{dx} h$ con el primer argumento de la función $h$ y $\frac{d}{dx} h$ con el segundo argumento de la función $h$. Para $h'(2, 5)$ se asocia el valor de $5$ 
+El procedimiento es similar, con el ingrediente extra de que se tiene que recordar la función y la posición del argumento, es decir, para $h(2, 5)$ se asocia el valor $\frac{\partial}{\partial x} h$ con el primer argumento de la función $h$ y $\frac{\partial}{\partial x} h$ con el segundo argumento de la función $h$. Para $h'(2, 5)$ se asocia el valor de $5$ 
 con el primer argumento de $h$ y $2$ con el segundo argumento de $h.$
-Se puede observar que los valores guardados corresponden a $\frac{d}{dx}h(2, 5)=y=5$ y $\frac{d}{dy}h(2, 5)=x=2.$ Escribiendo este ejemplo en Python quedaría como 
+Se puede observar que los valores guardados corresponden a $\frac{\partial}{\partial x}h(2, 5)=y=5$ y $\frac{\partial}{\partial y}h(2, 5)=x=2.$ Escribiendo este ejemplo en Python quedaría como 
 
 ```{python}
 #| echo: true
@@ -228,14 +225,14 @@ Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente
 
 ```{python}
 #| echo: true
-eta = 0.0001
+eta = 1e-5
 delta = np.inf
 params = jnp.array([5.3, -5.1])
 x = jnp.array(x)
 y = jnp.array(y)
 D = [params]
 error_grad = grad(error)
-while delta > 0.0001:
+while delta > 0.01:
     params -= eta * error_grad(params, x, y)
     D.append(params)
     delta = jnp.fabs(D[-1] - D[-2]).mean()
@@ -324,7 +321,7 @@ params_f = Markdown(f'[{_}]')
 
 Optimizando los parámetros de la regresión logística utilizando el procedimiento de diferenciación automática se obtiene `{python} params_f`. 
 
-En Discriminantes Lineales (@sec-discriminantes-lineales) se presento el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción. 
+En Discriminantes Lineales (@sec-discriminantes-lineales) se presentó el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción. 
 
 ```{python}
 #| echo: true
@@ -339,12 +336,14 @@ params_lr_f = Markdown(f'[{_}]')
 error_f = Markdown(f'${error[-1]:0.4f}$')
 ```
 
-Los parámetros son `{python} params_lr_f`. El error en el conjunto se entrenamiento es  se puede calcular de la siguiente manera. En comparación el error obtenido por diferenciación automática es `{python} error_f`, por supuesto este puede variar cambiando el número de iteraciones. 
+Los parámetros son `{python} params_lr_f`. El error en el conjunto de entrenamiento se puede calcular utilizando el siguiente código.
 
 ```{python}
 _ = jnp.array([lr.coef_[0, 0], lr.coef_[0, 1], lr.intercept_[0]])
 suma_entropia_cruzada(_, T, y_t)
 ```
+
+En comparación el error obtenido por diferenciación automática es `{python} error_f`, por supuesto este puede variar cambiando el número de iteraciones. 
 
 ## Actualización de Parámetros {#sec-actualizacion-parametros}
 
@@ -368,8 +367,6 @@ error_bfgs = Markdown(f'${float(error_bfgs):0.4f}$')
 Se observa como se usa la misma función de error (`suma_entropia_cruzada`) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son `{python} params_bfgs_f` y tiene un error `{python} error_bfgs`.
 
 La @fig-optimizacion-comparacion muestra la función discriminantes obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librearía `sklearn` y el algoritmo `BFGS`. Se puede observar que el plano de `sklearn` y `BFGS` son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, `BFGS`. Por supuesto la implementaciones tiene algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros $\mathbf w$ para que tengan una longitud de $1$ se observaría que `sklearn` y `BFGS` se tocan.
-
-
 
 ```{python}
 #| code-fold: true
