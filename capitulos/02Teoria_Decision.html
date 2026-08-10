@@ -316,13 +316,14 @@ window.Quarto = {
   <li><a href="#sec-prediccion-normal" id="toc-sec-prediccion-normal" class="nav-link" data-scroll-target="#sec-prediccion-normal"><span class="header-section-number">2.3.2</span> Predicción</a></li>
   </ul></li>
   <li><a href="#sec-error-clasificacion" id="toc-sec-error-clasificacion" class="nav-link" data-scroll-target="#sec-error-clasificacion"><span class="header-section-number">2.4</span> Error de Clasificación</a></li>
-  <li><a href="#riesgo" id="toc-riesgo" class="nav-link" data-scroll-target="#riesgo"><span class="header-section-number">2.5</span> Riesgo</a>
+  <li><a href="#sec-error-bayesiano" id="toc-sec-error-bayesiano" class="nav-link" data-scroll-target="#sec-error-bayesiano"><span class="header-section-number">2.5</span> Error Bayesiano</a></li>
+  <li><a href="#riesgo" id="toc-riesgo" class="nav-link" data-scroll-target="#riesgo"><span class="header-section-number">2.6</span> Riesgo</a>
   <ul class="collapse">
-  <li><a href="#acción-nula" id="toc-acción-nula" class="nav-link" data-scroll-target="#acción-nula"><span class="header-section-number">2.5.1</span> Acción nula</a></li>
+  <li><a href="#acción-nula" id="toc-acción-nula" class="nav-link" data-scroll-target="#acción-nula"><span class="header-section-number">2.6.1</span> Acción nula</a></li>
   </ul></li>
-  <li><a href="#sec-seleccion-accion-nula" id="toc-sec-seleccion-accion-nula" class="nav-link" data-scroll-target="#sec-seleccion-accion-nula"><span class="header-section-number">2.6</span> Seleccionando la acción</a>
+  <li><a href="#sec-seleccion-accion-nula" id="toc-sec-seleccion-accion-nula" class="nav-link" data-scroll-target="#sec-seleccion-accion-nula"><span class="header-section-number">2.7</span> Seleccionando la acción</a>
   <ul class="collapse">
-  <li><a href="#ejemplo" id="toc-ejemplo" class="nav-link" data-scroll-target="#ejemplo"><span class="header-section-number">2.6.1</span> Ejemplo</a></li>
+  <li><a href="#ejemplo" id="toc-ejemplo" class="nav-link" data-scroll-target="#ejemplo"><span class="header-section-number">2.7.1</span> Ejemplo</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -352,7 +353,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es analizar el uso de la teoría de la probabilidad para la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas de clasificación y su uso para tomar la decisión que reduzca el riesgo.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="1dac4261" class="cell" data-execution_count="1">
+<div id="d8302668" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -392,7 +393,7 @@ window.Quarto = {
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="sec-tres-normales"><span class="header-section-number">2.3.1</span> Problema Sintético</h3>
 <p>Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección presenta un problema sintético. El procedimiento es el siguiente, primero se generarán los datos, los cuales van a ser tres nubes de puntos generadas mediante tres distribuciones gaussianas multivariadas. Con estas tres nubes de puntos, se utilizará el Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) para clasificar todos los puntos generados.</p>
 <p>El primer paso es definir las tres distribuciones gaussianas multivariadas, para este objetivo se usa la clase <code>multivariate_normal</code> como se muestra a continuación.</p>
-<div id="45544763" class="cell" data-execution_count="3">
+<div id="8a60412c" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">1.5</span>, <span class="op">-</span><span class="fl">1.5</span>],</span>
@@ -408,7 +409,7 @@ window.Quarto = {
          \end{pmatrix}.
 \]</span></p>
 <p>Una vez definidas las distribuciones podemos generar números aleatorios de las mismas, en el siguiente código se generar 1000 vectores aleatorios de las tres distribuciones.</p>
-<div id="1e7cab64" class="cell" data-execution_count="4">
+<div id="18a38859" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> p3.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -453,7 +454,7 @@ Figura&nbsp;2.1: Muestras de 3 distribuciones Gausianas
 <div id="fig-guasiana-alargada-x" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-guasiana-alargada-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="02Teoria_Decision_files/figure-html/fig-guasiana-alargada-x-output-1.png" width="491" height="471" class="figure-img">
+<img src="02Teoria_Decision_files/figure-html/fig-guasiana-alargada-x-output-1.png" width="499" height="475" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-guasiana-alargada-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;2.2: Distribución Gausiana
@@ -472,28 +473,28 @@ Figura&nbsp;2.2: Distribución Gausiana
 <p>Quitando la evidencia del Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>2.1</span></a>) se observa que <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span>. En el ejemplo creado se observa que <span class="math inline">\(\mathbb P(\mathcal Y=1) = \frac{1000}{3000},\)</span> las otras probabilidades a priori tienen el mismo valor, es decir, <span class="math inline">\(\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.\)</span></p>
 <p>La verosimilitud está definida en las variables <code>p1</code>, <code>p2</code> y <code>p3</code>; en particular en la función <code>pdf</code>, es decir, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> es <code>p1.pdf</code>, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=2)\)</span> corresponde a <code>p2.pdf</code> y equivalentemente <code>p3.pdf</code> es la verosimilitud cuando <span class="math inline">\(\mathcal Y=3.\)</span></p>
 <p>Utilizando esta información <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> se calcula de la siguiente manera.</p>
-<div id="91860d71" class="cell" data-execution_count="7">
+<div id="bd499194" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> (np.vstack([p1.pdf(X),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        p2.pdf(X), </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        p3.pdf(X)]) <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La evidencia (<a href="#eq-evidencia" class="quarto-xref">Ecuación&nbsp;<span>2.2</span></a>) es un factor normalizador que hace que las probabilidad sume a uno, el siguiente código calcula la evidencia, <span class="math inline">\(\mathbb P(\mathcal X)\)</span></p>
-<div id="b90e2217" class="cell" data-execution_count="8">
+<div id="ac76e8fd" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Finalmente, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> se obtiene normalizando <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> que se puede realizar de la siguiente manera.</p>
-<div id="62fbaeed" class="cell" data-execution_count="9">
+<div id="3ba457b6" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.atleast_2d(evidencia).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X),\)</span> <span class="math inline">\(\mathbb P(\mathcal Y=2 \mid \mathcal X)\)</span> y <span class="math inline">\(\mathbb P(\mathcal Y=3 \mid \mathcal X)\)</span>; y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase.</p>
-<div id="3d106339" class="cell" data-execution_count="10">
+<div id="754f2d53" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>prediccion <span class="op">=</span> clase[indice]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En la variable <code>prediccion</code> se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó <code>X</code> se sabe que los primero 1000 elementos pertenecen a la clase <span class="math inline">\(1\)</span>, los siguientes 1000 a la clase <span class="math inline">\(2\)</span> y los restantes a la clase <span class="math inline">\(3\)</span>. A continuación se muestra el arreglo <code>y</code> que tiene esta estructura.</p>
-<div id="5826311b" class="cell" data-execution_count="11">
+<div id="c325a386" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Teniendo las predicciones y los valores de reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.</p>
@@ -522,22 +523,22 @@ Figura&nbsp;2.3: Error en problema de clasificación
 <section id="sec-error-clasificacion" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="sec-error-clasificacion"><span class="header-section-number">2.4</span> Error de Clasificación</h2>
 <p>Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la <a href="#fig-gaussian-3classes" class="quarto-xref">Figura&nbsp;<span>2.1</span></a>.</p>
-<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0080\)</span>.</p>
-<div id="05382cf3" class="cell" data-execution_count="14">
+<p>El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.2</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0100\)</span>.</p>
+<div id="225e9d09" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> prediccion).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code>. Una manera de conocer esta variabilidad de la medición del error es calculando su <strong>error estándar</strong>.</p>
-<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estándar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0016\)</span>.</p>
-<div id="e342080f" class="cell" data-execution_count="16">
+<p>El error estándar (ver <a href="14Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estándar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="14Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0018\)</span>.</p>
+<div id="5b3a4c0f" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Aunque el error estándar del parámetro <span class="math inline">\(p\)</span> de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar <span class="math inline">\(B\)</span> muestras de <span class="math inline">\(N\)</span> elementos con remplazo de los datos. En este caso los datos son los errores entre <code>y</code> y <code>prediccion</code>. Siguiendo el método presentado en la <a href="14Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a> se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las <span class="math inline">\(B\)</span> repeticiones las cuales consisten en calcular <span class="math inline">\(\hat p\)</span>. Se puede observar como se usa directamente <code>y</code> y <code>prediccion</code> junto con el arreglo de índices <code>s</code> para calcular la media del error. Finalmente se calcula la desviación estándar de <code>B</code> (tercera línea) y ese valor corresponde al error estándar.</p>
-<div id="facaa069" class="cell" data-execution_count="17">
+<div id="308beca5" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [(y[s] <span class="op">!=</span> prediccion[s]).mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0017\)</span>.</p>
+<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0018\)</span>.</p>
 <p>El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés; mediante la técnica de muestreo boostrap se simuló está distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista <code>B</code>.</p>
 <div id="cell-fig-gaussian-3classes-distribucion" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -545,7 +546,7 @@ Figura&nbsp;2.3: Error en problema de clasificación
 <div id="fig-gaussian-3classes-distribucion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gaussian-3classes-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="02Teoria_Decision_files/figure-html/fig-gaussian-3classes-distribucion-output-1.png" width="472" height="470" class="figure-img">
+<img src="02Teoria_Decision_files/figure-html/fig-gaussian-3classes-distribucion-output-1.png" width="471" height="470" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gaussian-3classes-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;2.4: Distribución del error de clasificación
@@ -556,8 +557,48 @@ Figura&nbsp;2.4: Distribución del error de clasificación
 </div>
 <p>La <a href="#fig-gaussian-3classes-distribucion" class="quarto-xref">Figura&nbsp;<span>2.4</span></a> muestra el histograma de la estimación del error en el ejemplo analizado.</p>
 </section>
-<section id="riesgo" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="riesgo"><span class="header-section-number">2.5</span> Riesgo</h2>
+<section id="sec-error-bayesiano" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="sec-error-bayesiano"><span class="header-section-number">2.5</span> Error Bayesiano</h2>
+<p>El ejemplo anterior deja una pregunta abierta, ¿por qué un modelo que conoce exactamente las distribuciones que generaron los datos (<code>p1</code>, <code>p2</code> y <code>p3</code>) comete errores al clasificar? La respuesta está en que el error no depende únicamente del método utilizado para clasificar, sino también de la superposición entre las distribuciones de las clases; esta sección formaliza esta idea mediante el concepto de <strong>error bayesiano</strong> y muestra que la regla utilizada en <a href="#sec-prediccion-normal" class="quarto-xref"><span>Sección 2.3.2</span></a>, es decir, seleccionar la clase con mayor probabilidad <em>a posteriori</em>, es la que menor error comete entre todos los clasificadores posibles.</p>
+<p>Sea <span class="math inline">\(f: \mathcal X \rightarrow \mathcal Y\)</span> un clasificador, es decir, una función que asigna una clase <span class="math inline">\(f(x)\)</span> a cada entrada <span class="math inline">\(x\)</span>; por ejemplo, la variable <code>prediccion</code> del ejemplo anterior corresponde a <span class="math inline">\(f(x)\)</span> evaluado en cada uno de los elementos de <code>X</code>. La probabilidad de que <span class="math inline">\(f\)</span> se equivoque, condicionada a una entrada <span class="math inline">\(\mathcal X=x\)</span>, es</p>
+<p><span id="eq-error-condicional"><span class="math display">\[
+\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \mathbb P(\mathcal Y = f(x) \mid \mathcal X=x),
+\tag{2.3}\]</span></span></p>
+<p>dado que <span class="math inline">\(f(x)\)</span> únicamente puede tomar un valor y el complemento de acertar es equivocarse. El error del clasificador <span class="math inline">\(f\)</span>, sin condicionar a una entrada particular, se obtiene promediando sobre todas las posibles entradas, es decir, <span class="math inline">\(\mathbb P(f(\mathcal X) \neq \mathcal Y) = \mathbb E_{\mathcal X}\left[\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X)\right].\)</span></p>
+<p>El clasificador utilizado en <a href="#sec-prediccion-normal" class="quarto-xref"><span>Sección 2.3.2</span></a> corresponde a la regla</p>
+<p><span id="eq-clasificador-bayes"><span class="math display">\[
+f^*(x) = \underset{k}{\text{arg max }} \mathbb P(\mathcal Y=k \mid \mathcal X=x),
+\tag{2.4}\]</span></span></p>
+<p>conocida como la <strong>regla de Bayes</strong>, y al error que esta regla produce, <span class="math inline">\(\mathbb P(f^*(\mathcal X) \neq \mathcal Y)\)</span>, se le conoce como <strong>error bayesiano</strong>. Usando la <a href="#eq-error-condicional" class="quarto-xref">Ecuación&nbsp;<span>2.3</span></a> en <span class="math inline">\(f^*\)</span> se tiene que</p>
+<p><span id="eq-error-bayesiano"><span class="math display">\[
+\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \underset{k}{\max}\ \mathbb P(\mathcal Y=k \mid \mathcal X=x).
+\tag{2.5}\]</span></span></p>
+<p>El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases; en el ejemplo de <a href="#sec-tres-normales" class="quarto-xref"><span>Sección 2.3.1</span></a> el valor <span class="math inline">\(0.0100\)</span> estimado no es producto de un método imperfecto – <code>p1</code>, <code>p2</code> y <code>p3</code> son las distribuciones exactas – sino que corresponde, salvo el error de estimación medido con <code>se_f</code>, al error bayesiano del problema, es decir, es un error irreducible.</p>
+<p>Falta mostrar que <span class="math inline">\(f^*\)</span> es, de entre todos los clasificadores posibles, el que tiene el menor error esperado. Sea <span class="math inline">\(f\)</span> cualquier otro clasificador y, para simplificar la notación, sea <span class="math inline">\(p_k(x) = \mathbb P(\mathcal Y=k \mid \mathcal X=x)\)</span>. Por definición de máximo, para toda entrada <span class="math inline">\(x\)</span> se cumple que</p>
+<p><span id="eq-paso-max"><span class="math display">\[
+p_{f(x)}(x) \leq \underset{k}{\max}\ p_k(x),
+\tag{2.6}\]</span></span></p>
+<p>dado que el lado derecho es el mayor valor que puede tomar <span class="math inline">\(p_k(x)\)</span> mientras que el lado izquierdo es solo uno de esos valores, el correspondiente a la clase <span class="math inline">\(f(x)\)</span> que selecciona el clasificador <span class="math inline">\(f\)</span>.</p>
+<p>El siguiente paso es multiplicar ambos lados de la <a href="#eq-paso-max" class="quarto-xref">Ecuación&nbsp;<span>2.6</span></a> por <span class="math inline">\(-1\)</span>, operación que invierte el sentido de la desigualdad, y después sumar <span class="math inline">\(1\)</span> a ambos lados, lo cual no altera el sentido de la desigualdad al sumarse la misma constante en ambos lados:</p>
+<p><span class="math display">\[
+\begin{split}
+p_{f(x)}(x) &amp;\leq \underset{k}{\max}\ p_k(x) \\
+-p_{f(x)}(x) &amp;\geq -\underset{k}{\max}\ p_k(x) \\
+1 - p_{f(x)}(x) &amp;\geq 1 - \underset{k}{\max}\ p_k(x).
+\end{split}
+\]</span></p>
+<p>Finalmente se identifica cada lado de esta última desigualdad, el lado izquierdo, <span class="math inline">\(1-p_{f(x)}(x) = 1 - \mathbb P(\mathcal Y=f(x) \mid \mathcal X=x)\)</span>, corresponde a <span class="math inline">\(\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)\)</span> por la <a href="#eq-error-condicional" class="quarto-xref">Ecuación&nbsp;<span>2.3</span></a>; el lado derecho, <span class="math inline">\(1 - \underset{k}{\max}\ p_k(x)\)</span>, corresponde a <span class="math inline">\(\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)\)</span> por la <a href="#eq-error-bayesiano" class="quarto-xref">Ecuación&nbsp;<span>2.5</span></a>. Sustituyendo ambas identidades se obtiene</p>
+<p><span class="math display">\[
+\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \quad \text{para toda } x.
+\]</span></p>
+<p>Como esta desigualdad se cumple para cada valor de <span class="math inline">\(x\)</span>, se preserva al tomar el valor esperado sobre <span class="math inline">\(\mathcal X\)</span> en ambos lados, por lo tanto</p>
+<p><span class="math display">\[
+\mathbb P(f(\mathcal X) \neq \mathcal Y) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y) \quad \text{para todo clasificador } f,
+\]</span></p>
+<p>es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la <strong>optimalidad del clasificador Bayesiano</strong>. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo <span class="math inline">\(0/1\)</span> es equivalente a minimizar el error aquí definido.</p>
+</section>
+<section id="riesgo" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="riesgo"><span class="header-section-number">2.6</span> Riesgo</h2>
 <p>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.</p>
 <p>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir <span class="math inline">\(\alpha_i\)</span> como la acción que se toma al seleccionar la clase <span class="math inline">\(\mathcal Y=i\)</span>. Entonces el riesgo esperado por tomar la acción <span class="math inline">\(\alpha_i\)</span> está definido por:</p>
 <p><span class="math display">\[R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),\]</span></p>
@@ -575,8 +616,8 @@ R(\alpha_i \mid x) &amp;= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathc
 \end{split}
 \]</span></p>
 <p>Recordando que <span class="math inline">\(\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1\)</span>. Por lo tanto en el caso de costo <span class="math inline">\(0/1\)</span> se puede observar que mínimo riesgo corresponde a la clase más probable.</p>
-<section id="acción-nula" class="level3" data-number="2.5.1">
-<h3 data-number="2.5.1" class="anchored" data-anchor-id="acción-nula"><span class="header-section-number">2.5.1</span> Acción nula</h3>
+<section id="acción-nula" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="acción-nula"><span class="header-section-number">2.6.1</span> Acción nula</h3>
 <p>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</p>
 <p>La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento mas adecuado sería incrementar el número de acciones, <span class="math inline">\(\alpha\)</span> de tal manera que la acción <span class="math inline">\(\alpha_{K+1}\)</span> corresponda a la intervención esperada, esto para cualquier problema de <span class="math inline">\(K\)</span> clases.</p>
 <p>La extensión del costo <span class="math inline">\(0/1\)</span> para este caso estaría definida como:</p>
@@ -593,14 +634,14 @@ R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \m
 \]</span></p>
 </section>
 </section>
-<section id="sec-seleccion-accion-nula" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="sec-seleccion-accion-nula"><span class="header-section-number">2.6</span> Seleccionando la acción</h2>
+<section id="sec-seleccion-accion-nula" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="sec-seleccion-accion-nula"><span class="header-section-number">2.7</span> Seleccionando la acción</h2>
 <p>Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo <span class="math inline">\(0/1\)</span> que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por <span class="math inline">\(R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)\)</span> y el riesgo de la acción nula es <span class="math inline">\(R(\alpha_{K+1} \mid x) = \lambda\)</span>.</p>
 <p>En esta circunstancias se selecciona la clase <span class="math inline">\(\hat y\)</span> si es la clase con la probabilidad máxima (i.e., <span class="math inline">\(\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)\)</span>) y además <span class="math inline">\(\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.\)</span></p>
-<section id="ejemplo" class="level3" data-number="2.6.1">
-<h3 data-number="2.6.1" class="anchored" data-anchor-id="ejemplo"><span class="header-section-number">2.6.1</span> Ejemplo</h3>
+<section id="ejemplo" class="level3" data-number="2.7.1">
+<h3 data-number="2.7.1" class="anchored" data-anchor-id="ejemplo"><span class="header-section-number">2.7.1</span> Ejemplo</h3>
 <p>El siguiente ejemplo ilustra el comportamiento de seleccionar la clase considerando que se tiene un riesgo en la acción nula. Lo primero es generar dos conjuntos de datos uno para la clase positiva y otro para la negativa, tal y como lo indica el siguiente código. <code>p1</code> y <code>p1</code> son distribuciones Gaussianas, los elementos generados por <code>p1</code> serán asociados a la clase positiva y los generados por <code>p2</code> a la clase negativa.</p>
-<div id="2b6f768a" class="cell" data-execution_count="20">
+<div id="ffc8e8ea" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="op">-</span><span class="dv">5</span>],</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                   [<span class="op">-</span><span class="dv">5</span>, <span class="dv">2</span>]])</span>
@@ -637,28 +678,28 @@ Figura&nbsp;2.5: Dos distribución Gausianas asociadas a dos clases
 </div>
 </div>
 <p>Para no introducir ningún error adicional con la estimación de parámetros, se utilizan los parámetros con los que se generaron los datos para calcular <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> tal y como lo muestra el siguiente código.</p>
-<div id="9b61a8fc" class="cell" data-execution_count="22">
+<div id="7279330a" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> np.c_[p1.pdf(X), p2.pdf(X)] <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.c_[evidencia]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Habiendo calculado la probabilidad de cada clase en todos los elementos de <code>X</code>, es momento de predecir la clase y calcular el error del proceso de clasificación.</p>
-<div id="ca2fd1b8" class="cell" data-execution_count="23">
+<div id="fe38b764" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'P'</span>, <span class="dv">1</span>: <span class="st">'N'</span>}</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([m[i]</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> i <span class="kw">in</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error que se tiene corresponde a 0.0070. El siguiente paso es definir un riesgo para la clase nula, e.g.&nbsp;<span class="math inline">\(\lambda = 0.2\)</span> y utilizarlo para saber cuales son los elementos que cumplen con la condición <span class="math inline">\(\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.\)</span> Estos elementos se guardan en la variable <code>valid</code> como muestra el siguiente código.</p>
-<div id="c113ae63" class="cell" data-execution_count="24">
+<p>El error que se tiene corresponde a 0.0100. El siguiente paso es definir un riesgo para la clase nula, e.g.&nbsp;<span class="math inline">\(\lambda = 0.2\)</span> y utilizarlo para saber cuales son los elementos que cumplen con la condición <span class="math inline">\(\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.\)</span> Estos elementos se guardan en la variable <code>valid</code> como muestra el siguiente código.</p>
+<div id="9ec4d6b9" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="fl">0.20</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>valid <span class="op">=</span> posterior.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">-</span> riesgo</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Utilizando <code>valid</code> se puede calcular el error de aquellos elementos los cuales tiene una clase positiva o negativa. El siguiente código calcula el error.</p>
-<div id="08537656" class="cell" data-execution_count="25">
+<div id="20693de1" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y[valid] <span class="op">!=</span> hy[valid]).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error obtenido con los elementos válidos es <span class="math inline">\(0.0040\)</span>, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es np.int64(1976).</p>
+<p>El error obtenido con los elementos válidos es <span class="math inline">\(0.0071\)</span>, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es np.int64(1982).</p>
 <p>Para completar el ejemplo, la <a href="#fig-2-guasiana-original-reducido" class="quarto-xref">Figura&nbsp;<span>2.6</span></a> muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se pueden observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula.</p>
 <div id="cell-fig-2-guasiana-original-reducido" class="cell" data-execution_count="26">
 <details class="code-fold">
@@ -1449,222 +1490,280 @@ Figura&nbsp;2.7: Predicción del conjunto original y el conjunto que elimina aqu
 <span id="cb22-292"><a href="#cb22-292" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-293"><a href="#cb22-293" aria-hidden="true" tabindex="-1"></a>La @fig-gaussian-3classes-distribucion muestra el histograma de la estimación del error en el ejemplo analizado.</span>
 <span id="cb22-294"><a href="#cb22-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-295"><a href="#cb22-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## Riesgo</span></span>
+<span id="cb22-295"><a href="#cb22-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## Error Bayesiano {#sec-error-bayesiano}</span></span>
 <span id="cb22-296"><a href="#cb22-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-297"><a href="#cb22-297" aria-hidden="true" tabindex="-1"></a>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.</span>
+<span id="cb22-297"><a href="#cb22-297" aria-hidden="true" tabindex="-1"></a>El ejemplo anterior deja una pregunta abierta, ¿por qué un modelo que conoce exactamente las distribuciones que generaron los datos (<span class="in">`p1`</span>, <span class="in">`p2`</span> y <span class="in">`p3`</span>) comete errores al clasificar? La respuesta está en que el error no depende únicamente del método utilizado para clasificar, sino también de la superposición entre las distribuciones de las clases; esta sección formaliza esta idea mediante el concepto de **error bayesiano** y muestra que la regla utilizada en @sec-prediccion-normal, es decir, seleccionar la clase con mayor probabilidad *a posteriori*, es la que menor error comete entre todos los clasificadores posibles.</span>
 <span id="cb22-298"><a href="#cb22-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-299"><a href="#cb22-299" aria-hidden="true" tabindex="-1"></a>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir $\alpha_i$ como la acción que se toma al seleccionar la clase $\mathcal Y=i$. Entonces el riesgo esperado por tomar la acción $\alpha_i$ está definido por:</span>
+<span id="cb22-299"><a href="#cb22-299" aria-hidden="true" tabindex="-1"></a>Sea $f: \mathcal X \rightarrow \mathcal Y$ un clasificador, es decir, una función que asigna una clase $f(x)$ a cada entrada $x$; por ejemplo, la variable <span class="in">`prediccion`</span> del ejemplo anterior corresponde a $f(x)$ evaluado en cada uno de los elementos de <span class="in">`X`</span>. La probabilidad de que $f$ se equivoque, condicionada a una entrada $\mathcal X=x$, es</span>
 <span id="cb22-300"><a href="#cb22-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-301"><a href="#cb22-301" aria-hidden="true" tabindex="-1"></a>$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$</span>
-<span id="cb22-302"><a href="#cb22-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-303"><a href="#cb22-303" aria-hidden="true" tabindex="-1"></a>donde $\lambda_{ik}$ es el costo de tomar la acción $i$ en la clase $k$.</span>
+<span id="cb22-301"><a href="#cb22-301" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-302"><a href="#cb22-302" aria-hidden="true" tabindex="-1"></a>\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \mathbb P(\mathcal Y = f(x) \mid \mathcal X=x),</span>
+<span id="cb22-303"><a href="#cb22-303" aria-hidden="true" tabindex="-1"></a>$$ {#eq-error-condicional}</span>
 <span id="cb22-304"><a href="#cb22-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-305"><a href="#cb22-305" aria-hidden="true" tabindex="-1"></a>Suponiendo una función de costo $0/1$, donde el escoger la clase correcta tiene un costo $0$ y el equivocarse en cualquier caso tiene un costo $1$ se define como:</span>
+<span id="cb22-305"><a href="#cb22-305" aria-hidden="true" tabindex="-1"></a>dado que $f(x)$ únicamente puede tomar un valor y el complemento de acertar es equivocarse. El error del clasificador $f$, sin condicionar a una entrada particular, se obtiene promediando sobre todas las posibles entradas, es decir, $\mathbb P(f(\mathcal X) \neq \mathcal Y) = \mathbb E_{\mathcal X}\left<span class="co">[</span><span class="ot">\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X)\right</span><span class="co">]</span>.$</span>
 <span id="cb22-306"><a href="#cb22-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-307"><a href="#cb22-307" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-308"><a href="#cb22-308" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases}.</span>
+<span id="cb22-307"><a href="#cb22-307" aria-hidden="true" tabindex="-1"></a>El clasificador utilizado en @sec-prediccion-normal corresponde a la regla</span>
+<span id="cb22-308"><a href="#cb22-308" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-309"><a href="#cb22-309" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-310"><a href="#cb22-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-311"><a href="#cb22-311" aria-hidden="true" tabindex="-1"></a>Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: </span>
+<span id="cb22-310"><a href="#cb22-310" aria-hidden="true" tabindex="-1"></a>f^*(x) = \underset{k}{\text{arg max }} \mathbb P(\mathcal Y=k \mid \mathcal X=x),</span>
+<span id="cb22-311"><a href="#cb22-311" aria-hidden="true" tabindex="-1"></a>$$ {#eq-clasificador-bayes}</span>
 <span id="cb22-312"><a href="#cb22-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-313"><a href="#cb22-313" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-314"><a href="#cb22-314" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb22-315"><a href="#cb22-315" aria-hidden="true" tabindex="-1"></a>R(\alpha_i \mid x) &amp;= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
-<span id="cb22-316"><a href="#cb22-316" aria-hidden="true" tabindex="-1"></a>&amp;= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
-<span id="cb22-317"><a href="#cb22-317" aria-hidden="true" tabindex="-1"></a>&amp;= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).</span>
-<span id="cb22-318"><a href="#cb22-318" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb22-319"><a href="#cb22-319" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb22-313"><a href="#cb22-313" aria-hidden="true" tabindex="-1"></a>conocida como la **regla de Bayes**, y al error que esta regla produce, $\mathbb P(f^*(\mathcal X) \neq \mathcal Y)$, se le conoce como **error bayesiano**. Usando la @eq-error-condicional en $f^*$ se tiene que</span>
+<span id="cb22-314"><a href="#cb22-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-315"><a href="#cb22-315" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-316"><a href="#cb22-316" aria-hidden="true" tabindex="-1"></a>\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \underset{k}{\max}\ \mathbb P(\mathcal Y=k \mid \mathcal X=x).</span>
+<span id="cb22-317"><a href="#cb22-317" aria-hidden="true" tabindex="-1"></a>$$ {#eq-error-bayesiano}</span>
+<span id="cb22-318"><a href="#cb22-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-319"><a href="#cb22-319" aria-hidden="true" tabindex="-1"></a>El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases; en el ejemplo de @sec-tres-normales el valor <span class="in">`{python} error_f`</span> estimado no es producto de un método imperfecto -- <span class="in">`p1`</span>, <span class="in">`p2`</span> y <span class="in">`p3`</span> son las distribuciones exactas -- sino que corresponde, salvo el error de estimación medido con <span class="in">`se_f`</span>, al error bayesiano del problema, es decir, es un error irreducible.</span>
 <span id="cb22-320"><a href="#cb22-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-321"><a href="#cb22-321" aria-hidden="true" tabindex="-1"></a>Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que mínimo riesgo corresponde a la clase más probable.</span>
+<span id="cb22-321"><a href="#cb22-321" aria-hidden="true" tabindex="-1"></a>Falta mostrar que $f^*$ es, de entre todos los clasificadores posibles, el que tiene el menor error esperado. Sea $f$ cualquier otro clasificador y, para simplificar la notación, sea $p_k(x) = \mathbb P(\mathcal Y=k \mid \mathcal X=x)$. Por definición de máximo, para toda entrada $x$ se cumple que</span>
 <span id="cb22-322"><a href="#cb22-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-323"><a href="#cb22-323" aria-hidden="true" tabindex="-1"></a><span class="fu">### Acción nula</span></span>
-<span id="cb22-324"><a href="#cb22-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-325"><a href="#cb22-325" aria-hidden="true" tabindex="-1"></a>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</span>
+<span id="cb22-323"><a href="#cb22-323" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-324"><a href="#cb22-324" aria-hidden="true" tabindex="-1"></a>p_{f(x)}(x) \leq \underset{k}{\max}\ p_k(x),</span>
+<span id="cb22-325"><a href="#cb22-325" aria-hidden="true" tabindex="-1"></a>$$ {#eq-paso-max}</span>
 <span id="cb22-326"><a href="#cb22-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-327"><a href="#cb22-327" aria-hidden="true" tabindex="-1"></a>La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento mas adecuado sería incrementar el número de acciones, $\alpha$ de tal manera que la acción $\alpha_{K+1}$ corresponda a la intervención esperada, esto para cualquier problema de $K$ clases.</span>
+<span id="cb22-327"><a href="#cb22-327" aria-hidden="true" tabindex="-1"></a>dado que el lado derecho es el mayor valor que puede tomar $p_k(x)$ mientras que el lado izquierdo es solo uno de esos valores, el correspondiente a la clase $f(x)$ que selecciona el clasificador $f$.</span>
 <span id="cb22-328"><a href="#cb22-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-329"><a href="#cb22-329" aria-hidden="true" tabindex="-1"></a>La extensión del costo $0/1$ para este caso estaría definida como:</span>
+<span id="cb22-329"><a href="#cb22-329" aria-hidden="true" tabindex="-1"></a>El siguiente paso es multiplicar ambos lados de la @eq-paso-max por $-1$, operación que invierte el sentido de la desigualdad, y después sumar $1$ a ambos lados, lo cual no altera el sentido de la desigualdad al sumarse la misma constante en ambos lados:</span>
 <span id="cb22-330"><a href="#cb22-330" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-331"><a href="#cb22-331" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-332"><a href="#cb22-332" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> \lambda \text{ si } i = K + 1 <span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases},</span>
-<span id="cb22-333"><a href="#cb22-333" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-334"><a href="#cb22-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-335"><a href="#cb22-335" aria-hidden="true" tabindex="-1"></a>donde $0 &lt; \lambda &lt; 1$.</span>
-<span id="cb22-336"><a href="#cb22-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-337"><a href="#cb22-337" aria-hidden="true" tabindex="-1"></a>Usando la definición de riesgo, el riesgo de tomar la acción $\alpha_{K+1}$ es </span>
+<span id="cb22-332"><a href="#cb22-332" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb22-333"><a href="#cb22-333" aria-hidden="true" tabindex="-1"></a>p_{f(x)}(x) &amp;\leq \underset{k}{\max}\ p_k(x) <span class="sc">\\</span></span>
+<span id="cb22-334"><a href="#cb22-334" aria-hidden="true" tabindex="-1"></a>-p_{f(x)}(x) &amp;\geq -\underset{k}{\max}\ p_k(x) <span class="sc">\\</span></span>
+<span id="cb22-335"><a href="#cb22-335" aria-hidden="true" tabindex="-1"></a>1 - p_{f(x)}(x) &amp;\geq 1 - \underset{k}{\max}\ p_k(x).</span>
+<span id="cb22-336"><a href="#cb22-336" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb22-337"><a href="#cb22-337" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb22-338"><a href="#cb22-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-339"><a href="#cb22-339" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-340"><a href="#cb22-340" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb22-341"><a href="#cb22-341" aria-hidden="true" tabindex="-1"></a>R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> &amp;= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> </span>
-<span id="cb22-342"><a href="#cb22-342" aria-hidden="true" tabindex="-1"></a>&amp;= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.</span>
-<span id="cb22-343"><a href="#cb22-343" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb22-344"><a href="#cb22-344" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb22-345"><a href="#cb22-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-346"><a href="#cb22-346" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seleccionando la acción {#sec-seleccion-accion-nula}</span></span>
-<span id="cb22-347"><a href="#cb22-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-348"><a href="#cb22-348" aria-hidden="true" tabindex="-1"></a>Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.</span>
-<span id="cb22-349"><a href="#cb22-349" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-350"><a href="#cb22-350" aria-hidden="true" tabindex="-1"></a>En esta circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.$</span>
-<span id="cb22-351"><a href="#cb22-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-339"><a href="#cb22-339" aria-hidden="true" tabindex="-1"></a>Finalmente se identifica cada lado de esta última desigualdad, el lado izquierdo, $1-p_{f(x)}(x) = 1 - \mathbb P(\mathcal Y=f(x) \mid \mathcal X=x)$, corresponde a $\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-condicional; el lado derecho, $1 - \underset{k}{\max}\ p_k(x)$, corresponde a $\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-bayesiano. Sustituyendo ambas identidades se obtiene</span>
+<span id="cb22-340"><a href="#cb22-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-341"><a href="#cb22-341" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-342"><a href="#cb22-342" aria-hidden="true" tabindex="-1"></a>\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \quad \text{para toda } x.</span>
+<span id="cb22-343"><a href="#cb22-343" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-344"><a href="#cb22-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-345"><a href="#cb22-345" aria-hidden="true" tabindex="-1"></a>Como esta desigualdad se cumple para cada valor de $x$, se preserva al tomar el valor esperado sobre $\mathcal X$ en ambos lados, por lo tanto</span>
+<span id="cb22-346"><a href="#cb22-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-347"><a href="#cb22-347" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-348"><a href="#cb22-348" aria-hidden="true" tabindex="-1"></a>\mathbb P(f(\mathcal X) \neq \mathcal Y) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y) \quad \text{para todo clasificador } f,</span>
+<span id="cb22-349"><a href="#cb22-349" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-350"><a href="#cb22-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-351"><a href="#cb22-351" aria-hidden="true" tabindex="-1"></a>es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la **optimalidad del clasificador Bayesiano**. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo $0/1$ es equivalente a minimizar el error aquí definido.</span>
 <span id="cb22-352"><a href="#cb22-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-353"><a href="#cb22-353" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo </span></span>
+<span id="cb22-353"><a href="#cb22-353" aria-hidden="true" tabindex="-1"></a><span class="fu">## Riesgo</span></span>
 <span id="cb22-354"><a href="#cb22-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-355"><a href="#cb22-355" aria-hidden="true" tabindex="-1"></a>El siguiente ejemplo ilustra el comportamiento de seleccionar la clase considerando que se tiene un riesgo en la acción nula. Lo primero es generar dos conjuntos de datos uno para la clase positiva y otro para la negativa, tal y como lo indica el siguiente código. <span class="in">`p1`</span> y <span class="in">`p1`</span> son distribuciones Gaussianas, los elementos generados por <span class="in">`p1`</span> serán asociados a la clase positiva y los generados por <span class="in">`p2`</span> a la clase negativa. </span>
+<span id="cb22-355"><a href="#cb22-355" aria-hidden="true" tabindex="-1"></a>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.</span>
 <span id="cb22-356"><a href="#cb22-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-359"><a href="#cb22-359" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-360"><a href="#cb22-360" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb22-361"><a href="#cb22-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-362"><a href="#cb22-362" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
-<span id="cb22-363"><a href="#cb22-363" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="op">-</span><span class="dv">5</span>],</span>
-<span id="cb22-364"><a href="#cb22-364" aria-hidden="true" tabindex="-1"></a>                                   [<span class="op">-</span><span class="dv">5</span>, <span class="dv">2</span>]])</span>
-<span id="cb22-365"><a href="#cb22-365" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="op">-</span><span class="dv">5</span>, <span class="dv">0</span>],</span>
-<span id="cb22-366"><a href="#cb22-366" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="dv">5</span>],</span>
-<span id="cb22-367"><a href="#cb22-367" aria-hidden="true" tabindex="-1"></a>                                   [<span class="dv">5</span>, <span class="dv">2</span>]])</span>
-<span id="cb22-368"><a href="#cb22-368" aria-hidden="true" tabindex="-1"></a>X1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
-<span id="cb22-369"><a href="#cb22-369" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
-<span id="cb22-370"><a href="#cb22-370" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X1, X2))</span>
-<span id="cb22-371"><a href="#cb22-371" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="st">'P'</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="st">'N'</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
-<span id="cb22-372"><a href="#cb22-372" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-373"><a href="#cb22-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-374"><a href="#cb22-374" aria-hidden="true" tabindex="-1"></a>La @fig-2-guasiana-alargada-x muestra el conjunto de datos donde se realizará el ejemplo de seleccionar la clase considerando el riesgo. </span>
-<span id="cb22-375"><a href="#cb22-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-376"><a href="#cb22-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-379"><a href="#cb22-379" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-380"><a href="#cb22-380" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-2-guasiana-alargada-x</span></span>
-<span id="cb22-381"><a href="#cb22-381" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Dos distribución Gausianas asociadas a dos clases"</span></span>
-<span id="cb22-382"><a href="#cb22-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb22-383"><a href="#cb22-383" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-357"><a href="#cb22-357" aria-hidden="true" tabindex="-1"></a>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir $\alpha_i$ como la acción que se toma al seleccionar la clase $\mathcal Y=i$. Entonces el riesgo esperado por tomar la acción $\alpha_i$ está definido por:</span>
+<span id="cb22-358"><a href="#cb22-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-359"><a href="#cb22-359" aria-hidden="true" tabindex="-1"></a>$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$</span>
+<span id="cb22-360"><a href="#cb22-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-361"><a href="#cb22-361" aria-hidden="true" tabindex="-1"></a>donde $\lambda_{ik}$ es el costo de tomar la acción $i$ en la clase $k$.</span>
+<span id="cb22-362"><a href="#cb22-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-363"><a href="#cb22-363" aria-hidden="true" tabindex="-1"></a>Suponiendo una función de costo $0/1$, donde el escoger la clase correcta tiene un costo $0$ y el equivocarse en cualquier caso tiene un costo $1$ se define como:</span>
+<span id="cb22-364"><a href="#cb22-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-365"><a href="#cb22-365" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-366"><a href="#cb22-366" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases}.</span>
+<span id="cb22-367"><a href="#cb22-367" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-368"><a href="#cb22-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-369"><a href="#cb22-369" aria-hidden="true" tabindex="-1"></a>Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: </span>
+<span id="cb22-370"><a href="#cb22-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-371"><a href="#cb22-371" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-372"><a href="#cb22-372" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb22-373"><a href="#cb22-373" aria-hidden="true" tabindex="-1"></a>R(\alpha_i \mid x) &amp;= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
+<span id="cb22-374"><a href="#cb22-374" aria-hidden="true" tabindex="-1"></a>&amp;= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
+<span id="cb22-375"><a href="#cb22-375" aria-hidden="true" tabindex="-1"></a>&amp;= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).</span>
+<span id="cb22-376"><a href="#cb22-376" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb22-377"><a href="#cb22-377" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb22-378"><a href="#cb22-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-379"><a href="#cb22-379" aria-hidden="true" tabindex="-1"></a>Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que mínimo riesgo corresponde a la clase más probable.</span>
+<span id="cb22-380"><a href="#cb22-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-381"><a href="#cb22-381" aria-hidden="true" tabindex="-1"></a><span class="fu">### Acción nula</span></span>
+<span id="cb22-382"><a href="#cb22-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-383"><a href="#cb22-383" aria-hidden="true" tabindex="-1"></a>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</span>
 <span id="cb22-384"><a href="#cb22-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-385"><a href="#cb22-385" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb22-386"><a href="#cb22-386" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y</span>
-<span id="cb22-387"><a href="#cb22-387" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
-<span id="cb22-388"><a href="#cb22-388" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>)</span>
-<span id="cb22-389"><a href="#cb22-389" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;fig.ax.set_xlim(-20, 20)</span></span>
-<span id="cb22-390"><a href="#cb22-390" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;fig.ax.set_ylim(-20, 20)</span></span>
-<span id="cb22-391"><a href="#cb22-391" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-385"><a href="#cb22-385" aria-hidden="true" tabindex="-1"></a>La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento mas adecuado sería incrementar el número de acciones, $\alpha$ de tal manera que la acción $\alpha_{K+1}$ corresponda a la intervención esperada, esto para cualquier problema de $K$ clases.</span>
+<span id="cb22-386"><a href="#cb22-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-387"><a href="#cb22-387" aria-hidden="true" tabindex="-1"></a>La extensión del costo $0/1$ para este caso estaría definida como:</span>
+<span id="cb22-388"><a href="#cb22-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-389"><a href="#cb22-389" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-390"><a href="#cb22-390" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> \lambda \text{ si } i = K + 1 <span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases},</span>
+<span id="cb22-391"><a href="#cb22-391" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb22-392"><a href="#cb22-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-393"><a href="#cb22-393" aria-hidden="true" tabindex="-1"></a>Para no introducir ningún error adicional con la estimación de parámetros, se utilizan los parámetros con los que se generaron los datos para calcular $\mathbb P(\mathcal Y \mid \mathcal X)$ tal y como lo muestra el siguiente código. </span>
+<span id="cb22-393"><a href="#cb22-393" aria-hidden="true" tabindex="-1"></a>donde $0 &lt; \lambda &lt; 1$.</span>
 <span id="cb22-394"><a href="#cb22-394" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-395"><a href="#cb22-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-398"><a href="#cb22-398" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-399"><a href="#cb22-399" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb22-400"><a href="#cb22-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-401"><a href="#cb22-401" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> np.c_[p1.pdf(X), p2.pdf(X)] <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb22-402"><a href="#cb22-402" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb22-403"><a href="#cb22-403" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.c_[evidencia]</span>
-<span id="cb22-404"><a href="#cb22-404" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-395"><a href="#cb22-395" aria-hidden="true" tabindex="-1"></a>Usando la definición de riesgo, el riesgo de tomar la acción $\alpha_{K+1}$ es </span>
+<span id="cb22-396"><a href="#cb22-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-397"><a href="#cb22-397" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-398"><a href="#cb22-398" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb22-399"><a href="#cb22-399" aria-hidden="true" tabindex="-1"></a>R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> &amp;= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> </span>
+<span id="cb22-400"><a href="#cb22-400" aria-hidden="true" tabindex="-1"></a>&amp;= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.</span>
+<span id="cb22-401"><a href="#cb22-401" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb22-402"><a href="#cb22-402" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-403"><a href="#cb22-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-404"><a href="#cb22-404" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seleccionando la acción {#sec-seleccion-accion-nula}</span></span>
 <span id="cb22-405"><a href="#cb22-405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-406"><a href="#cb22-406" aria-hidden="true" tabindex="-1"></a>Habiendo calculado la probabilidad de cada clase en todos los elementos de <span class="in">`X`</span>, es momento de predecir la clase y calcular el error del proceso de clasificación. </span>
+<span id="cb22-406"><a href="#cb22-406" aria-hidden="true" tabindex="-1"></a>Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.</span>
 <span id="cb22-407"><a href="#cb22-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-410"><a href="#cb22-410" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-411"><a href="#cb22-411" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-408"><a href="#cb22-408" aria-hidden="true" tabindex="-1"></a>En esta circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.$</span>
+<span id="cb22-409"><a href="#cb22-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-410"><a href="#cb22-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-411"><a href="#cb22-411" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo </span></span>
 <span id="cb22-412"><a href="#cb22-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-413"><a href="#cb22-413" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'P'</span>, <span class="dv">1</span>: <span class="st">'N'</span>}</span>
-<span id="cb22-414"><a href="#cb22-414" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([m[i]</span>
-<span id="cb22-415"><a href="#cb22-415" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> i <span class="kw">in</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
-<span id="cb22-416"><a href="#cb22-416" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> hy).mean()</span>
-<span id="cb22-417"><a href="#cb22-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-418"><a href="#cb22-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-419"><a href="#cb22-419" aria-hidden="true" tabindex="-1"></a>El error que se tiene corresponde a <span class="in">`{python} Markdown(f'{error:0.4f}')`</span>. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuales son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.$ Estos elementos se guardan en la variable <span class="in">`valid`</span> como muestra el siguiente código. </span>
-<span id="cb22-420"><a href="#cb22-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-423"><a href="#cb22-423" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-424"><a href="#cb22-424" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb22-425"><a href="#cb22-425" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-426"><a href="#cb22-426" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="fl">0.20</span></span>
-<span id="cb22-427"><a href="#cb22-427" aria-hidden="true" tabindex="-1"></a>valid <span class="op">=</span> posterior.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">-</span> riesgo</span>
-<span id="cb22-428"><a href="#cb22-428" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-429"><a href="#cb22-429" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-430"><a href="#cb22-430" aria-hidden="true" tabindex="-1"></a>Utilizando <span class="in">`valid`</span> se puede calcular el error de aquellos elementos los cuales tiene una clase positiva o negativa. El siguiente código calcula el error. </span>
+<span id="cb22-413"><a href="#cb22-413" aria-hidden="true" tabindex="-1"></a>El siguiente ejemplo ilustra el comportamiento de seleccionar la clase considerando que se tiene un riesgo en la acción nula. Lo primero es generar dos conjuntos de datos uno para la clase positiva y otro para la negativa, tal y como lo indica el siguiente código. <span class="in">`p1`</span> y <span class="in">`p1`</span> son distribuciones Gaussianas, los elementos generados por <span class="in">`p1`</span> serán asociados a la clase positiva y los generados por <span class="in">`p2`</span> a la clase negativa. </span>
+<span id="cb22-414"><a href="#cb22-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-417"><a href="#cb22-417" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-418"><a href="#cb22-418" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-419"><a href="#cb22-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-420"><a href="#cb22-420" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
+<span id="cb22-421"><a href="#cb22-421" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="op">-</span><span class="dv">5</span>],</span>
+<span id="cb22-422"><a href="#cb22-422" aria-hidden="true" tabindex="-1"></a>                                   [<span class="op">-</span><span class="dv">5</span>, <span class="dv">2</span>]])</span>
+<span id="cb22-423"><a href="#cb22-423" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="op">-</span><span class="dv">5</span>, <span class="dv">0</span>],</span>
+<span id="cb22-424"><a href="#cb22-424" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="dv">5</span>],</span>
+<span id="cb22-425"><a href="#cb22-425" aria-hidden="true" tabindex="-1"></a>                                   [<span class="dv">5</span>, <span class="dv">2</span>]])</span>
+<span id="cb22-426"><a href="#cb22-426" aria-hidden="true" tabindex="-1"></a>X1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb22-427"><a href="#cb22-427" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb22-428"><a href="#cb22-428" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X1, X2))</span>
+<span id="cb22-429"><a href="#cb22-429" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="st">'P'</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="st">'N'</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
+<span id="cb22-430"><a href="#cb22-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-431"><a href="#cb22-431" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-434"><a href="#cb22-434" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-435"><a href="#cb22-435" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb22-436"><a href="#cb22-436" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-437"><a href="#cb22-437" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y[valid] <span class="op">!=</span> hy[valid]).mean()</span>
-<span id="cb22-438"><a href="#cb22-438" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-439"><a href="#cb22-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-440"><a href="#cb22-440" aria-hidden="true" tabindex="-1"></a>El error obtenido con los elementos válidos es <span class="in">`{python} Markdown(f'${error:0.4f}$')`</span>, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es <span class="in">`{python} valid.sum()`</span>. </span>
-<span id="cb22-441"><a href="#cb22-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-442"><a href="#cb22-442" aria-hidden="true" tabindex="-1"></a>Para completar el ejemplo, la @fig-2-guasiana-original-reducido muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se pueden observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula. </span>
-<span id="cb22-443"><a href="#cb22-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-444"><a href="#cb22-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-447"><a href="#cb22-447" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-448"><a href="#cb22-448" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-2-guasiana-original-reducido</span></span>
-<span id="cb22-449"><a href="#cb22-449" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula"</span></span>
-<span id="cb22-450"><a href="#cb22-450" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb22-451"><a href="#cb22-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-432"><a href="#cb22-432" aria-hidden="true" tabindex="-1"></a>La @fig-2-guasiana-alargada-x muestra el conjunto de datos donde se realizará el ejemplo de seleccionar la clase considerando el riesgo. </span>
+<span id="cb22-433"><a href="#cb22-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-434"><a href="#cb22-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-437"><a href="#cb22-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-438"><a href="#cb22-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-2-guasiana-alargada-x</span></span>
+<span id="cb22-439"><a href="#cb22-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Dos distribución Gausianas asociadas a dos clases"</span></span>
+<span id="cb22-440"><a href="#cb22-440" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb22-441"><a href="#cb22-441" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-442"><a href="#cb22-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-443"><a href="#cb22-443" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb22-444"><a href="#cb22-444" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y</span>
+<span id="cb22-445"><a href="#cb22-445" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data<span class="op">=</span>df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
+<span id="cb22-446"><a href="#cb22-446" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>)</span>
+<span id="cb22-447"><a href="#cb22-447" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;fig.ax.set_xlim(-20, 20)</span></span>
+<span id="cb22-448"><a href="#cb22-448" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;fig.ax.set_ylim(-20, 20)</span></span>
+<span id="cb22-449"><a href="#cb22-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-450"><a href="#cb22-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-451"><a href="#cb22-451" aria-hidden="true" tabindex="-1"></a>Para no introducir ningún error adicional con la estimación de parámetros, se utilizan los parámetros con los que se generaron los datos para calcular $\mathbb P(\mathcal Y \mid \mathcal X)$ tal y como lo muestra el siguiente código. </span>
 <span id="cb22-452"><a href="#cb22-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-453"><a href="#cb22-453" aria-hidden="true" tabindex="-1"></a>y_error <span class="op">=</span> y.copy()</span>
-<span id="cb22-454"><a href="#cb22-454" aria-hidden="true" tabindex="-1"></a>y_error[y <span class="op">!=</span> hy] <span class="op">=</span> <span class="st">'E'</span></span>
-<span id="cb22-455"><a href="#cb22-455" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb22-456"><a href="#cb22-456" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y_error</span>
-<span id="cb22-457"><a href="#cb22-457" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Original'</span></span>
-<span id="cb22-458"><a href="#cb22-458" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.DataFrame(X[valid], columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb22-459"><a href="#cb22-459" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Clase'</span>] <span class="op">=</span> y_error[valid]</span>
-<span id="cb22-460"><a href="#cb22-460" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Reducido'</span></span>
-<span id="cb22-461"><a href="#cb22-461" aria-hidden="true" tabindex="-1"></a>color<span class="op">=</span>sns.color_palette()</span>
-<span id="cb22-462"><a href="#cb22-462" aria-hidden="true" tabindex="-1"></a>palette <span class="op">=</span> <span class="bu">dict</span>(P<span class="op">=</span>color[<span class="dv">0</span>], N<span class="op">=</span>color[<span class="dv">1</span>], E<span class="op">=</span>color[<span class="dv">3</span>])</span>
+<span id="cb22-453"><a href="#cb22-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-456"><a href="#cb22-456" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-457"><a href="#cb22-457" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-458"><a href="#cb22-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-459"><a href="#cb22-459" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> np.c_[p1.pdf(X), p2.pdf(X)] <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb22-460"><a href="#cb22-460" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb22-461"><a href="#cb22-461" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.c_[evidencia]</span>
+<span id="cb22-462"><a href="#cb22-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-463"><a href="#cb22-463" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-464"><a href="#cb22-464" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data<span class="op">=</span>pd.concat((df, df2)), kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
-<span id="cb22-465"><a href="#cb22-465" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>palette,</span>
-<span id="cb22-466"><a href="#cb22-466" aria-hidden="true" tabindex="-1"></a>                  y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>, col<span class="op">=</span><span class="st">'Conjunto'</span>)</span>
-<span id="cb22-467"><a href="#cb22-467" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-468"><a href="#cb22-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-469"><a href="#cb22-469" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-470"><a href="#cb22-470" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
-<span id="cb22-471"><a href="#cb22-471" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Actividad</span></span>
-<span id="cb22-472"><a href="#cb22-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-473"><a href="#cb22-473" aria-hidden="true" tabindex="-1"></a>Utilizando los siguientes parámetros $\mathbf \mu = <span class="co">[</span><span class="ot">5, 5</span><span class="co">]</span>^\intercal = \mu_1 = \mu_2$, $\Sigma_1 = \begin{pmatrix} 20 &amp; -5 <span class="sc">\\</span> -5 &amp; 2 <span class="sc">\\</span> \end{pmatrix}$ y $\Sigma_2 = \begin{pmatrix} 20 &amp; -5 <span class="sc">\\</span> -5 &amp; 2 <span class="sc">\\</span> \end{pmatrix}$, generar 1,000 muestras de las siguientes distribuciones $\mathcal N_1(\mu, \Sigma_1)$ y $\mathcal N_2(\mu, \Sigma_2)$. Asociar, a los datos generados por la primera distribución, la clase positiva y los elementos negativos corresponden a los 1,000 elementos generados mediante $\mathcal N_2$. </span>
-<span id="cb22-474"><a href="#cb22-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-475"><a href="#cb22-475" aria-hidden="true" tabindex="-1"></a>La actividad corresponde en calcular el error y el número de elementos que no están asociados a la clase nula cuando $\lambda = 0.2$. La @fig-2-guasiana-alargada-actividad muestra los datos generados y los datos válidos considerando el nivel de riesgo solicitado así como los errores en la predicción. </span>
+<span id="cb22-464"><a href="#cb22-464" aria-hidden="true" tabindex="-1"></a>Habiendo calculado la probabilidad de cada clase en todos los elementos de <span class="in">`X`</span>, es momento de predecir la clase y calcular el error del proceso de clasificación. </span>
+<span id="cb22-465"><a href="#cb22-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-468"><a href="#cb22-468" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-469"><a href="#cb22-469" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-470"><a href="#cb22-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-471"><a href="#cb22-471" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'P'</span>, <span class="dv">1</span>: <span class="st">'N'</span>}</span>
+<span id="cb22-472"><a href="#cb22-472" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([m[i]</span>
+<span id="cb22-473"><a href="#cb22-473" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> i <span class="kw">in</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb22-474"><a href="#cb22-474" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> hy).mean()</span>
+<span id="cb22-475"><a href="#cb22-475" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-476"><a href="#cb22-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-479"><a href="#cb22-479" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-480"><a href="#cb22-480" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-2-guasiana-alargada-actividad</span></span>
-<span id="cb22-481"><a href="#cb22-481" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula"</span></span>
-<span id="cb22-482"><a href="#cb22-482" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-477"><a href="#cb22-477" aria-hidden="true" tabindex="-1"></a>El error que se tiene corresponde a <span class="in">`{python} Markdown(f'{error:0.4f}')`</span>. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuales son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.$ Estos elementos se guardan en la variable <span class="in">`valid`</span> como muestra el siguiente código. </span>
+<span id="cb22-478"><a href="#cb22-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-481"><a href="#cb22-481" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-482"><a href="#cb22-482" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb22-483"><a href="#cb22-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-484"><a href="#cb22-484" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
-<span id="cb22-485"><a href="#cb22-485" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="op">-</span><span class="dv">5</span>],</span>
-<span id="cb22-486"><a href="#cb22-486" aria-hidden="true" tabindex="-1"></a>                                   [<span class="op">-</span><span class="dv">5</span>, <span class="dv">2</span>]])</span>
-<span id="cb22-487"><a href="#cb22-487" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
-<span id="cb22-488"><a href="#cb22-488" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="dv">5</span>],</span>
-<span id="cb22-489"><a href="#cb22-489" aria-hidden="true" tabindex="-1"></a>                                   [<span class="dv">5</span>, <span class="dv">2</span>]])</span>
-<span id="cb22-490"><a href="#cb22-490" aria-hidden="true" tabindex="-1"></a>X1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
-<span id="cb22-491"><a href="#cb22-491" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
-<span id="cb22-492"><a href="#cb22-492" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X1, X2))</span>
-<span id="cb22-493"><a href="#cb22-493" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="st">'P'</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="st">'N'</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
+<span id="cb22-484"><a href="#cb22-484" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="fl">0.20</span></span>
+<span id="cb22-485"><a href="#cb22-485" aria-hidden="true" tabindex="-1"></a>valid <span class="op">=</span> posterior.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">-</span> riesgo</span>
+<span id="cb22-486"><a href="#cb22-486" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-487"><a href="#cb22-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-488"><a href="#cb22-488" aria-hidden="true" tabindex="-1"></a>Utilizando <span class="in">`valid`</span> se puede calcular el error de aquellos elementos los cuales tiene una clase positiva o negativa. El siguiente código calcula el error. </span>
+<span id="cb22-489"><a href="#cb22-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-492"><a href="#cb22-492" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-493"><a href="#cb22-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb22-494"><a href="#cb22-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-495"><a href="#cb22-495" aria-hidden="true" tabindex="-1"></a><span class="co"># fig.ax.set_xlim(-20, 20)</span></span>
-<span id="cb22-496"><a href="#cb22-496" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;fig.ax.set_ylim(-20, 20)</span></span>
+<span id="cb22-495"><a href="#cb22-495" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y[valid] <span class="op">!=</span> hy[valid]).mean()</span>
+<span id="cb22-496"><a href="#cb22-496" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb22-497"><a href="#cb22-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-498"><a href="#cb22-498" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> np.c_[p1.pdf(X), p2.pdf(X)] <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb22-499"><a href="#cb22-499" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb22-500"><a href="#cb22-500" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.c_[evidencia]</span>
+<span id="cb22-498"><a href="#cb22-498" aria-hidden="true" tabindex="-1"></a>El error obtenido con los elementos válidos es <span class="in">`{python} Markdown(f'${error:0.4f}$')`</span>, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es <span class="in">`{python} valid.sum()`</span>. </span>
+<span id="cb22-499"><a href="#cb22-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-500"><a href="#cb22-500" aria-hidden="true" tabindex="-1"></a>Para completar el ejemplo, la @fig-2-guasiana-original-reducido muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se pueden observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula. </span>
 <span id="cb22-501"><a href="#cb22-501" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-502"><a href="#cb22-502" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'P'</span>, <span class="dv">1</span>: <span class="st">'N'</span>}</span>
-<span id="cb22-503"><a href="#cb22-503" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([m[i]</span>
-<span id="cb22-504"><a href="#cb22-504" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> i <span class="kw">in</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
-<span id="cb22-505"><a href="#cb22-505" aria-hidden="true" tabindex="-1"></a>error1 <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>(y <span class="op">!=</span> hy)<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">'</span></span>
-<span id="cb22-506"><a href="#cb22-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-507"><a href="#cb22-507" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="fl">0.20</span></span>
-<span id="cb22-508"><a href="#cb22-508" aria-hidden="true" tabindex="-1"></a>valid <span class="op">=</span> posterior.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">-</span> riesgo</span>
-<span id="cb22-509"><a href="#cb22-509" aria-hidden="true" tabindex="-1"></a>error2 <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>(y[valid] <span class="op">!=</span> hy[valid])<span class="sc">.</span>mean()<span class="sc">: 0.4f}</span><span class="ss">'</span></span>
+<span id="cb22-502"><a href="#cb22-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-505"><a href="#cb22-505" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-506"><a href="#cb22-506" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-2-guasiana-original-reducido</span></span>
+<span id="cb22-507"><a href="#cb22-507" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula"</span></span>
+<span id="cb22-508"><a href="#cb22-508" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb22-509"><a href="#cb22-509" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb22-510"><a href="#cb22-510" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-511"><a href="#cb22-511" aria-hidden="true" tabindex="-1"></a>y_error <span class="op">=</span> y.copy()</span>
 <span id="cb22-512"><a href="#cb22-512" aria-hidden="true" tabindex="-1"></a>y_error[y <span class="op">!=</span> hy] <span class="op">=</span> <span class="st">'E'</span></span>
-<span id="cb22-513"><a href="#cb22-513" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-514"><a href="#cb22-514" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb22-515"><a href="#cb22-515" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y_error</span>
-<span id="cb22-516"><a href="#cb22-516" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Original'</span></span>
-<span id="cb22-517"><a href="#cb22-517" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.DataFrame(X[valid], columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb22-518"><a href="#cb22-518" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Clase'</span>] <span class="op">=</span> y_error[valid]</span>
-<span id="cb22-519"><a href="#cb22-519" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Reducido'</span></span>
-<span id="cb22-520"><a href="#cb22-520" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-521"><a href="#cb22-521" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data<span class="op">=</span>pd.concat((df, df2)), kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
-<span id="cb22-522"><a href="#cb22-522" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>palette,</span>
-<span id="cb22-523"><a href="#cb22-523" aria-hidden="true" tabindex="-1"></a>                  y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>, col<span class="op">=</span><span class="st">'Conjunto'</span>)</span>
-<span id="cb22-524"><a href="#cb22-524" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-525"><a href="#cb22-525" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-526"><a href="#cb22-526" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb22-513"><a href="#cb22-513" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb22-514"><a href="#cb22-514" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y_error</span>
+<span id="cb22-515"><a href="#cb22-515" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Original'</span></span>
+<span id="cb22-516"><a href="#cb22-516" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.DataFrame(X[valid], columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb22-517"><a href="#cb22-517" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Clase'</span>] <span class="op">=</span> y_error[valid]</span>
+<span id="cb22-518"><a href="#cb22-518" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Reducido'</span></span>
+<span id="cb22-519"><a href="#cb22-519" aria-hidden="true" tabindex="-1"></a>color<span class="op">=</span>sns.color_palette()</span>
+<span id="cb22-520"><a href="#cb22-520" aria-hidden="true" tabindex="-1"></a>palette <span class="op">=</span> <span class="bu">dict</span>(P<span class="op">=</span>color[<span class="dv">0</span>], N<span class="op">=</span>color[<span class="dv">1</span>], E<span class="op">=</span>color[<span class="dv">3</span>])</span>
+<span id="cb22-521"><a href="#cb22-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-522"><a href="#cb22-522" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data<span class="op">=</span>pd.concat((df, df2)), kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
+<span id="cb22-523"><a href="#cb22-523" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>palette,</span>
+<span id="cb22-524"><a href="#cb22-524" aria-hidden="true" tabindex="-1"></a>                  y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>, col<span class="op">=</span><span class="st">'Conjunto'</span>)</span>
+<span id="cb22-525"><a href="#cb22-525" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-526"><a href="#cb22-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-527"><a href="#cb22-527" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-528"><a href="#cb22-528" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb22-529"><a href="#cb22-529" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Actividad</span></span>
+<span id="cb22-530"><a href="#cb22-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-531"><a href="#cb22-531" aria-hidden="true" tabindex="-1"></a>Utilizando los siguientes parámetros $\mathbf \mu = <span class="co">[</span><span class="ot">5, 5</span><span class="co">]</span>^\intercal = \mu_1 = \mu_2$, $\Sigma_1 = \begin{pmatrix} 20 &amp; -5 <span class="sc">\\</span> -5 &amp; 2 <span class="sc">\\</span> \end{pmatrix}$ y $\Sigma_2 = \begin{pmatrix} 20 &amp; -5 <span class="sc">\\</span> -5 &amp; 2 <span class="sc">\\</span> \end{pmatrix}$, generar 1,000 muestras de las siguientes distribuciones $\mathcal N_1(\mu, \Sigma_1)$ y $\mathcal N_2(\mu, \Sigma_2)$. Asociar, a los datos generados por la primera distribución, la clase positiva y los elementos negativos corresponden a los 1,000 elementos generados mediante $\mathcal N_2$. </span>
+<span id="cb22-532"><a href="#cb22-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-533"><a href="#cb22-533" aria-hidden="true" tabindex="-1"></a>La actividad corresponde en calcular el error y el número de elementos que no están asociados a la clase nula cuando $\lambda = 0.2$. La @fig-2-guasiana-alargada-actividad muestra los datos generados y los datos válidos considerando el nivel de riesgo solicitado así como los errores en la predicción. </span>
+<span id="cb22-534"><a href="#cb22-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-537"><a href="#cb22-537" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-538"><a href="#cb22-538" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-2-guasiana-alargada-actividad</span></span>
+<span id="cb22-539"><a href="#cb22-539" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula"</span></span>
+<span id="cb22-540"><a href="#cb22-540" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-541"><a href="#cb22-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-542"><a href="#cb22-542" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
+<span id="cb22-543"><a href="#cb22-543" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="op">-</span><span class="dv">5</span>],</span>
+<span id="cb22-544"><a href="#cb22-544" aria-hidden="true" tabindex="-1"></a>                                   [<span class="op">-</span><span class="dv">5</span>, <span class="dv">2</span>]])</span>
+<span id="cb22-545"><a href="#cb22-545" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
+<span id="cb22-546"><a href="#cb22-546" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="dv">5</span>],</span>
+<span id="cb22-547"><a href="#cb22-547" aria-hidden="true" tabindex="-1"></a>                                   [<span class="dv">5</span>, <span class="dv">2</span>]])</span>
+<span id="cb22-548"><a href="#cb22-548" aria-hidden="true" tabindex="-1"></a>X1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb22-549"><a href="#cb22-549" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb22-550"><a href="#cb22-550" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X1, X2))</span>
+<span id="cb22-551"><a href="#cb22-551" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="st">'P'</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="st">'N'</span>] <span class="op">*</span> <span class="dv">1000</span>)</span>
+<span id="cb22-552"><a href="#cb22-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-553"><a href="#cb22-553" aria-hidden="true" tabindex="-1"></a><span class="co"># fig.ax.set_xlim(-20, 20)</span></span>
+<span id="cb22-554"><a href="#cb22-554" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;fig.ax.set_ylim(-20, 20)</span></span>
+<span id="cb22-555"><a href="#cb22-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-556"><a href="#cb22-556" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> np.c_[p1.pdf(X), p2.pdf(X)] <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb22-557"><a href="#cb22-557" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb22-558"><a href="#cb22-558" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.c_[evidencia]</span>
+<span id="cb22-559"><a href="#cb22-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-560"><a href="#cb22-560" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'P'</span>, <span class="dv">1</span>: <span class="st">'N'</span>}</span>
+<span id="cb22-561"><a href="#cb22-561" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([m[i]</span>
+<span id="cb22-562"><a href="#cb22-562" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> i <span class="kw">in</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb22-563"><a href="#cb22-563" aria-hidden="true" tabindex="-1"></a>error1 <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>(y <span class="op">!=</span> hy)<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">'</span></span>
+<span id="cb22-564"><a href="#cb22-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-565"><a href="#cb22-565" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="fl">0.20</span></span>
+<span id="cb22-566"><a href="#cb22-566" aria-hidden="true" tabindex="-1"></a>valid <span class="op">=</span> posterior.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">-</span> riesgo</span>
+<span id="cb22-567"><a href="#cb22-567" aria-hidden="true" tabindex="-1"></a>error2 <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>(y[valid] <span class="op">!=</span> hy[valid])<span class="sc">.</span>mean()<span class="sc">: 0.4f}</span><span class="ss">'</span></span>
+<span id="cb22-568"><a href="#cb22-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-569"><a href="#cb22-569" aria-hidden="true" tabindex="-1"></a>y_error <span class="op">=</span> y.copy()</span>
+<span id="cb22-570"><a href="#cb22-570" aria-hidden="true" tabindex="-1"></a>y_error[y <span class="op">!=</span> hy] <span class="op">=</span> <span class="st">'E'</span></span>
+<span id="cb22-571"><a href="#cb22-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-572"><a href="#cb22-572" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb22-573"><a href="#cb22-573" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y_error</span>
+<span id="cb22-574"><a href="#cb22-574" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Original'</span></span>
+<span id="cb22-575"><a href="#cb22-575" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.DataFrame(X[valid], columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb22-576"><a href="#cb22-576" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Clase'</span>] <span class="op">=</span> y_error[valid]</span>
+<span id="cb22-577"><a href="#cb22-577" aria-hidden="true" tabindex="-1"></a>df2[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Reducido'</span></span>
+<span id="cb22-578"><a href="#cb22-578" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-579"><a href="#cb22-579" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data<span class="op">=</span>pd.concat((df, df2)), kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>,</span>
+<span id="cb22-580"><a href="#cb22-580" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>palette,</span>
+<span id="cb22-581"><a href="#cb22-581" aria-hidden="true" tabindex="-1"></a>                  y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>, col<span class="op">=</span><span class="st">'Conjunto'</span>)</span>
+<span id="cb22-582"><a href="#cb22-582" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-583"><a href="#cb22-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-584"><a href="#cb22-584" aria-hidden="true" tabindex="-1"></a>::: </span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
