@@ -147,7 +147,105 @@ Habiendo explicado $\mu_i$ y $G_i$ se procede a describir el procedimiento para 
 3. Se actualizan las $\mu_i$ con los elementos de $G_i.$
 4. Se regresa al paso 2. 
 
-El procedimiento termina cuando se llega a un número máximo de iteraciones o que la variación de los $\mu_i$ es mínima, es decir, que los grupos no cambian. 
+El procedimiento termina cuando se llega a un número máximo de iteraciones o que la variación de los $\mu_i$ es mínima, es decir, que los grupos no cambian.
+
+## Maximización de la Expectativa {#sec-agrupamiento-em}
+
+K-medias (@sec-agrupamiento-k-medias) es un caso particular de un algoritmo más general conocido como **Expectation-Maximization** (EM), el cual se utiliza para estimar por máxima verosimilitud (@sec-verosimilitud) los parámetros de un modelo cuando este depende de una variable que no se observa, es decir, una variable latente.
+
+En el problema de agrupamiento la variable que no se observa es el grupo al que pertenece cada elemento $x \in \mathcal D$. Sea $z$ la variable aleatoria correspondiente, donde $z=i$ indica que $x \in G_i$. Se asume que $x$ proviene de una mezcla de $K$ distribuciones, donde la distribución $i$-ésima está definida por la función de densidad $f_{\theta_i}$ y tiene una probabilidad a priori $\pi_i = \mathbb P(z=i)$ tal que $\sum_{i=1}^K \pi_i = 1.$ Bajo este modelo, la función de densidad de $x$ corresponde a $f(x) = \sum_{i=1}^K \pi_i f_{\theta_i}(x).$
+
+Los parámetros de este modelo son $\Theta = \{\pi_1, \theta_1, \ldots, \pi_K, \theta_K\}$, entonces siguiendo la misma notación de la @sec-verosimilitud, la verosimilitud de $\mathcal D$ es
+
+$$
+\mathcal L(\Theta) = \prod_{x \in \mathcal D} \sum_{i=1}^K \pi_i f_{\theta_i}(x),
+$$ {#eq-em-verosimilitud}
+
+cuyo logaritmo es
+
+$$
+\ell(\Theta) = \sum_{x \in \mathcal D} \log \left(\sum_{i=1}^K \pi_i f_{\theta_i}(x) \right).
+$$ {#eq-em-log-verosimilitud}
+
+La dificultad para maximizar $\ell(\Theta)$ (@eq-em-log-verosimilitud) de manera directa es que, al no observarse $z$, el logaritmo no puede aplicarse a cada término de la suma en $i$. EM resuelve este problema con un procedimiento iterativo de dos pasos, Expectativa (E) y Maximización (M), que en la iteración $t$ se definen de la siguiente manera.
+
+Para entender por qué el primer paso se llama Expectativa conviene considerar qué pasaría si $z$ se observara. En ese caso, para un elemento $x$ con grupo verdadero $z$, se podría usar el indicador $\mathbb 1(z=i),$ que vale $1$ si $z=i$ y $0$ en otro caso, para escribir el logaritmo de su verosimilitud completa (la que incluye a $z$) como $\sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)),$ ya que únicamente el término correspondiente al grupo verdadero de $x$ contribuye a la suma, al ser cero el resto de los indicadores. Sumando sobre $\mathcal D$ se obtiene la log-verosimilitud completa
+
+$$
+\ell_c(\Theta) = \sum_{x \in \mathcal D} \sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)).
+$$ {#eq-em-log-verosimilitud-completa}
+
+Maximizar la @eq-em-log-verosimilitud-completa sería sencillo, sin embargo no se puede calcular porque $z,$ y por lo tanto $\mathbb 1(z=i),$ no se observa. La idea de EM es sustituir el indicador $\mathbb 1(z=i)$ por su valor esperado dado lo que sí se observa, es decir, dado $x$ y los parámetros actuales $\Theta^{(t)}$; esta esperanza es
+
+$$
+\mathbb E[\mathbb 1(z=i) \mid x, \Theta^{(t)}] = \mathbb P(z=i \mid x, \Theta^{(t)}) = \gamma_i(x),
+$$ {#eq-em-esperanza-indicador}
+
+donde la primera igualdad se debe a que la esperanza de una variable indicadora corresponde a la probabilidad del evento que indica. Sustituyendo la @eq-em-esperanza-indicador en la @eq-em-log-verosimilitud-completa, en lugar de $\ell_c(\Theta)$ se obtiene su valor esperado
+
+$$
+Q(\Theta, \Theta^{(t)}) = \mathbb E_{z \mid x, \Theta^{(t)}}[\ell_c(\Theta)] = \sum_{x \in \mathcal D} \sum_{i=1}^K \gamma_i(x) \log(\pi_i f_{\theta_i}(x)).
+$$ {#eq-em-q-funcion}
+
+Calcular $\gamma_i(x)$ (@eq-em-esperanza-indicador), que es lo único que se necesita de $Q(\Theta, \Theta^{(t)})$ (@eq-em-q-funcion) para continuar con el siguiente paso, es precisamente lo que hace el **Paso E**, de ahí su nombre, Expectativa. El **Paso M** completa el procedimiento encontrando $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),$ es decir, maximizando la esperanza calculada en el paso anterior; de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.
+
+**Paso E**. Dados los parámetros actuales $\Theta^{(t)} = \{\pi_i^{(t)}, \theta_i^{(t)}\}$, se calcula $\gamma_i(x)$ (@eq-em-esperanza-indicador) para cada $x \in \mathcal D$ y cada grupo $i,$ lo cual, sustituyendo $\mathbb P(z=i \mid x, \Theta^{(t)})$ con el Teorema de Bayes, corresponde a
+
+$$
+\gamma_i(x) = \mathbb P(z=i \mid x, \Theta^{(t)}) = \frac{\pi_i^{(t)} f_{\theta_i^{(t)}}(x)}{\sum_{j=1}^K \pi_j^{(t)} f_{\theta_j^{(t)}}(x)}.
+$$ {#eq-em-paso-e}
+
+$\gamma_i(x)$ es la responsabilidad de $G_i$ en el elemento $x$; a diferencia del paso 2 de K-medias (@sec-agrupamiento-k-medias) donde $x$ se asigna completamente a un grupo, en EM $x$ se asigna de manera fraccionaria a los $K$ grupos, dado que $\gamma_i(x) \in [0, 1]$ y $\sum_{i=1}^K \gamma_i(x) = 1.$
+
+**Paso M**. Con las responsabilidades del paso anterior se actualizan los parámetros $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)})$ (@eq-em-q-funcion). La probabilidad a priori se actualiza con
+
+$$
+\pi_i^{(t+1)} = \frac{1}{N} \sum_{x \in \mathcal D} \gamma_i(x),
+$$ {#eq-em-paso-m-pi}
+
+y $\theta_i^{(t+1)}$ se obtiene con la estimación de máxima verosimilitud de $f_{\theta_i}$ ponderando cada $x$ con $\gamma_i(x).$ Por ejemplo, cuando $f_{\theta_i}$ corresponde a $\mathcal N(\mu_i, \Sigma_i)$ (@sec-estimacion-distribucion-gausiana) las actualizaciones son
+
+$$
+\mu_i^{(t+1)} = \frac{\sum_{x \in \mathcal D} \gamma_i(x) \, x}{\sum_{x \in \mathcal D} \gamma_i(x)},
+$$ {#eq-em-paso-m-mu}
+
+$$
+\Sigma_i^{(t+1)} = \frac{\sum_{x \in \mathcal D} \gamma_i(x) \, (x - \mu_i^{(t+1)})(x - \mu_i^{(t+1)})^\intercal}{\sum_{x \in \mathcal D} \gamma_i(x)}.
+$$ {#eq-em-paso-m-sigma}
+
+Los pasos E (@eq-em-paso-e) y M (@eq-em-paso-m-pi, @eq-em-paso-m-mu y @eq-em-paso-m-sigma) se repiten hasta que $\ell(\Theta)$ converge o se llega a un número máximo de iteraciones, de manera análoga al criterio de paro de K-medias.
+
+### K-medias como caso particular de EM
+
+K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo de mezcla. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$
+
+Para observar el efecto de estas suposiciones en el paso E (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$; para $x \in \mathbb R^d$ esta densidad es
+
+$$
+f_{\theta_i}(x) = \mathcal N(x \mid \mu_i, \sigma^2 I) = \frac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right),
+$$ {#eq-em-gaussiana-esferica}
+
+donde $(2\pi\sigma^2)^{-d/2}$ es la constante de normalización de la Gaussiana. Se puede observar en la @eq-em-gaussiana-esferica que esta constante depende únicamente de $\sigma^2$ y de $d$, no de $\mu_i$, entonces tiene el mismo valor para las $K$ Gaussianas al ser $\sigma^2$ compartida. Sustituyendo la @eq-em-gaussiana-esferica y $\pi_i = \pi_j = \frac{1}{K}$ en la definición general del paso E (@eq-em-paso-e) se obtiene
+
+$$
+\gamma_i(x) = \frac{\dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\displaystyle\sum_{j=1}^K \dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.
+$$ {#eq-em-gamma-sustitucion}
+
+En la @eq-em-gamma-sustitucion el factor $c = \frac{1}{K} \cdot \frac{1}{(2\pi\sigma^2)^{d/2}}$ es el mismo en el numerador y en cada uno de los $K$ términos de la suma del denominador, dado que no depende ni del grupo $i$ del numerador ni del índice $j$ de la suma. Al ser un factor común se puede sacar de la suma, quedando
+
+$$
+\gamma_i(x) = \frac{c \cdot \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{c \cdot \displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)},
+$$ {#eq-em-gamma-factorizado}
+
+y como $c > 0$, se cancela entre el numerador y el denominador de la @eq-em-gamma-factorizado, es decir, las responsabilidades no dependen ni de $\pi_i$ ni de la constante de normalización de la Gaussiana, sino únicamente de la distancia de $x$ a cada media. Esto se resume en
+
+$$
+\gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.
+$$ {#eq-em-gamma-kmedias}
+
+Al tomar el límite $\sigma^2 \to 0$ en la @eq-em-gamma-kmedias el término correspondiente al $\min_j \mid\mid x - \mu_j \mid\mid$ domina la suma del denominador; esto ocasiona que $\gamma_i(x) \to 1$ para el grupo $i$ tal que $\mid\mid x - \mu_i \mid\mid$ corresponde al $\min_j \mid\mid x - \mu_j \mid\mid,$ y $\gamma_j(x) \to 0$ para el resto de los grupos. Es decir, la asignación fraccionaria del paso E se convierte en la asignación completa $x \in G_i$ si $\mid\mid x - \mu_i \mid\mid$ corresponde al $\min_j \mid\mid x - \mu_j \mid\mid,$ que es exactamente el paso 2 de K-medias.
+
+Con esta asignación completa, i.e., $\gamma_i(x) \in \{0, 1\}$, la actualización de $\mu_i$ del paso M (@eq-em-paso-m-mu) se reduce a la media de los elementos de $G_i,$ que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que $\sigma^2 \to 0$ y sustituyendo la responsabilidad $\gamma_i(x)$ por la asignación completa al grupo más cercano.
 
 ## Ejemplo: Iris
 
