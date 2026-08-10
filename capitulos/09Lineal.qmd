@@ -84,7 +84,6 @@ En la @fig-lineal-discriminante se observa el plano (linea) que divide las dos c
 
 ```{python}
 #| code-fold: true
-#| warning: false
 #| fig-cap: Función Discriminante
 #| label: fig-lineal-discriminante
 X_1 = multivariate_normal(mean=[15, 20],
@@ -116,7 +115,6 @@ La función discriminante $g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$ tiene
 ```{python}
 #| code-fold: true
 #| fig-cap: Función discriminante
-#| warning: false
 #| label: fig-lineal-repr-df
 _ = pd.DataFrame([dict(x1=w_1, x2=w_2, clase='w')])
 df = pd.concat((df, _), axis=0)
@@ -140,7 +138,6 @@ donde el vector $\mathbf x_a -  \mathbf x_b$ es paralelo a $g(\mathbf x)=0$, ort
 ```{python}
 #| code-fold: true
 #| fig-cap: Visualizando que $\mathbf w$ y la función discriminante son ortogonales.
-#| warning: false
 #| label: fig-lineal-ort
 w = np.array([w_1, w_2]) / np.linalg.norm([w_1, w_2])
 len_0 = w_0 / np.linalg.norm([w_1, w_2])
@@ -163,7 +160,6 @@ La @fig-lineal-dist-hyp muestra en rojo la línea generada por $\mathbf w \cdot 
 
 ```{python}
 #| code-fold: true
-#| warning: false
 #| fig-cap: Geometría de la función discriminante.
 #| label: fig-lineal-dist-hyp
 vec = np.array([1, (- w_1 * 1) / w_2])
@@ -215,7 +211,6 @@ Como ya se había visto la distancia del origen al hiperplano está dada por $\e
 
 ```{python}
 #| code-fold: true
-#| warning: false
 #| fig-cap: Distancia ($\ell_{\mathbf x} = x$) de un elemento al hiperplano
 #| label: fig-lineal-dis-ele
 point = X_2[X_2.argmax(axis=0)[1]]
@@ -248,7 +243,6 @@ La @fig-lineal-multiclase ejemplifica el comportamiento de esta técnica en un p
 
 ```{python}
 #| code-fold: true
-#| warning: false
 #| fig-cap: Problema multiclase
 #| label: fig-lineal-multiclase
 seed = 3
@@ -439,7 +433,6 @@ La @fig-lineal-xi muestra un ejemplo donde existe un elemento negativo que se en
 ```{python}
 #| code-fold: true
 #| fig-cap: Hiperplanos
-#| warning: false
 #| label: fig-lineal-xi
 seed = 2
 X_1 = multivariate_normal(mean=[15, 20], cov=[[3, -3], [-3, 8]], seed=seed).rvs(1000)
@@ -472,7 +465,6 @@ Continuando con el análisis del problema de optimización (@eq-svm), se puede o
 
 ```{python}
 #| code-fold: true
-#| warning: false
 #| fig-cap: Hiperplanos para diferentes valores de $C$. Se observa que en $C=0.01$ se clasifica incorrectamente un elemento positivo.
 #| label: fig-lineal-hip-c
 for k, (C, legend) in enumerate(zip([1, 0.01], [False, True])):
@@ -561,7 +553,6 @@ La @fig-lineal-kernel muestra los datos del iris (proyectados con Análisis de C
 
 ```{python}
 #| code-fold: true
-#| warning: false
 #| fig-cap: Visualización de los vectores de soporte usando PCA.
 #| label: fig-lineal-kernel
 X, y = load_iris(return_X_y=True)
@@ -752,7 +743,6 @@ Es momento de comparar el comportamiento de los dos métodos de discriminantes l
 ```{python}
 #| code-fold: true
 #| fig-cap: Comparación de dos métodos lineales
-#| warning: false
 #| label: fig-lineal-comparacion
 svm = LinearSVC(dual=False).fit(T, y_t)
 lr = LogisticRegression().fit(T, y_t)
@@ -791,7 +781,6 @@ Los clasificadores a comparar son una máquina de soporte vectorial lineal, una 
 
 ```{python}
 #| echo: true
-#| warning: false
 svm = LinearSVC(dual=False).fit(T, y_t)
 svm_k = SVC(kernel='poly', degree=1).fit(T, y_t)
 lr = LogisticRegression().fit(T, y_t)
