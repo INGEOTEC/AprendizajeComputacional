@@ -15,6 +15,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -22,6 +23,27 @@ jobs:
         with:
           version: 1.10.18
           tinytex: true
+
+      # Mismas librerías que .devcontainer/postCreate.sh: sin ellas, el Chrome
+      # headless que Quarto usa para rasterizar los diagramas mermaid (p.ej.
+      # capitulos/01Introduccion.qmd) se queda colgado indefinidamente en vez
+      # de fallar, y el job termina agotando el tiempo hasta cancelarse.
+      - name: Install headless Chrome dependencies (mermaid rendering)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libatk1.0-0t64 \
+            libatk-bridge2.0-0t64 \
+            libatspi2.0-0t64 \
+            libdbus-1-3 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxfixes3 \
+            libxrandr2 \
+            libgbm1 \
+            libxkbcommon0 \
+            libasound2t64 \
+            fonts-liberation
 
       # Execution results are frozen (_freeze/), so publishing needs neither
       # Python nor the TextClassification datasets it downloads at render
