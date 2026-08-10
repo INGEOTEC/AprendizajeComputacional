@@ -24,10 +24,8 @@ jobs:
           version: 1.10.18
           tinytex: true
 
-      # Mismas librerías que .devcontainer/postCreate.sh: sin ellas, el Chrome
-      # headless que Quarto usa para rasterizar los diagramas mermaid (p.ej.
-      # capitulos/01Introduccion.qmd) se queda colgado indefinidamente en vez
-      # de fallar, y el job termina agotando el tiempo hasta cancelarse.
+      # Mismas librerías que .devcontainer/postCreate.sh, por si el runner no
+      # las trae de fábrica.
       - name: Install headless Chrome dependencies (mermaid rendering)
         run: |
           sudo apt-get update -qq
@@ -44,6 +42,17 @@ jobs:
             libxkbcommon0 \
             libasound2t64 \
             fonts-liberation
+
+      # Sin esto, Quarto cae de vuelta al Chrome del sistema que trae
+      # ubuntu-latest (preinstalado para Selenium/Playwright) para rasterizar
+      # el diagrama mermaid de 01Introduccion.qmd a imagen (necesario para el
+      # PDF). Ese Chrome del sistema es una versión demasiado nueva/no
+      # verificada contra el cliente CDP que trae Quarto y se queda colgado
+      # sin avisar en vez de fallar (bug conocido en quarto-cli). Al instalar
+      # su propio Chrome Headless Shell (probado y fijado a esta versión de
+      # Quarto), este pasa a preferirse automáticamente sobre el del sistema.
+      - name: Install Chrome Headless Shell (mermaid rendering)
+        run: quarto install chrome-headless-shell --no-prompt --log-level warning
 
       # Execution results are frozen (_freeze/), so publishing needs neither
       # Python nor the TextClassification datasets it downloads at render
