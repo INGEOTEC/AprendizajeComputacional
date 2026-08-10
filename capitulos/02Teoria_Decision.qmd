@@ -254,6 +254,64 @@ _ = sns.displot(B, kde=True)
 
 La @fig-gaussian-3classes-distribucion muestra el histograma de la estimación del error en el ejemplo analizado.
 
+## Error Bayesiano {#sec-error-bayesiano}
+
+El ejemplo anterior deja una pregunta abierta, ¿por qué un modelo que conoce exactamente las distribuciones que generaron los datos (`p1`, `p2` y `p3`) comete errores al clasificar? La respuesta está en que el error no depende únicamente del método utilizado para clasificar, sino también de la superposición entre las distribuciones de las clases; esta sección formaliza esta idea mediante el concepto de **error bayesiano** y muestra que la regla utilizada en @sec-prediccion-normal, es decir, seleccionar la clase con mayor probabilidad *a posteriori*, es la que menor error comete entre todos los clasificadores posibles.
+
+Sea $f: \mathcal X \rightarrow \mathcal Y$ un clasificador, es decir, una función que asigna una clase $f(x)$ a cada entrada $x$; por ejemplo, la variable `prediccion` del ejemplo anterior corresponde a $f(x)$ evaluado en cada uno de los elementos de `X`. La probabilidad de que $f$ se equivoque, condicionada a una entrada $\mathcal X=x$, es
+
+$$
+\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \mathbb P(\mathcal Y = f(x) \mid \mathcal X=x),
+$$ {#eq-error-condicional}
+
+dado que $f(x)$ únicamente puede tomar un valor y el complemento de acertar es equivocarse. El error del clasificador $f$, sin condicionar a una entrada particular, se obtiene promediando sobre todas las posibles entradas, es decir, $\mathbb P(f(\mathcal X) \neq \mathcal Y) = \mathbb E_{\mathcal X}\left[\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X)\right].$
+
+El clasificador utilizado en @sec-prediccion-normal corresponde a la regla
+
+$$
+f^*(x) = \underset{k}{\text{arg max }} \mathbb P(\mathcal Y=k \mid \mathcal X=x),
+$$ {#eq-clasificador-bayes}
+
+conocida como la **regla de Bayes**, y al error que esta regla produce, $\mathbb P(f^*(\mathcal X) \neq \mathcal Y)$, se le conoce como **error bayesiano**. Usando la @eq-error-condicional en $f^*$ se tiene que
+
+$$
+\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \underset{k}{\max}\ \mathbb P(\mathcal Y=k \mid \mathcal X=x).
+$$ {#eq-error-bayesiano}
+
+El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases; en el ejemplo de @sec-tres-normales el valor `{python} error_f` estimado no es producto de un método imperfecto -- `p1`, `p2` y `p3` son las distribuciones exactas -- sino que corresponde, salvo el error de estimación medido con `se_f`, al error bayesiano del problema, es decir, es un error irreducible.
+
+Falta mostrar que $f^*$ es, de entre todos los clasificadores posibles, el que tiene el menor error esperado. Sea $f$ cualquier otro clasificador y, para simplificar la notación, sea $p_k(x) = \mathbb P(\mathcal Y=k \mid \mathcal X=x)$. Por definición de máximo, para toda entrada $x$ se cumple que
+
+$$
+p_{f(x)}(x) \leq \underset{k}{\max}\ p_k(x),
+$$ {#eq-paso-max}
+
+dado que el lado derecho es el mayor valor que puede tomar $p_k(x)$ mientras que el lado izquierdo es solo uno de esos valores, el correspondiente a la clase $f(x)$ que selecciona el clasificador $f$.
+
+El siguiente paso es multiplicar ambos lados de la @eq-paso-max por $-1$, operación que invierte el sentido de la desigualdad, y después sumar $1$ a ambos lados, lo cual no altera el sentido de la desigualdad al sumarse la misma constante en ambos lados:
+
+$$
+\begin{split}
+p_{f(x)}(x) &\leq \underset{k}{\max}\ p_k(x) \\
+-p_{f(x)}(x) &\geq -\underset{k}{\max}\ p_k(x) \\
+1 - p_{f(x)}(x) &\geq 1 - \underset{k}{\max}\ p_k(x).
+\end{split}
+$$
+
+Finalmente se identifica cada lado de esta última desigualdad, el lado izquierdo, $1-p_{f(x)}(x) = 1 - \mathbb P(\mathcal Y=f(x) \mid \mathcal X=x)$, corresponde a $\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-condicional; el lado derecho, $1 - \underset{k}{\max}\ p_k(x)$, corresponde a $\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-bayesiano. Sustituyendo ambas identidades se obtiene
+
+$$
+\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \quad \text{para toda } x.
+$$
+
+Como esta desigualdad se cumple para cada valor de $x$, se preserva al tomar el valor esperado sobre $\mathcal X$ en ambos lados, por lo tanto
+
+$$
+\mathbb P(f(\mathcal X) \neq \mathcal Y) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y) \quad \text{para todo clasificador } f,
+$$
+
+es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la **optimalidad del clasificador Bayesiano**. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo $0/1$ es equivalente a minimizar el error aquí definido.
+
 ## Riesgo
 
 Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.
