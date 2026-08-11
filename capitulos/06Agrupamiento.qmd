@@ -187,7 +187,9 @@ $$
 Q(\Theta, \Theta^{(t)}) = \mathbb E_{z \mid x, \Theta^{(t)}}[\ell_c(\Theta)] = \sum_{x \in \mathcal D} \sum_{i=1}^K \gamma_i(x) \log(\pi_i f_{\theta_i}(x)).
 $$ {#eq-em-q-funcion}
 
-Calcular $\gamma_i(x)$ (@eq-em-esperanza-indicador), que es lo único que se necesita de $Q(\Theta, \Theta^{(t)})$ (@eq-em-q-funcion) para continuar con el siguiente paso, es precisamente lo que hace el **Paso E**, de ahí su nombre, Expectativa. El **Paso M** completa el procedimiento encontrando $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),$ es decir, maximizando la esperanza calculada en el paso anterior; de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.
+En la @eq-em-q-funcion se puede notar que $Q$ tiene dos argumentos, $\Theta$ y $\Theta^{(t)}$, con roles distintos. $\Theta^{(t)}$ son los parámetros de la iteración anterior, que ya se conocen; mientras que $\Theta$ es la variable sobre la que se maximiza. Dado que $\gamma_i(x)$ (@eq-em-esperanza-indicador) depende únicamente de $x$ y $\Theta^{(t)}$, y no de $\Theta$, al resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$ cada $\gamma_i(x)$ se comporta como una constante, es decir, un peso fijo que ya no cambia durante la maximización; los únicos términos de la @eq-em-q-funcion que dependen de $\Theta$ son $\pi_i$ y $f_{\theta_i}(x)$, dentro del logaritmo. 
+
+Calcular $\gamma_i(x)$ (@eq-em-esperanza-indicador), es necesario para resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$; y este se calcula en el **Paso E**, de ahí su nombre, Expectativa. El **Paso M** completa el procedimiento encontrando $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),$ es decir, maximizando la esperanza; de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.
 
 **Paso E**. Dados los parámetros actuales $\Theta^{(t)} = \{\pi_i^{(t)}, \theta_i^{(t)}\}$, se calcula $\gamma_i(x)$ (@eq-em-esperanza-indicador) para cada $x \in \mathcal D$ y cada grupo $i,$ lo cual, sustituyendo $\mathbb P(z=i \mid x, \Theta^{(t)})$ con el Teorema de Bayes, corresponde a
 
@@ -219,13 +221,13 @@ Los pasos E (@eq-em-paso-e) y M (@eq-em-paso-m-pi, @eq-em-paso-m-mu y @eq-em-pas
 
 K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo de mezcla. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$
 
-Para observar el efecto de estas suposiciones en el paso E (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$; para $x \in \mathbb R^d$ esta densidad es
+Para observar el efecto de estas suposiciones en el **Paso E** (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$; para $x \in \mathbb R^d$ esta densidad es
 
 $$
 f_{\theta_i}(x) = \mathcal N(x \mid \mu_i, \sigma^2 I) = \frac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right),
 $$ {#eq-em-gaussiana-esferica}
 
-donde $(2\pi\sigma^2)^{-d/2}$ es la constante de normalización de la Gaussiana. Se puede observar en la @eq-em-gaussiana-esferica que esta constante depende únicamente de $\sigma^2$ y de $d$, no de $\mu_i$, entonces tiene el mismo valor para las $K$ Gaussianas al ser $\sigma^2$ compartida. Sustituyendo la @eq-em-gaussiana-esferica y $\pi_i = \pi_j = \frac{1}{K}$ en la definición general del paso E (@eq-em-paso-e) se obtiene
+donde $(2\pi\sigma^2)^{-d/2}$ es la constante de normalización de la Gaussiana. Se puede observar en la @eq-em-gaussiana-esferica que esta constante depende únicamente de $\sigma^2$ y de $d$, no de $\mu_i$, entonces tiene el mismo valor para las $K$ Gaussianas al ser $\sigma^2$ compartida. Sustituyendo la @eq-em-gaussiana-esferica y $\pi_i = \pi_j = \frac{1}{K}$ en la definición general del **Paso E** (@eq-em-paso-e) se obtiene
 
 $$
 \gamma_i(x) = \frac{\dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\displaystyle\sum_{j=1}^K \dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.
@@ -257,7 +259,7 @@ m = KMeans(n_clusters=2, n_init='auto').fit(D)
 cl = m.predict(D)
 ```
 
-La @fig-kmeans-2gr muestra el resultado del algoritmo k-means en el conjunto del Iris, se muestran los dos grupos $G_1$ y $G_2$ y en color verde $\mu_1$ y $\mu_2$. 
+La @fig-kmeans-2gr muestra el resultado del algoritmo k-medias en el conjunto del Iris, se muestran los dos grupos $G_1$ y $G_2$ y en color verde $\mu_1$ y $\mu_2$. 
 
 ```{python}
 #| code-fold: true
@@ -342,7 +344,7 @@ Utilizando `perm` se calcula la exactitud (@sec-accuracy) utilizando la siguient
 acc = metrics.accuracy_score(y, perm[cl])
 ```
 
-En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el accuracy o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos. 
+En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el exactitud o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos. 
 
 Una medida que no requiere conocer los grupos es el **Silhouette Coefficient**; el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:
 
