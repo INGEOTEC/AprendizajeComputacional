@@ -312,9 +312,13 @@ window.Quarto = {
   <li><a href="#g_i" id="toc-g_i" class="nav-link" data-scroll-target="#g_i"><span class="header-section-number">6.3.2</span> <span class="math inline">\(G_i\)</span></a></li>
   <li><a href="#algoritmo" id="toc-algoritmo" class="nav-link" data-scroll-target="#algoritmo"><span class="header-section-number">6.3.3</span> Algoritmo</a></li>
   </ul></li>
-  <li><a href="#ejemplo-iris" id="toc-ejemplo-iris" class="nav-link" data-scroll-target="#ejemplo-iris"><span class="header-section-number">6.4</span> Ejemplo: Iris</a></li>
-  <li><a href="#rendimiento" id="toc-rendimiento" class="nav-link" data-scroll-target="#rendimiento"><span class="header-section-number">6.5</span> Rendimiento</a></li>
-  <li><a href="#número-de-grupos" id="toc-número-de-grupos" class="nav-link" data-scroll-target="#número-de-grupos"><span class="header-section-number">6.6</span> Número de Grupos</a></li>
+  <li><a href="#sec-agrupamiento-em" id="toc-sec-agrupamiento-em" class="nav-link" data-scroll-target="#sec-agrupamiento-em"><span class="header-section-number">6.4</span> Maximización de la Expectativa</a>
+  <ul class="collapse">
+  <li><a href="#k-medias-como-caso-particular-de-em" id="toc-k-medias-como-caso-particular-de-em" class="nav-link" data-scroll-target="#k-medias-como-caso-particular-de-em"><span class="header-section-number">6.4.1</span> K-medias como caso particular de EM</a></li>
+  </ul></li>
+  <li><a href="#ejemplo-iris" id="toc-ejemplo-iris" class="nav-link" data-scroll-target="#ejemplo-iris"><span class="header-section-number">6.5</span> Ejemplo: Iris</a></li>
+  <li><a href="#rendimiento" id="toc-rendimiento" class="nav-link" data-scroll-target="#rendimiento"><span class="header-section-number">6.6</span> Rendimiento</a></li>
+  <li><a href="#número-de-grupos" id="toc-número-de-grupos" class="nav-link" data-scroll-target="#número-de-grupos"><span class="header-section-number">6.7</span> Número de Grupos</a></li>
   </ul>
 </nav>
     </div>
@@ -343,7 +347,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar el algoritmo de agrupamiento k-medias</p>
 <section id="paquetes-usados" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">6.1</span> Paquetes usados</h2>
-<div id="16d6ed0b" class="cell" data-execution_count="1">
+<div id="d6f84a76" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> decomposition</span>
@@ -367,20 +371,20 @@ window.Quarto = {
 <p>De manera formal el objetivo de K-medias es encontrar la partición <span class="math inline">\(G = \{G_1, G_2, \ldots, G_K \}\)</span> que corresponda al <span class="math inline">\(\min \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid,\)</span> donde <span class="math inline">\(\mu_i\)</span> es la media de todos los elementos que pertenecen a <span class="math inline">\(G_i.\)</span></p>
 <p>Para comprender la función objetivo (<span class="math inline">\(\min \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid\)</span>) de k-medias se explican los dos componentes principales que son las medias <span class="math inline">\(\mu_i\)</span> y los grupos <span class="math inline">\(G_i.\)</span></p>
 <p>Para ilustrar tanto a <span class="math inline">\(\mu_i\)</span> como a <span class="math inline">\(G_i\)</span> se utiliza el problema del iris (<a href="05ReduccionDim.html#sec-visualizacion-iris" class="quarto-xref"><span>Sección 5.5.1</span></a>) cuyos datos se pueden obtener de la siguiente manera.</p>
-<div id="9043feb8" class="cell" data-execution_count="3">
+<div id="d947ed9f" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="mu_i" class="level3" data-number="6.3.1">
 <h3 data-number="6.3.1" class="anchored" data-anchor-id="mu_i"><span class="header-section-number">6.3.1</span> <span class="math inline">\(\mu_i\)</span></h3>
 <p>Como se describió, <span class="math inline">\(\mu_i\)</span> es la media de los elementos que corresponden al grupo <span class="math inline">\(G_i\)</span>. Asumiendo que el grupo <span class="math inline">\(1\)</span> (<span class="math inline">\(G_1\)</span>) tiene <span class="math inline">\(10\)</span> elementos seleccionados de manera aleatoria de <span class="math inline">\(\mathcal D\)</span> como se muestra a continuación.</p>
-<div id="ec971a1d" class="cell" data-execution_count="4">
+<div id="138db5b1" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> np.arange(<span class="bu">len</span>(D))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>np.random.shuffle(index)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> index[:<span class="dv">10</span>]</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>G_1 <span class="op">=</span> D[sel]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La variable <code>G_1</code> tiene los 10 elementos considerados como miembros de <span class="math inline">\(G_1\)</span> entonces <span class="math inline">\(\mu_1\)</span> se calcula como la media de cada componente, lo cual se puede calcular con el siguiente código.</p>
-<div id="e9cabca4" class="cell" data-execution_count="5">
+<div id="f1c6ddb5" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu_1 <span class="op">=</span> G_1.mean(axis<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La <a href="#fig-g1-centro" class="quarto-xref">Figura&nbsp;<span>6.1</span></a> muestra los elementos seleccionados (<span class="math inline">\(x \in G_1\)</span>) y la media (<span class="math inline">\(\mu_1\)</span>) del grupo. Los elementos se encuentran en <span class="math inline">\(\mathbb R^4\)</span> y para visualizarlos se transformaron usando PCA descrito en la <a href="05ReduccionDim.html#sec-visualizacion-iris" class="quarto-xref"><span>Sección 5.5.1</span></a>.</p>
@@ -403,7 +407,7 @@ window.Quarto = {
 <div id="fig-g1-centro" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-g1-centro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06Agrupamiento_files/figure-html/fig-g1-centro-output-1.png" width="481" height="429" class="figure-img">
+<img src="06Agrupamiento_files/figure-html/fig-g1-centro-output-1.png" width="490" height="429" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-g1-centro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.1: Elementos del primer grupo y su centro
@@ -416,18 +420,18 @@ Figura&nbsp;6.1: Elementos del primer grupo y su centro
 <section id="g_i" class="level3" data-number="6.3.2">
 <h3 data-number="6.3.2" class="anchored" data-anchor-id="g_i"><span class="header-section-number">6.3.2</span> <span class="math inline">\(G_i\)</span></h3>
 <p>El complemento del procedimiento anterior es encontrar los elementos de <span class="math inline">\(G_i\)</span> dando la <span class="math inline">\(\mu_i\)</span>. El ejemplo consiste en generar dos medias, es decir, <span class="math inline">\(K=2\)</span> y encontrar los elementos que corresponden a las medias generadas. Se puede utilizar cualquier procedimiento para generar dos vectores de manera aleatoria, pero en este ejemplo se asume que estos vectores corresponden a dos elementos de <span class="math inline">\(\mathcal D.\)</span> Estos elementos son los que se encuentran en los indices <span class="math inline">\(50\)</span> y <span class="math inline">\(100\)</span> tal y como se muestra en las siguientes instrucciones.</p>
-<div id="92e2ffd7" class="cell" data-execution_count="7">
+<div id="2e4f7fa0" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mu_1 <span class="op">=</span> D[<span class="dv">50</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mu_2 <span class="op">=</span> D[<span class="dv">100</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El elemento <span class="math inline">\(x\)</span> pertenece al grupo <span class="math inline">\(G_i\)</span> si el valor <span class="math inline">\(\mid\mid x - \mu_i\mid\mid\)</span> corresponde al <span class="math inline">\(\min_j \mid\mid x - \mu_j\mid\mid.\)</span> Entonces se requiere calcular <span class="math inline">\(\mid\mid x - \mu_i\mid\mid\)</span> para cada elemento <span class="math inline">\(x \in \mathcal D\)</span> y para cada una de las medias <span class="math inline">\(\mu_i\)</span>. Esto se puede realizar con la siguiente instrucción</p>
-<div id="83852114" class="cell" data-execution_count="8">
+<div id="08bd3839" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.array([linalg.norm((D <span class="op">-</span> np.atleast_2d(mu)),</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                            axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> mu <span class="kw">in</span> [mu_1, mu_2]]).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>donde se puede observar que el ciclo itera por cada una de las medias, i.e., <code>mu_1</code> y <code>mu_2</code>. Después se calcula la norma utilizando la función <code>linalg.norm</code> y finalmente se regresa la transpuesta para tener una matriz de 150 renglones y dos columnas que corresponden al número de ejemplos en <span class="math inline">\(\mathcal D\)</span> y a las dos medias. Los valores de <code>dis[50]</code> y <code>dis[100]</code> son array([0. , 1.8439]) y array([1.8439, 0. ]) respectivamente. Tal y como se espera porque <span class="math inline">\(\mu_1\)</span> corresponde al índice 50 y <span class="math inline">\(\mu_2\)</span> es el índice 100. Estos dos ejemplos, array([0. , 1.8439]) y array([1.8439, 0. ]), permiten observar que el argumento mínimo de <code>dis</code> identifica al grupo del elemento, haciendo la consideración que el índice 0 representa <span class="math inline">\(G_1\)</span> y el índice 1 es <span class="math inline">\(G_2.\)</span> La siguiente instrucción muestra como se realiza esta asignación.</p>
-<div id="4360c577" class="cell" data-execution_count="9">
+<div id="9abce599" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> dis.argmin(axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La <a href="#fig-k-means-g" class="quarto-xref">Figura&nbsp;<span>6.2</span></a> muestra los grupos formados, el primer grupo <code>G_1</code> se encuentra en azul y el segundo en naranja, también muestra los elementos que fueron usados como medias de cada grupo; estos elementos se observan en color verde.</p>
@@ -476,14 +480,85 @@ Figura&nbsp;6.2: Proyección de los elementos del conjunto y sus centros
 <p>El procedimiento termina cuando se llega a un número máximo de iteraciones o que la variación de los <span class="math inline">\(\mu_i\)</span> es mínima, es decir, que los grupos no cambian.</p>
 </section>
 </section>
-<section id="ejemplo-iris" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="ejemplo-iris"><span class="header-section-number">6.4</span> Ejemplo: Iris</h2>
+<section id="sec-agrupamiento-em" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-agrupamiento-em"><span class="header-section-number">6.4</span> Maximización de la Expectativa</h2>
+<p>K-medias (<a href="#sec-agrupamiento-k-medias" class="quarto-xref"><span>Sección 6.3</span></a>) es un caso particular de un algoritmo más general conocido como <strong>Expectation-Maximization</strong> (EM), el cual se utiliza para estimar por máxima verosimilitud (<a href="03Parametricos.html#sec-verosimilitud" class="quarto-xref"><span>Sección 3.3.1</span></a>) los parámetros de un modelo cuando este depende de una variable que no se observa, es decir, una variable latente.</p>
+<p>En el problema de agrupamiento la variable que no se observa es el grupo al que pertenece cada elemento <span class="math inline">\(x \in \mathcal D\)</span>. Sea <span class="math inline">\(z\)</span> la variable aleatoria correspondiente, donde <span class="math inline">\(z=i\)</span> indica que <span class="math inline">\(x \in G_i\)</span>. Se asume que <span class="math inline">\(x\)</span> proviene de una mezcla de <span class="math inline">\(K\)</span> distribuciones, donde la distribución <span class="math inline">\(i\)</span>-ésima está definida por la función de densidad <span class="math inline">\(f_{\theta_i}\)</span> y tiene una probabilidad a priori <span class="math inline">\(\pi_i = \mathbb P(z=i)\)</span> tal que <span class="math inline">\(\sum_{i=1}^K \pi_i = 1.\)</span> Bajo este modelo, la función de densidad de <span class="math inline">\(x\)</span> corresponde a <span class="math inline">\(f(x) = \sum_{i=1}^K \pi_i f_{\theta_i}(x).\)</span></p>
+<p>Los parámetros de este modelo son <span class="math inline">\(\Theta = \{\pi_1, \theta_1, \ldots, \pi_K, \theta_K\}\)</span>, entonces siguiendo la misma notación de la <a href="03Parametricos.html#sec-verosimilitud" class="quarto-xref"><span>Sección 3.3.1</span></a>, la verosimilitud de <span class="math inline">\(\mathcal D\)</span> es</p>
+<p><span id="eq-em-verosimilitud"><span class="math display">\[
+\mathcal L(\Theta) = \prod_{x \in \mathcal D} \sum_{i=1}^K \pi_i f_{\theta_i}(x),
+\tag{6.1}\]</span></span></p>
+<p>cuyo logaritmo es</p>
+<p><span id="eq-em-log-verosimilitud"><span class="math display">\[
+\ell(\Theta) = \sum_{x \in \mathcal D} \log \left(\sum_{i=1}^K \pi_i f_{\theta_i}(x) \right).
+\tag{6.2}\]</span></span></p>
+<p>La dificultad para maximizar <span class="math inline">\(\ell(\Theta)\)</span> (<a href="#eq-em-log-verosimilitud" class="quarto-xref">Ecuación&nbsp;<span>6.2</span></a>) de manera directa es que, al no observarse <span class="math inline">\(z\)</span>, el logaritmo no puede aplicarse a cada término de la suma en <span class="math inline">\(i\)</span>. EM resuelve este problema con un procedimiento iterativo de dos pasos, Expectativa (E) y Maximización (M), que en la iteración <span class="math inline">\(t\)</span> se definen de la siguiente manera.</p>
+<p>Para entender por qué el primer paso se llama Expectativa conviene considerar qué pasaría si <span class="math inline">\(z\)</span> se observara. En ese caso, para un elemento <span class="math inline">\(x\)</span> con grupo verdadero <span class="math inline">\(z\)</span>, se podría usar el indicador <span class="math inline">\(\mathbb 1(z=i),\)</span> que vale <span class="math inline">\(1\)</span> si <span class="math inline">\(z=i\)</span> y <span class="math inline">\(0\)</span> en otro caso, para escribir el logaritmo de su verosimilitud completa (la que incluye a <span class="math inline">\(z\)</span>) como <span class="math inline">\(\sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)),\)</span> ya que únicamente el término correspondiente al grupo verdadero de <span class="math inline">\(x\)</span> contribuye a la suma, al ser cero el resto de los indicadores. Sumando sobre <span class="math inline">\(\mathcal D\)</span> se obtiene la log-verosimilitud completa</p>
+<p><span id="eq-em-log-verosimilitud-completa"><span class="math display">\[
+\ell_c(\Theta) = \sum_{x \in \mathcal D} \sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)).
+\tag{6.3}\]</span></span></p>
+<p>Maximizar la <a href="#eq-em-log-verosimilitud-completa" class="quarto-xref">Ecuación&nbsp;<span>6.3</span></a> sería sencillo, sin embargo no se puede calcular porque <span class="math inline">\(z,\)</span> y por lo tanto <span class="math inline">\(\mathbb 1(z=i),\)</span> no se observa. La idea de EM es sustituir el indicador <span class="math inline">\(\mathbb 1(z=i)\)</span> por su valor esperado dado lo que sí se observa, es decir, dado <span class="math inline">\(x\)</span> y los parámetros actuales <span class="math inline">\(\Theta^{(t)}\)</span>; esta esperanza es</p>
+<p><span id="eq-em-esperanza-indicador"><span class="math display">\[
+\mathbb E[\mathbb 1(z=i) \mid x, \Theta^{(t)}] = \mathbb P(z=i \mid x, \Theta^{(t)}) = \gamma_i(x),
+\tag{6.4}\]</span></span></p>
+<p>donde la primera igualdad se debe a que la esperanza de una variable indicadora corresponde a la probabilidad del evento que indica. Sustituyendo la <a href="#eq-em-esperanza-indicador" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a> en la <a href="#eq-em-log-verosimilitud-completa" class="quarto-xref">Ecuación&nbsp;<span>6.3</span></a>, en lugar de <span class="math inline">\(\ell_c(\Theta)\)</span> se obtiene su valor esperado</p>
+<p><span id="eq-em-q-funcion"><span class="math display">\[
+Q(\Theta, \Theta^{(t)}) = \mathbb E_{z \mid x, \Theta^{(t)}}[\ell_c(\Theta)] = \sum_{x \in \mathcal D} \sum_{i=1}^K \gamma_i(x) \log(\pi_i f_{\theta_i}(x)).
+\tag{6.5}\]</span></span></p>
+<p>En la <a href="#eq-em-q-funcion" class="quarto-xref">Ecuación&nbsp;<span>6.5</span></a> se puede notar que <span class="math inline">\(Q\)</span> tiene dos argumentos, <span class="math inline">\(\Theta\)</span> y <span class="math inline">\(\Theta^{(t)}\)</span>, con roles distintos. <span class="math inline">\(\Theta^{(t)}\)</span> son los parámetros de la iteración anterior, que ya se conocen; mientras que <span class="math inline">\(\Theta\)</span> es la variable sobre la que se maximiza. Dado que <span class="math inline">\(\gamma_i(x)\)</span> (<a href="#eq-em-esperanza-indicador" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>) depende únicamente de <span class="math inline">\(x\)</span> y <span class="math inline">\(\Theta^{(t)}\)</span>, y no de <span class="math inline">\(\Theta\)</span>, al resolver <span class="math inline">\(\arg\max_\Theta Q(\Theta, \Theta^{(t)})\)</span> cada <span class="math inline">\(\gamma_i(x)\)</span> se comporta como una constante, es decir, un peso fijo que ya no cambia durante la maximización; los únicos términos de la <a href="#eq-em-q-funcion" class="quarto-xref">Ecuación&nbsp;<span>6.5</span></a> que dependen de <span class="math inline">\(\Theta\)</span> son <span class="math inline">\(\pi_i\)</span> y <span class="math inline">\(f_{\theta_i}(x)\)</span>, dentro del logaritmo.</p>
+<p>Calcular <span class="math inline">\(\gamma_i(x)\)</span> (<a href="#eq-em-esperanza-indicador" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>), es necesario para resolver <span class="math inline">\(\arg\max_\Theta Q(\Theta, \Theta^{(t)})\)</span>; y este se calcula en el <strong>Paso E</strong>, de ahí su nombre, Expectativa. El <strong>Paso M</strong> completa el procedimiento encontrando <span class="math inline">\(\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),\)</span> es decir, maximizando la esperanza; de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.</p>
+<p><strong>Paso E</strong>. Dados los parámetros actuales <span class="math inline">\(\Theta^{(t)} = \{\pi_i^{(t)}, \theta_i^{(t)}\}\)</span>, se calcula <span class="math inline">\(\gamma_i(x)\)</span> (<a href="#eq-em-esperanza-indicador" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>) para cada <span class="math inline">\(x \in \mathcal D\)</span> y cada grupo <span class="math inline">\(i,\)</span> lo cual, sustituyendo <span class="math inline">\(\mathbb P(z=i \mid x, \Theta^{(t)})\)</span> con el Teorema de Bayes, corresponde a</p>
+<p><span id="eq-em-paso-e"><span class="math display">\[
+\gamma_i(x) = \mathbb P(z=i \mid x, \Theta^{(t)}) = \frac{\pi_i^{(t)} f_{\theta_i^{(t)}}(x)}{\sum_{j=1}^K \pi_j^{(t)} f_{\theta_j^{(t)}}(x)}.
+\tag{6.6}\]</span></span></p>
+<p><span class="math inline">\(\gamma_i(x)\)</span> es la responsabilidad de <span class="math inline">\(G_i\)</span> en el elemento <span class="math inline">\(x\)</span>; a diferencia del paso 2 de K-medias (<a href="#sec-agrupamiento-k-medias" class="quarto-xref"><span>Sección 6.3</span></a>) donde <span class="math inline">\(x\)</span> se asigna completamente a un grupo, en EM <span class="math inline">\(x\)</span> se asigna de manera fraccionaria a los <span class="math inline">\(K\)</span> grupos, dado que <span class="math inline">\(\gamma_i(x) \in [0, 1]\)</span> y <span class="math inline">\(\sum_{i=1}^K \gamma_i(x) = 1.\)</span></p>
+<p><strong>Paso M</strong>. Con las responsabilidades del paso anterior se actualizan los parámetros <span class="math inline">\(\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)})\)</span> (<a href="#eq-em-q-funcion" class="quarto-xref">Ecuación&nbsp;<span>6.5</span></a>). La probabilidad a priori se actualiza con</p>
+<p><span id="eq-em-paso-m-pi"><span class="math display">\[
+\pi_i^{(t+1)} = \frac{1}{N} \sum_{x \in \mathcal D} \gamma_i(x),
+\tag{6.7}\]</span></span></p>
+<p>y <span class="math inline">\(\theta_i^{(t+1)}\)</span> se obtiene con la estimación de máxima verosimilitud de <span class="math inline">\(f_{\theta_i}\)</span> ponderando cada <span class="math inline">\(x\)</span> con <span class="math inline">\(\gamma_i(x).\)</span> Por ejemplo, cuando <span class="math inline">\(f_{\theta_i}\)</span> corresponde a <span class="math inline">\(\mathcal N(\mu_i, \Sigma_i)\)</span> (<a href="03Parametricos.html#sec-estimacion-distribucion-gausiana" class="quarto-xref"><span>Sección 3.3.3</span></a>) las actualizaciones son</p>
+<p><span id="eq-em-paso-m-mu"><span class="math display">\[
+\mu_i^{(t+1)} = \frac{\sum_{x \in \mathcal D} \gamma_i(x) \, x}{\sum_{x \in \mathcal D} \gamma_i(x)},
+\tag{6.8}\]</span></span></p>
+<p><span id="eq-em-paso-m-sigma"><span class="math display">\[
+\Sigma_i^{(t+1)} = \frac{\sum_{x \in \mathcal D} \gamma_i(x) \, (x - \mu_i^{(t+1)})(x - \mu_i^{(t+1)})^\intercal}{\sum_{x \in \mathcal D} \gamma_i(x)}.
+\tag{6.9}\]</span></span></p>
+<p>Los pasos E (<a href="#eq-em-paso-e" class="quarto-xref">Ecuación&nbsp;<span>6.6</span></a>) y M (<a href="#eq-em-paso-m-pi" class="quarto-xref">Ecuación&nbsp;<span>6.7</span></a>, <a href="#eq-em-paso-m-mu" class="quarto-xref">Ecuación&nbsp;<span>6.8</span></a> y <a href="#eq-em-paso-m-sigma" class="quarto-xref">Ecuación&nbsp;<span>6.9</span></a>) se repiten hasta que <span class="math inline">\(\ell(\Theta)\)</span> converge o se llega a un número máximo de iteraciones, de manera análoga al criterio de paro de K-medias.</p>
+<section id="k-medias-como-caso-particular-de-em" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="k-medias-como-caso-particular-de-em"><span class="header-section-number">6.4.1</span> K-medias como caso particular de EM</h3>
+<p>K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo. La primera es que las <span class="math inline">\(K\)</span> distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, <span class="math inline">\(f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)\)</span> para todo <span class="math inline">\(i,\)</span> con <span class="math inline">\(\sigma^2\)</span> fija y compartida por los <span class="math inline">\(K\)</span> grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., <span class="math inline">\(\pi_i = \frac{1}{K}\)</span> para todo <span class="math inline">\(i.\)</span></p>
+<p>Para observar el efecto de estas suposiciones en el <strong>Paso E</strong> (<a href="#eq-em-paso-e" class="quarto-xref">Ecuación&nbsp;<span>6.6</span></a>) se requiere la función de densidad de una Gaussiana multivariada con media <span class="math inline">\(\mu_i\)</span> y matriz de covarianza esférica <span class="math inline">\(\sigma^2 I\)</span>; para <span class="math inline">\(x \in \mathbb R^d\)</span> esta densidad es</p>
+<p><span id="eq-em-gaussiana-esferica"><span class="math display">\[
+f_{\theta_i}(x) = \mathcal N(x \mid \mu_i, \sigma^2 I) = \frac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right),
+\tag{6.10}\]</span></span></p>
+<p>donde <span class="math inline">\((2\pi\sigma^2)^{-d/2}\)</span> es la constante de normalización de la Gaussiana. Se puede observar en la <a href="#eq-em-gaussiana-esferica" class="quarto-xref">Ecuación&nbsp;<span>6.10</span></a> que esta constante depende únicamente de <span class="math inline">\(\sigma^2\)</span> y de <span class="math inline">\(d\)</span>, no de <span class="math inline">\(\mu_i\)</span>, entonces tiene el mismo valor para las <span class="math inline">\(K\)</span> Gaussianas al ser <span class="math inline">\(\sigma^2\)</span> compartida. Sustituyendo la <a href="#eq-em-gaussiana-esferica" class="quarto-xref">Ecuación&nbsp;<span>6.10</span></a> y <span class="math inline">\(\pi_i = \pi_j = \frac{1}{K}\)</span> en la definición general del <strong>Paso E</strong> (<a href="#eq-em-paso-e" class="quarto-xref">Ecuación&nbsp;<span>6.6</span></a>) se obtiene</p>
+<p><span id="eq-em-gamma-sustitucion"><span class="math display">\[
+\gamma_i(x) = \frac{\dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\displaystyle\sum_{j=1}^K \dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.
+\tag{6.11}\]</span></span></p>
+<p>En la <a href="#eq-em-gamma-sustitucion" class="quarto-xref">Ecuación&nbsp;<span>6.11</span></a> el factor <span class="math inline">\(c = \frac{1}{K} \cdot \frac{1}{(2\pi\sigma^2)^{d/2}}\)</span> es el mismo en el numerador y en cada uno de los <span class="math inline">\(K\)</span> términos de la suma del denominador, dado que no depende ni del grupo <span class="math inline">\(i\)</span> del numerador ni del índice <span class="math inline">\(j\)</span> de la suma. Al ser un factor común se puede sacar de la suma, quedando</p>
+<p><span id="eq-em-gamma-factorizado"><span class="math display">\[
+\gamma_i(x) = \frac{c \cdot \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{c \cdot \displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)},
+\tag{6.12}\]</span></span></p>
+<p>y como <span class="math inline">\(c &gt; 0\)</span>, se cancela entre el numerador y el denominador de la <a href="#eq-em-gamma-factorizado" class="quarto-xref">Ecuación&nbsp;<span>6.12</span></a>, es decir, las responsabilidades no dependen ni de <span class="math inline">\(\pi_i\)</span> ni de la constante de normalización de la Gaussiana, sino únicamente de la distancia de <span class="math inline">\(x\)</span> a cada media. Esto se resume en</p>
+<p><span id="eq-em-gamma-kmedias"><span class="math display">\[
+\gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.
+\tag{6.13}\]</span></span></p>
+<p>Para tomar el límite <span class="math inline">\(\sigma^2 \to 0\)</span> en la <a href="#eq-em-gamma-kmedias" class="quarto-xref">Ecuación&nbsp;<span>6.13</span></a> conviene denotar <span class="math inline">\(d_j = \mid\mid x - \mu_j \mid\mid^2\)</span> y, asumiendo que la media más cercana a <span class="math inline">\(x\)</span> es única, sea <span class="math inline">\(i^*\)</span> el grupo tal que <span class="math inline">\(d_{i^*} = \min_j d_j\)</span>. Multiplicando el numerador y el denominador de la <a href="#eq-em-gamma-kmedias" class="quarto-xref">Ecuación&nbsp;<span>6.13</span></a> por <span class="math inline">\(\exp\left(\frac{1}{2\sigma^2} d_{i^*}\right)\)</span>, es decir, sacando de la suma del denominador el factor común <span class="math inline">\(\exp\left(-\frac{1}{2\sigma^2} d_{i^*}\right)\)</span> tal como se hizo con <span class="math inline">\(c\)</span> en la <a href="#eq-em-gamma-factorizado" class="quarto-xref">Ecuación&nbsp;<span>6.12</span></a>, se obtiene</p>
+<p><span id="eq-em-gamma-diferencias"><span class="math display">\[
+\gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} (d_i - d_{i^*})\right)}{\displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right)}.
+\tag{6.14}\]</span></span></p>
+<p>En la <a href="#eq-em-gamma-diferencias" class="quarto-xref">Ecuación&nbsp;<span>6.14</span></a> cada exponente está escrito en términos de <span class="math inline">\(d_j - d_{i^*} \geq 0\)</span>, dado que <span class="math inline">\(d_{i^*}\)</span> es el mínimo; en particular, para <span class="math inline">\(j = i^*\)</span> el exponente es <span class="math inline">\(0\)</span> y por lo tanto ese término de la suma es <span class="math inline">\(\exp(0) = 1\)</span>, sin importar el valor de <span class="math inline">\(\sigma^2\)</span>. Para cualquier otro grupo <span class="math inline">\(j \neq i^*\)</span> se tiene <span class="math inline">\(d_j - d_{i^*} &gt; 0\)</span>, entonces al tomar el límite <span class="math inline">\(\sigma^2 \to 0\)</span> el exponente <span class="math inline">\(-\frac{1}{2\sigma^2}(d_j - d_{i^*}) \to -\infty\)</span> y en consecuencia ese término tiende a <span class="math inline">\(\exp(-\infty) = 0\)</span>. Esto significa que en el límite la suma del denominador de la <a href="#eq-em-gamma-diferencias" class="quarto-xref">Ecuación&nbsp;<span>6.14</span></a> se reduce únicamente al término <span class="math inline">\(j=i^*\)</span>, es decir, <span class="math inline">\(\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right) \to 1,\)</span> de donde se dice que este término domina la suma: todos los demás términos se desprecian frente a él conforme <span class="math inline">\(\sigma^2 \to 0\)</span>.</p>
+<p>Con esta asignación completa, i.e., <span class="math inline">\(\gamma_i(x) \in \{0, 1\}\)</span>, la actualización de <span class="math inline">\(\mu_i\)</span> del <strong>Paso M</strong> (<a href="#eq-em-paso-m-mu" class="quarto-xref">Ecuación&nbsp;<span>6.8</span></a>) se reduce a la media de los elementos de <span class="math inline">\(G_i,\)</span> que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que <span class="math inline">\(\sigma^2 \to 0\)</span> y sustituyendo la responsabilidad <span class="math inline">\(\gamma_i(x)\)</span> por la asignación completa al grupo más cercano.</p>
+</section>
+</section>
+<section id="ejemplo-iris" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="ejemplo-iris"><span class="header-section-number">6.5</span> Ejemplo: Iris</h2>
 <p>En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos en el conjunto del iris. La clase se inicializa primero con 2 grupos (primera línea). En la segunda instrucción se predice los grupos para todo el conjunto de datos. Las medias para cada grupo se encuentran en el atributo <code>cluster_centers_.</code></p>
-<div id="9aeddebf" class="cell" data-execution_count="11">
+<div id="21b4ec72" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">2</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>La <a href="#fig-kmeans-2gr" class="quarto-xref">Figura&nbsp;<span>6.3</span></a> muestra el resultado del algoritmo k-means en el conjunto del Iris, se muestran los dos grupos <span class="math inline">\(G_1\)</span> y <span class="math inline">\(G_2\)</span> y en color verde <span class="math inline">\(\mu_1\)</span> y <span class="math inline">\(\mu_2\)</span>.</p>
+<p>La <a href="#fig-kmeans-2gr" class="quarto-xref">Figura&nbsp;<span>6.3</span></a> muestra el resultado del algoritmo k-medias en el conjunto del Iris, se muestran los dos grupos <span class="math inline">\(G_1\)</span> y <span class="math inline">\(G_2\)</span> y en color verde <span class="math inline">\(\mu_1\)</span> y <span class="math inline">\(\mu_2\)</span>.</p>
 <div id="cell-fig-kmeans-2gr" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Código</summary>
@@ -518,7 +593,7 @@ Figura&nbsp;6.3: Proyección de k-means usando dos grupos
 </div>
 </div>
 <p>Un procedimiento equivalente se puede realizar para generar tres grupos, el único cambio es el parámetro <code>n_clusters</code> en la clase <code>KMeans</code> de la siguiente manera.</p>
-<div id="11a01637" class="cell" data-execution_count="13">
+<div id="06915e09" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -557,32 +632,32 @@ Figura&nbsp;6.4: Proyección de k-means usando tres grupos
 </div>
 </div>
 </section>
-<section id="rendimiento" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="rendimiento"><span class="header-section-number">6.5</span> Rendimiento</h2>
+<section id="rendimiento" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="rendimiento"><span class="header-section-number">6.6</span> Rendimiento</h2>
 <p>Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir. En este caso particular se utilizó un problema de clasificación para ilustrar el procedimiento de k-medias, entonces se cuenta con una clase para cada elemento <span class="math inline">\(x \in \mathcal D\)</span>. Además se sabe que el problema del iris tiene tres clases, entonces utilizando los tres grupos obtenidos previamente podemos medir que tanto se parecen estos tres grupos a las clases del iris. Es decir, se puede saber si el algoritmo de k-medias agrupa los elementos de tal manera que cada grupo corresponda a una clase del iris.</p>
-<p>Los grupos generados se encuentran en la lista <code>cl</code> y las clases se encuentran en <code>y</code>. La lista <code>y</code> tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase <span class="math inline">\(0\)</span>, los siguientes <span class="math inline">\(50\)</span> son clase <span class="math inline">\(1\)</span> y los últimos son la clase <span class="math inline">\(2\)</span>. Dado que K-medias no conoce los clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en <code>cl</code> están organizados de la siguiente manera aproximadamente los <span class="math inline">\(50\)</span> primeros elementos son del grupo <span class="math inline">\(1\)</span>, los siguientes son grupo <span class="math inline">\(0\)</span> y finalmente los últimos son grupo <span class="math inline">\(2\)</span>. Entonces se puede hacer una transformación usando la variable <code>perm</code> con la siguiente información array([2, 0, 1]).</p>
-<p>Utilizando <code>perm</code> se calcula la exactitud (<a href="04Rendimiento.html#sec-accuracy" class="quarto-xref"><span>Sección 4.2.2</span></a>) utilizando la siguiente instrucción. Se obtiene una exactitud de <span class="math inline">\(0.8867\)</span> que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris.</p>
-<div id="5fc20b00" class="cell" data-execution_count="17">
+<p>Los grupos generados se encuentran en la lista <code>cl</code> y las clases se encuentran en <code>y</code>. La lista <code>y</code> tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase <span class="math inline">\(0\)</span>, los siguientes <span class="math inline">\(50\)</span> son clase <span class="math inline">\(1\)</span> y los últimos son la clase <span class="math inline">\(2\)</span>. Dado que K-medias no conoce los clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en <code>cl</code> están organizados de la siguiente manera aproximadamente los <span class="math inline">\(50\)</span> primeros elementos son del grupo <span class="math inline">\(1\)</span>, los siguientes son grupo <span class="math inline">\(0\)</span> y finalmente los últimos son grupo <span class="math inline">\(2\)</span>. Entonces se puede hacer una transformación usando la variable <code>perm</code> con la siguiente información array([1, 0, 2]).</p>
+<p>Utilizando <code>perm</code> se calcula la exactitud (<a href="04Rendimiento.html#sec-accuracy" class="quarto-xref"><span>Sección 4.2.2</span></a>) utilizando la siguiente instrucción. Se obtiene una exactitud de <span class="math inline">\(0.8933\)</span> que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris.</p>
+<div id="a708bfca" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> metrics.accuracy_score(y, perm[cl])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el accuracy o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos.</p>
+<p>En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el exactitud o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos.</p>
 <p>Una medida que no requiere conocer los grupos es el <strong>Silhouette Coefficient</strong>; el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:</p>
 <p><span class="math display">\[
 s = \frac{b - a}{\max(a, b)},
 \]</span></p>
 <p>donde <span class="math inline">\(a\)</span> corresponde a la distancia media entre un elemento y todos las objetos del mismo grupo; y <span class="math inline">\(b\)</span> es la distancia media entre la muestra y todos los elementos del grupo más cercano.</p>
-<p>Por ejemplo, en el problema del Iris <span class="math inline">\(s\)</span> tiene un valor de <span class="math inline">\(0.5512\)</span> calculado con la siguiente instrucción.</p>
-<div id="0ba170f6" class="cell" data-execution_count="19">
+<p>Por ejemplo, en el problema del Iris <span class="math inline">\(s\)</span> tiene un valor de <span class="math inline">\(0.5528\)</span> calculado con la siguiente instrucción.</p>
+<div id="5c10a74d" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sil <span class="op">=</span> metrics.silhouette_score(D, cl, metric<span class="op">=</span><span class="st">'euclidean'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Otra medida de la calidad de los grupos es índice de <strong>Calinski-Harabasz</strong> que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de <span class="math inline">\(561.5937\)</span> obtenido con la siguiente instrucción.</p>
+<p>Otra medida de la calidad de los grupos es índice de <strong>Calinski-Harabasz</strong> que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de <span class="math inline">\(561.6278\)</span> obtenido con la siguiente instrucción.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cal_har <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="número-de-grupos" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="número-de-grupos"><span class="header-section-number">6.6</span> Número de Grupos</h2>
+<section id="número-de-grupos" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="número-de-grupos"><span class="header-section-number">6.7</span> Número de Grupos</h2>
 <p>Utilizando una medida de rendimiento de agrupamiento se analizar cual sería el número adecuado de grupos para un problema dado. El procedimiento es variar el número de grupos y medir el rendimiento para cada grupo y quedarse con aquel que da el mejor rendimiento considerando también el número de grupos.</p>
 <p>Por ejemplo, el siguiente instrucción calcula el coeficiente de Silhouette y el índice de Calinski-Harabasz en el problema del Iris.</p>
-<div id="f20875ef" class="cell" data-execution_count="20">
+<div id="eb5e4a7b" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>S1 <span class="op">=</span> []</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="op">=</span> []</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">11</span>):</span>
@@ -610,7 +685,7 @@ s = \frac{b - a}{\max(a, b)},
 <div id="fig-k-means-performance-k" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-k-means-performance-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="06Agrupamiento_files/figure-html/fig-k-means-performance-k-output-1.png" width="652" height="434" class="figure-img">
+<img src="06Agrupamiento_files/figure-html/fig-k-means-performance-k-output-1.png" width="652" height="435" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-k-means-performance-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.5: Rendimiento variando el número de grupos
@@ -1238,168 +1313,274 @@ Figura&nbsp;6.5: Rendimiento variando el número de grupos
 <span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Se actualizan las $\mu_i$ con los elementos de $G_i.$</span>
 <span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Se regresa al paso 2. </span>
 <span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a>El procedimiento termina cuando se llega a un número máximo de iteraciones o que la variación de los $\mu_i$ es mínima, es decir, que los grupos no cambian. </span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a>El procedimiento termina cuando se llega a un número máximo de iteraciones o que la variación de los $\mu_i$ es mínima, es decir, que los grupos no cambian.</span>
 <span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejemplo: Iris</span></span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a><span class="fu">## Maximización de la Expectativa {#sec-agrupamiento-em}</span></span>
 <span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a>En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos en el conjunto del iris. La clase se inicializa primero con 2 grupos (primera línea). En la segunda instrucción se predice los grupos para todo el conjunto de datos. Las medias para cada grupo se encuentran en el atributo <span class="in">`cluster_centers_.`</span></span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a>K-medias (@sec-agrupamiento-k-medias) es un caso particular de un algoritmo más general conocido como **Expectation-Maximization** (EM), el cual se utiliza para estimar por máxima verosimilitud (@sec-verosimilitud) los parámetros de un modelo cuando este depende de una variable que no se observa, es decir, una variable latente.</span>
 <span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">2</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
-<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span>
-<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a>En el problema de agrupamiento la variable que no se observa es el grupo al que pertenece cada elemento $x \in \mathcal D$. Sea $z$ la variable aleatoria correspondiente, donde $z=i$ indica que $x \in G_i$. Se asume que $x$ proviene de una mezcla de $K$ distribuciones, donde la distribución $i$-ésima está definida por la función de densidad $f_{\theta_i}$ y tiene una probabilidad a priori $\pi_i = \mathbb P(z=i)$ tal que $\sum_{i=1}^K \pi_i = 1.$ Bajo este modelo, la función de densidad de $x$ corresponde a $f(x) = \sum_{i=1}^K \pi_i f_{\theta_i}(x).$</span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a>Los parámetros de este modelo son $\Theta = <span class="sc">\{</span>\pi_1, \theta_1, \ldots, \pi_K, \theta_K<span class="sc">\}</span>$, entonces siguiendo la misma notación de la @sec-verosimilitud, la verosimilitud de $\mathcal D$ es</span>
+<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a>\mathcal L(\Theta) = \prod_{x \in \mathcal D} \sum_{i=1}^K \pi_i f_{\theta_i}(x),</span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-verosimilitud}</span>
 <span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a>La @fig-kmeans-2gr muestra el resultado del algoritmo k-means en el conjunto del Iris, se muestran los dos grupos $G_1$ y $G_2$ y en color verde $\mu_1$ y $\mu_2$. </span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a>cuyo logaritmo es</span>
 <span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección de k-means usando dos grupos</span></span>
-<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-kmeans-2gr</span></span>
-<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
-<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a>D_pca <span class="op">=</span> pca.transform(D)</span>
-<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> pca.transform(m.cluster_centers_)</span>
-<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a>mu_data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>mu[:, <span class="dv">0</span>],</span>
-<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a>                            y<span class="op">=</span>mu[:, <span class="dv">1</span>],</span>
-<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a>                            tipo<span class="op">=</span>[<span class="st">'mu'</span>] <span class="op">*</span> mu.shape[<span class="dv">0</span>]))</span>
-<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>D_pca[:, <span class="dv">0</span>],</span>
-<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a>                         y<span class="op">=</span>D_pca[:, <span class="dv">1</span>],</span>
-<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>                         tipo<span class="op">=</span>[<span class="ss">f'G_</span><span class="sc">{</span>x<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> cl]))</span>
-<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.concat((data, mu_data))</span>
-<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'scatter'</span>, hue<span class="op">=</span><span class="st">'tipo'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>)</span>
-<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a>\ell(\Theta) = \sum_{x \in \mathcal D} \log \left(\sum_{i=1}^K \pi_i f_{\theta_i}(x) \right).</span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-log-verosimilitud}</span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a>La dificultad para maximizar $\ell(\Theta)$ (@eq-em-log-verosimilitud) de manera directa es que, al no observarse $z$, el logaritmo no puede aplicarse a cada término de la suma en $i$. EM resuelve este problema con un procedimiento iterativo de dos pasos, Expectativa (E) y Maximización (M), que en la iteración $t$ se definen de la siguiente manera.</span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a>Para entender por qué el primer paso se llama Expectativa conviene considerar qué pasaría si $z$ se observara. En ese caso, para un elemento $x$ con grupo verdadero $z$, se podría usar el indicador $\mathbb 1(z=i),$ que vale $1$ si $z=i$ y $0$ en otro caso, para escribir el logaritmo de su verosimilitud completa (la que incluye a $z$) como $\sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)),$ ya que únicamente el término correspondiente al grupo verdadero de $x$ contribuye a la suma, al ser cero el resto de los indicadores. Sumando sobre $\mathcal D$ se obtiene la log-verosimilitud completa</span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a>\ell_c(\Theta) = \sum_{x \in \mathcal D} \sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)).</span>
+<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-log-verosimilitud-completa}</span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a>Maximizar la @eq-em-log-verosimilitud-completa sería sencillo, sin embargo no se puede calcular porque $z,$ y por lo tanto $\mathbb 1(z=i),$ no se observa. La idea de EM es sustituir el indicador $\mathbb 1(z=i)$ por su valor esperado dado lo que sí se observa, es decir, dado $x$ y los parámetros actuales $\Theta^{(t)}$; esta esperanza es</span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>\mathbb E<span class="co">[</span><span class="ot">\mathbb 1(z=i) \mid x, \Theta^{(t)}</span><span class="co">]</span> = \mathbb P(z=i \mid x, \Theta^{(t)}) = \gamma_i(x),</span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-esperanza-indicador}</span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a>donde la primera igualdad se debe a que la esperanza de una variable indicadora corresponde a la probabilidad del evento que indica. Sustituyendo la @eq-em-esperanza-indicador en la @eq-em-log-verosimilitud-completa, en lugar de $\ell_c(\Theta)$ se obtiene su valor esperado</span>
+<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a>Q(\Theta, \Theta^{(t)}) = \mathbb E_{z \mid x, \Theta^{(t)}}<span class="co">[</span><span class="ot">\ell_c(\Theta)</span><span class="co">]</span> = \sum_{x \in \mathcal D} \sum_{i=1}^K \gamma_i(x) \log(\pi_i f_{\theta_i}(x)).</span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-q-funcion}</span>
 <span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>Un procedimiento equivalente se puede realizar para generar </span>
-<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a>tres grupos, el único cambio es el parámetro <span class="in">`n_clusters`</span></span>
-<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a>en la clase <span class="in">`KMeans`</span> de la siguiente manera.</span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>En la @eq-em-q-funcion se puede notar que $Q$ tiene dos argumentos, $\Theta$ y $\Theta^{(t)}$, con roles distintos. $\Theta^{(t)}$ son los parámetros de la iteración anterior, que ya se conocen; mientras que $\Theta$ es la variable sobre la que se maximiza. Dado que $\gamma_i(x)$ (@eq-em-esperanza-indicador) depende únicamente de $x$ y $\Theta^{(t)}$, y no de $\Theta$, al resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$ cada $\gamma_i(x)$ se comporta como una constante, es decir, un peso fijo que ya no cambia durante la maximización; los únicos términos de la @eq-em-q-funcion que dependen de $\Theta$ son $\pi_i$ y $f_{\theta_i}(x)$, dentro del logaritmo. </span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a>Calcular $\gamma_i(x)$ (@eq-em-esperanza-indicador), es necesario para resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$; y este se calcula en el **Paso E**, de ahí su nombre, Expectativa. El **Paso M** completa el procedimiento encontrando $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),$ es decir, maximizando la esperanza; de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.</span>
 <span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
-<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span>
-<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a>**Paso E**. Dados los parámetros actuales $\Theta^{(t)} = <span class="sc">\{</span>\pi_i^{(t)}, \theta_i^{(t)}<span class="sc">\}</span>$, se calcula $\gamma_i(x)$ (@eq-em-esperanza-indicador) para cada $x \in \mathcal D$ y cada grupo $i,$ lo cual, sustituyendo $\mathbb P(z=i \mid x, \Theta^{(t)})$ con el Teorema de Bayes, corresponde a</span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a>\gamma_i(x) = \mathbb P(z=i \mid x, \Theta^{(t)}) = \frac{\pi_i^{(t)} f_{\theta_i^{(t)}}(x)}{\sum_{j=1}^K \pi_j^{(t)} f_{\theta_j^{(t)}}(x)}.</span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-paso-e}</span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a>$\gamma_i(x)$ es la responsabilidad de $G_i$ en el elemento $x$; a diferencia del paso 2 de K-medias (@sec-agrupamiento-k-medias) donde $x$ se asigna completamente a un grupo, en EM $x$ se asigna de manera fraccionaria a los $K$ grupos, dado que $\gamma_i(x) \in <span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span>$ y $\sum_{i=1}^K \gamma_i(x) = 1.$</span>
 <span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a>La @fig-kmeans-3gr muestra los tres grupos y con sus tres respectivas medias en color rojo. </span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a>**Paso M**. Con las responsabilidades del paso anterior se actualizan los parámetros $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)})$ (@eq-em-q-funcion). La probabilidad a priori se actualiza con</span>
 <span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección de k-means usando tres grupos</span></span>
-<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-kmeans-3gr</span></span>
-<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
-<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a>D_pca <span class="op">=</span> pca.transform(D)</span>
-<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> pca.transform(m.cluster_centers_)</span>
-<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a>mu_data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>mu[:, <span class="dv">0</span>],</span>
-<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a>                            y<span class="op">=</span>mu[:, <span class="dv">1</span>],</span>
-<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a>                            tipo<span class="op">=</span>[<span class="st">'mu'</span>] <span class="op">*</span> mu.shape[<span class="dv">0</span>]))</span>
-<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>D_pca[:, <span class="dv">0</span>],</span>
-<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a>                         y<span class="op">=</span>D_pca[:, <span class="dv">1</span>],</span>
-<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a>                         tipo<span class="op">=</span>[<span class="ss">f'G_</span><span class="sc">{</span>x<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> cl]))</span>
-<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.concat((data, mu_data))</span>
-<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'scatter'</span>, hue<span class="op">=</span><span class="st">'tipo'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>)</span>
-<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rendimiento</span></span>
-<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a>Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir. En este caso particular se utilizó un problema de clasificación para ilustrar el procedimiento de k-medias, entonces se cuenta con una clase para cada elemento $x \in \mathcal D$. Además se sabe que el problema del iris tiene tres clases, entonces utilizando los tres grupos obtenidos previamente podemos medir que tanto se parecen estos tres grupos a las clases del iris. Es decir, se puede saber si el algoritmo de k-medias agrupa los elementos de tal manera que cada grupo corresponda a una clase del iris. </span>
-<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a>perms <span class="op">=</span> <span class="bu">list</span>(permutations([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>]))</span>
-<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a>perfs <span class="op">=</span> [(metrics.accuracy_score(y, np.array(x)[cl]), x)</span>
-<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a>         <span class="cf">for</span> x <span class="kw">in</span> perms]</span>
-<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a>perm <span class="op">=</span> np.r_[<span class="bu">sorted</span>(perfs, key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">0</span>])[<span class="op">-</span><span class="dv">1</span>][<span class="dv">1</span>]]</span>
-<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a>Los grupos generados se encuentran en la lista <span class="in">`cl`</span> y las clases se encuentran en <span class="in">`y`</span>. La lista <span class="in">`y`</span> tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase $0$, los siguientes $50$ son clase $1$ y los últimos son la clase $2$. Dado que K-medias no conoce los clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en <span class="in">`cl`</span> están organizados de la siguiente manera aproximadamente los $50$ primeros elementos son del grupo $1$, los siguientes son grupo $0$ y finalmente los últimos son grupo $2$. Entonces se puede hacer una transformación usando la variable <span class="in">`perm`</span> con la siguiente información <span class="in">`{python} perm`</span>.</span>
-<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-267"><a href="#cb19-267" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-268"><a href="#cb19-268" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a>acc_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>metrics<span class="sc">.</span>accuracy_score(y, perm[cl])<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a>Utilizando <span class="in">`perm`</span> se calcula la exactitud (@sec-accuracy) utilizando la siguiente instrucción. Se obtiene una exactitud de <span class="in">`{python} acc_f`</span> que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris. </span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a>\pi_i^{(t+1)} = \frac{1}{N} \sum_{x \in \mathcal D} \gamma_i(x),</span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-paso-m-pi}</span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a>y $\theta_i^{(t+1)}$ se obtiene con la estimación de máxima verosimilitud de $f_{\theta_i}$ ponderando cada $x$ con $\gamma_i(x).$ Por ejemplo, cuando $f_{\theta_i}$ corresponde a $\mathcal N(\mu_i, \Sigma_i)$ (@sec-estimacion-distribucion-gausiana) las actualizaciones son</span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a>\mu_i^{(t+1)} = \frac{\sum_{x \in \mathcal D} \gamma_i(x) \, x}{\sum_{x \in \mathcal D} \gamma_i(x)},</span>
+<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-paso-m-mu}</span>
+<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a>\Sigma_i^{(t+1)} = \frac{\sum_{x \in \mathcal D} \gamma_i(x) \, (x - \mu_i^{(t+1)})(x - \mu_i^{(t+1)})^\intercal}{\sum_{x \in \mathcal D} \gamma_i(x)}.</span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-paso-m-sigma}</span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a>Los pasos E (@eq-em-paso-e) y M (@eq-em-paso-m-pi, @eq-em-paso-m-mu y @eq-em-paso-m-sigma) se repiten hasta que $\ell(\Theta)$ converge o se llega a un número máximo de iteraciones, de manera análoga al criterio de paro de K-medias.</span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a><span class="fu">### K-medias como caso particular de EM</span></span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a>K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$</span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a>Para observar el efecto de estas suposiciones en el **Paso E** (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$; para $x \in \mathbb R^d$ esta densidad es</span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a>f_{\theta_i}(x) = \mathcal N(x \mid \mu_i, \sigma^2 I) = \frac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right),</span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-gaussiana-esferica}</span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a>donde $(2\pi\sigma^2)^{-d/2}$ es la constante de normalización de la Gaussiana. Se puede observar en la @eq-em-gaussiana-esferica que esta constante depende únicamente de $\sigma^2$ y de $d$, no de $\mu_i$, entonces tiene el mismo valor para las $K$ Gaussianas al ser $\sigma^2$ compartida. Sustituyendo la @eq-em-gaussiana-esferica y $\pi_i = \pi_j = \frac{1}{K}$ en la definición general del **Paso E** (@eq-em-paso-e) se obtiene</span>
+<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a>\gamma_i(x) = \frac{\dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\displaystyle\sum_{j=1}^K \dfrac{1}{K} \cdot \dfrac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\dfrac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.</span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-gamma-sustitucion}</span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a>En la @eq-em-gamma-sustitucion el factor $c = \frac{1}{K} \cdot \frac{1}{(2\pi\sigma^2)^{d/2}}$ es el mismo en el numerador y en cada uno de los $K$ términos de la suma del denominador, dado que no depende ni del grupo $i$ del numerador ni del índice $j$ de la suma. Al ser un factor común se puede sacar de la suma, quedando</span>
+<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a>\gamma_i(x) = \frac{c \cdot \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{c \cdot \displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)},</span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-gamma-factorizado}</span>
+<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a>y como $c &gt; 0$, se cancela entre el numerador y el denominador de la @eq-em-gamma-factorizado, es decir, las responsabilidades no dependen ni de $\pi_i$ ni de la constante de normalización de la Gaussiana, sino únicamente de la distancia de $x$ a cada media. Esto se resume en</span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a>\gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.</span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-gamma-kmedias}</span>
+<span id="cb19-267"><a href="#cb19-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-268"><a href="#cb19-268" aria-hidden="true" tabindex="-1"></a>Para tomar el límite $\sigma^2 \to 0$ en la @eq-em-gamma-kmedias conviene denotar $d_j = \mid\mid x - \mu_j \mid\mid^2$ y, asumiendo que la media más cercana a $x$ es única, sea $i^*$ el grupo tal que $d_{i^*} = \min_j d_j$. Multiplicando el numerador y el denominador de la @eq-em-gamma-kmedias por $\exp\left(\frac{1}{2\sigma^2} d_{i^*}\right)$, es decir, sacando de la suma del denominador el factor común $\exp\left(-\frac{1}{2\sigma^2} d_{i^*}\right)$ tal como se hizo con $c$ en la @eq-em-gamma-factorizado, se obtiene</span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a>\gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} (d_i - d_{i^*})\right)}{\displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right)}.</span>
+<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a>$$ {#eq-em-gamma-diferencias}</span>
 <span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> metrics.accuracy_score(y, perm[cl])</span>
-<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a>En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el accuracy o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos. </span>
-<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-283"><a href="#cb19-283" aria-hidden="true" tabindex="-1"></a>Una medida que no requiere conocer los grupos es el **Silhouette Coefficient**; el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:</span>
-<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a>s = \frac{b - a}{\max(a, b)},</span>
-<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a>donde $a$ corresponde a la distancia media entre un elemento y todos las objetos del mismo grupo; y $b$ es la distancia media entre la muestra y todos los elementos del grupo más cercano.</span>
-<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a>sil_f <span class="op">=</span> <span class="ss">f'$</span><span class="sc">{</span>metrics<span class="sc">.</span>silhouette_score(D, cl, metric<span class="op">=</span><span class="st">"euclidean"</span>)<span class="sc">:0.4f}</span><span class="ss">$'</span></span>
-<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a>sil_f <span class="op">=</span> Markdown(sil_f)</span>
-<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a>cal_har_f <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span>
-<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a>cal_har_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>cal_har_f<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a>Por ejemplo, en el problema del Iris $s$ tiene un valor de <span class="in">`{python} sil_f`</span> calculado con la siguiente instrucción. </span>
-<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a>sil <span class="op">=</span> metrics.silhouette_score(D, cl, metric<span class="op">=</span><span class="st">'euclidean'</span>)</span>
-<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a>Otra medida de la calidad de los grupos es índice de **Calinski-Harabasz** que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de <span class="in">`{python} cal_har_f`</span> obtenido con la siguiente instrucción.</span>
-<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a>cal_har <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a>En la @eq-em-gamma-diferencias cada exponente está escrito en términos de $d_j - d_{i^*} \geq 0$, dado que $d_{i^*}$ es el mínimo; en particular, para $j = i^*$ el exponente es $0$ y por lo tanto ese término de la suma es $\exp(0) = 1$, sin importar el valor de $\sigma^2$. Para cualquier otro grupo $j \neq i^*$ se tiene $d_j - d_{i^*} &gt; 0$, entonces al tomar el límite $\sigma^2 \to 0$ el exponente $-\frac{1}{2\sigma^2}(d_j - d_{i^*}) \to -\infty$ y en consecuencia ese término tiende a $\exp(-\infty) = 0$. Esto significa que en el límite la suma del denominador de la @eq-em-gamma-diferencias se reduce únicamente al término $j=i^*$, es decir, $\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right) \to 1,$ de donde se dice que este término domina la suma: todos los demás términos se desprecian frente a él conforme $\sigma^2 \to 0$.</span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a>Con esta asignación completa, i.e., $\gamma_i(x) \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$, la actualización de $\mu_i$ del **Paso M** (@eq-em-paso-m-mu) se reduce a la media de los elementos de $G_i,$ que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que $\sigma^2 \to 0$ y sustituyendo la responsabilidad $\gamma_i(x)$ por la asignación completa al grupo más cercano.</span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejemplo: Iris</span></span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a>En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos en el conjunto del iris. La clase se inicializa primero con 2 grupos (primera línea). En la segunda instrucción se predice los grupos para todo el conjunto de datos. Las medias para cada grupo se encuentran en el atributo <span class="in">`cluster_centers_.`</span></span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">2</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
+<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a>La @fig-kmeans-2gr muestra el resultado del algoritmo k-medias en el conjunto del Iris, se muestran los dos grupos $G_1$ y $G_2$ y en color verde $\mu_1$ y $\mu_2$. </span>
+<span id="cb19-291"><a href="#cb19-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección de k-means usando dos grupos</span></span>
+<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-kmeans-2gr</span></span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a>D_pca <span class="op">=</span> pca.transform(D)</span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> pca.transform(m.cluster_centers_)</span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a>mu_data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>mu[:, <span class="dv">0</span>],</span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a>                            y<span class="op">=</span>mu[:, <span class="dv">1</span>],</span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a>                            tipo<span class="op">=</span>[<span class="st">'mu'</span>] <span class="op">*</span> mu.shape[<span class="dv">0</span>]))</span>
+<span id="cb19-304"><a href="#cb19-304" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>D_pca[:, <span class="dv">0</span>],</span>
+<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a>                         y<span class="op">=</span>D_pca[:, <span class="dv">1</span>],</span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a>                         tipo<span class="op">=</span>[<span class="ss">f'G_</span><span class="sc">{</span>x<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> cl]))</span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.concat((data, mu_data))</span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'scatter'</span>, hue<span class="op">=</span><span class="st">'tipo'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
+<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb19-314"><a href="#cb19-314" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a><span class="fu">## Número de Grupos</span></span>
-<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a>Utilizando una medida de rendimiento de agrupamiento se analizar cual sería el número adecuado de grupos para un problema dado. El procedimiento es variar el número de grupos y medir el rendimiento para cada grupo y quedarse con aquel que da el mejor rendimiento considerando también el número de grupos. </span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a>Un procedimiento equivalente se puede realizar para generar </span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a>tres grupos, el único cambio es el parámetro <span class="in">`n_clusters`</span></span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a>en la clase <span class="in">`KMeans`</span> de la siguiente manera.</span>
 <span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a>Por ejemplo, el siguiente instrucción calcula el coeficiente de Silhouette y el índice de Calinski-Harabasz en el problema del Iris. </span>
-<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a>S1 <span class="op">=</span> []</span>
-<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a>S2 <span class="op">=</span> []</span>
-<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">11</span>):</span>
-<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
-<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a>    cl <span class="op">=</span> m.predict(D)</span>
-<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> metrics.silhouette_score(D, cl, metric<span class="op">=</span><span class="st">'euclidean'</span>)</span>
-<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a>    S1.append(_)</span>
-<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span>
-<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a>    S2.append(_)</span>
-<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a>Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En color azul se observa el coeficiente de Silhouette; donde el mejor resultado es cuando $K=2$. En color naranja se muestra el índice Calinski-Harabasz done el mejor resultado se tiene cuando $K=3$. Considerando que se está trabajando con el problema del Iris se conoce que la mejor agrupación es para $K=3$ dado que son tres clases.</span>
-<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento variando el número de grupos</span></span>
-<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-k-means-performance-k</span></span>
-<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame([{<span class="st">'Calinski-Harabasz'</span>: b,  <span class="st">'Silhouette'</span>: a, <span class="st">'K'</span>: k <span class="op">+</span> <span class="dv">2</span>} </span>
-<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> k, (a, b) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(S1, S2))])</span>
-<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'K'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>data.Silhouette, color<span class="op">=</span>sns.color_palette()[<span class="dv">0</span>])</span>
-<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> plt.twinx()</span>
-<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.lineplot(data<span class="op">=</span>data[<span class="st">'Calinski-Harabasz'</span>], </span>
-<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a>                   color<span class="op">=</span>sns.color_palette()[<span class="dv">1</span>], ax<span class="op">=</span>ax2)</span>
+<span id="cb19-322"><a href="#cb19-322" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-323"><a href="#cb19-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a>La @fig-kmeans-3gr muestra los tres grupos y con sus tres respectivas medias en color rojo. </span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección de k-means usando tres grupos</span></span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-kmeans-3gr</span></span>
+<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
+<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a>D_pca <span class="op">=</span> pca.transform(D)</span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> pca.transform(m.cluster_centers_)</span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a>mu_data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>mu[:, <span class="dv">0</span>],</span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a>                            y<span class="op">=</span>mu[:, <span class="dv">1</span>],</span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a>                            tipo<span class="op">=</span>[<span class="st">'mu'</span>] <span class="op">*</span> mu.shape[<span class="dv">0</span>]))</span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>D_pca[:, <span class="dv">0</span>],</span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a>                         y<span class="op">=</span>D_pca[:, <span class="dv">1</span>],</span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a>                         tipo<span class="op">=</span>[<span class="ss">f'G_</span><span class="sc">{</span>x<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> x <span class="kw">in</span> cl]))</span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.concat((data, mu_data))</span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'scatter'</span>, hue<span class="op">=</span><span class="st">'tipo'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rendimiento</span></span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a>Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir. En este caso particular se utilizó un problema de clasificación para ilustrar el procedimiento de k-medias, entonces se cuenta con una clase para cada elemento $x \in \mathcal D$. Además se sabe que el problema del iris tiene tres clases, entonces utilizando los tres grupos obtenidos previamente podemos medir que tanto se parecen estos tres grupos a las clases del iris. Es decir, se puede saber si el algoritmo de k-medias agrupa los elementos de tal manera que cada grupo corresponda a una clase del iris. </span>
+<span id="cb19-358"><a href="#cb19-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a>perms <span class="op">=</span> <span class="bu">list</span>(permutations([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>]))</span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a>perfs <span class="op">=</span> [(metrics.accuracy_score(y, np.array(x)[cl]), x)</span>
+<span id="cb19-365"><a href="#cb19-365" aria-hidden="true" tabindex="-1"></a>         <span class="cf">for</span> x <span class="kw">in</span> perms]</span>
+<span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a>perm <span class="op">=</span> np.r_[<span class="bu">sorted</span>(perfs, key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">0</span>])[<span class="op">-</span><span class="dv">1</span>][<span class="dv">1</span>]]</span>
+<span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a>Los grupos generados se encuentran en la lista <span class="in">`cl`</span> y las clases se encuentran en <span class="in">`y`</span>. La lista <span class="in">`y`</span> tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase $0$, los siguientes $50$ son clase $1$ y los últimos son la clase $2$. Dado que K-medias no conoce los clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en <span class="in">`cl`</span> están organizados de la siguiente manera aproximadamente los $50$ primeros elementos son del grupo $1$, los siguientes son grupo $0$ y finalmente los últimos son grupo $2$. Entonces se puede hacer una transformación usando la variable <span class="in">`perm`</span> con la siguiente información <span class="in">`{python} perm`</span>.</span>
+<span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-373"><a href="#cb19-373" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-374"><a href="#cb19-374" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-375"><a href="#cb19-375" aria-hidden="true" tabindex="-1"></a>acc_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>metrics<span class="sc">.</span>accuracy_score(y, perm[cl])<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb19-376"><a href="#cb19-376" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-377"><a href="#cb19-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-378"><a href="#cb19-378" aria-hidden="true" tabindex="-1"></a>Utilizando <span class="in">`perm`</span> se calcula la exactitud (@sec-accuracy) utilizando la siguiente instrucción. Se obtiene una exactitud de <span class="in">`{python} acc_f`</span> que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris. </span>
+<span id="cb19-379"><a href="#cb19-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-382"><a href="#cb19-382" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-383"><a href="#cb19-383" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-384"><a href="#cb19-384" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> metrics.accuracy_score(y, perm[cl])</span>
+<span id="cb19-385"><a href="#cb19-385" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-386"><a href="#cb19-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-387"><a href="#cb19-387" aria-hidden="true" tabindex="-1"></a>En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir el exactitud o cualquier otra medida de agrupamiento que requiera la composición de real de los grupos. </span>
+<span id="cb19-388"><a href="#cb19-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-389"><a href="#cb19-389" aria-hidden="true" tabindex="-1"></a>Una medida que no requiere conocer los grupos es el **Silhouette Coefficient**; el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:</span>
+<span id="cb19-390"><a href="#cb19-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-391"><a href="#cb19-391" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-392"><a href="#cb19-392" aria-hidden="true" tabindex="-1"></a>s = \frac{b - a}{\max(a, b)},</span>
+<span id="cb19-393"><a href="#cb19-393" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a>donde $a$ corresponde a la distancia media entre un elemento y todos las objetos del mismo grupo; y $b$ es la distancia media entre la muestra y todos los elementos del grupo más cercano.</span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a>sil_f <span class="op">=</span> <span class="ss">f'$</span><span class="sc">{</span>metrics<span class="sc">.</span>silhouette_score(D, cl, metric<span class="op">=</span><span class="st">"euclidean"</span>)<span class="sc">:0.4f}</span><span class="ss">$'</span></span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a>sil_f <span class="op">=</span> Markdown(sil_f)</span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a>cal_har_f <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span>
+<span id="cb19-404"><a href="#cb19-404" aria-hidden="true" tabindex="-1"></a>cal_har_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>cal_har_f<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a>Por ejemplo, en el problema del Iris $s$ tiene un valor de <span class="in">`{python} sil_f`</span> calculado con la siguiente instrucción. </span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a>sil <span class="op">=</span> metrics.silhouette_score(D, cl, metric<span class="op">=</span><span class="st">'euclidean'</span>)</span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a>Otra medida de la calidad de los grupos es índice de **Calinski-Harabasz** que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de <span class="in">`{python} cal_har_f`</span> obtenido con la siguiente instrucción.</span>
+<span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb19-419"><a href="#cb19-419" aria-hidden="true" tabindex="-1"></a>cal_har <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span>
+<span id="cb19-420"><a href="#cb19-420" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-421"><a href="#cb19-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-422"><a href="#cb19-422" aria-hidden="true" tabindex="-1"></a><span class="fu">## Número de Grupos</span></span>
+<span id="cb19-423"><a href="#cb19-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-424"><a href="#cb19-424" aria-hidden="true" tabindex="-1"></a>Utilizando una medida de rendimiento de agrupamiento se analizar cual sería el número adecuado de grupos para un problema dado. El procedimiento es variar el número de grupos y medir el rendimiento para cada grupo y quedarse con aquel que da el mejor rendimiento considerando también el número de grupos. </span>
+<span id="cb19-425"><a href="#cb19-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-426"><a href="#cb19-426" aria-hidden="true" tabindex="-1"></a>Por ejemplo, el siguiente instrucción calcula el coeficiente de Silhouette y el índice de Calinski-Harabasz en el problema del Iris. </span>
+<span id="cb19-427"><a href="#cb19-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-430"><a href="#cb19-430" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-431"><a href="#cb19-431" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-432"><a href="#cb19-432" aria-hidden="true" tabindex="-1"></a>S1 <span class="op">=</span> []</span>
+<span id="cb19-433"><a href="#cb19-433" aria-hidden="true" tabindex="-1"></a>S2 <span class="op">=</span> []</span>
+<span id="cb19-434"><a href="#cb19-434" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">11</span>):</span>
+<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
+<span id="cb19-436"><a href="#cb19-436" aria-hidden="true" tabindex="-1"></a>    cl <span class="op">=</span> m.predict(D)</span>
+<span id="cb19-437"><a href="#cb19-437" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> metrics.silhouette_score(D, cl, metric<span class="op">=</span><span class="st">'euclidean'</span>)</span>
+<span id="cb19-438"><a href="#cb19-438" aria-hidden="true" tabindex="-1"></a>    S1.append(_)</span>
+<span id="cb19-439"><a href="#cb19-439" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> metrics.calinski_harabasz_score(D, cl)</span>
+<span id="cb19-440"><a href="#cb19-440" aria-hidden="true" tabindex="-1"></a>    S2.append(_)</span>
+<span id="cb19-441"><a href="#cb19-441" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-442"><a href="#cb19-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-443"><a href="#cb19-443" aria-hidden="true" tabindex="-1"></a>Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En color azul se observa el coeficiente de Silhouette; donde el mejor resultado es cuando $K=2$. En color naranja se muestra el índice Calinski-Harabasz done el mejor resultado se tiene cuando $K=3$. Considerando que se está trabajando con el problema del Iris se conoce que la mejor agrupación es para $K=3$ dado que son tres clases.</span>
+<span id="cb19-444"><a href="#cb19-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-447"><a href="#cb19-447" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-448"><a href="#cb19-448" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb19-449"><a href="#cb19-449" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento variando el número de grupos</span></span>
+<span id="cb19-450"><a href="#cb19-450" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-k-means-performance-k</span></span>
+<span id="cb19-451"><a href="#cb19-451" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame([{<span class="st">'Calinski-Harabasz'</span>: b,  <span class="st">'Silhouette'</span>: a, <span class="st">'K'</span>: k <span class="op">+</span> <span class="dv">2</span>} </span>
+<span id="cb19-452"><a href="#cb19-452" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> k, (a, b) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(S1, S2))])</span>
+<span id="cb19-453"><a href="#cb19-453" aria-hidden="true" tabindex="-1"></a>data.set_index(<span class="st">'K'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-454"><a href="#cb19-454" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb19-455"><a href="#cb19-455" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>data.Silhouette, color<span class="op">=</span>sns.color_palette()[<span class="dv">0</span>])</span>
+<span id="cb19-456"><a href="#cb19-456" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> plt.twinx()</span>
+<span id="cb19-457"><a href="#cb19-457" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.lineplot(data<span class="op">=</span>data[<span class="st">'Calinski-Harabasz'</span>], </span>
+<span id="cb19-458"><a href="#cb19-458" aria-hidden="true" tabindex="-1"></a>                   color<span class="op">=</span>sns.color_palette()[<span class="dv">1</span>], ax<span class="op">=</span>ax2)</span>
+<span id="cb19-459"><a href="#cb19-459" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

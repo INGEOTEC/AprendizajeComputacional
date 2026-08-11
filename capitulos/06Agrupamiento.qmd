@@ -219,7 +219,7 @@ Los pasos E (@eq-em-paso-e) y M (@eq-em-paso-m-pi, @eq-em-paso-m-mu y @eq-em-pas
 
 ### K-medias como caso particular de EM
 
-K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo de mezcla. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$
+K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$
 
 Para observar el efecto de estas suposiciones en el **Paso E** (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$; para $x \in \mathbb R^d$ esta densidad es
 
@@ -245,9 +245,15 @@ $$
 \gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right)}{\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_j \mid\mid^2\right)}.
 $$ {#eq-em-gamma-kmedias}
 
-Al tomar el límite $\sigma^2 \to 0$ en la @eq-em-gamma-kmedias el término correspondiente al $\min_j \mid\mid x - \mu_j \mid\mid$ domina la suma del denominador; esto ocasiona que $\gamma_i(x) \to 1$ para el grupo $i$ tal que $\mid\mid x - \mu_i \mid\mid$ corresponde al $\min_j \mid\mid x - \mu_j \mid\mid,$ y $\gamma_j(x) \to 0$ para el resto de los grupos. Es decir, la asignación fraccionaria del paso E se convierte en la asignación completa $x \in G_i$ si $\mid\mid x - \mu_i \mid\mid$ corresponde al $\min_j \mid\mid x - \mu_j \mid\mid,$ que es exactamente el paso 2 de K-medias.
+Para tomar el límite $\sigma^2 \to 0$ en la @eq-em-gamma-kmedias conviene denotar $d_j = \mid\mid x - \mu_j \mid\mid^2$ y, asumiendo que la media más cercana a $x$ es única, sea $i^*$ el grupo tal que $d_{i^*} = \min_j d_j$. Multiplicando el numerador y el denominador de la @eq-em-gamma-kmedias por $\exp\left(\frac{1}{2\sigma^2} d_{i^*}\right)$, es decir, sacando de la suma del denominador el factor común $\exp\left(-\frac{1}{2\sigma^2} d_{i^*}\right)$ tal como se hizo con $c$ en la @eq-em-gamma-factorizado, se obtiene
 
-Con esta asignación completa, i.e., $\gamma_i(x) \in \{0, 1\}$, la actualización de $\mu_i$ del paso M (@eq-em-paso-m-mu) se reduce a la media de los elementos de $G_i,$ que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que $\sigma^2 \to 0$ y sustituyendo la responsabilidad $\gamma_i(x)$ por la asignación completa al grupo más cercano.
+$$
+\gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} (d_i - d_{i^*})\right)}{\displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right)}.
+$$ {#eq-em-gamma-diferencias}
+
+En la @eq-em-gamma-diferencias cada exponente está escrito en términos de $d_j - d_{i^*} \geq 0$, dado que $d_{i^*}$ es el mínimo; en particular, para $j = i^*$ el exponente es $0$ y por lo tanto ese término de la suma es $\exp(0) = 1$, sin importar el valor de $\sigma^2$. Para cualquier otro grupo $j \neq i^*$ se tiene $d_j - d_{i^*} > 0$, entonces al tomar el límite $\sigma^2 \to 0$ el exponente $-\frac{1}{2\sigma^2}(d_j - d_{i^*}) \to -\infty$ y en consecuencia ese término tiende a $\exp(-\infty) = 0$. Esto significa que en el límite la suma del denominador de la @eq-em-gamma-diferencias se reduce únicamente al término $j=i^*$, es decir, $\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right) \to 1,$ de donde se dice que este término domina la suma: todos los demás términos se desprecian frente a él conforme $\sigma^2 \to 0$.
+
+Con esta asignación completa, i.e., $\gamma_i(x) \in \{0, 1\}$, la actualización de $\mu_i$ del **Paso M** (@eq-em-paso-m-mu) se reduce a la media de los elementos de $G_i,$ que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que $\sigma^2 \to 0$ y sustituyendo la responsabilidad $\gamma_i(x)$ por la asignación completa al grupo más cercano.
 
 ## Ejemplo: Iris
 
