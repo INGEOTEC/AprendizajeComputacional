@@ -237,7 +237,7 @@ La variable `prior` contiene en el primer elemento `{python} Markdown(f'$\mathbb
 
 Siguiendo los pasos en estimación de parámetros de una Gaussiana (@sec-estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gaussiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3.$ El algoritmo de clasificación que estima $\mu$ y $\Sigma$ para cada clase se le conoce como **Analizador Discriminante Cuadrático** implementando en la clase `QuadraticDiscriminantAnalysis`.
 
-Una implementación directa para la estimación de los parámetros se puede realizar iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en el slice de la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal` para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista `likelihood`.
+Una implementación directa para la estimación de los parámetros se puede realizar iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal` para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista `likelihood`.
 
 
 ```{python}
@@ -705,9 +705,9 @@ $$
 
 El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $d$ derivadas parciales para cada uno de los coeficientes $\mathbf w$. En este proceso se observar que el término $N \log \frac{1}{\sigma \sqrt{2\pi}}$ no depende de $\mathbf w$ entonces no afecta el máximo siendo una constante en el proceso de derivación y por lo tanto se desprecia. Lo mismo pasa para la constante $\frac{1}{2\sigma^2}$. Una vez obtenidos los parámetros $\mathcal w$ se obtiene el valor $\sigma.$ 
 
-Una manera equivalente de plantear este problema es como un problema de algebra lineal, donde se tiene una matriz de observaciones $X$ que se construyen con las variables $\mathbf x$ de $\mathcal X,$ donde cada renglón de $X$ es una observación, y el vector dependiente $\mathbf y$ donde cada elemento es la respuesta correspondiente a la observación.
+Una manera equivalente de plantear este problema es como un problema de álgebra lineal, donde se tiene una matriz de observaciones $X$ que se construyen con las variables $\mathbf x$ de $\mathcal X,$ donde cada renglón de $X$ es una observación, y el vector dependiente $\mathbf y$ donde cada elemento es la respuesta correspondiente a la observación.
 
-Viéndolo como un problema de algebra lineal lo que se tiene es 
+Viéndolo como un problema de álgebra lineal lo que se tiene es 
 
 $$
 X \mathbf w = \mathbf y,
