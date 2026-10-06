@@ -12,8 +12,8 @@ Quarto is not installed by any script; it comes from the devcontainer (`.devcont
 
 ```bash
 python scripts/render.py                               # install missing deps, render whole book, verify freeze cache
-python scripts/render.py capitulos/06Agrupamiento.qmd  # render one chapter (the equivalent of "run one test")
-python scripts/render.py --force capitulos/06Agrupamiento.qmd  # drop its frozen result and re-execute the code
+python scripts/render.py capitulos/13Agrupamiento.qmd  # render one chapter (the equivalent of "run one test")
+python scripts/render.py --force capitulos/13Agrupamiento.qmd  # drop its frozen result and re-execute the code
 python scripts/render.py --verify-only                 # no render; just check _freeze/ is in sync with sources
 quarto preview                                         # live preview while editing
 ```
@@ -42,9 +42,9 @@ Every chapter in `capitulos/` follows the same skeleton; new sections or chapter
 4. Figures: labeled chunks `#| label: fig-...`, `#| fig-cap: "..."`, `#| code-fold: true`, referenced in prose as `@fig-...`. Tables use `tbl-` labels / `#| tbl-cap`.
 5. Numbers quoted in prose are never hard-coded: compute them in a hidden chunk as `x_f = Markdown(f'${x:0.4f}$')` and reference with inline `` `{python} x_f` `` so the text stays consistent with the executed code.
 6. Pedagogical blocks: `::: {.callout-tip collapse="true"}` with `### Actividad` for exercises, `::: {.callout-note}` for asides.
-7. Cross-references use `@sec-...` across chapters (58 distinct anchors exist, so renaming a `{#sec-...}` id requires grepping all of `capitulos/`). Citations are `@bibkey` from `references.bib`; the bibliography renders in `17Referencias.qmd`.
+7. Cross-references use `@sec-...` across chapters (58 distinct anchors exist, so renaming a `{#sec-...}` id requires grepping all of `capitulos/`). Citations are `@bibkey` from `references.bib`; the bibliography renders in `18Referencias.qmd`.
 
-Chapter order and the appendix split live only in `_quarto.yml` (`book.chapters` / `book.appendices`). `capitulos/15Codigo.qmd` exists but is **not** listed there, so it is not rendered.
+Chapter order and the appendix split live only in `_quarto.yml` (`book.chapters` / `book.appendices`). File numbers are deliberately sparse: 03, 15, 16, 17 and 21 are reserved for planned chapters (regression and regularization, etc.), so a gap in the numbering is intentional and does not affect Quarto, which numbers chapters by their position in `_quarto.yml`. The current edition is oriented to the METPOL course (CIDE), so the Introduction frames the book around public-policy problems. `capitulos/22Codigo.qmd` exists but is **not** listed there, so it is not rendered.
 
 ## Spell checking
 
