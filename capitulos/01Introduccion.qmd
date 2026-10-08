@@ -1,6 +1,6 @@
 # Introducción {#sec-intro-01}
 
-El **objetivo** de la unidad es explicar el área de aprendizaje computacional, los diferentes tipos de aprendizaje que la componen, la metodología general del área y su relación con otras áreas del conocimiento. 
+El **objetivo** de la unidad es explicar el área de aprendizaje computacional, los diferentes tipos de aprendizaje que la componen, la metodología general del área y su relación con otras áreas del conocimiento, en particular con el análisis de políticas públicas. 
 
 ## Paquetes usados {.unnumbered}
 
@@ -34,11 +34,6 @@ from IPython.display import Markdown
 sns.set_style('whitegrid')
 ```
 
-::: {.content-visible when-format="html"}
-
-{{< video https://www.youtube.com/embed/FlipLNC36Zo width="560" height="315" >}}
-:::
-
 ## Aprendizaje Computacional
 
 Según la descripción de @langley1986machine, el **aprendizaje computacional** es una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el tiempo. Inicialmente, el campo se centraba en el desarrollo de representaciones simbólicas, al igual que la IA, aunque también permitía representaciones numéricas. Actualmente, el enfoque ha cambiado, privilegiando las representaciones numéricas sobre las simbólicas. Este documento se centra exclusivamente en las representaciones numéricas.
@@ -51,7 +46,7 @@ Leer la carta editorial de @langley1986machine para conocer la visión que se te
 
 Según @breiman2001statistical, al analizar datos con valores de entrada y respuesta, existen dos objetivos principales: **predecir** la respuesta de futuros eventos y **extraer conocimiento** del proceso o fenómeno. Estos objetivos han dado origen a dos enfoques en el modelado de datos: la cultura del modelado de datos y la cultura del modelado de algoritmos.
 
-En la cultura del modelado de datos, se asume que los datos provienen de una función que depende de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos, se estiman los parámetros y, si los datos cumplen con las condiciones impuestas a la función, se puede conocer el procedimiento que genera los datos, logrando así la segunda meta. Con los parámetros y la estructura de la función, es posible hacer predicciones de futuros eventos (primera meta).
+En la cultura del modelado de datos, se asume que los datos provienen de una función que depende de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos, se estiman los parámetros y, si los datos cumplen con las condiciones impuestas a la función, se puede conocer el procedimiento que genera los datos, logrando así el segundo objetivo. Con los parámetros y la estructura de la función, es posible hacer predicciones de futuros eventos (primer objetivo).
 
 En la cultura del modelado de algoritmos, no se asume ninguna estructura para el sistema que genera los datos. El enfoque es diseñar un algoritmo que replique la respuesta dada las entradas. Dado que no se asume ningún modelo particular, obtener conocimiento del sistema no es una prioridad. En cambio, la prioridad es encontrar el algoritmo que mejor reproduzca los datos, desarrollando diversas estrategias para medir el rendimiento del algoritmo y estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura.
 
@@ -60,6 +55,35 @@ En la cultura del modelado de algoritmos, no se asume ninguna estructura para el
 
 Leer el artículo de @breiman2001statistical para profundizar en las ventajas y desventajas de cada una de las culturas y como estas influyen en la forma de abordar un problema. En este momento no es necesario detenerse en la parte técnica de los algoritmos descritos en el artículo. 
 :::
+
+## Predicción e Inferencia Causal {#sec-prediccion-vs-causal}
+
+La oposición que plantea @breiman2001statistical entre las dos culturas tiene una lectura directa en el análisis de políticas públicas. En el trabajo cotidiano de evaluación se estima un efecto, $\tau$, por ejemplo cuánto cambia la deserción escolar por haber participado en un programa de becas. Ese es un problema de la cultura del modelado de datos, donde importa la interpretación del parámetro y las condiciones que permiten darle un significado causal. En cambio, en un problema de predicción lo que se estima es $\hat y$, el valor de la respuesta para una entrada nueva, y lo que importa es qué tan cerca está de $y$ en datos no vistos. Aquí los coeficientes del modelo, si los hay, no se interpretan causalmente.
+
+@kleinberg2015prediction muestran que una parte importante de las decisiones públicas depende de $\hat y$ y no de $\tau$, a las cuales llaman *prediction policy problems* (problemas de política de predicción). Su ejemplo es decidir a quién operar de la cadera. El beneficio de la operación depende de la probabilidad de que la persona sobreviva los años siguientes, y lo que se requiere es predecir esa probabilidad. Estos problemas se ubican en la cultura del modelado de algoritmos, por lo que son el terreno natural del aprendizaje computacional. Algunos ejemplos son la focalización de programas sociales (predecir qué hogares están en pobreza para dirigirles el apoyo), la priorización de inspecciones (predecir qué establecimientos incumplen la norma), el riesgo de deserción escolar (predecir qué estudiantes abandonarán la escuela para atenderlos antes) y la administración de listas de espera en salud (predecir qué pacientes tienen mayor riesgo para ordenar la atención). Por el contrario, preguntar si el programa de becas redujo la deserción, o si una política de salud mejora los resultados, es un problema causal para el cual la predicción por sí sola no es suficiente y se requiere el diseño de investigación y los supuestos que se estudian en inferencia causal.
+
+Que un problema sea de predicción no significa, sin embargo, que una predicción exacta baste para decidir bien. @sarewitz1999prediction sostienen que la predicción se ha vuelto el producto científico que más demanda la política, pero que su utilidad para decidir depende, además de la exactitud, del contexto de decisión, de cómo se comunica la incertidumbre, de la relación entre quienes predicen y quienes deciden, y de si existen alternativas a predecir, como las políticas robustas ante la incertidumbre. Advierten también que una predicción puede desplazar la responsabilidad política y generar falsa confianza. Sus ejemplos son ambientales y de riesgo (sismos, clima, inundaciones), y en ellos el aprendizaje computacional puede ser una de las técnicas para estimar esos eventos.
+
+Las dos lecturas se complementan. @kleinberg2015prediction indican qué decisiones públicas requieren $\hat y$ y @sarewitz1999prediction qué hace falta, además de exactitud, para que esa $\hat y$ sirva para decidir. Este libro cubre dos de esos elementos, la medición honesta del rendimiento fuera de muestra (@sec-rendimiento-cap) y los costos asimétricos de las decisiones (@sec-teoria-decision-bayesianas).
+
+@mullainathan2017machine traducen esta distinción al lenguaje de la econometría, donde la tarea de estimar $\hat y$ se contrapone a la de estimar $\hat \beta$, y muestran que la regularización y la validación cruzada sustituyen a la especificación a mano del modelo como mecanismo para controlar la complejidad. Finalmente, @belloni2014high y @athey2019machine reconcilian las dos culturas al poner las herramientas de la cultura algorítmica, por ejemplo Lasso para elegir controles o bosques para estimar efectos heterogéneos, al servicio de la estimación de un efecto causal con inferencia válida. @athey2019impact ofrece un panorama más amplio del impacto del aprendizaje computacional en la economía, desde las aplicaciones a texto e imágenes hasta los problemas de política de predicción, la equidad y la combinación con inferencia causal. Este libro se enfoca en las herramientas de predicción.
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Leer los siguientes artículos, escritos para economistas y analistas de política. Cada uno aporta una perspectiva distinta y complementaria a este capítulo.
+
+- @kleinberg2015prediction define los *prediction policy problems* y los distingue de los problemas causales.
+- @mullainathan2017machine explican aprendizaje computacional desde la econometría y por qué los coeficientes de un modelo predictivo no se interpretan causalmente. Es la lectura puente más cercana al perfil de este curso.
+- @athey2019machine presentan un panorama de los métodos (regularización, árboles, bosques, redes y aprendizaje no supervisado) y de cómo se combinan con inferencia causal. Sirve de mapa de todo el libro.
+- @athey2019impact evalúa las primeras contribuciones del aprendizaje computacional a la economía, repasa aplicaciones como texto e imágenes, discute los *prediction policy problems* y las consideraciones de equidad y manipulabilidad, y resume la literatura que combina aprendizaje computacional con inferencia causal. Es un texto más amplio y anterior al de Athey e Imbens.
+- @belloni2014high muestran cómo usar Lasso para elegir controles y seguir estimando un efecto de tratamiento con inferencia válida.
+- @varian2014big es una introducción ligera a árboles, bosques, validación cruzada y selección de variables para economistas, con ejemplos. Es la más accesible de las siete.
+- @sarewitz1999prediction es el contrapunto. Discute por qué la utilidad de una predicción para decidir depende del contexto de decisión y de la comunicación de la incertidumbre, y no solo de su exactitud.
+:::
+
+## Tipos de Aprendizaje Computacional {#sec-tipos-aprendizaje}
+
 
 Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
 
@@ -392,3 +416,23 @@ fig.tick_params(bottom=False, top=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel='x', ylabel='y')
 ```
+
+## Organización del Libro {#sec-organizacion-libro}
+
+El libro sigue un orden que parte de las preguntas de predicción que ya conoce quien estudió econometría y avanza hacia métodos más flexibles. La @tbl-organizacion-libro resume los bloques, los capítulos que los componen y el curso de METPOL con el que se conectan. Los capítulos marcados como "en preparación" todavía no forman parte de esta versión.
+
+| Bloque | Capítulos | Conexión con METPOL |
+|---|---|---|
+| Marco | Introducción (@sec-intro-01) y Rendimiento (@sec-rendimiento-cap): qué es predecir, cómo se separan los datos y cómo se mide el rendimiento fuera de muestra. | Estadística, Econometría |
+| Regresión y regularización | *Regresión y Regularización* (en preparación): MCO evaluado por predicción, sesgo y varianza, Ridge y Lasso. | Econometría |
+| Decisión y modelos probabilísticos | Teoría de Decisión Bayesiana (@sec-teoria-decision-bayesianas), Métodos Paramétricos (@sec-metodos-parametricos) y Métodos No Paramétricos (@sec-metodos-no-parametricos). | Estadística, Econometría |
+| Discriminantes y optimización | Discriminantes Lineales (@sec-discriminantes-lineales) y Optimización (@sec-optimizacion). | Matemáticas Aplicadas |
+| Métodos flexibles | Árboles de Decisión (@sec-arboles-decision), Ensambles (@sec-ensambles) y Redes Neuronales. | Econometría, Evaluación de Políticas Públicas |
+| Aprendizaje no supervisado | Reducción de Dimensión (con el Análisis de Componentes Principales, @sec-pca) y Agrupamiento. | Manejo de Bases de Datos, Diseño de Investigación |
+| Comparación | Comparación de Algoritmos: cómo decidir si un algoritmo es mejor que otro. | Estadística, Métodos Experimentales |
+| Uso responsable e inferencia causal | *Interpretabilidad y Equidad* y *Aprendizaje Computacional e Inferencia Causal* (en preparación). | Inferencia Causal, Evaluación de Políticas Públicas |
+| Texto | *Texto como Datos* (en preparación): clasificación y agrupamiento de documentos. | Métodos Mixtos Aplicados al Análisis de Políticas |
+
+: Organización del libro {#tbl-organizacion-libro}
+
+Los apéndices contienen un repaso de estadística y la descripción de los conjuntos de datos que se utilizan en el libro.
