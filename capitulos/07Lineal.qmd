@@ -549,7 +549,7 @@ En lugar de utilizar directamente las características $\mathbf x$ se puede real
 
 La función discriminante está dada por $g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x) + w_0,$ donde aquellos elementos donde $\alpha_i > 0$ se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.
 
-La @fig-lineal-kernel muestra los datos del iris (proyectados con Análisis de Componentes Principales, el cual se describirá en la @sec-pca), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. 
+La @fig-lineal-kernel muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la @sec-pca), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. 
 
 ```{python}
 #| code-fold: true
@@ -676,7 +676,7 @@ $${#eq-lineal-entropia-cruzada}
 
 Es importante notar que la ecuación anterior corresponde a Entropía cruzada (@sec-entropia-cruzada), donde $y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))$ y $C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)$ y los términos $1-y$ y $1-C(\mathbf x)$ corresponde a la otra clase. 
 
-Otra característica de $E(\mathbf w, w_0 \mid \mathcal D)$ es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización (que se describe en la @sec-optimizacion, más adelante) para encontrar los parámetros $\mathbf w$ y $w_0$. 
+Otra característica de $E(\mathbf w, w_0 \mid \mathcal D)$ es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización para encontrar los parámetros $\mathbf w$ y $w_0$. En esta unidad el problema se resuelve con [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy), tomándolo como una herramienta que regresa los parámetros que minimizan la función; en la @sec-optimizacion, más adelante, se describe cómo resolver este mismo problema con descenso por gradiente. 
 
 En el caso de regresión logística, el logaritmo de la verosimilitud está dada por la @eq-log-likelihood-logistica; esta función es cóncava, lo cual hace que pueda ser maximizada por algún algoritmo de optimización convexa. 
 
@@ -717,7 +717,7 @@ $$
 \log \ell(W, W_0) = \sum_i \log \mathbb{\hat P}(\mathcal Y=y_i \mid \mathcal X=\mathbf x_i)
 $$ {#eq-log-likelihood-multinomial}
 
-y $\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0)$ (ver @eq-softmax). Siguiendo el procedimiento anterior el siguiente código códifica en [CVXPY](https://www.cvxpy.org/index.html) el problema de regresión logística multinomial. 
+y $\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0),$ donde $\textsf{softmax}$ transforma un vector $\mathbf v$ de $K$ valores en probabilidades, $\textsf{softmax}(\mathbf v)_i = \frac{\exp v_i}{\sum_{j=1}^K \exp v_j},$ y es la generalización de la función sigmoide a $K$ clases (ver también @eq-softmax). Siguiendo el procedimiento anterior el siguiente código códifica en [CVXPY](https://www.cvxpy.org/index.html) el problema de regresión logística multinomial. 
 
 En la primera línea se cargan los datos del problema de clasificación, en las variables `X` y `y`, la segunda línea cuenta el número de clases. La variable `Wt` y `W0` contienen los parámetros del modelo es decir $W^\intercal$ y $W_0$, `den` calcula el valor del denominador de la función $\textsf{softmax}$ y `logit` corresponde al numerador solamente de la clase medida. La variable `verosimilitud` contienen el valor calculado en la @eq-log-likelihood-multinomial, el problema de optimización está en `prob` y se ejecuta en la última linea. 
 
