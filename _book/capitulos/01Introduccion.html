@@ -2,16 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>1&nbsp; Introducción – Aprendizaje Computacional</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -24,9 +21,8 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -37,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -62,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -89,16 +86,15 @@ div.csl-indent {
 <meta name="quarto:offset" content="../">
 <link href="../capitulos/02Rendimiento.html" rel="next">
 <link href="../index.html" rel="prev">
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-87b7f55de2e0c9887283481eb31a794c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-626149efe8f5d16e1d391ba177679bf0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -113,7 +109,7 @@ div.csl-indent {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No se han encontrado resultados",
+    "search-no-results-text": "Sin resultados",
     "search-matching-documents-text": "documentos encontrados",
     "search-copy-link-title": "Copiar el enlace en la búsqueda",
     "search-hide-matches-text": "Ocultar resultados adicionales",
@@ -131,7 +127,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -144,7 +140,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+      if (mathElements[i].tagName == "SPAN") {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -162,7 +158,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -366,7 +362,7 @@ window.Quarto = {
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
 <div id="138df1b3" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
@@ -385,19 +381,19 @@ window.Quarto = {
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.discriminant_analysis <span class="im">import</span> LinearDiscriminantAnalysis <span class="im">as</span> LDA</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="aprendizaje-computacional" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="aprendizaje-computacional"><span class="header-section-number">1.1</span> Aprendizaje Computacional</h2>
 <p>Según la descripción de <span class="citation" data-cites="langley1986machine">Langley (<a href="18Referencias.html#ref-langley1986machine" role="doc-biblioref">1986</a>)</span>, el <strong>aprendizaje computacional</strong> es una rama de la Inteligencia Artificial (IA) que estudia los enfoques computacionales capaces de aprender y mejorar su rendimiento con el tiempo. Inicialmente, el campo se centraba en el desarrollo de representaciones simbólicas, al igual que la IA, aunque también permitía representaciones numéricas. Actualmente, el enfoque ha cambiado, privilegiando las representaciones numéricas sobre las simbólicas. Este documento se centra exclusivamente en las representaciones numéricas.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Actividad
+Actividad
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -411,12 +407,12 @@ window.Quarto = {
 <p>En la cultura del modelado de datos, se asume que los datos provienen de una función que depende de los valores de entrada, un conjunto de parámetros y ruido. Utilizando los datos, se estiman los parámetros y, si los datos cumplen con las condiciones impuestas a la función, se puede conocer el procedimiento que genera los datos, logrando así el segundo objetivo. Con los parámetros y la estructura de la función, es posible hacer predicciones de futuros eventos (primer objetivo).</p>
 <p>En la cultura del modelado de algoritmos, no se asume ninguna estructura para el sistema que genera los datos. El enfoque es diseñar un algoritmo que replique la respuesta dada las entradas. Dado que no se asume ningún modelo particular, obtener conocimiento del sistema no es una prioridad. En cambio, la prioridad es encontrar el algoritmo que mejor reproduzca los datos, desarrollando diversas estrategias para medir el rendimiento del algoritmo y estimar su comportamiento en diferentes escenarios. El área de aprendizaje computacional se encuentra en esta segunda cultura.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Actividad
+Actividad
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -433,14 +429,14 @@ window.Quarto = {
 <p><span class="citation" data-cites="kleinberg2015prediction">Kleinberg et&nbsp;al. (<a href="18Referencias.html#ref-kleinberg2015prediction" role="doc-biblioref">2015</a>)</span> muestran que una parte importante de las decisiones públicas depende de <span class="math inline">\(\hat y\)</span> y no de <span class="math inline">\(\tau\)</span>, a las cuales llaman <em>prediction policy problems</em> (problemas de política de predicción). Su ejemplo es decidir a quién operar de la cadera. El beneficio de la operación depende de la probabilidad de que la persona sobreviva los años siguientes, y lo que se requiere es predecir esa probabilidad. Estos problemas se ubican en la cultura del modelado de algoritmos, por lo que son el terreno natural del aprendizaje computacional. Algunos ejemplos son la focalización de programas sociales (predecir qué hogares están en pobreza para dirigirles el apoyo), la priorización de inspecciones (predecir qué establecimientos incumplen la norma), el riesgo de deserción escolar (predecir qué estudiantes abandonarán la escuela para atenderlos antes) y la administración de listas de espera en salud (predecir qué pacientes tienen mayor riesgo para ordenar la atención). Por el contrario, preguntar si el programa de becas redujo la deserción, o si una política de salud mejora los resultados, es un problema causal para el cual la predicción por sí sola no es suficiente y se requiere el diseño de investigación y los supuestos que se estudian en inferencia causal.</p>
 <p>Que un problema sea de predicción no significa, sin embargo, que una predicción exacta baste para decidir bien. <span class="citation" data-cites="sarewitz1999prediction">Sarewitz y Pielke (<a href="18Referencias.html#ref-sarewitz1999prediction" role="doc-biblioref">1999</a>)</span> sostienen que la predicción se ha vuelto el producto científico que más demanda la política, pero que su utilidad para decidir depende, además de la exactitud, del contexto de decisión, de cómo se comunica la incertidumbre, de la relación entre quienes predicen y quienes deciden, y de si existen alternativas a predecir, como las políticas robustas ante la incertidumbre. Advierten también que una predicción puede desplazar la responsabilidad política y generar falsa confianza. Sus ejemplos son ambientales y de riesgo (sismos, clima, inundaciones), y en ellos el aprendizaje computacional puede ser una de las técnicas para estimar esos eventos.</p>
 <p>Las dos lecturas se complementan. <span class="citation" data-cites="kleinberg2015prediction">Kleinberg et&nbsp;al. (<a href="18Referencias.html#ref-kleinberg2015prediction" role="doc-biblioref">2015</a>)</span> indican qué decisiones públicas requieren <span class="math inline">\(\hat y\)</span> y <span class="citation" data-cites="sarewitz1999prediction">Sarewitz y Pielke (<a href="18Referencias.html#ref-sarewitz1999prediction" role="doc-biblioref">1999</a>)</span> qué hace falta, además de exactitud, para que esa <span class="math inline">\(\hat y\)</span> sirva para decidir. Este libro cubre dos de esos elementos, la medición honesta del rendimiento fuera de muestra (<a href="02Rendimiento.html" class="quarto-xref"><span>Capítulo 2</span></a>) y los costos asimétricos de las decisiones (<a href="04Teoria_Decision.html" class="quarto-xref"><span>Capítulo 3</span></a>).</p>
-<p><span class="citation" data-cites="mullainathan2017machine">Mullainathan y Spiess (<a href="18Referencias.html#ref-mullainathan2017machine" role="doc-biblioref">2017</a>)</span> traducen esta distinción al lenguaje de la econometría, donde la tarea de estimar <span class="math inline">\(\hat y\)</span> se contrapone a la de estimar <span class="math inline">\(\hat \beta\)</span>, y muestran que la regularización y la validación cruzada sustituyen a la especificación a mano del modelo como mecanismo para controlar la complejidad. Finalmente, <span class="citation" data-cites="belloni2014high">Belloni et&nbsp;al. (<a href="18Referencias.html#ref-belloni2014high" role="doc-biblioref">2014</a>)</span> y <span class="citation" data-cites="athey2019machine">Athey y Imbens (<a href="18Referencias.html#ref-athey2019machine" role="doc-biblioref">2019</a>)</span> reconcilian las dos culturas al poner las herramientas de la cultura algorítmica, por ejemplo Lasso para elegir controles o bosques para estimar efectos heterogéneos, al servicio de la estimación de un efecto causal con inferencia válida. <span class="citation" data-cites="athey2019impact">Athey (<a href="18Referencias.html#ref-athey2019impact" role="doc-biblioref">2019</a>)</span> ofrece un panorama más amplio del impacto del aprendizaje computacional en la economía, desde las aplicaciones a texto e imágenes hasta los problemas de política de predicción, la equidad y la combinación con inferencia causal. Este libro se enfoca en las herramientas de predicción.</p>
+<p><span class="citation" data-cites="mullainathan2017machine">Mullainathan y Spiess (<a href="18Referencias.html#ref-mullainathan2017machine" role="doc-biblioref">2017</a>)</span> traducen esta distinción al lenguaje de la econometría, donde la tarea de estimar <span class="math inline">\(\hat y\)</span> se contrapone a la de estimar <span class="math inline">\(\hat \beta\)</span>, y muestran que la regularización y la validación cruzada sustituyen a la especificación a mano del modelo como mecanismo para controlar la complejidad. Finalmente, <span class="citation" data-cites="belloni2014high">Belloni, Chernozhukov, y Hansen (<a href="18Referencias.html#ref-belloni2014high" role="doc-biblioref">2014</a>)</span> y <span class="citation" data-cites="athey2019machine">Athey y Imbens (<a href="18Referencias.html#ref-athey2019machine" role="doc-biblioref">2019</a>)</span> reconcilian las dos culturas al poner las herramientas de la cultura algorítmica, por ejemplo Lasso para elegir controles o bosques para estimar efectos heterogéneos, al servicio de la estimación de un efecto causal con inferencia válida. <span class="citation" data-cites="athey2019impact">Athey (<a href="18Referencias.html#ref-athey2019impact" role="doc-biblioref">2019</a>)</span> ofrece un panorama más amplio del impacto del aprendizaje computacional en la economía, desde las aplicaciones a texto e imágenes hasta los problemas de política de predicción, la equidad y la combinación con inferencia causal. Este libro se enfoca en las herramientas de predicción.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Actividad
+Actividad
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -452,7 +448,7 @@ window.Quarto = {
 <li><span class="citation" data-cites="mullainathan2017machine">Mullainathan y Spiess (<a href="18Referencias.html#ref-mullainathan2017machine" role="doc-biblioref">2017</a>)</span> explican aprendizaje computacional desde la econometría y por qué los coeficientes de un modelo predictivo no se interpretan causalmente. Es la lectura puente más cercana al perfil de este curso.</li>
 <li><span class="citation" data-cites="athey2019machine">Athey y Imbens (<a href="18Referencias.html#ref-athey2019machine" role="doc-biblioref">2019</a>)</span> presentan un panorama de los métodos (regularización, árboles, bosques, redes y aprendizaje no supervisado) y de cómo se combinan con inferencia causal. Sirve de mapa de todo el libro.</li>
 <li><span class="citation" data-cites="athey2019impact">Athey (<a href="18Referencias.html#ref-athey2019impact" role="doc-biblioref">2019</a>)</span> evalúa las primeras contribuciones del aprendizaje computacional a la economía, repasa aplicaciones como texto e imágenes, discute los <em>prediction policy problems</em> y las consideraciones de equidad y manipulabilidad, y resume la literatura que combina aprendizaje computacional con inferencia causal. Es un texto más amplio y anterior al de Athey e Imbens.</li>
-<li><span class="citation" data-cites="belloni2014high">Belloni et&nbsp;al. (<a href="18Referencias.html#ref-belloni2014high" role="doc-biblioref">2014</a>)</span> muestran cómo usar Lasso para elegir controles y seguir estimando un efecto de tratamiento con inferencia válida.</li>
+<li><span class="citation" data-cites="belloni2014high">Belloni, Chernozhukov, y Hansen (<a href="18Referencias.html#ref-belloni2014high" role="doc-biblioref">2014</a>)</span> muestran cómo usar Lasso para elegir controles y seguir estimando un efecto de tratamiento con inferencia válida.</li>
 <li><span class="citation" data-cites="varian2014big">Varian (<a href="18Referencias.html#ref-varian2014big" role="doc-biblioref">2014</a>)</span> es una introducción ligera a árboles, bosques, validación cruzada y selección de variables para economistas, con ejemplos. Es la más accesible de las siete.</li>
 <li><span class="citation" data-cites="sarewitz1999prediction">Sarewitz y Pielke (<a href="18Referencias.html#ref-sarewitz1999prediction" role="doc-biblioref">1999</a>)</span> es el contrapunto. Discute por qué la utilidad de una predicción para decidir depende del contexto de decisión y de la comunicación de la incertidumbre, y no solo de su exactitud.</li>
 </ul>
@@ -489,7 +485,7 @@ window.Quarto = {
 <div id="cell-fig-puntos-iris" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Dn <span class="op">=</span> pca.transform(D)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Dn <span class="op">=</span> np.concatenate((Dn, np.atleast_2d(y).T), axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -499,7 +495,7 @@ window.Quarto = {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-puntos-iris" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -518,7 +514,7 @@ Figura&nbsp;1.1: Proyección de los datos del Iris en dos dimensiones
 <div id="cell-fig-kmeans-iris" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, n_init<span class="op">=</span><span class="st">'auto'</span>).fit(D)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> m.predict(D)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
@@ -531,7 +527,7 @@ Figura&nbsp;1.1: Proyección de los datos del Iris en dos dimensiones
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-kmeans-iris" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -548,12 +544,12 @@ Figura&nbsp;1.2: Proyección de agrupar los datos del Iris usando K-medias
 </div>
 <p>Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Actividad
+Actividad
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -611,7 +607,7 @@ Figura&nbsp;1.4: Datos de Aprendizaje Supervisado
 <div id="cell-fig-iris-2clases" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> y <span class="op">&lt;=</span> <span class="dv">1</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[mask]</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y[mask]</span>
@@ -624,7 +620,7 @@ Figura&nbsp;1.4: Datos de Aprendizaje Supervisado
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-iris-2clases" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -640,12 +636,12 @@ Figura&nbsp;1.5: Proyección del Iris mostrando dos clases linealmente separable
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Actividad
+Actividad
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -673,7 +669,7 @@ Figura&nbsp;1.6: Proyección de los datos de Breast Cancer Wisconsin.
 <div id="cell-fig-iris-2clases-df" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> y <span class="op">&lt;=</span> <span class="dv">1</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[mask]</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y[mask]</span>
@@ -694,7 +690,7 @@ Figura&nbsp;1.6: Proyección de los datos de Breast Cancer Wisconsin.
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>ax.tick_params(axis<span class="op">=</span><span class="st">"both"</span>, which<span class="op">=</span><span class="st">"both"</span>, bottom<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                top<span class="op">=</span><span class="va">False</span>, left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-iris-2clases-df" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -713,7 +709,7 @@ Figura&nbsp;1.7: Proyección del Iris mostrando dos clases linealmente separable
 <div id="cell-fig-regresion" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">100</span>)</span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">100</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fl">12.3</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="fl">3.2</span> <span class="op">*</span> x <span class="op">+</span> <span class="fl">1.2</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ym <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="fl">0.2</span>, size<span class="op">=</span>x.shape[<span class="dv">0</span>]) <span class="op">+</span> y</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, ym<span class="op">=</span>ym))</span>
@@ -722,7 +718,7 @@ Figura&nbsp;1.7: Proyección del Iris mostrando dos clases linealmente separable
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-regresion" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -741,12 +737,12 @@ Figura&nbsp;1.8: Problema de regresión
 <div id="cell-fig-regresion-2" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, legend<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, legend<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.scatterplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'ym'</span>, legend<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fig.tick_params(axis<span class="op">=</span><span class="st">"both"</span>, which<span class="op">=</span><span class="st">"both"</span>, bottom<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                top<span class="op">=</span><span class="va">False</span>, left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-regresion-2" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -773,7 +769,7 @@ Figura&nbsp;1.9: Problema de regresión con función con función estimada
 <div id="cell-fig-comparacion-intro" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bioresponse <span class="op">=</span> fetch_openml(data_id<span class="op">=</span><span class="dv">1464</span>)</span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bioresponse <span class="op">=</span> fetch_openml(data_id<span class="op">=</span><span class="dv">1464</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> bioresponse.target.to_numpy().astype(<span class="bu">int</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> bioresponse.data.to_numpy()</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Xtrain, Xtest, ytrain, ytest <span class="op">=</span> train_test_split(D, np.array(y), random_state<span class="op">=</span><span class="dv">13</span>)</span>
@@ -791,7 +787,7 @@ Figura&nbsp;1.9: Problema de regresión con función con función estimada
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>           comp_legend<span class="op">=</span><span class="st">'Comparación'</span>,</span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>           winner_legend<span class="op">=</span><span class="st">'Mejor'</span>,</span>
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>           tie_legend<span class="op">=</span><span class="st">'Equivalente'</span>,</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>           loser_legend<span class="op">=</span><span class="st">'Diferente'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>           loser_legend<span class="op">=</span><span class="st">'Diferente'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-comparacion-intro" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -820,7 +816,7 @@ Figura&nbsp;1.10: Comparación del rendimiento de algoritmos de clasificación e
 <div id="cell-fig-sobre-aprendizaje" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(np.atleast_2d(x).T, ym)</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor().fit(np.atleast_2d(x).T, ym)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(np.atleast_2d(x).T)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'arbol'</span>] <span class="op">=</span> hy</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'arbol'</span>, legend<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
@@ -828,7 +824,7 @@ Figura&nbsp;1.10: Comparación del rendimiento de algoritmos de clasificación e
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-sobre-aprendizaje" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -850,7 +846,7 @@ Figura&nbsp;1.11: Sobre-aprendizaje en un problema de regresión
 <div id="cell-fig-sub-aprendizaje" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">2</span>).fit(np.atleast_2d(x).T, ym)</span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">2</span>).fit(np.atleast_2d(x).T, ym)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(np.atleast_2d(x).T)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'arbol'</span>] <span class="op">=</span> hy</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'arbol'</span>, legend<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">'k'</span>)</span>
@@ -858,7 +854,7 @@ Figura&nbsp;1.11: Sobre-aprendizaje en un problema de regresión
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'x'</span>, ylabel<span class="op">=</span><span class="st">'y'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-sub-aprendizaje" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -953,9 +949,9 @@ Tabla&nbsp;1.1: Organización del libro
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-athey2019impact" class="csl-entry" role="listitem">
-Athey, Susan. 2019. <span>«The Impact of Machine Learning on Economics»</span>. En <em>The Economics of Artificial Intelligence: An Agenda</em>, editado por Ajay Agrawal, Joshua Gans, y Avi Goldfarb. University of Chicago Press. <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/impact-machine-learning-economics">https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/impact-machine-learning-economics</a>.
+Athey, Susan. 2019. <span>«The Impact of Machine Learning on Economics»</span>. En <em>The Economics of Artificial Intelligence: An Agenda</em>, editado por Ajay Agrawal, Joshua Gans, y Avi Goldfarb, 507-47. University of Chicago Press. <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/impact-machine-learning-economics">https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/impact-machine-learning-economics</a>.
 </div>
 <div id="ref-athey2019machine" class="csl-entry" role="listitem">
 Athey, Susan, y Guido W. Imbens. 2019. <span>«Machine Learning Methods That Economists Should Know About»</span>. <em>Annual Review of Economics</em> 11: 685-725. <a href="https://doi.org/10.1146/annurev-economics-080217-053433">https://doi.org/10.1146/annurev-economics-080217-053433</a>.
@@ -967,10 +963,10 @@ Belloni, Alexandre, Victor Chernozhukov, y Christian Hansen. 2014. <span>«High-
 Breiman, Leo. 2001. <span>«Statistical modeling: The two cultures»</span>. <em>Statistical science</em> 16 (3): 199-231. <a href="https://doi.org/10.1214/ss/1009213726">https://doi.org/10.1214/ss/1009213726</a>.
 </div>
 <div id="ref-Esteva2017" class="csl-entry" role="listitem">
-Esteva, Andre, Brett Kuprel, Roberto A. Novoa, et&nbsp;al. 2017. <span>«Dermatologist-level classification of skin cancer with deep neural networks»</span>. <em>Nature</em> 542 (7639): 115-18. <a href="https://doi.org/10.1038/nature21056">https://doi.org/10.1038/nature21056</a>.
+Esteva, Andre, Brett Kuprel, Roberto A. Novoa, Justin Ko, Susan M. Swetter, Helen M. Blau, y Sebastian Thrun. 2017. <span>«Dermatologist-level classification of skin cancer with deep neural networks»</span>. <em>Nature</em> 542 (7639): 115-18. <a href="https://doi.org/10.1038/nature21056">https://doi.org/10.1038/nature21056</a>.
 </div>
 <div id="ref-Hannun2019" class="csl-entry" role="listitem">
-Hannun, Awni Y., Pranav Rajpurkar, Masoumeh Haghpanahi, et&nbsp;al. 2019. <span>«Cardiologist-level arrhythmia detection and classification in ambulatory electrocardiograms using a deep neural network»</span>. <em>Nature Medicine</em> 25 (1): 65-69. <a href="https://doi.org/10.1038/s41591-018-0268-3">https://doi.org/10.1038/s41591-018-0268-3</a>.
+Hannun, Awni Y., Pranav Rajpurkar, Masoumeh Haghpanahi, Geoffrey H. Tison, Codie Bourn, Mintu P. Turakhia, y Andrew Y. Ng. 2019. <span>«Cardiologist-level arrhythmia detection and classification in ambulatory electrocardiograms using a deep neural network»</span>. <em>Nature Medicine</em> 25 (1): 65-69. <a href="https://doi.org/10.1038/s41591-018-0268-3">https://doi.org/10.1038/s41591-018-0268-3</a>.
 </div>
 <div id="ref-kleinberg2015prediction" class="csl-entry" role="listitem">
 Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span>«Prediction Policy Problems»</span>. <em>American Economic Review: Papers &amp; Proceedings</em> 105 (5): 491-95. <a href="https://doi.org/10.1257/aer.p20151023">https://doi.org/10.1257/aer.p20151023</a>.
@@ -985,10 +981,10 @@ Mullainathan, Sendhil, y Jann Spiess. 2017. <span>«Machine Learning: An Applied
 Sarewitz, Daniel, y Roger A. Pielke Jr. 1999. <span>«Prediction in science and policy»</span>. <em>Technology in Society</em> 21 (2): 121-33. <a href="https://doi.org/10.1016/S0160-791X(99)00002-0">https://doi.org/10.1016/S0160-791X(99)00002-0</a>.
 </div>
 <div id="ref-Silver2016" class="csl-entry" role="listitem">
-Silver, David, Aja Huang, Chris J. Maddison, et&nbsp;al. 2016. <span>«Mastering the game of Go with deep neural networks and tree search»</span>. <em>Nature</em> 529 (7587): 484-89. <a href="https://doi.org/10.1038/nature16961">https://doi.org/10.1038/nature16961</a>.
+Silver, David, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, et&nbsp;al. 2016. <span>«Mastering the game of Go with deep neural networks and tree search»</span>. <em>Nature</em> 529 (7587): 484-89. <a href="https://doi.org/10.1038/nature16961">https://doi.org/10.1038/nature16961</a>.
 </div>
 <div id="ref-Silver2017" class="csl-entry" role="listitem">
-Silver, David, Julian Schrittwieser, Karen Simonyan, et&nbsp;al. 2017. <span>«Mastering the game of Go without human knowledge»</span>. <em>Nature</em> 550 (7676): 354-59. <a href="https://doi.org/10.1038/nature24270">https://doi.org/10.1038/nature24270</a>.
+Silver, David, Julian Schrittwieser, Karen Simonyan, Ioannis Antonoglou, Aja Huang, Arthur Guez, Thomas Hubert, et&nbsp;al. 2017. <span>«Mastering the game of Go without human knowledge»</span>. <em>Nature</em> 550 (7676): 354-59. <a href="https://doi.org/10.1038/nature24270">https://doi.org/10.1038/nature24270</a>.
 </div>
 <div id="ref-varian2014big" class="csl-entry" role="listitem">
 Varian, Hal R. 2014. <span>«Big Data: New Tricks for Econometrics»</span>. <em>Journal of Economic Perspectives</em> 28 (2): 3-28. <a href="https://doi.org/10.1257/jep.28.2.3">https://doi.org/10.1257/jep.28.2.3</a>.
@@ -998,294 +994,287 @@ Varian, Hal R. 2014. <span>«Big Data: New Tricks for Econometrics»</span>. <em
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
     }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiado");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiado");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
     }
-    const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
-    }
-    const viewSource = window.document.getElementById('quarto-view-source') ||
-                       window.document.getElementById('quarto-code-tools-source');
-    if (viewSource) {
-      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
-      viewSource.addEventListener("click", function(e) {
-        if (sourceUrl) {
-          // rstudio viewer pane
-          if (/\bcapabilities=\b/.test(window.location)) {
-            window.open(sourceUrl);
-          } else {
-            window.location.href = sourceUrl;
-          }
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
         } else {
-          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
-          modal.show();
-        }
-        return false;
-      });
-    }
-    function toggleCodeHandler(show) {
-      return function(e) {
-        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-        for (let i=0; i<detailsSrc.length; i++) {
-          const details = detailsSrc[i].parentElement;
-          if (show) {
-            details.open = true;
-          } else {
-            details.removeAttribute("open");
-          }
-        }
-        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
-        const fromCls = show ? "hidden" : "unhidden";
-        const toCls = show ? "unhidden" : "hidden";
-        for (let i=0; i<cellCodeDivs.length; i++) {
-          const codeDiv = cellCodeDivs[i];
-          if (codeDiv.classList.contains(fromCls)) {
-            codeDiv.classList.remove(fromCls);
-            codeDiv.classList.add(toCls);
-          } 
-        }
-        return false;
-      }
-    }
-    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
-    if (hideAllCode) {
-      hideAllCode.addEventListener("click", toggleCodeHandler(false));
-    }
-    const showAllCode = window.document.getElementById("quarto-show-all-code");
-    if (showAllCode) {
-      showAllCode.addEventListener("click", toggleCodeHandler(true));
-    }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-        }
-      }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
-    }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
-    }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
+          window.location.href = sourceUrl;
         }
       } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
         }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
       }
     }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
           }
         } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
+          // See if we can fetch this
+          fetch(url.split('#')[0])
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
+            const note = htmlDoc.getElementById(id);
             if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
+              const html = processXRef(id, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1293,161 +1282,185 @@ Varian, Hal R. 2014. <span>«Big Data: New Tricks for Econometrics»</span>. <em
             instance.show();
           });
         }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
       } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
             }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
         });
       }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
     }
-  });
-  </script>
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../index.html" class="pagination-link" aria-label="Prefacio">
@@ -1460,7 +1473,7 @@ Varian, Hal R. 2014. <span>«Big Data: New Tricks for Econometrics»</span>. <em
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introducción {#sec-intro-01}</span></span>
+<div class="sourceCode" id="cb11" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introducción {#sec-intro-01}</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es explicar el área de aprendizaje computacional, los diferentes tipos de aprendizaje que la componen, la metodología general del área y su relación con otras áreas del conocimiento, en particular con el análisis de políticas públicas. </span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1656,13 +1669,13 @@ Varian, Hal R. 2014. <span>«Big Data: New Tricks for Econometrics»</span>. <em
 <span id="cb11-204"><a href="#cb11-204" aria-hidden="true" tabindex="-1"></a>Aprendizaje supervisado inicia con un conjunto de pares, entrada y salida; la @fig-datos-aprendizaje-supervisado ilustra el mecanismo que genera estos pares, del lado izquierdo se tiene las variables medibles que entran al proceso o fenómeno que se desconoce y del lado derecho se mide la(s) variable(s) respuesta, es decir, la(s) salida(s) del sistema. En otras palabras se tiene $\mathcal D = <span class="sc">\{</span> (x_1, y_1), \ldots, (x_N, y_N )<span class="sc">\}</span>$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada. </span>
 <span id="cb11-205"><a href="#cb11-205" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-208"><a href="#cb11-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb11-209"><a href="#cb11-209" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
-<span id="cb11-210"><a href="#cb11-210" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: Datos de Aprendizaje Supervisado</span>
-<span id="cb11-211"><a href="#cb11-211" aria-hidden="true" tabindex="-1"></a>%%| label: fig-datos-aprendizaje-supervisado</span>
+<span id="cb11-209"><a href="#cb11-209" aria-hidden="true" tabindex="-1"></a><span class="in">%%| echo: false</span></span>
+<span id="cb11-210"><a href="#cb11-210" aria-hidden="true" tabindex="-1"></a><span class="in">%%| fig-cap: Datos de Aprendizaje Supervisado</span></span>
+<span id="cb11-211"><a href="#cb11-211" aria-hidden="true" tabindex="-1"></a><span class="in">%%| label: fig-datos-aprendizaje-supervisado</span></span>
 <span id="cb11-212"><a href="#cb11-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-213"><a href="#cb11-213" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb11-214"><a href="#cb11-214" aria-hidden="true" tabindex="-1"></a>    Entrada([Entradas]) --&gt;  Proceso[Proceso / Fenómeno]</span>
-<span id="cb11-215"><a href="#cb11-215" aria-hidden="true" tabindex="-1"></a>    Proceso --&gt; Salidas([Salidas])</span>
+<span id="cb11-213"><a href="#cb11-213" aria-hidden="true" tabindex="-1"></a><span class="in">flowchart LR</span></span>
+<span id="cb11-214"><a href="#cb11-214" aria-hidden="true" tabindex="-1"></a><span class="in">    Entrada([Entradas]) --&gt;  Proceso[Proceso / Fenómeno]</span></span>
+<span id="cb11-215"><a href="#cb11-215" aria-hidden="true" tabindex="-1"></a><span class="in">    Proceso --&gt; Salidas([Salidas])</span></span>
 <span id="cb11-216"><a href="#cb11-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb11-217"><a href="#cb11-217" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-218"><a href="#cb11-218" aria-hidden="true" tabindex="-1"></a>Considerando que se desconoce el modelo del proceso o fenómeno que generó la respuesta y además que pueden existir variables de entrada que no son medibles, se puede definir el **objetivo** de aprendizaje supervisado como encontrar un algoritmo o función, $f$, capaz de regresar la salida, $y$, dada una entrada $x$.</span>
@@ -1883,22 +1896,22 @@ Varian, Hal R. 2014. <span>«Big Data: New Tricks for Econometrics»</span>. <em
 <span id="cb11-449"><a href="#cb11-449" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-450"><a href="#cb11-450" aria-hidden="true" tabindex="-1"></a>El libro sigue un orden que parte de las preguntas de predicción que ya conoce quien estudió econometría y avanza hacia métodos más flexibles. La @tbl-organizacion-libro resume los bloques, los capítulos que los componen y el curso de METPOL con el que se conectan. Los capítulos marcados como "en preparación" todavía no forman parte de esta versión.</span>
 <span id="cb11-451"><a href="#cb11-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-452"><a href="#cb11-452" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bloque <span class="pp">|</span> Capítulos <span class="pp">|</span> Conexión con METPOL <span class="pp">|</span></span>
-<span id="cb11-453"><a href="#cb11-453" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
-<span id="cb11-454"><a href="#cb11-454" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Marco <span class="pp">|</span> Introducción (@sec-intro-01) y Rendimiento (@sec-rendimiento-cap): qué es predecir, cómo se separan los datos y cómo se mide el rendimiento fuera de muestra. <span class="pp">|</span> Estadística, Econometría <span class="pp">|</span></span>
-<span id="cb11-455"><a href="#cb11-455" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Regresión y regularización <span class="pp">|</span> *Regresión y Regularización* (en preparación): MCO evaluado por predicción, sesgo y varianza, Ridge y Lasso. <span class="pp">|</span> Econometría <span class="pp">|</span></span>
-<span id="cb11-456"><a href="#cb11-456" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Decisión y modelos probabilísticos <span class="pp">|</span> Teoría de Decisión Bayesiana (@sec-teoria-decision-bayesianas), Métodos Paramétricos (@sec-metodos-parametricos) y Métodos No Paramétricos (@sec-metodos-no-parametricos). <span class="pp">|</span> Estadística, Econometría <span class="pp">|</span></span>
-<span id="cb11-457"><a href="#cb11-457" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Discriminantes y optimización <span class="pp">|</span> Discriminantes Lineales (@sec-discriminantes-lineales) y Optimización (@sec-optimizacion). <span class="pp">|</span> Matemáticas Aplicadas <span class="pp">|</span></span>
-<span id="cb11-458"><a href="#cb11-458" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Métodos flexibles <span class="pp">|</span> Árboles de Decisión (@sec-arboles-decision), Ensambles (@sec-ensambles) y Redes Neuronales. <span class="pp">|</span> Econometría, Evaluación de Políticas Públicas <span class="pp">|</span></span>
-<span id="cb11-459"><a href="#cb11-459" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Aprendizaje no supervisado <span class="pp">|</span> Reducción de Dimensión (con el Análisis de Componentes Principales, @sec-pca) y Agrupamiento. <span class="pp">|</span> Manejo de Bases de Datos, Diseño de Investigación <span class="pp">|</span></span>
-<span id="cb11-460"><a href="#cb11-460" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Comparación <span class="pp">|</span> Comparación de Algoritmos: cómo decidir si un algoritmo es mejor que otro. <span class="pp">|</span> Estadística, Métodos Experimentales <span class="pp">|</span></span>
-<span id="cb11-461"><a href="#cb11-461" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Uso responsable e inferencia causal <span class="pp">|</span> *Interpretabilidad y Equidad* y *Aprendizaje Computacional e Inferencia Causal* (en preparación). <span class="pp">|</span> Inferencia Causal, Evaluación de Políticas Públicas <span class="pp">|</span></span>
-<span id="cb11-462"><a href="#cb11-462" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Texto <span class="pp">|</span> *Texto como Datos* (en preparación): clasificación y agrupamiento de documentos. <span class="pp">|</span> Métodos Mixtos Aplicados al Análisis de Políticas <span class="pp">|</span></span>
+<span id="cb11-452"><a href="#cb11-452" aria-hidden="true" tabindex="-1"></a>| Bloque | Capítulos | Conexión con METPOL |</span>
+<span id="cb11-453"><a href="#cb11-453" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
+<span id="cb11-454"><a href="#cb11-454" aria-hidden="true" tabindex="-1"></a>| Marco | Introducción (@sec-intro-01) y Rendimiento (@sec-rendimiento-cap): qué es predecir, cómo se separan los datos y cómo se mide el rendimiento fuera de muestra. | Estadística, Econometría |</span>
+<span id="cb11-455"><a href="#cb11-455" aria-hidden="true" tabindex="-1"></a>| Regresión y regularización | *Regresión y Regularización* (en preparación): MCO evaluado por predicción, sesgo y varianza, Ridge y Lasso. | Econometría |</span>
+<span id="cb11-456"><a href="#cb11-456" aria-hidden="true" tabindex="-1"></a>| Decisión y modelos probabilísticos | Teoría de Decisión Bayesiana (@sec-teoria-decision-bayesianas), Métodos Paramétricos (@sec-metodos-parametricos) y Métodos No Paramétricos (@sec-metodos-no-parametricos). | Estadística, Econometría |</span>
+<span id="cb11-457"><a href="#cb11-457" aria-hidden="true" tabindex="-1"></a>| Discriminantes y optimización | Discriminantes Lineales (@sec-discriminantes-lineales) y Optimización (@sec-optimizacion). | Matemáticas Aplicadas |</span>
+<span id="cb11-458"><a href="#cb11-458" aria-hidden="true" tabindex="-1"></a>| Métodos flexibles | Árboles de Decisión (@sec-arboles-decision), Ensambles (@sec-ensambles) y Redes Neuronales. | Econometría, Evaluación de Políticas Públicas |</span>
+<span id="cb11-459"><a href="#cb11-459" aria-hidden="true" tabindex="-1"></a>| Aprendizaje no supervisado | Reducción de Dimensión (con el Análisis de Componentes Principales, @sec-pca) y Agrupamiento. | Manejo de Bases de Datos, Diseño de Investigación |</span>
+<span id="cb11-460"><a href="#cb11-460" aria-hidden="true" tabindex="-1"></a>| Comparación | Comparación de Algoritmos: cómo decidir si un algoritmo es mejor que otro. | Estadística, Métodos Experimentales |</span>
+<span id="cb11-461"><a href="#cb11-461" aria-hidden="true" tabindex="-1"></a>| Uso responsable e inferencia causal | *Interpretabilidad y Equidad* y *Aprendizaje Computacional e Inferencia Causal* (en preparación). | Inferencia Causal, Evaluación de Políticas Públicas |</span>
+<span id="cb11-462"><a href="#cb11-462" aria-hidden="true" tabindex="-1"></a>| Texto | *Texto como Datos* (en preparación): clasificación y agrupamiento de documentos. | Métodos Mixtos Aplicados al Análisis de Políticas |</span>
 <span id="cb11-463"><a href="#cb11-463" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-464"><a href="#cb11-464" aria-hidden="true" tabindex="-1"></a>: Organización del libro {#tbl-organizacion-libro}</span>
 <span id="cb11-465"><a href="#cb11-465" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-466"><a href="#cb11-466" aria-hidden="true" tabindex="-1"></a>Los apéndices contienen un repaso de estadística y la descripción de los conjuntos de datos que se utilizan en el libro.</span>
-</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
