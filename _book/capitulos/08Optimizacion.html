@@ -336,10 +336,10 @@ window.Quarto = {
 </header>
 
 
-<p>El <strong>objetivo</strong> de la unidad es conocer y aplicar el método de <strong>Descenso de Gradiente</strong> y <strong>Propagación hacia Atrás</strong> par estimar los parámetros de modelos de clasificación y regresión.</p>
+<p>El <strong>objetivo</strong> de la unidad es conocer y aplicar el método de <strong>Descenso de Gradiente</strong> y <strong>Propagación hacia Atrás</strong> para estimar los parámetros de modelos de clasificación y regresión.</p>
 <section id="paquetes-usados" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">7.1</span> Paquetes usados</h2>
-<div id="6d22b512" class="cell" data-execution_count="1">
+<div id="b00e96f1" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, minmax_scale</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
@@ -357,7 +357,7 @@ window.Quarto = {
 <section id="sec-intro-10" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="sec-intro-10"><span class="header-section-number">7.2</span> Introducción</h2>
 <p>Existen diferentes modelos de clasificación y regresión donde no es posible encontrar una solución analítica para estimar los parámetros, por ejemplo en Regresión Logística (<a href="07Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección 6.5</span></a>). Es en este escenario donde se voltea a métodos de optimización iterativos para calcular los parámetros.</p>
-<p>En esta unidad se describe posiblemente el método de optimización más conocido que es <strong>Descenso de Gradiente</strong>. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá como se puede calcular el gradiente utilizando un método gráfico y como este método naturalmente realiza <strong>Propagación hacia Atrás</strong>.</p>
+<p>En esta unidad se describe posiblemente el método de optimización más conocido que es <strong>Descenso de Gradiente</strong>. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá cómo se puede calcular el gradiente utilizando un método gráfico y cómo este método naturalmente realiza <strong>Propagación hacia Atrás</strong>.</p>
 </section>
 <section id="sec-descenso-gradiente" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="sec-descenso-gradiente"><span class="header-section-number">7.3</span> Descenso por Gradiente</h2>
@@ -398,20 +398,20 @@ window.Quarto = {
 \end{split}
 \]</span></p>
 <p>Con el objetivo de visualizar descenso por gradiente y completar el ejemplo anterior, el siguiente código implementa el proceso de optimización mencionado. Lo primero es generar el conjunto de entrenamiento.</p>
-<div id="0411719b" class="cell" data-execution_count="3">
+<div id="b9231c56" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">50</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fl">2.3</span> <span class="op">*</span> x <span class="op">-</span> <span class="dv">3</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El proceso inicia con valores aleatorios de <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span>, estos valores podrían ser <span class="math inline">\(5.3\)</span> y <span class="math inline">\(-5.1,\)</span> además se utilizará una <span class="math inline">\(\eta=0.0001\)</span>, se guardarán todos los puntos visitados en la lista <code>D</code>. Las variables y valores iniciales quedarían como:</p>
-<div id="576bf727" class="cell" data-execution_count="4">
+<div id="7f53912d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">5.3</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="op">-</span><span class="fl">5.1</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>delta <span class="op">=</span> np.inf</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>eta <span class="op">=</span> <span class="fl">0.0001</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(a, b)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El siguiente ciclo realiza la iteración del proceso de optimización y se detienen cuando los valores estimados varían poco entre dos iteraciones consecutivas, en particular cuando en promedio el cambio en las constantes sea menor a <span class="math inline">\(0.0001\)</span>.</p>
-<div id="26a4a4c8" class="cell" data-execution_count="5">
+<p>El siguiente ciclo realiza la iteración del proceso de optimización y se detiene cuando los valores estimados varían poco entre dos iteraciones consecutivas, en particular cuando en promedio el cambio en las constantes sea menor a <span class="math inline">\(0.0001\)</span>.</p>
+<div id="903ac9c4" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> delta <span class="op">&gt;</span> <span class="fl">0.0001</span>:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> a <span class="op">*</span> x <span class="op">+</span> b</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    e <span class="op">=</span> (y <span class="op">-</span> hy)</span>
@@ -434,7 +434,7 @@ window.Quarto = {
 <div id="fig-optimizacion-evolucion-desc" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-evolucion-desc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="08Optimizacion_files/figure-html/fig-optimizacion-evolucion-desc-output-1.png" width="563" height="470" class="figure-img">
+<img src="08Optimizacion_files/figure-html/fig-optimizacion-evolucion-desc-output-1.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-evolucion-desc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;7.1: Camino de los parámetros en el proceso de optimización.
@@ -450,19 +450,19 @@ Figura&nbsp;7.1: Camino de los parámetros en el proceso de optimización.
 <p>No en todos los casos es posible encontrar una ecuación cerrada para actualizar los parámetros; también el trabajo manual que se requiere para encontrar la solución analítica es considerable y depende de la complejidad de la función objetivo que se quiere derivar. Observando el procedimiento para actualizar los parámetros, i.e., <span class="math inline">\(\mathbf w^{t+1} = w^{t-1} - \eta \nabla_{\mathbf w} E\)</span>, se concluye que se requiere evaluar <span class="math inline">\(\nabla_{\mathbf w} E\)</span> en un punto en particular, entonces, para solucionar el problema, es suficiente contar con un procedimiento que permita conocer el valor de <span class="math inline">\(\nabla_{\mathbf w} E\)</span> en cualquier punto deseado, y en particular no es necesario conocer la solución analítica de <span class="math inline">\(\nabla_{\mathbf w} E.\)</span> Al procedimiento que encuentra el valor de la derivada de cualquier función en un punto de manera automática se le conoce como diferenciación automática.</p>
 <section id="una-variable" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="una-variable"><span class="header-section-number">7.4.1</span> Una Variable</h3>
-<p>Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea <span class="math inline">\(f(x) = x^2,\)</span> en este caso <span class="math inline">\(f'(x) = 2x.\)</span> Ahora considerando que se quiere evaluar <span class="math inline">\(f'(2.5)\)</span>, se sabe que <span class="math inline">\(f'(2.5)=5,\)</span> pero también se puede generar un programa donde en la primera fase se calcule <span class="math inline">\(f(2.5)=(2.5)^2\)</span> y al momento de calcular <span class="math inline">\(f\)</span> se guarde en un espacio asociado a <span class="math inline">\(f\)</span> el valor de <span class="math inline">\(f'(2.5).\)</span> es decir <span class="math inline">\(5\)</span>. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable.</p>
+<p>Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea <span class="math inline">\(f(x) = x^2,\)</span> en este caso <span class="math inline">\(f'(x) = 2x.\)</span> Ahora considerando que se quiere evaluar <span class="math inline">\(f'(2.5)\)</span>, se sabe que <span class="math inline">\(f'(2.5)=5,\)</span> pero también se puede generar un programa donde en la primera fase se calcule <span class="math inline">\(f(2.5)=(2.5)^2\)</span> y al momento de calcular <span class="math inline">\(f\)</span> se guarde en un espacio asociado a <span class="math inline">\(f\)</span> el valor de <span class="math inline">\(f'(2.5).\)</span> Es decir <span class="math inline">\(5\)</span>. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable.</p>
 <p>La librería <a href="https://jax.readthedocs.io">JAX</a> permite hacer diferenciación automática en Python. Siguiendo el ejemplo anterior, se genera la función <span class="math inline">\(f(x) = x^2\)</span> con el siguiente código</p>
-<div id="d18b40c7" class="cell" data-execution_count="7">
+<div id="78f51b3c" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sq(x):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">2</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Esta función se puede evaluar como <code>sq(2.5)</code>; lo interesante es que <code>sq</code> se puede componer con la función <code>grad</code> para calcular la derivada de la siguiente manera.</p>
-<div id="5c7cc414" class="cell" data-execution_count="8">
+<div id="3425311f" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> grad(sq)(<span class="fl">2.5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Ejecutando el código anterior se obtiene <span class="math inline">\(5\)</span>, <code>grad</code> internamente guarda <span class="math inline">\(5\)</span>, <code>grad</code> asociado a <code>sq</code>.</p>
 <p>Ahora en el caso de una composición, por ejemplo, sea <span class="math inline">\(g(x)=\sin(x)\)</span> y se desea conocer <span class="math inline">\(\frac{d}{dx} g(f(x)),\)</span> siguiendo el mismo principio primero se evalúa <span class="math inline">\(f(2.5)\)</span> y se guarda asociado a <span class="math inline">\(f\)</span> el valor de <span class="math inline">\(5\)</span> que corresponde a <span class="math inline">\(f',\)</span> después se evalúa <span class="math inline">\(g(5)\)</span> y se guarda asociado a <span class="math inline">\(g\)</span> el valor <span class="math inline">\(\cos(2.5^2).\)</span> Ahora para conocer el valor de <span class="math inline">\(\frac{d}{dx} g(f(2.5))\)</span> se camina en el sentido inverso multiplicando todos los valores guardados, es decir, se multiplica <span class="math inline">\(5 \times \cos(2.5^2).\)</span> Implementando este ejemplo en Python quedaría como:</p>
-<div id="76866bab" class="cell" data-execution_count="10">
+<div id="53d4918b" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sin_sq(x):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jnp.sin(sq(x))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -472,7 +472,7 @@ Figura&nbsp;7.1: Camino de los parámetros en el proceso de optimización.
 <h3 data-number="7.4.2" class="anchored" data-anchor-id="dos-variables"><span class="header-section-number">7.4.2</span> Dos Variables</h3>
 <p>El ejemplo anterior se puede extender para cualquier composición de funciones, pero ese ejemplo no deja claro lo que pasaría con una función de dos o más variables, como por ejemplo, <span class="math inline">\(h(x, y) = x \times y.\)</span> En este caso, el objetivo es calcular tanto <span class="math inline">\(\frac{d}{dx} h\)</span> como <span class="math inline">\(\frac{d}{dy} h.\)</span></p>
 <p>El procedimiento es similar, con el ingrediente extra de que se tiene que recordar la función y la posición del argumento, es decir, para <span class="math inline">\(h(2, 5)\)</span> se asocia el valor <span class="math inline">\(\frac{\partial}{\partial x} h\)</span> con el primer argumento de la función <span class="math inline">\(h\)</span> y <span class="math inline">\(\frac{\partial}{\partial x} h\)</span> con el segundo argumento de la función <span class="math inline">\(h\)</span>. Para <span class="math inline">\(h'(2, 5)\)</span> se asocia el valor de <span class="math inline">\(5\)</span> con el primer argumento de <span class="math inline">\(h\)</span> y <span class="math inline">\(2\)</span> con el segundo argumento de <span class="math inline">\(h.\)</span> Se puede observar que los valores guardados corresponden a <span class="math inline">\(\frac{\partial}{\partial x}h(2, 5)=y=5\)</span> y <span class="math inline">\(\frac{\partial}{\partial y}h(2, 5)=x=2.\)</span> Escribiendo este ejemplo en Python quedaría como</p>
-<div id="5a6c1cb5" class="cell" data-execution_count="12">
+<div id="a2ddbc43" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prod(x):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x[<span class="dv">0</span>] <span class="op">*</span> x[<span class="dv">1</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -494,22 +494,22 @@ Figura&nbsp;7.2: Árbol de expresión
 </section>
 <section id="regresión-lineal" class="level3" data-number="7.4.4">
 <h3 data-number="7.4.4" class="anchored" data-anchor-id="regresión-lineal"><span class="header-section-number">7.4.4</span> Regresión Lineal</h3>
-<p>En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (<a href="#sec-regresion-lineal-manual" class="quarto-xref"><span>Sección 7.3.1</span></a>). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es <span class="math inline">\(ax + b\)</span> la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después viene los argumentos de la función que en este caso son los valores de <span class="math inline">\(x.\)</span></p>
-<div id="160c6dbe" class="cell" data-execution_count="13">
+<p>En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (<a href="#sec-regresion-lineal-manual" class="quarto-xref"><span>Sección 7.3.1</span></a>). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es <span class="math inline">\(ax + b\)</span> la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después vienen los argumentos de la función que en este caso son los valores de <span class="math inline">\(x.\)</span></p>
+<div id="e1673863" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> func(params, x):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> params</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">*</span> x <span class="op">+</span> b</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El siguiente paso es definir la función de error, en este caso la función de error definida previamente es <span class="math inline">\(\sum_{i=1}^{N} (y_i - \hat y_i)^2\)</span> tal y como se muestra en la siguiente función.</p>
-<div id="f80ab512" class="cell" data-execution_count="14">
+<div id="72102961" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> error(params, x, y):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> func(params, x)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> lax.fori_loop(<span class="dv">0</span>, x.shape[<span class="dv">0</span>],</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                         <span class="kw">lambda</span> i, acc: acc <span class="op">+</span> (y[i] <span class="op">-</span> hy[i])<span class="op">**</span><span class="dv">2</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                         <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente al mostrado anteriormente. La primera linea define el valor de <span class="math inline">\(\eta,\)</span> el valor de la variable <code>delta</code> indica el término del ciclo, la tercera línea define los parámetros iniciales (<code>params</code>), la siguiente guarda los todos los puntos visitados (cuarta línea) y la quinta línea deriva la función de <code>error</code> para calcular el gradiente. La primera instrucción dentro del ciclo actualiza los parámetros.</p>
-<div id="2720b747" class="cell" data-execution_count="15">
+<p>Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente al mostrado anteriormente. La primera línea define el valor de <span class="math inline">\(\eta,\)</span> el valor de la variable <code>delta</code> indica el término del ciclo, la tercera línea define los parámetros iniciales (<code>params</code>), la siguiente guarda todos los puntos visitados (cuarta línea) y la quinta línea deriva la función de <code>error</code> para calcular el gradiente. La primera instrucción dentro del ciclo actualiza los parámetros.</p>
+<div id="12207b94" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>eta <span class="op">=</span> <span class="fl">1e-5</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>delta <span class="op">=</span> np.inf</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> jnp.array([<span class="fl">5.3</span>, <span class="op">-</span><span class="fl">5.1</span>])</span>
@@ -528,7 +528,7 @@ Figura&nbsp;7.2: Árbol de expresión
 <h2 data-number="7.5" class="anchored" data-anchor-id="sec-regresion-logistica-optimizacion"><span class="header-section-number">7.5</span> Regresión Logística</h2>
 <p>En esta sección, se presenta la implementación de Regresión Logística (<a href="07Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección 6.5</span></a>) utilizando diferenciación automática.</p>
 <p>El método se probará en los datos generados por dos normales en <span class="math inline">\(\mathbb R^2\)</span> que se generan con las siguientes instrucciones.</p>
-<div id="5f73420d" class="cell" data-execution_count="16">
+<div id="02db3f11" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">15</span>, <span class="dv">20</span>], cov<span class="op">=</span>[[<span class="dv">3</span>, <span class="op">-</span><span class="dv">3</span>], [<span class="op">-</span><span class="dv">3</span>, <span class="dv">8</span>]]).rvs(<span class="dv">1000</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">8</span>, <span class="dv">8</span>], cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(<span class="dv">1000</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> np.concatenate((X_1, X_2))</span>
@@ -536,28 +536,28 @@ Figura&nbsp;7.2: Árbol de expresión
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> jnp.array(normalize.transform(T))</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>y_t <span class="op">=</span> jnp.array([<span class="dv">1</span>] <span class="op">*</span> X_1.shape[<span class="dv">0</span>] <span class="op">+</span> [<span class="dv">0</span>] <span class="op">*</span> X_2.shape[<span class="dv">0</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Siguiendo los pasos utilizados en el ejemplo anterior, la primera función a implementar es el model, es decir la función sigmoide, i.e., <span class="math inline">\(\textsf{sigmoid}(\mathbf x) = \frac{1}{1 + \exp(- (\mathbf w \cdot \mathbf x + w_0))}.\)</span></p>
-<div id="a7a31129" class="cell" data-execution_count="17">
+<p>Siguiendo los pasos utilizados en el ejemplo anterior, la primera función a implementar es el modelo, es decir la función sigmoide, i.e., <span class="math inline">\(\textsf{sigmoid}(\mathbf x) = \frac{1}{1 + \exp(- (\mathbf w \cdot \mathbf x + w_0))}.\)</span></p>
+<div id="a7390e9f" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> modelo(params, x):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> jnp.exp(<span class="op">-</span>(jnp.dot(x, params[:<span class="dv">2</span>]) <span class="op">+</span> params[<span class="op">-</span><span class="dv">1</span>]))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> _)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El siguiente paso es implementar la función de error que guía el proceso de optimización, en el caso de regresión logística de dos clases la función de error corresponde a la media de la Entropía Cruzada (<a href="07Lineal.html#eq-lineal-entropia-cruzada" class="quarto-xref">Ecuación&nbsp;<span>6.5</span></a>). Esta función se implementa en dos pasos, primero se calcula la entropía cruzada usando el siguiente procedimiento. Donde la primera línea verifica selecciona si se trata de la clase positiva (<span class="math inline">\(1\)</span>) o de la clase negativa <span class="math inline">\(0\)</span> y calcula el <span class="math inline">\(\log \hat y\)</span> o <span class="math inline">\(\log (1 - \hat y)\)</span> respectivamente.</p>
-<div id="530dc21a" class="cell" data-execution_count="18">
+<p>El siguiente paso es implementar la función de error que guía el proceso de optimización, en el caso de regresión logística de dos clases la función de error corresponde a la media de la Entropía Cruzada (<a href="07Lineal.html#eq-lineal-entropia-cruzada" class="quarto-xref">Ecuación&nbsp;<span>6.5</span></a>). Esta función se implementa en dos pasos, primero se calcula la entropía cruzada usando el siguiente procedimiento. Donde la primera línea verifica si se trata de la clase positiva (<span class="math inline">\(1\)</span>) o de la clase negativa <span class="math inline">\(0\)</span> y calcula el <span class="math inline">\(\log \hat y\)</span> o <span class="math inline">\(\log (1 - \hat y)\)</span> respectivamente.</p>
+<div id="caddb4be" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> entropia_cruzada(y, hy):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> lax.cond(y <span class="op">==</span> <span class="dv">1</span>, <span class="kw">lambda</span> w: jnp.log(w), <span class="kw">lambda</span> w: jnp.log(<span class="dv">1</span> <span class="op">-</span> w), hy)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> lax.cond(_ <span class="op">==</span> <span class="op">-</span>jnp.inf, <span class="kw">lambda</span> w: jnp.log(<span class="fl">1e-6</span>), <span class="kw">lambda</span> w: w, _)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El segundo paso es calcular la media de la entropía cruzada de cada elemento de <span class="math inline">\(\mathcal D,\)</span> esto se puede realizar con la siguiente función.</p>
-<div id="ee858640" class="cell" data-execution_count="19">
+<div id="97a9b3e8" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma_entropia_cruzada(params, x, y):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    hy <span class="op">=</span> modelo(params, x)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> lax.fori_loop(<span class="dv">0</span>, y.shape[<span class="dv">0</span>],</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                           <span class="kw">lambda</span> i, x: x <span class="op">+</span> entropia_cruzada(y[i], hy[i]),</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                           <span class="dv">1</span>) <span class="op">/</span> y.shape[<span class="dv">0</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>El paso final es actualizar los parámetros, en esta ocasión se utilizará la función <code>value_and_grad</code> que regresa la evaluación de la función así como la derivada, esto para poder desplegar como el error disminuye con el paso de las iteraciones. El código es similar al mostrado anteriormente. La diferencias son la forma en generar los parámetros iniciales, primeras tres líneas, el parámetro <span class="math inline">\(\eta\)</span>, que se itera por <span class="math inline">\(n=5000\)</span> iteraciones y la función <code>value_and_grad</code>.</p>
-<div id="7ecff29c" class="cell" data-execution_count="20">
+<p>El paso final es actualizar los parámetros, en esta ocasión se utilizará la función <code>value_and_grad</code> que regresa la evaluación de la función así como la derivada, esto para poder desplegar cómo el error disminuye con el paso de las iteraciones. El código es similar al mostrado anteriormente. Las diferencias son la forma en generar los parámetros iniciales, primeras tres líneas, el parámetro <span class="math inline">\(\eta\)</span>, que se itera por <span class="math inline">\(n=5000\)</span> iteraciones y la función <code>value_and_grad</code>.</p>
+<div id="7b1bf0eb" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> random.PRNGKey(<span class="dv">0</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>key, subkey <span class="op">=</span> random.split(key)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> random.normal(subkey, (<span class="dv">3</span>,)) <span class="op">*</span> jnp.sqrt(<span class="dv">2</span> <span class="op">/</span> <span class="dv">2</span>)</span>
@@ -569,7 +569,7 @@ Figura&nbsp;7.2: Árbol de expresión
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    error.append(_)</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    params <span class="op">-=</span> eta <span class="op">*</span> g</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>La <a href="#fig-optimizacion-descenso-ent-x" class="quarto-xref">Figura&nbsp;<span>7.3</span></a> muestra como se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drasticamente.</p>
+<p>La <a href="#fig-optimizacion-descenso-ent-x" class="quarto-xref">Figura&nbsp;<span>7.3</span></a> muestra cómo se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drásticamente.</p>
 <div id="cell-fig-optimizacion-descenso-ent-x" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Código</summary>
@@ -581,7 +581,7 @@ Figura&nbsp;7.2: Árbol de expresión
 <div id="fig-optimizacion-descenso-ent-x" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-descenso-ent-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="08Optimizacion_files/figure-html/fig-optimizacion-descenso-ent-x-output-1.png" width="472" height="471" class="figure-img">
+<img src="08Optimizacion_files/figure-html/fig-optimizacion-descenso-ent-x-output-1.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-descenso-ent-x-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;7.3: Descenso de Entropía Cruzada
@@ -591,30 +591,30 @@ Figura&nbsp;7.3: Descenso de Entropía Cruzada
 </div>
 </div>
 
-<p>Optimizando los parámetros de la regresión logística utilizando el procedimiento de diferenciación automática se obtiene [3.4374, 4.7095, -0.2468].</p>
+<p>Optimizando los parámetros de la regresión logística utilizando el procedimiento de diferenciación automática se obtiene [3.9707, 4.2746, -0.4100].</p>
 <p>En Discriminantes Lineales (<a href="07Lineal.html" class="quarto-xref"><span>Capítulo 6</span></a>) se presentó el procedimiento para entrenar un clasificador logístico usando la siguiente instrucción.</p>
-<div id="d214084d" class="cell" data-execution_count="23">
+<div id="cc795721" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> LogisticRegression().fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Los parámetros son [3.2401, 4.5135, -0.2704]. El error en el conjunto de entrenamiento se puede calcular utilizando el siguiente código.</p>
-<div id="23308210" class="cell" data-execution_count="25">
+<p>Los parámetros son [3.2327, 4.4274, -0.2519]. El error en el conjunto de entrenamiento se puede calcular utilizando el siguiente código.</p>
+<div id="486048ca" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> jnp.array([lr.coef_[<span class="dv">0</span>, <span class="dv">0</span>], lr.coef_[<span class="dv">0</span>, <span class="dv">1</span>], lr.intercept_[<span class="dv">0</span>]])</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>suma_entropia_cruzada(_, T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
-<pre><code>Array(0.00371268, dtype=float32)</code></pre>
+<pre><code>Array(0.00313429, dtype=float32)</code></pre>
 </div>
 </div>
-<p>En comparación el error obtenido por diferenciación automática es <span class="math inline">\(0.0030\)</span>, por supuesto este puede variar cambiando el número de iteraciones.</p>
+<p>En comparación el error obtenido por diferenciación automática es <span class="math inline">\(0.0025\)</span>, por supuesto este puede variar cambiando el número de iteraciones.</p>
 </section>
 <section id="sec-actualizacion-parametros" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="sec-actualizacion-parametros"><span class="header-section-number">7.6</span> Actualización de Parámetros</h2>
-<p>Por supuesto la regla <span class="math inline">\(\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E\)</span> para actualizar los parámetros <span class="math inline">\(\mathbf w\)</span> no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es una problema de optimización convexo, en este tipo de problemas un algoritmos para encontrar los parámetros es el <code>BFGS</code>. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística.</p>
-<div id="3d1d88f8" class="cell" data-execution_count="26">
+<p>Por supuesto la regla <span class="math inline">\(\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E\)</span> para actualizar los parámetros <span class="math inline">\(\mathbf w\)</span> no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es un problema de optimización convexo, en este tipo de problemas un algoritmo para encontrar los parámetros es el <code>BFGS</code>. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística.</p>
+<div id="0ec0f0c3" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> random.normal(subkey, (<span class="dv">3</span>,)) <span class="op">*</span> jnp.sqrt(<span class="dv">2</span> <span class="op">/</span> <span class="dv">2</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> minimize(suma_entropia_cruzada, p, args<span class="op">=</span>(T, y_t), method<span class="op">=</span><span class="st">'BFGS'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Se observa como se usa la misma función de error (<code>suma_entropia_cruzada</code>) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son [37.9981, 48.2315, -8.1590] y tiene un error <span class="math inline">\(-0.0004\)</span>.</p>
-<p>La <a href="#fig-optimizacion-comparacion" class="quarto-xref">Figura&nbsp;<span>7.4</span></a> muestra la función discriminantes obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librearía <code>sklearn</code> y el algoritmo <code>BFGS</code>. Se puede observar que el plano de <code>sklearn</code> y <code>BFGS</code> son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, <code>BFGS</code>. Por supuesto la implementaciones tiene algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros <span class="math inline">\(\mathbf w\)</span> para que tengan una longitud de <span class="math inline">\(1\)</span> se observaría que <code>sklearn</code> y <code>BFGS</code> se tocan.</p>
+<p>Se observa cómo se usa la misma función de error (<code>suma_entropia_cruzada</code>) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son [18.0230, 27.4437, 2.9525] y tiene un error <span class="math inline">\(-0.0005\)</span>.</p>
+<p>La <a href="#fig-optimizacion-comparacion" class="quarto-xref">Figura&nbsp;<span>7.4</span></a> muestra la función discriminante obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librería <code>sklearn</code> y el algoritmo <code>BFGS</code>. Se puede observar que el plano de <code>sklearn</code> y <code>BFGS</code> son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, <code>BFGS</code>. Por supuesto las implementaciones tienen algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros <span class="math inline">\(\mathbf w\)</span> para que tengan una longitud de <span class="math inline">\(1\)</span> se observaría que <code>sklearn</code> y <code>BFGS</code> se tocan.</p>
 <div id="cell-fig-optimizacion-comparacion" class="cell" data-execution_count="28">
 <details class="code-fold">
 <summary>Código</summary>
@@ -645,7 +645,7 @@ Figura&nbsp;7.3: Descenso de Entropía Cruzada
 <div id="fig-optimizacion-comparacion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optimizacion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="08Optimizacion_files/figure-html/fig-optimizacion-comparacion-output-1.png" width="585" height="430" class="figure-img">
+<img src="08Optimizacion_files/figure-html/fig-optimizacion-comparacion-output-1.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimizacion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;7.4: Comparación de modelos lineales con diferentes optimizadores
@@ -1143,7 +1143,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb24" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Optimización {#sec-optimizacion}</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar el método de **Descenso de Gradiente** y **Propagación hacia Atrás** par estimar los parámetros de modelos de clasificación y regresión.</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar el método de **Descenso de Gradiente** y **Propagación hacia Atrás** para estimar los parámetros de modelos de clasificación y regresión.</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados</span></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -1177,7 +1177,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>Existen diferentes modelos de clasificación y regresión donde no es posible encontrar una solución analítica para estimar los parámetros, por ejemplo en Regresión Logística (@sec-regresion-logistica). Es en este escenario donde se voltea a métodos de optimización iterativos para calcular los parámetros. </span>
 <span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>En esta unidad se describe posiblemente el método de optimización más conocido que es **Descenso de Gradiente**. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá como se puede calcular el gradiente utilizando un método gráfico y como este método naturalmente realiza **Propagación hacia Atrás**.</span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>En esta unidad se describe posiblemente el método de optimización más conocido que es **Descenso de Gradiente**. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá cómo se puede calcular el gradiente utilizando un método gráfico y cómo este método naturalmente realiza **Propagación hacia Atrás**.</span>
 <span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Descenso por Gradiente {#sec-descenso-gradiente}</span></span>
 <span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a></span>
@@ -1248,7 +1248,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-113"><a href="#cb24-113" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(a, b)]</span>
 <span id="cb24-114"><a href="#cb24-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
 <span id="cb24-115"><a href="#cb24-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-116"><a href="#cb24-116" aria-hidden="true" tabindex="-1"></a>El siguiente ciclo realiza la iteración del proceso de optimización y se detienen cuando los valores estimados varían poco entre dos iteraciones consecutivas, en particular cuando en promedio el cambio en las constantes sea menor a $0.0001$. </span>
+<span id="cb24-116"><a href="#cb24-116" aria-hidden="true" tabindex="-1"></a>El siguiente ciclo realiza la iteración del proceso de optimización y se detiene cuando los valores estimados varían poco entre dos iteraciones consecutivas, en particular cuando en promedio el cambio en las constantes sea menor a $0.0001$. </span>
 <span id="cb24-117"><a href="#cb24-117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-120"><a href="#cb24-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-121"><a href="#cb24-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1280,7 +1280,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-149"><a href="#cb24-149" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-150"><a href="#cb24-150" aria-hidden="true" tabindex="-1"></a><span class="fu">### Una Variable</span></span>
 <span id="cb24-151"><a href="#cb24-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-152"><a href="#cb24-152" aria-hidden="true" tabindex="-1"></a>Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea $f(x) = x^2,$ en este caso $f'(x) = 2x.$ Ahora considerando que se quiere evaluar $f'(2.5)$, se sabe que $f'(2.5)=5,$  pero también se puede generar un programa donde en la primera fase se calcule $f(2.5)=(2.5)^2$ y al momento de calcular $f$ se guarde en un espacio asociado a $f$ el valor de $f'(2.5).$ es decir $5$. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable. </span>
+<span id="cb24-152"><a href="#cb24-152" aria-hidden="true" tabindex="-1"></a>Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea $f(x) = x^2,$ en este caso $f'(x) = 2x.$ Ahora considerando que se quiere evaluar $f'(2.5)$, se sabe que $f'(2.5)=5,$  pero también se puede generar un programa donde en la primera fase se calcule $f(2.5)=(2.5)^2$ y al momento de calcular $f$ se guarde en un espacio asociado a $f$ el valor de $f'(2.5).$ Es decir $5$. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable. </span>
 <span id="cb24-153"><a href="#cb24-153" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-154"><a href="#cb24-154" aria-hidden="true" tabindex="-1"></a>La librería <span class="co">[</span><span class="ot">JAX</span><span class="co">](https://jax.readthedocs.io)</span> permite hacer diferenciación automática en Python. Siguiendo el ejemplo anterior, se genera la función $f(x) = x^2$ con el siguiente código</span>
 <span id="cb24-155"><a href="#cb24-155" aria-hidden="true" tabindex="-1"></a></span>
@@ -1344,7 +1344,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-225"><a href="#cb24-225" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-226"><a href="#cb24-226" aria-hidden="true" tabindex="-1"></a><span class="fu">### Regresión Lineal</span></span>
 <span id="cb24-227"><a href="#cb24-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a>En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (@sec-regresion-lineal-manual). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es $ax + b$ la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después viene los argumentos de la función que en este caso son los valores de $x.$</span>
+<span id="cb24-228"><a href="#cb24-228" aria-hidden="true" tabindex="-1"></a>En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (@sec-regresion-lineal-manual). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es $ax + b$ la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después vienen los argumentos de la función que en este caso son los valores de $x.$</span>
 <span id="cb24-229"><a href="#cb24-229" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-232"><a href="#cb24-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-233"><a href="#cb24-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1364,7 +1364,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-249"><a href="#cb24-249" aria-hidden="true" tabindex="-1"></a>                         <span class="dv">0</span>)</span>
 <span id="cb24-250"><a href="#cb24-250" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-251"><a href="#cb24-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-252"><a href="#cb24-252" aria-hidden="true" tabindex="-1"></a>Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente al mostrado anteriormente. La primera linea define el valor de $\eta,$ el valor de la variable <span class="in">`delta`</span> indica el término del ciclo, la tercera línea define los parámetros iniciales (<span class="in">`params`</span>), la siguiente guarda los todos los puntos visitados (cuarta línea) y la quinta línea deriva la función de <span class="in">`error`</span> para calcular el gradiente. La primera instrucción dentro del ciclo actualiza los parámetros.  </span>
+<span id="cb24-252"><a href="#cb24-252" aria-hidden="true" tabindex="-1"></a>Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente al mostrado anteriormente. La primera línea define el valor de $\eta,$ el valor de la variable <span class="in">`delta`</span> indica el término del ciclo, la tercera línea define los parámetros iniciales (<span class="in">`params`</span>), la siguiente guarda todos los puntos visitados (cuarta línea) y la quinta línea deriva la función de <span class="in">`error`</span> para calcular el gradiente. La primera instrucción dentro del ciclo actualiza los parámetros.  </span>
 <span id="cb24-253"><a href="#cb24-253" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-256"><a href="#cb24-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-257"><a href="#cb24-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1399,7 +1399,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-288"><a href="#cb24-288" aria-hidden="true" tabindex="-1"></a>y_t <span class="op">=</span> jnp.array([<span class="dv">1</span>] <span class="op">*</span> X_1.shape[<span class="dv">0</span>] <span class="op">+</span> [<span class="dv">0</span>] <span class="op">*</span> X_2.shape[<span class="dv">0</span>])</span>
 <span id="cb24-289"><a href="#cb24-289" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-290"><a href="#cb24-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-291"><a href="#cb24-291" aria-hidden="true" tabindex="-1"></a>Siguiendo los pasos utilizados en el ejemplo anterior, la primera función a implementar es el model, es decir la función sigmoide, i.e., $\textsf{sigmoid}(\mathbf x) = \frac{1}{1 + \exp(- (\mathbf w \cdot \mathbf x + w_0))}.$</span>
+<span id="cb24-291"><a href="#cb24-291" aria-hidden="true" tabindex="-1"></a>Siguiendo los pasos utilizados en el ejemplo anterior, la primera función a implementar es el modelo, es decir la función sigmoide, i.e., $\textsf{sigmoid}(\mathbf x) = \frac{1}{1 + \exp(- (\mathbf w \cdot \mathbf x + w_0))}.$</span>
 <span id="cb24-292"><a href="#cb24-292" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-295"><a href="#cb24-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-296"><a href="#cb24-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1408,7 +1408,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-299"><a href="#cb24-299" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> _)</span>
 <span id="cb24-300"><a href="#cb24-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-301"><a href="#cb24-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-302"><a href="#cb24-302" aria-hidden="true" tabindex="-1"></a>El siguiente paso es implementar la función de error que guía el proceso de optimización, en el caso de regresión logística de dos clases la función de error corresponde a la media de la Entropía Cruzada (@eq-lineal-entropia-cruzada). Esta función se implementa en dos pasos, primero se calcula la entropía cruzada usando el siguiente procedimiento. Donde la primera línea verifica selecciona si se trata de la clase positiva ($1$) o de la clase negativa $0$ y calcula el $\log \hat y$ o $\log (1 - \hat y)$ respectivamente.</span>
+<span id="cb24-302"><a href="#cb24-302" aria-hidden="true" tabindex="-1"></a>El siguiente paso es implementar la función de error que guía el proceso de optimización, en el caso de regresión logística de dos clases la función de error corresponde a la media de la Entropía Cruzada (@eq-lineal-entropia-cruzada). Esta función se implementa en dos pasos, primero se calcula la entropía cruzada usando el siguiente procedimiento. Donde la primera línea verifica si se trata de la clase positiva ($1$) o de la clase negativa $0$ y calcula el $\log \hat y$ o $\log (1 - \hat y)$ respectivamente.</span>
 <span id="cb24-303"><a href="#cb24-303" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-306"><a href="#cb24-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-307"><a href="#cb24-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1428,7 +1428,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-323"><a href="#cb24-323" aria-hidden="true" tabindex="-1"></a>                           <span class="dv">1</span>) <span class="op">/</span> y.shape[<span class="dv">0</span>]</span>
 <span id="cb24-324"><a href="#cb24-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-325"><a href="#cb24-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a>El paso final es actualizar los parámetros, en esta ocasión se utilizará la función <span class="in">`value_and_grad`</span> que regresa la evaluación de la función así como la derivada, esto para poder desplegar como el error disminuye con el paso de las iteraciones. El código es similar al mostrado anteriormente. La diferencias son la forma en generar los parámetros iniciales, primeras tres líneas, el parámetro $\eta$, que se itera por $n=5000$ iteraciones y la función <span class="in">`value_and_grad`</span>.</span>
+<span id="cb24-326"><a href="#cb24-326" aria-hidden="true" tabindex="-1"></a>El paso final es actualizar los parámetros, en esta ocasión se utilizará la función <span class="in">`value_and_grad`</span> que regresa la evaluación de la función así como la derivada, esto para poder desplegar cómo el error disminuye con el paso de las iteraciones. El código es similar al mostrado anteriormente. Las diferencias son la forma en generar los parámetros iniciales, primeras tres líneas, el parámetro $\eta$, que se itera por $n=5000$ iteraciones y la función <span class="in">`value_and_grad`</span>.</span>
 <span id="cb24-327"><a href="#cb24-327" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-330"><a href="#cb24-330" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-331"><a href="#cb24-331" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1444,7 +1444,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-341"><a href="#cb24-341" aria-hidden="true" tabindex="-1"></a>    params <span class="op">-=</span> eta <span class="op">*</span> g</span>
 <span id="cb24-342"><a href="#cb24-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-343"><a href="#cb24-343" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a>La @fig-optimizacion-descenso-ent-x muestra como se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drasticamente. </span>
+<span id="cb24-344"><a href="#cb24-344" aria-hidden="true" tabindex="-1"></a>La @fig-optimizacion-descenso-ent-x muestra cómo se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drásticamente. </span>
 <span id="cb24-345"><a href="#cb24-345" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-348"><a href="#cb24-348" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-349"><a href="#cb24-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
@@ -1490,7 +1490,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-397"><a href="#cb24-397" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-398"><a href="#cb24-398" aria-hidden="true" tabindex="-1"></a><span class="fu">## Actualización de Parámetros {#sec-actualizacion-parametros}</span></span>
 <span id="cb24-399"><a href="#cb24-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-400"><a href="#cb24-400" aria-hidden="true" tabindex="-1"></a>Por supuesto la regla $\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E$ para actualizar los parámetros $\mathbf w$ no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es una problema de optimización convexo, en este tipo de problemas un algoritmos para encontrar los parámetros es el <span class="in">`BFGS`</span>. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística. </span>
+<span id="cb24-400"><a href="#cb24-400" aria-hidden="true" tabindex="-1"></a>Por supuesto la regla $\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E$ para actualizar los parámetros $\mathbf w$ no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es un problema de optimización convexo, en este tipo de problemas un algoritmo para encontrar los parámetros es el <span class="in">`BFGS`</span>. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística. </span>
 <span id="cb24-401"><a href="#cb24-401" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-404"><a href="#cb24-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-405"><a href="#cb24-405" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1507,9 +1507,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb24-418"><a href="#cb24-418" aria-hidden="true" tabindex="-1"></a>error_bfgs <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">float</span>(error_bfgs)<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
 <span id="cb24-419"><a href="#cb24-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb24-420"><a href="#cb24-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-421"><a href="#cb24-421" aria-hidden="true" tabindex="-1"></a>Se observa como se usa la misma función de error (<span class="in">`suma_entropia_cruzada`</span>) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son <span class="in">`{python} params_bfgs_f`</span> y tiene un error <span class="in">`{python} error_bfgs`</span>.</span>
+<span id="cb24-421"><a href="#cb24-421" aria-hidden="true" tabindex="-1"></a>Se observa cómo se usa la misma función de error (<span class="in">`suma_entropia_cruzada`</span>) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son <span class="in">`{python} params_bfgs_f`</span> y tiene un error <span class="in">`{python} error_bfgs`</span>.</span>
 <span id="cb24-422"><a href="#cb24-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-423"><a href="#cb24-423" aria-hidden="true" tabindex="-1"></a>La @fig-optimizacion-comparacion muestra la función discriminantes obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librearía <span class="in">`sklearn`</span> y el algoritmo <span class="in">`BFGS`</span>. Se puede observar que el plano de <span class="in">`sklearn`</span> y <span class="in">`BFGS`</span> son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, <span class="in">`BFGS`</span>. Por supuesto la implementaciones tiene algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros $\mathbf w$ para que tengan una longitud de $1$ se observaría que <span class="in">`sklearn`</span> y <span class="in">`BFGS`</span> se tocan.</span>
+<span id="cb24-423"><a href="#cb24-423" aria-hidden="true" tabindex="-1"></a>La @fig-optimizacion-comparacion muestra la función discriminante obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librería <span class="in">`sklearn`</span> y el algoritmo <span class="in">`BFGS`</span>. Se puede observar que el plano de <span class="in">`sklearn`</span> y <span class="in">`BFGS`</span> son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, <span class="in">`BFGS`</span>. Por supuesto las implementaciones tienen algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros $\mathbf w$ para que tengan una longitud de $1$ se observaría que <span class="in">`sklearn`</span> y <span class="in">`BFGS`</span> se tocan.</span>
 <span id="cb24-424"><a href="#cb24-424" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-427"><a href="#cb24-427" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb24-428"><a href="#cb24-428" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>

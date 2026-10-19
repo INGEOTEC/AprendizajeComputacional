@@ -44,7 +44,7 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-05}
 
-Habiendo descrito problemas de clasificación y regresión, podemos imaginar que existen ocasiones donde las variables que describen al problema no contribuyen dentro de la solución, o que su aporte está dado por otras componentes dentro de la descripción. Esto trae como consecuencia, en el mejor de los caso, que el algoritmo tenga un mayor costo computacional o en un caso menos afortunado que el algoritmo tenga un rendimiento menor al que se hubiera obtenido seleccionado las variables. Es pertinente mencionar que el caso contrario correspondiente al incremento del número de variables es también un escenario factible y se abordará en otra ocasión.
+Habiendo descrito problemas de clasificación y regresión, podemos imaginar que existen ocasiones donde las variables que describen al problema no contribuyen dentro de la solución, o que su aporte está dado por otras componentes dentro de la descripción. Esto trae como consecuencia, en el mejor de los casos, que el algoritmo tenga un mayor costo computacional o en un caso menos afortunado que el algoritmo tenga un rendimiento menor al que se hubiera obtenido seleccionando las variables. Es pertinente mencionar que el caso contrario correspondiente al incremento del número de variables es también un escenario factible y se abordará en otra ocasión.
 
 Existen diferentes maneras para reducir la dimensión de un problema, es decir, transformar la representación original $x \in \mathbb R^d$ a una representación $\hat x \in \mathbb R^m$ donde $m < d$. El objetivo es que la nueva representación $\hat x$ contenga la información necesaria para realizar la tarea de clasificación o regresión. También otro objetivo sería reducir a $\mathbb R^2$ o $\mathbb R^3$ de tal manera que se pueda visualizar el problema. En este último caso el objetivo es que se mantengan las características de los datos en $\mathbb R^d$ en la reducción.  
 
@@ -52,7 +52,7 @@ Esta descripción inicia con una metodología de selección basada en calcular e
 
 ## Selección de Variables basadas en Estadísticas {#sec-seleccion-var-estadistica}
 
-Se utilizará el problema sintético (@sec-tres-normales) de tres clases para describir el algoritmo de selección. Este problema está definido por tres Distribuciones Gausianas donde se generan tres muestras de 1000 elementos cada una utilizando el siguiente código. 
+Se utilizará el problema sintético (@sec-tres-normales) de tres clases para describir el algoritmo de selección. Este problema está definido por tres Distribuciones Gaussianas donde se generan tres muestras de 1000 elementos cada una utilizando el siguiente código. 
 
 ```{python}
 #| echo: true
@@ -80,7 +80,7 @@ y = np.array(['a'] * X_1.shape[0] +
 
 Por construcción el problema está en $\mathbb R^2$ y se sabe que las dos componentes contribuyen a la solución del mismo, es decir, imagine que una de las variables se pierde, con la información restante se desarrollaría un algoritmo de clasificación con un rendimiento mucho menor a aquel que tenga toda la información. 
 
-Continuando con el problema sintético, en está ocasión lo que se realiza es incluir en el problema una variable que no tiene relación con la clase, para esto se añade una variable aleatoria con una distribución Gausiana con $\mu=2$ y $\sigma=3$ tal como se muestra en el siguiente código.
+Continuando con el problema sintético, en esta ocasión lo que se realiza es incluir en el problema una variable que no tiene relación con la clase, para esto se añade una variable aleatoria con una distribución Gaussiana con $\mu=2$ y $\sigma=3$ tal como se muestra en el siguiente código.
 
 ```{python}
 #| echo: true
@@ -96,7 +96,7 @@ _ = [', '.join(i) for i in _]
 mus = [Markdown(f'$\\mu_{k+1}=[{i}]^\\intercal$') for k, i in enumerate(_)]
 ```
 
-El objetivo es encontrar la variable que no está relacionada con la salida. Una manera de realizar esto es imaginar que si la media en las diferentes variables es la misma en todas las clases entonces esa variable no contribuye a discriminar la clase. En @sec-estimacion-parametros se presentó el procedimiento para obtener las medias que definen $\mathbb P(\mathcal X \mid \mathcal Y)$ para cada clase. El siguiente código muestra el procedimiento para calcular las medías que son `{python} mus[0]`, `{python} mus[1]` y `{python} mus[2]`.
+El objetivo es encontrar la variable que no está relacionada con la salida. Una manera de realizar esto es imaginar que si la media en las diferentes variables es la misma en todas las clases entonces esa variable no contribuye a discriminar la clase. En @sec-estimacion-parametros se presentó el procedimiento para obtener las medias que definen $\mathbb P(\mathcal X \mid \mathcal Y)$ para cada clase. El siguiente código muestra el procedimiento para calcular las medias que son `{python} mus[0]`, `{python} mus[1]` y `{python} mus[2]`.
 
 ```{python}
 #| echo: true
@@ -104,9 +104,9 @@ labels = np.unique(y)
 mus = [np.mean(D[y==i], axis=0) for i in labels]
 ```
 
-Se observa que la media de la tercera variable es aproximadamente igual para las tres clases, teniendo un valor cercano a $2$ tal y como fue generada. Entonces lo que se busca es un procedimiento que permita identificar que las muestras en cada grupo (clase) hayan sido originadas por la misma distribución. Es decir se busca una prueba que indique que las primeras dos variables provienen de diferentes distribuciones y que la tercera provienen de la misma distribución. Es pertinente comentar que este procedimiento no es aplicable para problemas de regresión. 
+Se observa que la media de la tercera variable es aproximadamente igual para las tres clases, teniendo un valor cercano a $2$ tal y como fue generada. Entonces lo que se busca es un procedimiento que permita identificar que las muestras en cada grupo (clase) hayan sido originadas por la misma distribución. Es decir se busca una prueba que indique que las primeras dos variables provienen de diferentes distribuciones y que la tercera proviene de la misma distribución. Es pertinente comentar que este procedimiento no es aplicable para problemas de regresión. 
 
-Si se puede suponer que los datos provienen de una Distribución Gausiana entonces la prueba a realizar es ANOVA, en caso contrario se puede utilizar su equivalente método no paramétrico como es la prueba Kruskal-Wallis. Considerando que de manera general se desconoce la distribución que genera los datos, entonces se presenta el uso de la segunda prueba.
+Si se puede suponer que los datos provienen de una Distribución Gaussiana entonces la prueba a realizar es ANOVA, en caso contrario se puede utilizar su equivalente método no paramétrico como es la prueba Kruskal-Wallis. Considerando que de manera general se desconoce la distribución que genera los datos, entonces se presenta el uso de la segunda prueba.
 
 ```{python}
 #| echo: false
@@ -118,7 +118,7 @@ _ = ', '.join(_)
 p_f = Markdown(f'$[{_}]$')
 ```
 
-La prueba Kruskal-Wallis identifica si existen diferencias entre las medias de un conjunto de muestras independientes. La hipótesis nula es que las muestras tienen la misma media. La función `kruskal` implementa esta prueba y recibe tantas muestras como argumentos. En el siguiente código ilustra su uso, se observa que se llama a la función `kruskal` para cada columna en `D` y se calcula su valor $p$. Los valores $p$ obtenidos son: `{python} p_f` lo cual indica que para las primeras dos variables la hipótesis nula se puede rechazar y por el otro lado la hipótesis nula es factible para la tercera variable con un valor `{python} ultimo`.
+La prueba Kruskal-Wallis identifica si existen diferencias entre las medias de un conjunto de muestras independientes. La hipótesis nula es que las muestras tienen la misma media. La función `kruskal` implementa esta prueba y recibe tantas muestras como argumentos. El siguiente código ilustra su uso, se observa que se llama a la función `kruskal` para cada columna en `D` y se calcula su valor $p$. Los valores $p$ obtenidos son: `{python} p_f` lo cual indica que para las primeras dos variables la hipótesis nula se puede rechazar y por el otro lado la hipótesis nula es factible para la tercera variable con un valor `{python} ultimo`.
 
 ```{python}
 #| echo: true
@@ -135,7 +135,7 @@ f_statistics, p_values = f_regression(X, y)
 p2_f = Markdown(f'${p_values[1]:0.4f}$')
 ```
 
-El procedimiento equivalente a la estadística de Kruskal-Wallis en regresión es calcular la estadística F cuya hipótesis nula es asumir que el coeficiente obtenido en una regresión lineal entre las variables independientes y la dependiente es zero. Esta estadística se encuentra implementada en la función `f_regression`. El siguiente código muestra su uso en el conjunto de datos de diabetes; el cual tiene $10$ variables independientes. En la variable `p_values` se tienen los valores $p$ se puede observar que el valor $p$ correspondiente a la segunda variable tiene un valor de `{python} p2_f`, lo cual hace que esa variable no sea representativa para el problema que se está resolviendo. 
+El procedimiento equivalente a la estadística de Kruskal-Wallis en regresión es calcular la estadística F cuya hipótesis nula es asumir que el coeficiente obtenido en una regresión lineal entre las variables independientes y la dependiente es cero. Esta estadística se encuentra implementada en la función `f_regression`. El siguiente código muestra su uso en el conjunto de datos de diabetes; el cual tiene $10$ variables independientes. En la variable `p_values` se tienen los valores $p$ se puede observar que el valor $p$ correspondiente a la segunda variable tiene un valor de `{python} p2_f`, lo cual hace que esa variable no sea representativa para el problema que se está resolviendo. 
 
 
 ```{python}
@@ -151,7 +151,7 @@ vars_f = [str(i) for i in sel.get_support(indices=True)]
 vars_f = Markdown(f'[{", ".join(vars_f)}]')
 ```
 
-Un ejemplo que involucra la selección de las variables más representativas mediante una calificación que ordenan la importancia de las mismas se muestra en el siguiente código. Se puede observar que las nueve variables seleccionadas son: `{python} vars_f` descartando la segunda variable que tiene el máximo valor $p.$ 
+Un ejemplo que involucra la selección de las variables más representativas mediante una calificación que ordena la importancia de las mismas se muestra en el siguiente código. Se puede observar que las nueve variables seleccionadas son: `{python} vars_f` descartando la segunda variable que tiene el máximo valor $p.$ 
 
 
 ```{python}
@@ -162,7 +162,7 @@ vars = sel.get_support(indices=True)
 
 ### Ventajas y Limitaciones
 
-Las técnicas vistas hasta este momento requieren de pocos recursos computacionales para su cálculo. Además están basadas en estadísticas que permite saber cuales son las razones de funcionamiento. Estas fortalezas también son origen a sus debilidades, estas técnicas observan en cada paso las variables independientes de manera aislada y no consideran que estas variables pueden interactuar. Por otro lado, la selección es agnóstica del algoritmo de aprendizaje utilizado.
+Las técnicas vistas hasta este momento requieren de pocos recursos computacionales para su cálculo. Además están basadas en estadísticas que permiten saber cuáles son las razones de funcionamiento. Estas fortalezas también son origen a sus debilidades, estas técnicas observan en cada paso las variables independientes de manera aislada y no consideran que estas variables pueden interactuar. Por otro lado, la selección es agnóstica del algoritmo de aprendizaje utilizado.
 
 ## Selección hacia Adelante
 
@@ -170,7 +170,7 @@ Un procedimiento que pone en el centro del proceso de selección al algoritmo de
 
 En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = \{(x_i, y_i)\},$ con una función $L$ que mide el rendimiento del algoritmo de aprendizaje $\mathcal H.$ La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización del algoritmo se pueden realizar de diferentes maneras, una es mediante la división de $\mathcal X$ en dos conjuntos: entrenamiento y validación; y la segunda manera corresponde a utilizar $k$-iteraciones de validación cruzada.  
 
-Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando está notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset$, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continua si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
+Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando esta notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset$, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continúa si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
 
 Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.
 
@@ -182,7 +182,7 @@ D, y = load_breast_cancer(return_X_y=True)
 T, G, y_t, y_g = train_test_split(D, y, test_size=0.2)
 ```
 
-El primer paso es medir el rendimiento cuando solamente una variable interviene en el proceso. Como inicialmente $\pi^0 = \emptyset$ entonces solo es necesario generar un clasificador cuando sola una variable está involucrada. El rendimiento de cada variable se guarda en la variable `perf`, se puede observar que el primer ciclo (línea 3) itera por todas las variables en la representación, para cada una se seleccionan los datos solo con esa variable `T1 = T[:, np.array([var])]` después se hacen $k$-iteraciones de validación cruzada y finalmente se guarda el rendimiento. El rendimiento que se está calculando es macro-recall. 
+El primer paso es medir el rendimiento cuando solamente una variable interviene en el proceso. Como inicialmente $\pi^0 = \emptyset$ entonces solo es necesario generar un clasificador cuando solo una variable está involucrada. El rendimiento de cada variable se guarda en la variable `perf`, se puede observar que el primer ciclo (línea 3) itera por todas las variables en la representación, para cada una se seleccionan los datos solo con esa variable `T1 = T[:, np.array([var])]` después se hacen $k$-iteraciones de validación cruzada y finalmente se guarda el rendimiento. El rendimiento que se está calculando es macro-recall. 
 
 ```{python}
 #| echo: true
@@ -207,7 +207,7 @@ perf_f = Markdown(f'${perf[index]:0.4f}$')
 index_f = Markdown(f'${index}$')
 ```
 
-La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa como una gran parte de las variables proporcionan un rendimiento superior al $0.8$ y la variable que tiene el mejor rendimiento es la que corresponde al índice `{python} index_f` y valor `{python} perf_f`.
+La @fig-rendimiento-sel muestra el rendimiento de las 30 variables, se observa cómo una gran parte de las variables proporcionan un rendimiento superior al $0.8$ y la variable que tiene el mejor rendimiento es la que corresponde al índice `{python} index_f` y valor `{python} perf_f`.
 
 ```{python}
 #| fig-cap: Rendimiento de las variables en la primera iteración del selección hacia adelante
@@ -257,7 +257,7 @@ Utilizando el parámetro `direction='backward'` para utilizar selección hacia a
 
 ### Ventajas y Limitaciones
 
-Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto eso para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que sean capaces de garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Con el fin de complementar esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$, es decir, se tiene esa cantidad de diferentes configuraciones que se pueden explorar. En los algoritmos de vistos se observa un máximo de $d$ elementos de ese total.
+Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto es para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que sean capaces de garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Con el fin de complementar esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$, es decir, se tiene esa cantidad de diferentes configuraciones que se pueden explorar. En los algoritmos vistos se observa un máximo de $d$ elementos de ese total.
 
 
 ## Selección mediante Modelo {#sec-seleccion-por-modelo}
@@ -270,7 +270,7 @@ D, y = load_diabetes(return_X_y=True)
 D = StandardScaler().fit_transform(D)
 ```
 
-El siguiente paso se estiman los parámetros de una regresión lineal (@sec-regresion-ols), también se muestran los valores de los primeros tres coeficientes de la regresión. Se puede observar que el valor absoluto de estos coeficientes está en diferentes rangos, el primer coeficiente es cercano a cero, el segundo está alrededor de 10 y el tercero es superior a 20. Considerando que los datos están normalizados, entonces el valor absoluto indica el efecto que tiene esa variable en el resultado final, en estos tres datos es puede concluir que el tercer coeficiente tiene una mayor contribución que los otros dos coeficientes. 
+El siguiente paso se estiman los parámetros de una regresión lineal (@sec-regresion-ols), también se muestran los valores de los primeros tres coeficientes de la regresión. Se puede observar que el valor absoluto de estos coeficientes está en diferentes rangos, el primer coeficiente es cercano a cero, el segundo está alrededor de 10 y el tercero es superior a 20. Considerando que los datos están normalizados, entonces el valor absoluto indica el efecto que tiene esa variable en el resultado final, en estos tres datos se puede concluir que el tercer coeficiente tiene una mayor contribución que los otros dos coeficientes. 
 
 ```{python}
 #| echo: true
@@ -278,7 +278,7 @@ reg = LinearRegression().fit(D, y)
 reg.coef_[:3]
 ```
 
-La clase `SelectFromModel` permite seleccionar las $d$ características que el modelo considera más importante. En el siguiente ejemplo se selecciona las $d=4$ características más importantes; dentro de estas características se encuentra la tercera (i.e., índice 2) cuyo coeficiente se había presentado previamente. 
+La clase `SelectFromModel` permite seleccionar las $d$ características que el modelo considera más importantes. En el siguiente ejemplo se selecciona las $d=4$ características más importantes; dentro de estas características se encuentra la tercera (i.e., índice 2) cuyo coeficiente se había presentado previamente. 
 
 ```{python}
 #| echo: true
@@ -316,19 +316,19 @@ ax = sns.relplot(df, x='numero', y='r2', kind='line')
 
 ## Análisis de Componentes Principales {#sec-pca}
 
-Los algoritmos de selección hacia atrás y adelante tiene la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m < d$
+Los algoritmos de selección hacia atrás y adelante tienen la característica de requerir un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m < d$
 
-La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = \{x_i\}$ sea transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
+La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = \{x_i\}$ sean transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
 
 Si suponemos que $\mathbf x \sim \mathcal N_d(\mu, \Sigma)$ y $\mathbf w \in \mathbb R^d$ entonces $\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)$ y por lo tanto $\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.$
 
-Utilizando esta información se puede describir el problema como encontrar $\mathbf w_1$ tal que $\textsf{Var}(\mathbf z_1)$ sea máxima, donde $\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$ Dado que en este problema de optimización tiene multiples soluciones, se busca además maximizar bajo la restricción de $\mid\mid \mathbf w_1 \mid\mid = 1.$ Escribiéndolo como un problema de Lagrange quedaría como: $\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$ Derivando con respecto a $\mathbf w_1$ se tiene que la solución es: $\Sigma \mathbf w_i = \alpha \mathbf w_i$ donde esto se cumple solo si $\mathbf w_1$ es un eigenvector de $\Sigma$ y $\alpha$ es el eigenvalor correspondiente. Para encontrar $\mathbf w_2$ se requiere $\mid\mid \mathbf w_2 \mid\mid = 1$ y que los vectores sean ortogonales, es decir, $\mathbf w_2 \cdot \mathbf w_1 = 0.$ Realizando las operaciones necesarias se encuentra que $\mathbf w_2$ corresponde al segundo eigenvector y así sucesivamente.
+Utilizando esta información se puede describir el problema como encontrar $\mathbf w_1$ tal que $\textsf{Var}(\mathbf z_1)$ sea máxima, donde $\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$ Dado que en este problema de optimización tiene múltiples soluciones, se busca además maximizar bajo la restricción de $\mid\mid \mathbf w_1 \mid\mid = 1.$ Escribiéndolo como un problema de Lagrange quedaría como: $\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$ Derivando con respecto a $\mathbf w_1$ se tiene que la solución es: $\Sigma \mathbf w_i = \alpha \mathbf w_i$ donde esto se cumple solo si $\mathbf w_1$ es un vector propio de $\Sigma$ y $\alpha$ es el valor propio correspondiente. Para encontrar $\mathbf w_2$ se requiere $\mid\mid \mathbf w_2 \mid\mid = 1$ y que los vectores sean ortogonales, es decir, $\mathbf w_2 \cdot \mathbf w_1 = 0.$ Realizando las operaciones necesarias se encuentra que $\mathbf w_2$ corresponde al segundo vector propio y así sucesivamente.
 
 ### Ejemplo - Visualización {#sec-visualizacion-iris}
 
-Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemplos se encuetran en $\mathbb R^4$ entonces para poderlos graficar en $\mathbb R^2$ se requiere realizar una transformación como podría ser Análisis de Componentes Principales.
+Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemplos se encuentran en $\mathbb R^4$ entonces para poderlos graficar en $\mathbb R^2$ se requiere realizar una transformación como podría ser Análisis de Componentes Principales.
 
-Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción, en la segunda linea se normalizan los datos para tener una media $0$ y desviación estándar $1$, este procedimiento es necesario cuando los valores de las características se encuentran en diferentes escalas. 
+Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción, en la segunda línea se normalizan los datos para tener una media $0$ y desviación estándar $1$, este procedimiento es necesario cuando los valores de las características se encuentran en diferentes escalas. 
 
 ```{python}
 #| echo: true
@@ -336,7 +336,7 @@ D, y = load_iris(return_X_y=True)
 D = StandardScaler().fit_transform(D)
 ```
 
-Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $\mathbb R^2$ los datos, entonces el ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
+Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $\mathbb R^2$ los datos, entonces ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. 
 
 ```{python}
 #| echo: true
@@ -370,7 +370,7 @@ D, y = load_digits(return_X_y=True)
 D = StandardScaler().fit_transform(D)
 ```
 
-Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la @fig-pca-digits presenta la proyección del conjunto de Dígitos utilizando PCA. Como se puede observar en la figura, esta proyección no da una separación clara entre grupos, aunque si se puede identificar una estructura, donde algunos números se encuentran en la perifería de la figura. 
+Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la @fig-pca-digits presenta la proyección del conjunto de Dígitos utilizando PCA. Como se puede observar en la figura, esta proyección no da una separación clara entre grupos, aunque sí se puede identificar una estructura, donde algunos números se encuentran en la periferia de la figura. 
 
 ```{python}
 #| fig-cap: Proyección mediante PCA del problema de Dígitos
@@ -390,7 +390,7 @@ fig.tick_params(bottom=False, top=False,
 fig.set(xlabel=None, ylabel=None)
 ```
 
-UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los $K$ vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que se tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para $K=[2, 4, 8, 16].$ El código que realiza está exploración se muestra en las siguientes instrucciones. 
+UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los $K$ vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para $K=[2, 4, 8, 16].$ El código que realiza esta exploración se muestra en las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
@@ -404,7 +404,7 @@ for K in [2, 4, 8, 16]:
     df = pd.concat((df, _))
 ```
 
-La @fig-umap-digits-k muestra las diferentes visualizaciones cuando el número de vecinos de cambia en UMAP, se puede observar como para $K=2$ la visualización no muestra ninguna estructura, pero partiendo de $K=4$ se puede visualizar grupos que corresponden a los diferentes dígitos. 
+La @fig-umap-digits-k muestra las diferentes visualizaciones cuando el número de vecinos cambia en UMAP, se puede observar cómo para $K=2$ la visualización no muestra ninguna estructura, pero partiendo de $K=4$ se puede visualizar grupos que corresponden a los diferentes dígitos. 
 
 ```{python}
 #| fig-cap: Proyección mediante UMAP del problema de Dígitos variando el número de vecinos
@@ -419,7 +419,7 @@ fig.tick_params(bottom=False, top=False,
 fig.set(xlabel=None, ylabel=None)            
 ```
 
-Con el objetivo de mostrar con mayor detalle los grupos encontrados, la @fig-umap-digits-k8 muestra la visualización de $K=8$ en ella se puede observar como los ejemplos se agrupan de acuerdo al dígito que representan, también se puede ver la similitud entre los diferentes dígitos y como algunos ejemplos están muy cerca a un grupo al cual no pertenecen. 
+Con el objetivo de mostrar con mayor detalle los grupos encontrados, la @fig-umap-digits-k8 muestra la visualización de $K=8$ en ella se puede observar cómo los ejemplos se agrupan de acuerdo al dígito que representan, también se puede ver la similitud entre los diferentes dígitos y cómo algunos ejemplos están muy cerca a un grupo al cual no pertenecen. 
 
 ```{python}
 #| fig-cap: Proyección mediante UMAP del problema de dígitos con ocho vecinos

@@ -1,6 +1,6 @@
 # Optimización {#sec-optimizacion}
 
-El **objetivo** de la unidad es conocer y aplicar el método de **Descenso de Gradiente** y **Propagación hacia Atrás** par estimar los parámetros de modelos de clasificación y regresión.
+El **objetivo** de la unidad es conocer y aplicar el método de **Descenso de Gradiente** y **Propagación hacia Atrás** para estimar los parámetros de modelos de clasificación y regresión.
 
 ## Paquetes usados
 
@@ -34,7 +34,7 @@ sns.set_style('whitegrid')
 
 Existen diferentes modelos de clasificación y regresión donde no es posible encontrar una solución analítica para estimar los parámetros, por ejemplo en Regresión Logística (@sec-regresion-logistica). Es en este escenario donde se voltea a métodos de optimización iterativos para calcular los parámetros. 
 
-En esta unidad se describe posiblemente el método de optimización más conocido que es **Descenso de Gradiente**. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá como se puede calcular el gradiente utilizando un método gráfico y como este método naturalmente realiza **Propagación hacia Atrás**.
+En esta unidad se describe posiblemente el método de optimización más conocido que es **Descenso de Gradiente**. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá cómo se puede calcular el gradiente utilizando un método gráfico y cómo este método naturalmente realiza **Propagación hacia Atrás**.
 
 ## Descenso por Gradiente {#sec-descenso-gradiente}
 
@@ -105,7 +105,7 @@ eta = 0.0001
 D = [(a, b)]
 ``` 
 
-El siguiente ciclo realiza la iteración del proceso de optimización y se detienen cuando los valores estimados varían poco entre dos iteraciones consecutivas, en particular cuando en promedio el cambio en las constantes sea menor a $0.0001$. 
+El siguiente ciclo realiza la iteración del proceso de optimización y se detiene cuando los valores estimados varían poco entre dos iteraciones consecutivas, en particular cuando en promedio el cambio en las constantes sea menor a $0.0001$. 
 
 ```{python}
 #| echo: true
@@ -137,7 +137,7 @@ No en todos los casos es posible encontrar una ecuación cerrada para actualizar
 
 ### Una Variable
 
-Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea $f(x) = x^2,$ en este caso $f'(x) = 2x.$ Ahora considerando que se quiere evaluar $f'(2.5)$, se sabe que $f'(2.5)=5,$  pero también se puede generar un programa donde en la primera fase se calcule $f(2.5)=(2.5)^2$ y al momento de calcular $f$ se guarde en un espacio asociado a $f$ el valor de $f'(2.5).$ es decir $5$. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable. 
+Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea $f(x) = x^2,$ en este caso $f'(x) = 2x.$ Ahora considerando que se quiere evaluar $f'(2.5)$, se sabe que $f'(2.5)=5,$  pero también se puede generar un programa donde en la primera fase se calcule $f(2.5)=(2.5)^2$ y al momento de calcular $f$ se guarde en un espacio asociado a $f$ el valor de $f'(2.5).$ Es decir $5$. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable. 
 
 La librería [JAX](https://jax.readthedocs.io) permite hacer diferenciación automática en Python. Siguiendo el ejemplo anterior, se genera la función $f(x) = x^2$ con el siguiente código
 
@@ -201,7 +201,7 @@ Una manera de visualizar este proceso de diferenciación automática es poniénd
 
 ### Regresión Lineal
 
-En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (@sec-regresion-lineal-manual). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es $ax + b$ la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después viene los argumentos de la función que en este caso son los valores de $x.$
+En esta sección se realiza utilizando diferenciación automática el ejemplo de regresión lineal (@sec-regresion-lineal-manual). Lo primero que se tiene que hacer es definir la función para la cual se quieren optimizar los parámetros. Esta función es $ax + b$ la cual se define con el siguiente código. El primer argumento de la función son los parámetros y después vienen los argumentos de la función que en este caso son los valores de $x.$
 
 ```{python}
 #| echo: true
@@ -221,7 +221,7 @@ def error(params, x, y):
                          0)
 ```
 
-Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente al mostrado anteriormente. La primera linea define el valor de $\eta,$ el valor de la variable `delta` indica el término del ciclo, la tercera línea define los parámetros iniciales (`params`), la siguiente guarda los todos los puntos visitados (cuarta línea) y la quinta línea deriva la función de `error` para calcular el gradiente. La primera instrucción dentro del ciclo actualiza los parámetros.  
+Finalmente, se actualizan los parámetros siguiendo un procedimiento equivalente al mostrado anteriormente. La primera línea define el valor de $\eta,$ el valor de la variable `delta` indica el término del ciclo, la tercera línea define los parámetros iniciales (`params`), la siguiente guarda todos los puntos visitados (cuarta línea) y la quinta línea deriva la función de `error` para calcular el gradiente. La primera instrucción dentro del ciclo actualiza los parámetros.  
 
 ```{python}
 #| echo: true
@@ -256,7 +256,7 @@ T = jnp.array(normalize.transform(T))
 y_t = jnp.array([1] * X_1.shape[0] + [0] * X_2.shape[0])
 ```
 
-Siguiendo los pasos utilizados en el ejemplo anterior, la primera función a implementar es el model, es decir la función sigmoide, i.e., $\textsf{sigmoid}(\mathbf x) = \frac{1}{1 + \exp(- (\mathbf w \cdot \mathbf x + w_0))}.$
+Siguiendo los pasos utilizados en el ejemplo anterior, la primera función a implementar es el modelo, es decir la función sigmoide, i.e., $\textsf{sigmoid}(\mathbf x) = \frac{1}{1 + \exp(- (\mathbf w \cdot \mathbf x + w_0))}.$
 
 ```{python}
 #| echo: true
@@ -265,7 +265,7 @@ def modelo(params, x):
     return 1 / (1 + _)
 ```
 
-El siguiente paso es implementar la función de error que guía el proceso de optimización, en el caso de regresión logística de dos clases la función de error corresponde a la media de la Entropía Cruzada (@eq-lineal-entropia-cruzada). Esta función se implementa en dos pasos, primero se calcula la entropía cruzada usando el siguiente procedimiento. Donde la primera línea verifica selecciona si se trata de la clase positiva ($1$) o de la clase negativa $0$ y calcula el $\log \hat y$ o $\log (1 - \hat y)$ respectivamente.
+El siguiente paso es implementar la función de error que guía el proceso de optimización, en el caso de regresión logística de dos clases la función de error corresponde a la media de la Entropía Cruzada (@eq-lineal-entropia-cruzada). Esta función se implementa en dos pasos, primero se calcula la entropía cruzada usando el siguiente procedimiento. Donde la primera línea verifica si se trata de la clase positiva ($1$) o de la clase negativa $0$ y calcula el $\log \hat y$ o $\log (1 - \hat y)$ respectivamente.
 
 ```{python}
 #| echo: true
@@ -285,7 +285,7 @@ def suma_entropia_cruzada(params, x, y):
                            1) / y.shape[0]
 ```
 
-El paso final es actualizar los parámetros, en esta ocasión se utilizará la función `value_and_grad` que regresa la evaluación de la función así como la derivada, esto para poder desplegar como el error disminuye con el paso de las iteraciones. El código es similar al mostrado anteriormente. La diferencias son la forma en generar los parámetros iniciales, primeras tres líneas, el parámetro $\eta$, que se itera por $n=5000$ iteraciones y la función `value_and_grad`.
+El paso final es actualizar los parámetros, en esta ocasión se utilizará la función `value_and_grad` que regresa la evaluación de la función así como la derivada, esto para poder desplegar cómo el error disminuye con el paso de las iteraciones. El código es similar al mostrado anteriormente. Las diferencias son la forma en generar los parámetros iniciales, primeras tres líneas, el parámetro $\eta$, que se itera por $n=5000$ iteraciones y la función `value_and_grad`.
 
 ```{python}
 #| echo: true
@@ -301,7 +301,7 @@ for i in range(5000):
     params -= eta * g
 ```
 
-La @fig-optimizacion-descenso-ent-x muestra como se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drasticamente. 
+La @fig-optimizacion-descenso-ent-x muestra cómo se reduce la media de la entropía cruzada con respecto al número de iteraciones, este error sigue bajando aunque la velocidad disminuye drásticamente. 
 
 ```{python}
 #| code-fold: true
@@ -347,7 +347,7 @@ En comparación el error obtenido por diferenciación automática es `{python} e
 
 ## Actualización de Parámetros {#sec-actualizacion-parametros}
 
-Por supuesto la regla $\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E$ para actualizar los parámetros $\mathbf w$ no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es una problema de optimización convexo, en este tipo de problemas un algoritmos para encontrar los parámetros es el `BFGS`. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística. 
+Por supuesto la regla $\mathbf w^{t+1} = \mathbf w^{t-1} - \eta \nabla_{\mathbf w} E$ para actualizar los parámetros $\mathbf w$ no es única y existe una gama de métodos que se pueden seleccionar dependiendo de las características del problema. En particular regresión logística es un problema de optimización convexo, en este tipo de problemas un algoritmo para encontrar los parámetros es el `BFGS`. Por ejemplo el siguiente código utiliza este algoritmo para encontrar los parámetros de la regresión logística. 
 
 ```{python}
 #| echo: true
@@ -364,9 +364,9 @@ error_bfgs = suma_entropia_cruzada(_, T, y_t)
 error_bfgs = Markdown(f'${float(error_bfgs):0.4f}$')
 ```
 
-Se observa como se usa la misma función de error (`suma_entropia_cruzada`) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son `{python} params_bfgs_f` y tiene un error `{python} error_bfgs`.
+Se observa cómo se usa la misma función de error (`suma_entropia_cruzada`) y los mismos parámetros iniciales. Los parámetros que se encuentran con este método son `{python} params_bfgs_f` y tiene un error `{python} error_bfgs`.
 
-La @fig-optimizacion-comparacion muestra la función discriminantes obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librearía `sklearn` y el algoritmo `BFGS`. Se puede observar que el plano de `sklearn` y `BFGS` son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, `BFGS`. Por supuesto la implementaciones tiene algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros $\mathbf w$ para que tengan una longitud de $1$ se observaría que `sklearn` y `BFGS` se tocan.
+La @fig-optimizacion-comparacion muestra la función discriminante obtenida por cada uno de los métodos, el método de diferenciación automática (JAX), el método de la librería `sklearn` y el algoritmo `BFGS`. Se puede observar que el plano de `sklearn` y `BFGS` son más similares, esto no es sorpresa porque los dos métodos implementan el mismo método de optimización, es decir, `BFGS`. Por supuesto las implementaciones tienen algunas diferencias, que pueden ir desde el número de iteraciones y la forma de generar los parámetros iniciales. Si se escalan los parámetros $\mathbf w$ para que tengan una longitud de $1$ se observaría que `sklearn` y `BFGS` se tocan.
 
 ```{python}
 #| code-fold: true

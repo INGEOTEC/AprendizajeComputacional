@@ -53,7 +53,7 @@ En la cultura del modelado de algoritmos, no se asume ninguna estructura para el
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
-Leer el artículo de @breiman2001statistical para profundizar en las ventajas y desventajas de cada una de las culturas y como estas influyen en la forma de abordar un problema. En este momento no es necesario detenerse en la parte técnica de los algoritmos descritos en el artículo. 
+Leer el artículo de @breiman2001statistical para profundizar en las ventajas y desventajas de cada una de las culturas y cómo estas influyen en la forma de abordar un problema. En este momento no es necesario detenerse en la parte técnica de los algoritmos descritos en el artículo. 
 :::
 
 ## Predicción e Inferencia Causal {#sec-prediccion-vs-causal}
@@ -85,17 +85,17 @@ Leer los siguientes artículos, escritos para economistas y analistas de políti
 ## Tipos de Aprendizaje Computacional {#sec-tipos-aprendizaje}
 
 
-Existen diferentes tipos de aprendizaje computacional, los mas comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
+Existen diferentes tipos de aprendizaje computacional, los más comunes son: aprendizaje supervisado, aprendizaje no-supervisado y aprendizaje por refuerzo. En **aprendizaje supervisado** se crean modelos partiendo de un conjunto de pares, entrada y salida, donde el objetivo es encontrar un modelo que logra aprender esta relación y predecir ejemplos no vistos en el proceso, en particular a esto se le conoce como _inductive learning_. Complementando este tipo de aprendizaje supervisado se tiene lo que se conoce como _transductive learning_, en el cual se cuenta con un conjunto de pares y solamente se requiere conocer la salida en otro conjunto de datos. En este segundo tipo de aprendizaje todos los datos son conocidos en el proceso de aprendizaje. 
 
 **Aprendizaje no-supervisado** es aquel donde se tiene un conjunto de entradas y se busca aprender alguna relación de estas entradas, por ejemplo, generando grupos o utilizando estas entradas para hacer una transformación o encontrar un patrón. 
 
-Finalmente **aprendizaje por refuerzo** es aquel donde se tiene un agente que tiene que aprender como interactuar con un ambiente. La interacción es tomando una acción en cada diferente estado del ambiente. Por ejemplo, el agente puede ser un jugador virtual en un juego de ajedrez entonces la acción es identificar y mover una pieza en el tablero, el objetivo de ganar la partida. La característica de aprendizaje por refuerzo es que el agente va a recibir una recompensa al final de la interacción con el ambiente, e.g., final del juego y el objetivo es optimizar las acciones para que la recompensa sea la mayor posible. 
+Finalmente **aprendizaje por refuerzo** es aquel donde se tiene un agente que tiene que aprender cómo interactuar con un ambiente. La interacción es tomando una acción en cada diferente estado del ambiente. Por ejemplo, el agente puede ser un jugador virtual en un juego de ajedrez entonces la acción es identificar y mover una pieza en el tablero, el objetivo de ganar la partida. La característica de aprendizaje por refuerzo es que el agente va a recibir una recompensa al final de la interacción con el ambiente, e.g., final del juego y el objetivo es optimizar las acciones para que la recompensa sea la mayor posible. 
 
 El área de aprendizaje computacional ha tenido un crecimiento importante en los últimos años, algunos ejemplos del impacto de área se pueden encontrar en artículos publicados en la revista de la editorial [Nature](https://www.nature.com). Por ejemplo, en el área médica en específico en Cardiología @Hannun2019 propone una metodología para detectar arritmias o en dermatología @Esteva2017 propone un algoritmo para la detección de cáncer.
 
 Cabe mencionar que los tres tipos de aprendizaje no son excluyentes uno del otro, comúnmente para resolver un problema complejo se combinan diferentes tipos de aprendizaje y otras tecnologías de IA para encontrar una solución aceptable. Probablemente una de las pruebas más significativas de lo que puede realizarse con aprendizaje automático es lo realizado por AlphaGo descrito por @Silver2016 y en @Silver2017 se quitan una de las restricciones originales, la cual consiste en contar con un conjunto de jugadas realizadas por expertos.
 
-En el área de aprendizaje, hay una tendencia de utilizar plataformas donde diferentes empresas u organismos gubernamentales o sin fines de lucro, ponen un problema e incentivan al publico en general a resolver este problema. La plataforma sirve de mediador en este proceso. Ver por ejemplo [https://www.kaggle.com](https://www.kaggle.com).
+En el área de aprendizaje, hay una tendencia de utilizar plataformas donde diferentes empresas u organismos gubernamentales o sin fines de lucro, ponen un problema e incentivan al público en general a resolver este problema. La plataforma sirve de mediador en este proceso. Ver por ejemplo [https://www.kaggle.com](https://www.kaggle.com).
 
 En el ámbito científico también se han generado este tipo de plataformas aunque su objetivo es ligeramente diferente, lo que se busca es tener una medida objetiva de diferentes soluciones y en algunos casos facilitar la reproducibilidad de las soluciones. Ver por ejemplo [http://codalab.org](http://codalab.org).
 
@@ -111,11 +111,11 @@ Antes de continuar con la descripción de los diferentes tipos de aprendizaje es
 
 ## Aprendizaje No Supervisado {#sec-aprendizaje-no-supervisado}
 
-Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se puede transformar en conjunto de vectores, i.e. $\mathcal D = \{ x_1, \ldots, x_N \}$, donde $x_i \in \mathbb R^d$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
+Iniciamos la descripción de los diferentes tipos de aprendizaje computacional con **aprendizaje no-supervisado**; el cual inicia con un conjunto de elementos. Estos tradicionalmente se pueden transformar en un conjunto de vectores, i.e. $\mathcal D = \{ x_1, \ldots, x_N \}$, donde $x_i \in \mathbb R^d$. Durante este curso asumiremos que esta transformación existe y en algunos casos se hará explícito el algoritmo de transformación.
 
-El **objetivo** en aprendizaje no supervisado es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, en $\mathcal D$. Existen diferentes tareas que se pueden considerar dentro de este tipo de aprendizaje. Por ejemplo, el agrupamiento puede servir para segmentar clientes o productos, en otra línea también cabría el análisis del carrito de compras (Market Basket Analysis); donde el objetivo es encontrar la co-ocurrencias de productos, es decir, se quiere estimar la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
+El **objetivo** en aprendizaje no supervisado es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, en $\mathcal D$. Existen diferentes tareas que se pueden considerar dentro de este tipo de aprendizaje. Por ejemplo, el agrupamiento puede servir para segmentar clientes o productos, en otra línea también cabría el análisis del carrito de compras (Market Basket Analysis); donde el objetivo es encontrar las co-ocurrencias de productos, es decir, se quiere estimar la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
 
-Regresando a la representación vectorial, existen casos donde se pueden visualizar los elementos de $\mathcal D$, lo cuales están representados como puntos que se muestran en la @fig-puntos-iris. Claramente esto solo es posible si $x_i \in \mathbb R^2$ o si se hace algún tipo de transformación  $f: \mathbb R^d \rightarrow \mathbb R^2$, como se realizó en la figura.
+Regresando a la representación vectorial, existen casos donde se pueden visualizar los elementos de $\mathcal D$, los cuales están representados como puntos que se muestran en la @fig-puntos-iris. Claramente esto solo es posible si $x_i \in \mathbb R^2$ o si se hace algún tipo de transformación  $f: \mathbb R^d \rightarrow \mathbb R^2$, como se realizó en la figura.
 
 ```{python}
 #| label: fig-puntos-iris
@@ -158,7 +158,7 @@ fig.tick_params(bottom=False, top=False,
 fig.set(xlabel=None, ylabel=None)
 ```
     
-Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en la figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
+Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en las figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
@@ -205,17 +205,17 @@ flowchart LR
 
 Considerando que se desconoce el modelo del proceso o fenómeno que generó la respuesta y además que pueden existir variables de entrada que no son medibles, se puede definir el **objetivo** de aprendizaje supervisado como encontrar un algoritmo o función, $f$, capaz de regresar la salida, $y$, dada una entrada $x$.
 
-Los posibles fines de desarrollar la función $f$ es por un lado **predecir** la salida dada una nueva entrada $x$ y por el otro lado **extraer conocimiento** del proceso que asocia la respuesta de las variables de entrada (ver @breiman2001statistical). Estos dos metas se pueden contraponer, es decir, extraer conocimiento implica una reducción en la calidad de la predicción y viceversa mejorar la calidad de predicción en general trae consigo una menor capacidad para entender el fenómeno generador de datos.  
+Los posibles fines de desarrollar la función $f$ es por un lado **predecir** la salida dada una nueva entrada $x$ y por el otro lado **extraer conocimiento** del proceso que asocia la respuesta de las variables de entrada (ver @breiman2001statistical). Estas dos metas se pueden contraponer, es decir, extraer conocimiento implica una reducción en la calidad de la predicción y viceversa mejorar la calidad de predicción en general trae consigo una menor capacidad para entender el fenómeno generador de datos.  
 
-Existe una gran variedad de problemas que se puede categorizar como tareas de aprendizaje supervisado, solamente hay que recordar que en todos los casos se inicia con un conjunto $\mathcal D$ de pares entrada y salida. En ocasiones la construcción del conjunto es directa, por ejemplo en el caso de que se quiera identificar si una persona será sujeta a un crédito, entonces el conjunto a crear esta compuesto por las características de las personas que se les ha otorgado un crédito y el estado final de crédito, es decir, si el crédito fue pagado o no fue pagado. En otro ejemplo, suponiendo que se quiere crear un algoritmo capaz de identificar si un texto dado tiene una polaridad positiva o negativa, entonces el conjunto se crea recolectando textos y a cada texto un conjunto de personas decide si el texto dado es positivo o negativo y la polaridad final es el consenso de varias opiniones; a este problema en general se le conoce como análisis de sentimientos.
+Existe una gran variedad de problemas que se puede categorizar como tareas de aprendizaje supervisado, solamente hay que recordar que en todos los casos se inicia con un conjunto $\mathcal D$ de pares entrada y salida. En ocasiones la construcción del conjunto es directa, por ejemplo en el caso de que se quiera identificar si una persona será sujeta a un crédito, entonces el conjunto a crear está compuesto por las características de las personas que se les ha otorgado un crédito y el estado final de crédito, es decir, si el crédito fue pagado o no fue pagado. En otro ejemplo, suponiendo que se quiere crear un algoritmo capaz de identificar si un texto dado tiene una polaridad positiva o negativa, entonces el conjunto se crea recolectando textos y a cada texto un conjunto de personas decide si el texto dado es positivo o negativo y la polaridad final es el consenso de varias opiniones; a este problema en general se le conoce como análisis de sentimientos.
 
-La cantidad de problema que se pueden poner en términos de aprendizaje supervisado es amplia, un problema tangible en esta época y relacionado a la pandemia del COVID-19 sería el crear un algoritmo que pudiera predecir cuántos serán los casos positivos el día de mañana dando como entradas las restricciones en las actividades; por ejemplo escuelas cerradas, restaurantes al 30% de capacidad entre otras. 
+La cantidad de problemas que se pueden poner en términos de aprendizaje supervisado es amplia, un problema tangible en esta época y relacionado a la pandemia del COVID-19 sería el crear un algoritmo que pudiera predecir cuántos serán los casos positivos el día de mañana dando como entradas las restricciones en las actividades; por ejemplo escuelas cerradas, restaurantes al 30% de capacidad entre otras. 
 
 Los ejemplos anteriores corresponden a dos de las clases de problemas que se resuelven en aprendizaje supervisado estas son problemas de clasificación y regresión. Definamos de manera formal estos dos problemas. Cuando  $y \in \{0, 1\}$ se dice que es un problema de **clasificación binaria**, por otro lado cuando  $y \in \{0, 1\}^K$ se encuentra uno en clasificación **multi-clase** o **multi-etiqueta** y finalmente si  $y \in \mathbb R$ entonces es un problema de **regresión**.
 
-Haciendo la liga entre los ejemplos y las definiciones anteriores, podemos observar que el asignar un crédito o la polaridad a un texto es un problema de clasificación binaria, dado que se puede asociar 0 y 1 a la clase positivo y negativo; y en el otro caso a pagar o no pagar el crédito. Si el problema tiene mas categorías, supongamos que se desea identificar positivo, negativo o neutro, entonces se estaría en el problema de clasificación multi-clase. Por otro lado el problema de predecir el número de casos positivos se puede considerar como un problema de regresión, dado que el valor a predecir difícilmente se podría considerar como una categoría.
+Haciendo la liga entre los ejemplos y las definiciones anteriores, podemos observar que el asignar un crédito o la polaridad a un texto es un problema de clasificación binaria, dado que se puede asociar 0 y 1 a la clase positivo y negativo; y en el otro caso a pagar o no pagar el crédito. Si el problema tiene más categorías, supongamos que se desea identificar positivo, negativo o neutro, entonces se estaría en el problema de clasificación multi-clase. Por otro lado el problema de predecir el número de casos positivos se puede considerar como un problema de regresión, dado que el valor a predecir difícilmente se podría considerar como una categoría.
 
-Al igual que en aprendizaje no supervisado, en algunos casos es posible visualizar los elementos de  $\mathcal D$, el detalle adicional es que cada objeto tiene asociado una clase, entonces se selecciona un color para representar cada clase. En la @fig-iris-2clases se muestra el resultado donde los elementos de  $\mathcal D$ se encuentra en $\mathbb R^2$ y el color representa cada una de la clases de este problema de clasificación binaria.
+Al igual que en aprendizaje no supervisado, en algunos casos es posible visualizar los elementos de  $\mathcal D$, el detalle adicional es que cada objeto tiene asociado una clase, entonces se selecciona un color para representar cada clase. En la @fig-iris-2clases se muestra el resultado donde los elementos de  $\mathcal D$ se encuentran en $\mathbb R^2$ y el color representa cada una de las clases de este problema de clasificación binaria.
 
 ```{python}
 #| label: fig-iris-2clases
@@ -261,7 +261,7 @@ fig.set(xlabel=None, ylabel=None)
 ```
 :::
 
-Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se pueden imagina una simple línea recta podría separar estos puntos. La @fig-iris-2clases-df muestra un ejemplo de lo que haría un clasificador representado por la línea; la clase es dada por el signo de  $ax + by + c$, donde  $a$, $b$ y $c$ son parámetros identificados a partir de  $\mathcal D$.
+Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se puede imaginar una simple línea recta podría separar estos puntos. La @fig-iris-2clases-df muestra un ejemplo de lo que haría un clasificador representado por la línea; la clase es dada por el signo de  $ax + by + c$, donde  $a$, $b$ y $c$ son parámetros identificados a partir de  $\mathcal D$.
 
 ```{python}
 #| label: fig-iris-2clases-df
@@ -292,7 +292,7 @@ ax.tick_params(axis="both", which="both", bottom=False,
 ax.set(xlabel=None, ylabel=None)
 ```
 
-Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x,$ y el otro eje es la salida, i.e. $y.$ La @fig-regresion muestra un ejemplo de regresión, donde se puede observar que la idea es una encontrar una función que pueda seguir de manera adecuada los puntos datos.
+Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x,$ y el otro eje es la salida, i.e. $y.$ La @fig-regresion muestra un ejemplo de regresión, donde se puede observar que la idea es encontrar una función que pueda seguir de manera adecuada los puntos dados.
 
 ```{python}
 #| label: fig-regresion
@@ -315,7 +315,7 @@ El problema de regresión es muy conocido y seguramente ya se imaginaron que la 
 
 ```{python}
 #| label: fig-regresion-2
-#| fig-cap: "Problema de regresión con función con función estimada"
+#| fig-cap: "Problema de regresión con función estimada"
 #| code-fold: true
 sns.lineplot(data=df, x='x', y='y', legend=False, color='k')
 fig = sns.scatterplot(data=df, x='x', y='ym', legend=False)
@@ -325,7 +325,7 @@ fig.tick_params(axis="both", which="both", bottom=False,
 fig.set(xlabel='x', ylabel='y')
 ```
 
-Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, pero si permite ganar intuición sobre la forma en que trabajan estos algoritmos.
+Al igual que en aprendizaje no supervisado, este ejercicio de visualización no es posible en todos los problemas de aprendizaje supervisado, pero sí permite ganar intuición sobre la forma en que trabajan estos algoritmos.
 
 ## Definiciones de Aprendizaje Supervisado {#sec-definiciones-aprendizaje-supervisado}
 
@@ -367,7 +367,7 @@ score.plot(value_name='Cobertura (promedio)', alg_legend='Algoritmos',
 
 ### Estilos de Aprendizaje
 
-Utilizando $\mathcal T$ y $\mathcal G$ podemos definir **inductive learning** como el proceso de aprendizaje en donde solamente se utiliza $\mathcal T$ y el algoritmo debe de ser capaz de predecir cualquier instancia. Por otro lado, **transductive learning** es el proceso de aprendizaje donde se utilizar $\mathcal T \cup \{ x \mid (x, y) \in \mathcal G \}$ para aprender y solamente es de interés el conocer la clase o variable dependiente del conjunto $\mathcal G$.
+Utilizando $\mathcal T$ y $\mathcal G$ podemos definir **inductive learning** como el proceso de aprendizaje en donde solamente se utiliza $\mathcal T$ y el algoritmo debe de ser capaz de predecir cualquier instancia. Por otro lado, **transductive learning** es el proceso de aprendizaje donde se utiliza $\mathcal T \cup \{ x \mid (x, y) \in \mathcal G \}$ para aprender y solamente es de interés el conocer la clase o variable dependiente del conjunto $\mathcal G$.
 
 ### Sobre-aprendizaje
 
@@ -379,7 +379,7 @@ $$h^*(x) = \begin{cases} y & \text{si} (x, y) \in \mathcal T\\ 0 & \end{cases}$$
 
 Es fácil observar que este algoritmo tiene $E(h^* \mid \mathcal T) = 0$ dado que se aprende todo el conjunto de entrenamiento.
 
-La @fig-sobre-aprendizaje muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la línea negra, la línea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento no se muestran (se pueden observar en la @fig-regresion); estos corresponden a una parábola mas un error gaussiano. Entonces podemos ver que la línea negra pasa de manera exacta por todos los datos de entrenamiento y da como resultado la línea negra que claramente tiene un comportamiento más complejo que el comportamiento de la parábola que generó los datos.
+La @fig-sobre-aprendizaje muestra el comportamiento de un algoritmo que sobre-aprende, el algoritmo se muestra en la línea negra, la línea azul corresponde a una parábola (cuyos parámetros son identificados con los datos de entrenamiento) y los datos de entrenamiento no se muestran (se pueden observar en la @fig-regresion); estos corresponden a una parábola más un error gaussiano. Entonces podemos ver que la línea negra pasa de manera exacta por todos los datos de entrenamiento y da como resultado la línea negra que claramente tiene un comportamiento más complejo que el comportamiento de la parábola que generó los datos.
 
 ```{python}
 #| label: fig-sobre-aprendizaje
@@ -399,7 +399,7 @@ fig.set(xlabel='x', ylabel='y')
 
 ### Sub-aprendizaje
 
-Por otro lado existen problemas donde el conjunto de algoritmos $\mathcal H$ no tienen los grados de libertad necesarios para aprender, dependiendo de la medida de error esto se refleja como $E(h^* \mid \mathcal T) \gg 0$. La @fig-sub-aprendizaje muestra un problema de regresión donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. 
+Por otro lado existen problemas donde el conjunto de algoritmos $\mathcal H$ no tiene los grados de libertad necesarios para aprender, dependiendo de la medida de error esto se refleja como $E(h^* \mid \mathcal T) \gg 0$. La @fig-sub-aprendizaje muestra un problema de regresión donde el algoritmo de aprendizaje presenta el problema de sub-aprendizaje. 
 
 ```{python}
 #| label: fig-sub-aprendizaje

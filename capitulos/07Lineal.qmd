@@ -36,7 +36,7 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-09}
 
-En unidades anteriores se han visto diferentes técnicas para discriminar entre clases; en particular se ha descrito el uso de la probabilidad $\mathbb P(\mathcal Y \mid \mathcal X)$ para encontrar la clase más probable. Los parámetros de $\mathbb P(\mathcal Y \mid \mathcal X)$ se han estimado utilizando métodos [paramétricos](@sec-metodos-parametricos) y [no paramétricos](@sec-metodos-no-parametricos). En está unidad se describe el uso de funciones discriminantes para la clasificación y su similitud con el uso de $\mathbb P(\mathcal Y \mid \mathcal X).$
+En unidades anteriores se han visto diferentes técnicas para discriminar entre clases; en particular se ha descrito el uso de la probabilidad $\mathbb P(\mathcal Y \mid \mathcal X)$ para encontrar la clase más probable. Los parámetros de $\mathbb P(\mathcal Y \mid \mathcal X)$ se han estimado utilizando métodos [paramétricos](@sec-metodos-parametricos) y [no paramétricos](@sec-metodos-no-parametricos). En esta unidad se describe el uso de funciones discriminantes para la clasificación y su similitud con el uso de $\mathbb P(\mathcal Y \mid \mathcal X).$
 
 ## Función Discriminante {#sec-discriminante}
 
@@ -52,17 +52,17 @@ $$
 C(x) = \textsf{argmax}_{k=1}^K \mathbb P(\mathcal X=x \mid \mathcal Y=k)\mathbb P(\mathcal Y=k).
 $$
 
-Agrupando la probabilidad a priori y verosimilitud en una función $g_k,$ es decir, $g_k(x) = P(\mathcal X=x \mid \mathcal Y=k)\mathbb P(\mathcal Y=k),$  hace que $C(x)$ se sea:
+Agrupando la probabilidad a priori y verosimilitud en una función $g_k,$ es decir, $g_k(x) = P(\mathcal X=x \mid \mathcal Y=k)\mathbb P(\mathcal Y=k),$  hace que $C(x)$ sea:
 
 $$
 C(x) = \textsf{argmax}_{k=1}^K g_k(x).
 $$
 
-Observando $C(x)$ y olvidando los pasos utilizados para derivarla, uno se puede imaginar que lo único necesario para generar un clasificador de $K$ clases es definir un conjunto de functions $g_k$ que separen las clases correctamente. En esta unidad se presentan diferentes maneras para definir $g_k$ con la característica de que todas ellas son lineales, e.g., $g_k(\mathbf x) = \mathbf w_k \cdot \mathbf x + w_{k_0}.$
+Observando $C(x)$ y olvidando los pasos utilizados para derivarla, uno se puede imaginar que lo único necesario para generar un clasificador de $K$ clases es definir un conjunto de funciones $g_k$ que separen las clases correctamente. En esta unidad se presentan diferentes maneras para definir $g_k$ con la característica de que todas ellas son lineales, e.g., $g_k(\mathbf x) = \mathbf w_k \cdot \mathbf x + w_{k_0}.$
 
 ### Clasificación Binaria {#sec-binaria}
 
-La descripción de discriminantes lineales empieza con el caso particular de dos clases, i.e., $K=2$. En este caso $C(\mathbf x)$ es encontrar el máximo de las dos funciones $g_1$ y $g_2$. Una manear equivalente sería definir a $C(\mathbf x)$ como 
+La descripción de discriminantes lineales empieza con el caso particular de dos clases, i.e., $K=2$. En este caso $C(\mathbf x)$ es encontrar el máximo de las dos funciones $g_1$ y $g_2$. Una manera equivalente sería definir a $C(\mathbf x)$ como 
 
 $$
 C(\mathbf x) = \textsf{sign}(g_1(\mathbf x) - g_2(\mathbf x)),
@@ -80,7 +80,7 @@ $$
 
 donde se concluye que para el caso binario es necesario definir solamente una función discriminante y que los parámetros de esta función son $\mathbf w$ y $\mathbf w_0.$ Otra característica que se ilustra es que el parámetro $\mathbf w_0$ está actuando como un umbral, es decir, $\mathbf x$ corresponde a la clase positiva si $\mathbf w \cdot \mathbf x > -w_0.$
 
-En la @fig-lineal-discriminante se observa el plano (linea) que divide las dos clases, este plano representa los puntos que satisfacen $g(\mathbf x)=0$. 
+En la @fig-lineal-discriminante se observa el plano (línea) que divide las dos clases, este plano representa los puntos que satisfacen $g(\mathbf x)=0$. 
 
 ```{python}
 #| code-fold: true
@@ -110,7 +110,7 @@ _ = ax.axis('equal')
 
 ### Geometría de la Función de Decisión {#sec-geometria-funcion-decision}
 
-La función discriminante $g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$ tiene una representación gráfica. Lo primero que se observa es que los parámetros $\mathbf w$ viven en al mismo espacio que los datos, tal y como se puede observar en la @fig-lineal-repr-df. 
+La función discriminante $g(\mathbf x) = \mathbf w \cdot \mathbf x + w_0$ tiene una representación gráfica. Lo primero que se observa es que los parámetros $\mathbf w$ viven en el mismo espacio que los datos, tal y como se puede observar en la @fig-lineal-repr-df. 
 
 ```{python}
 #| code-fold: true
@@ -123,7 +123,7 @@ sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='tipo', palette=['k'], legend=T
 _ = ax.axis('equal')
 ```
 
-Siguiendo con la descripción, los parámetros $\mathbf w$ y la función $g(\mathbf x)$ son ortogonales, tal y como se muestra en la @fig-lineal-ort. Analiticamente la ortogonalidad se define de la siguiente manera. Sea $\mathbf x_a$ y $\mathbf x_b$ dos puntos en $g(\mathbf x)=0$, es decir, 
+Siguiendo con la descripción, los parámetros $\mathbf w$ y la función $g(\mathbf x)$ son ortogonales, tal y como se muestra en la @fig-lineal-ort. Analíticamente la ortogonalidad se define de la siguiente manera. Sea $\mathbf x_a$ y $\mathbf x_b$ dos puntos en $g(\mathbf x)=0$, es decir, 
 
 $$
 \begin{split}
@@ -237,9 +237,9 @@ donde $\ell_0$ es la distancia del origen al hiperplano y $\mathbf x_0$ es cualq
 
 ### Múltiples Clases {#sec-multiples-clases}
 
-Una manera de tratar un problema de $K$ clases, es convertirlo en $K$ problemas de clasificación binarios, a este procedimiento se le conoce como _Uno vs Resto_. La idea es entrenar $K$ clasificadores donde la clase positiva corresponde a cada una de las clases y la clase de negativa se construye con todas las clases que no son la clase positiva en esa iteración. Finalmente, la clase predicha corresponde al clasificador que tiene el valor máximo en la función discriminante. 
+Una manera de tratar un problema de $K$ clases, es convertirlo en $K$ problemas de clasificación binarios, a este procedimiento se le conoce como _Uno vs Resto_. La idea es entrenar $K$ clasificadores donde la clase positiva corresponde a cada una de las clases y la clase negativa se construye con todas las clases que no son la clase positiva en esa iteración. Finalmente, la clase predicha corresponde al clasificador que tiene el valor máximo en la función discriminante. 
 
-La @fig-lineal-multiclase ejemplifica el comportamiento de esta técnica en un problema de tres clases y utilizando un clasificador con discrimitante lineal. En la figura se muestra las tres funciones discriminantes $g_k(\mathbf x)=0$, los parámetros escalados de esas funciones, i.e., $\ell_k \mathbf w_k$ y los datos. Por ejemplo se observa como la clase $1$ mostrada en azul, se separa de las otras dos clases con la función $g_1(\mathbf x)=0$, es decir, para $g_1(\mathbf x)=0$ la clase positiva es $1$ y la clase negativa corresponde a los elementos que corresponde a las clases $2$ y $3.$
+La @fig-lineal-multiclase ejemplifica el comportamiento de esta técnica en un problema de tres clases y utilizando un clasificador con discriminante lineal. En la figura se muestra las tres funciones discriminantes $g_k(\mathbf x)=0$, los parámetros escalados de esas funciones, i.e., $\ell_k \mathbf w_k$ y los datos. Por ejemplo se observa cómo la clase $1$ mostrada en azul, se separa de las otras dos clases con la función $g_1(\mathbf x)=0$, es decir, para $g_1(\mathbf x)=0$ la clase positiva es $1$ y la clase negativa corresponde a los elementos que corresponden a las clases $2$ y $3.$
 
 ```{python}
 #| code-fold: true
@@ -309,7 +309,7 @@ $$
 \frac{g(\mathbf x_i)}{\mid\mid \mathbf w \mid\mid}y_i.
 $$
 
-Entonces, se puede ver que lo que se busca es encontrar $\mathbf w$ de tal manera que cualquier punto $\mathbf x_i$ esté lo mas alejada posible del discriminante, esto se logra minimizando $\mathbf w$, es decir, resolviendo el siguiente problema de optimización:
+Entonces, se puede ver que lo que se busca es encontrar $\mathbf w$ de tal manera que cualquier punto $\mathbf x_i$ esté lo más alejada posible del discriminante, esto se logra minimizando $\mathbf w$, es decir, resolviendo el siguiente problema de optimización:
 
 $$
 \begin{split}
@@ -319,7 +319,7 @@ $$
 \end{split}
 $$ {#eq-svm-separable}
 
-El problema de optimización de la @eq-svm-separable tiene solución solamente que los ejemplos sean linealmente separables. El siguiente código muestra la códificación de la @eq-svm-separable utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). Las primeras dos lineas corresponden a los datos de clasificación, `X` tiene las variables independientes y `y` corresponde a la clase. Las variables del problema de optimización están en `w` y `w0`; las restricciones están codificadas en la variable `constraints`y la función objetivo en la variable `obj`. La penúltima linea genera el problema de optimización y se resuelve en la última instrucción. 
+El problema de optimización de la @eq-svm-separable tiene solución solamente que los ejemplos sean linealmente separables. El siguiente código muestra la codificación de la @eq-svm-separable utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). Las primeras dos líneas corresponden a los datos de clasificación, `X` tiene las variables independientes y `y` corresponde a la clase. Las variables del problema de optimización están en `w` y `w0`; las restricciones están codificadas en la variable `constraints`y la función objetivo en la variable `obj`. La penúltima línea genera el problema de optimización y se resuelve en la última instrucción. 
 
 ```{python}
 #| echo: true
@@ -337,7 +337,7 @@ _ = prob.solve()
 ::: {.callout-tip collapse="true"}
 #### Actividad
 
-Graficar la función de decisión encontrada al optimizar la @eq-svm-separable. La función de decisión se observa en color verde con la leyenda $g(x)$; además se incluye la función encontrada por una MSV lineal identificada con la leyenda $g_{\textsf{msv}}.$ Modificar el parámetro `C` (utilizar un número cercano a cero y un número considerablemente grande e.g. $1^{10}$) de la clase `LinearSVC` y grafique nuevamente las funciones de decisión para tener una intución de lo que está haciendo ese parámetro. 
+Graficar la función de decisión encontrada al optimizar la @eq-svm-separable. La función de decisión se observa en color verde con la leyenda $g(x)$; además se incluye la función encontrada por una MSV lineal identificada con la leyenda $g_{\textsf{msv}}.$ Modificar el parámetro `C` (utilizar un número cercano a cero y un número considerablemente grande e.g. $1^{10}$) de la clase `LinearSVC` y graficar nuevamente las funciones de decisión para tener una intuición de lo que está haciendo ese parámetro. 
 
 ```{python}
 #| echo: false
@@ -382,7 +382,7 @@ _ = prob.solve()
 
 donde el atributo `prob.status` regresa el valor de `{python} prob.status`.
 
-Para que este problema tenga una solución factible es necesario relajar las restricciones permitiendo que algunas de las restricciones no se cumplan, esto se realiza utilizando una variable $\xi_i$ la cual sea no negativa (i.e., $\xi_i \geq 0$), de tal manera que si todas las restricciones se cumplen se llega a la @eq-svm-separable. Adicionalmente, se requiere incluir el peso de las restricciones que no se han cumplido, esto se hace incorporando $\sum_i \xi$ y pesando el término por un parámetro $C > 0$. El resultado final se observa en la @eq-svm, donde se incluye utiliza $\mathbf w \cdot \mathbf w$, en lugar de $\mid\mid\mathbf w \mid\mid$ para seguir la formulación propuesta en @cortes1995support. 
+Para que este problema tenga una solución factible es necesario relajar las restricciones permitiendo que algunas de las restricciones no se cumplan, esto se realiza utilizando una variable $\xi_i$ la cual sea no negativa (i.e., $\xi_i \geq 0$), de tal manera que si todas las restricciones se cumplen se llega a la @eq-svm-separable. Adicionalmente, se requiere incluir el peso de las restricciones que no se han cumplido, esto se hace incorporando $\sum_i \xi$ y pesando el término por un parámetro $C > 0$. El resultado final se observa en la @eq-svm, donde se utiliza $\mathbf w \cdot \mathbf w$, en lugar de $\mid\mid\mathbf w \mid\mid$ para seguir la formulación propuesta en @cortes1995support. 
 
 $$
 \begin{split}
@@ -393,7 +393,7 @@ $$
 \end{split}
 $$ {#eq-svm}
 
-La @eq-svm se códifica utilizando las siguientes instrucciones. El producto punto $\mathbf w \cdot \mathbf w$ se codifica utilizando la función `cp.quad_over_lin`, se observa que la variable $\xi_i$ está en el arreglo `xi`, que el parámetro $C$ está en una variable con el mismo nombre y que se le asigna el valor de $1$. 
+La @eq-svm se codifica utilizando las siguientes instrucciones. El producto punto $\mathbf w \cdot \mathbf w$ se codifica utilizando la función `cp.quad_over_lin`, se observa que la variable $\xi_i$ está en el arreglo `xi`, que el parámetro $C$ está en una variable con el mismo nombre y que se le asigna el valor de $1$. 
 
 ```{python}
 C = cp.Parameter(pos=True)
@@ -461,7 +461,7 @@ _ = ax.axis('equal')
 ```  
 
 
-Continuando con el análisis del problema de optimización (@eq-svm), se puede observar que el parámetro $C$ controla la penalización que se hace a los elementos que se encuentran en el lado incorrecto del hiperplano o dentro del margen. La @fig-lineal-hip-c muestra el hiperplano generado utilizando $C=1$ y $C=0.01$, en la figura se aprecia como el elemento que está correctamente clasificado en $C=1$ pasa al lado incorrecto del hiperplano, ademas la función de decisión rota cuando el valor de $C$ cambia. 
+Continuando con el análisis del problema de optimización (@eq-svm), se puede observar que el parámetro $C$ controla la penalización que se hace a los elementos que se encuentran en el lado incorrecto del hiperplano o dentro del margen. La @fig-lineal-hip-c muestra el hiperplano generado utilizando $C=1$ y $C=0.01$, en la figura se aprecia cómo el elemento que está correctamente clasificado en $C=1$ pasa al lado incorrecto del hiperplano, además la función de decisión rota cuando el valor de $C$ cambia. 
 
 ```{python}
 #| code-fold: true
@@ -493,7 +493,7 @@ for k, (C, legend) in enumerate(zip([1, 0.01], [False, True])):
 _ = plt.tight_layout()
 ```  
 
-Continuando con el comportamiento de las MSV lineales, está se encuentra implementada en la clase `LinearSVC` y su uso se ejemplifica utilizando el problema de dígitos (@sec-digitos); los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba utilizando las siguientes instrucciones. 
+Continuando con el comportamiento de las MSV lineales, esta se encuentra implementada en la clase `LinearSVC` y su uso se ejemplifica utilizando el problema de dígitos (@sec-digitos); los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba utilizando las siguientes instrucciones. 
 
 ```{python}
 D, y = load_digits(return_X_y=True)
@@ -545,11 +545,11 @@ score.plot(value_name='Cobertura (promedio)',
 
 ### Kernel
 
-En lugar de utilizar directamente las características $\mathbf x$ se puede realizar una transformación $\phi$ a estas características, esto haría que el hiperplano (@eq-hiperplano) quede cómo $\mathbf w = \sum_i \alpha_i y_i \phi(\mathbf x_i)$, pasando esto a la función discrimintante $g$ queda como $g(\mathbf x) = \sum_i \alpha_i y_i \phi(\mathbf x_i) \cdot \phi(x) + w_0.$ El producto punto se puede cambiar por una función **Kernel**, i.e., $K(\mathbf x_i, \mathbf x_j) = \phi(\mathbf x_i) \cdot \phi(\mathbf x_j)$ lo cual hace que sea innecesaria la transformación al espacio $\phi.$ 
+En lugar de utilizar directamente las características $\mathbf x$ se puede realizar una transformación $\phi$ a estas características, esto haría que el hiperplano (@eq-hiperplano) quede como $\mathbf w = \sum_i \alpha_i y_i \phi(\mathbf x_i)$, pasando esto a la función discriminante $g$ queda como $g(\mathbf x) = \sum_i \alpha_i y_i \phi(\mathbf x_i) \cdot \phi(x) + w_0.$ El producto punto se puede cambiar por una función **Kernel**, i.e., $K(\mathbf x_i, \mathbf x_j) = \phi(\mathbf x_i) \cdot \phi(\mathbf x_j)$ lo cual hace que sea innecesaria la transformación al espacio $\phi.$ 
 
 La función discriminante está dada por $g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x) + w_0,$ donde aquellos elementos donde $\alpha_i > 0$ se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.
 
-La @fig-lineal-kernel muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la @sec-pca), las clases se encuentran en color azul, naranja y verde. En color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. 
+La @fig-lineal-kernel muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la @sec-pca), las clases se encuentran en color azul, naranja y verde. En color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar cómo los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. 
 
 ```{python}
 #| code-fold: true
@@ -584,7 +584,7 @@ El uso de la MSV con un kernel polinomial de grado dos se ejemplifica en el sigu
 svm_k = SVC(kernel='poly', degree=2).fit(Xtrain, ytrain)
 ```
 
-La @fig-comp-svm-todos muestra el rendimiento de las MSV lineal con entradas originales y normalizadas, y una MSV con un kernel estimado en el paso anterior; se observa que el el kernel hace que el rendimiento sea estadísticamente superior a las MSV lineales. 
+La @fig-comp-svm-todos muestra el rendimiento de las MSV lineal con entradas originales y normalizadas, y una MSV con un kernel estimado en el paso anterior; se observa que el kernel hace que el rendimiento sea estadísticamente superior a las MSV lineales. 
 
 ```{python}
 #| echo: true
@@ -603,7 +603,7 @@ score.plot(value_name='Cobertura (promedio)',
 
 ### Regresión
 
-Las máquinas de soporte vectorial también se pueden utilizar para resolver problemas de regresión; su uso se ejemplifica utilizando el problema de Diabetes (@sec-diabetes), como se muestra en las siguiente dos instrucciones. 
+Las máquinas de soporte vectorial también se pueden utilizar para resolver problemas de regresión; su uso se ejemplifica utilizando el problema de Diabetes (@sec-diabetes), como se muestra en las siguientes dos instrucciones. 
 
 ```{python}
 #| echo: True
@@ -611,7 +611,7 @@ X, y = load_diabetes(return_X_y=True)
 Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, random_state=13)
 ```
 
-La clase `LinearSVR` implementa la máquina de soporte vectorial lineal y su uso sigue la misma dinámica que en el case de clasificación, e.g.,
+La clase `LinearSVR` implementa la máquina de soporte vectorial lineal y su uso sigue la misma dinámica que en el caso de clasificación, e.g.,
 
 ```{python}
 #| echo: true
@@ -634,7 +634,7 @@ $$
 
 donde la inversa del $\textsf{logit}$ es la función sigmoide, $\textsf{sigmoid}(x) = \frac{1}{1 + \exp(-x)}$, es decir $\textsf{sigmoid}(\textsf{logit}(y)) = y$. 
 
-Trabajando un poco con el $\textsf{logit}$ se puede observar que para el caso de dos clases está función queda como 
+Trabajando un poco con el $\textsf{logit}$ se puede observar que para el caso de dos clases esta función queda como 
 
 $$
 \begin{split}
@@ -674,11 +674,11 @@ $$
 E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \log C(x) + (1-y) \log (1 -  C(x)).
 $${#eq-lineal-entropia-cruzada}
 
-Es importante notar que la ecuación anterior corresponde a Entropía cruzada (@sec-entropia-cruzada), donde $y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))$ y $C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)$ y los términos $1-y$ y $1-C(\mathbf x)$ corresponde a la otra clase. 
+Es importante notar que la ecuación anterior corresponde a Entropía cruzada (@sec-entropia-cruzada), donde $y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))$ y $C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)$ y los términos $1-y$ y $1-C(\mathbf x)$ corresponden a la otra clase. 
 
 Otra característica de $E(\mathbf w, w_0 \mid \mathcal D)$ es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización para encontrar los parámetros $\mathbf w$ y $w_0$. En esta unidad el problema se resuelve con [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy), tomándolo como una herramienta que regresa los parámetros que minimizan la función. En la @sec-optimizacion, más adelante, se describe cómo resolver este mismo problema con descenso por gradiente. 
 
-En el caso de regresión logística, el logaritmo de la verosimilitud está dada por la @eq-log-likelihood-logistica; esta función es cóncava, lo cual hace que pueda ser maximizada por algún algoritmo de optimización convexa. 
+En el caso de regresión logística, el logaritmo de la verosimilitud está dado por la @eq-log-likelihood-logistica; esta función es cóncava, lo cual hace que pueda ser maximizada por algún algoritmo de optimización convexa. 
 
 $$
 \log \ell(\mathbf w, w_0) = \sum_i y_i \mathbf w \cdot \mathbf x_i + w_0 - \log (1 + \exp^{\mathbf w \cdot \mathbf x_i + w_0})
@@ -692,7 +692,7 @@ $$
 \end{split}
 $$ {#eq-reg-logistica}
 
-La @eq-reg-logistica se puede codificar [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy) utilizando las siguientes instrucciones. Las primeras dos líneas ponen en la variable `X` las variables independientes y en `y` la clase. En `w` y `w0` están las parámetros del modelo, es decir, las variables a optimizar, siguiendo por el parámetro `C` que penaliza la complejidad. La variable `verosimilitud` calcula la @eq-log-likelihood-logistica, el problema de optimización se encuentra en la variable `prob` y se optimiza la última línea. 
+La @eq-reg-logistica se puede codificar en [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy) utilizando las siguientes instrucciones. Las primeras dos líneas ponen en la variable `X` las variables independientes y en `y` la clase. En `w` y `w0` están los parámetros del modelo, es decir, las variables a optimizar, siguiendo por el parámetro `C` que penaliza la complejidad. La variable `verosimilitud` calcula la @eq-log-likelihood-logistica, el problema de optimización se encuentra en la variable `prob` y se optimiza la última línea. 
 
 ```{python}
 #| echo: true
@@ -709,17 +709,17 @@ C.value = 1
 _ = prob.solve(solver='SCS')
 ```
 
-### Múltiples classes
+### Múltiples clases
 
-En el caso de tener múltiples clases, en el caso de regresión logística, se puede modelar con una función categórica, donde el logaritmo de la verosimilitud esta dado por 
+En el caso de tener múltiples clases, en el caso de regresión logística, se puede modelar con una función categórica, donde el logaritmo de la verosimilitud está dado por 
 
 $$
 \log \ell(W, W_0) = \sum_i \log \mathbb{\hat P}(\mathcal Y=y_i \mid \mathcal X=\mathbf x_i)
 $$ {#eq-log-likelihood-multinomial}
 
-y $\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0),$ donde $\textsf{softmax}$ transforma un vector $\mathbf v$ de $K$ valores en probabilidades, $\textsf{softmax}(\mathbf v)_i = \frac{\exp v_i}{\sum_{j=1}^K \exp v_j},$ y es la generalización de la función sigmoide a $K$ clases (ver también @eq-softmax). Siguiendo el procedimiento anterior el siguiente código códifica en [CVXPY](https://www.cvxpy.org/index.html) el problema de regresión logística multinomial. 
+y $\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0),$ donde $\textsf{softmax}$ transforma un vector $\mathbf v$ de $K$ valores en probabilidades, $\textsf{softmax}(\mathbf v)_i = \frac{\exp v_i}{\sum_{j=1}^K \exp v_j},$ y es la generalización de la función sigmoide a $K$ clases (ver también @eq-softmax). Siguiendo el procedimiento anterior el siguiente código codifica en [CVXPY](https://www.cvxpy.org/index.html) el problema de regresión logística multinomial. 
 
-En la primera línea se cargan los datos del problema de clasificación, en las variables `X` y `y`, la segunda línea cuenta el número de clases. La variable `Wt` y `W0` contienen los parámetros del modelo es decir $W^\intercal$ y $W_0$, `den` calcula el valor del denominador de la función $\textsf{softmax}$ y `logit` corresponde al numerador solamente de la clase medida. La variable `verosimilitud` contienen el valor calculado en la @eq-log-likelihood-multinomial, el problema de optimización está en `prob` y se ejecuta en la última linea. 
+En la primera línea se cargan los datos del problema de clasificación, en las variables `X` y `y`, la segunda línea cuenta el número de clases. La variable `Wt` y `W0` contienen los parámetros del modelo es decir $W^\intercal$ y $W_0$, `den` calcula el valor del denominador de la función $\textsf{softmax}$ y `logit` corresponde al numerador solamente de la clase medida. La variable `verosimilitud` contiene el valor calculado en la @eq-log-likelihood-multinomial, el problema de optimización está en `prob` y se ejecuta en la última línea. 
 
 ```{python}
 X, y = load_iris(return_X_y=True)
@@ -738,7 +738,7 @@ _ = prob.solve(solver='SCS')
 
 ## Comparación
 
-Es momento de comparar el comportamiento de los dos métodos de discriminantes lineales visto en la unidad, estos son, Máquinas de Soporte Vectorial (MSV) y Regresión Logística (RL). La @fig-lineal-comparacion muestra el hiperplano generado por MSV y RL, además se puede observar los valores de los pesos $\mathbf w$ para cada uno de los algoritmos. 
+Es momento de comparar el comportamiento de los dos métodos de discriminantes lineales vistos en la unidad, estos son, Máquinas de Soporte Vectorial (MSV) y Regresión Logística (RL). La @fig-lineal-comparacion muestra el hiperplano generado por MSV y RL, además se puede observar los valores de los pesos $\mathbf w$ para cada uno de los algoritmos. 
 
 ```{python}
 #| code-fold: true

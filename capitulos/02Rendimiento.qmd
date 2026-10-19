@@ -36,7 +36,7 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-04}
 
-Es importante conocer el rendimiento del algoritmo de aprendizaje computacional desarrollado. En aprendizaje supervisado la medición se hace mediante el conjunto de prueba, $\mathcal G$, mientras que en aprendizaje no supervisado es posible utilizar el conjunto de entrenamiento $\mathcal T$ o utilizar un conjunto de prueba. Es importante notar que aunque en el proceso de entrenamiento puede usar una función de rendimiento para estimar o encontrar el algoritmo que modela los datos, es importante complementar esta medición con otras funciones de rendimiento. Esta unidad describe algunas de las medidas más utilizadas para medir el rendimiento de algoritmos de clasificación y regresión. 
+Es importante conocer el rendimiento del algoritmo de aprendizaje computacional desarrollado. En aprendizaje supervisado la medición se hace mediante el conjunto de prueba, $\mathcal G$, mientras que en aprendizaje no supervisado es posible utilizar el conjunto de entrenamiento $\mathcal T$ o utilizar un conjunto de prueba. Es importante notar que aunque en el proceso de entrenamiento se puede usar una función de rendimiento para estimar o encontrar el algoritmo que modela los datos, es importante complementar esta medición con otras funciones de rendimiento. Esta unidad describe algunas de las medidas más utilizadas para medir el rendimiento de algoritmos de clasificación y regresión. 
 
 Para el análisis de políticas públicas esta pregunta es central: un modelo que se utilice para focalizar un programa o priorizar inspecciones debe evaluarse con datos que no se usaron para construirlo, de la misma manera que un estimador econométrico se valida con datos distintos a los de su ajuste. El primer paso es, entonces, describir cómo se separan los datos.
 
@@ -60,7 +60,7 @@ El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathca
 
 En clasificación existen diferentes medidas de rendimiento, algunas de ellas son exactitud (*accuracy*), precisión (*precision*), cobertura (*recall*), y $F_1$, entre otras. @10.1145/2808194.2809449 describe de manera axiomática algunas de estas medidas y se dan recomendaciones en general sobre medidas de rendimiento para clasificadores. 
 
-Varias de las medidas de rendimiento toman como insume la **Tabla de Confusión** (@tbl-confusion), la cual contiene la información del proceso de clasificación. La siguiente tabla muestra la estructura de esta tabla para un problema binario, donde se tiene una clase positiva identificada con $p$ y una clase negativa ($n$). La variable $\mathcal Y$ indica las clases reales y la variable $\mathcal{\hat Y}$ representa la estimación (predicción) hecha por el clasificador. Adicionalmente, la tabla se puede extender a $K$ clases siguiendo la misma estructura; la diagonal contienen los elementos correctamente identificados y los elementos fuera de la diagonal muestra los errores. 
+Varias de las medidas de rendimiento toman como insumo la **Tabla de Confusión** (@tbl-confusion), la cual contiene la información del proceso de clasificación. La siguiente tabla muestra la estructura de esta tabla para un problema binario, donde se tiene una clase positiva identificada con $p$ y una clase negativa ($n$). La variable $\mathcal Y$ indica las clases reales y la variable $\mathcal{\hat Y}$ representa la estimación (predicción) hecha por el clasificador. Adicionalmente, la tabla se puede extender a $K$ clases siguiendo la misma estructura; la diagonal contiene los elementos correctamente identificados y los elementos fuera de la diagonal muestran los errores. 
 
 |              |$\mathcal{\hat Y}=p$  |$\mathcal{\hat Y}=n$  |
 |--------------|----------------------|----------------------|
@@ -69,7 +69,7 @@ Varias de las medidas de rendimiento toman como insume la **Tabla de Confusión*
 
 : Tabla de Confusión {#tbl-confusion}
 
-La tabla se puede ver como valores nominales, es decir contar el número de ejemplos clasificados como verdaderos positivos o como proporción de tal manera que las cuatro celdas sumen $1$. En esta descripción se asume que son proporcionen, esto porque se seguirá una interpretación probabilística, descrita por @10.1007/978-3-540-31865-1_25, para presentar las diferentes medidas de rendimiento.
+La tabla se puede ver como valores nominales, es decir contar el número de ejemplos clasificados como verdaderos positivos o como proporción de tal manera que las cuatro celdas sumen $1$. En esta descripción se asume que son proporciones, esto porque se seguirá una interpretación probabilística, descrita por @10.1007/978-3-540-31865-1_25, para presentar las diferentes medidas de rendimiento.
 
 Viendo la @tbl-confusion como una proporción y combinando con la interpretación probabilística la tabla quedaría de la siguiente manera.
 
@@ -107,9 +107,9 @@ $$
 \end{split}
 $$
 
-Esta manera ayuda a entender el caso cuando se tiene una clase con muchos ejemplos, e.g., $\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),$ en ese caso se ve que la exactitud está dominado por el primer término, i.e., $\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).$ En este caso, la manera trivial de optimizar la exactitud es crear un clasificador que siempre regrese la clase $p.$ Por esta razón la exactitud no es una medida adecuada cuando las clases son desbalanciadas, es buena medida cuando $\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$
+Esta manera ayuda a entender el caso cuando se tiene una clase con muchos ejemplos, e.g., $\mathbb P(\mathcal Y=p) \gg \mathbb P(\mathcal Y=n),$ en ese caso se ve que la exactitud está dominada por el primer término, i.e., $\mathbb P( \mathcal{\hat Y}=p \mid \mathcal Y=p)\mathbb P(\mathcal Y=p).$ En este caso, la manera trivial de optimizar la exactitud es crear un clasificador que siempre regrese la clase $p.$ Por esta razón la exactitud no es una medida adecuada cuando las clases son desbalanceadas, es buena medida cuando $\mathbb P(\mathcal Y=p) \approx \mathbb P(\mathcal Y=n).$
 
-### Coberturba (*Recall*) {#sec-recall}
+### Cobertura (*Recall*) {#sec-recall}
 
 La siguiente medida de rendimiento es el recall, este calcula la probabilidad de ejemplos correctamente clasificados como $p$ dados todos los ejemplos que se tienen de la clase $p$. En base a esta ecuación se puede observar que un algoritmo trivial con el máximo valor de recall solamente tiene que predecir como clase $p$ todos los elementos. 
 
@@ -124,7 +124,7 @@ $$ {#eq-recall}
 
 ### Precisión (*Precision*) {#sec-precision}
 
-La precisión complementa el recall, al calcular la probabilidad de los ejemplos correctamente clasificados como $p$ dadas las predicciones de los ejemplos. Es decir, en la probabilidad condicional se observa que se conocen las predicciones positivas y de esas predicciones se mide si estas son correctamente clasificadas. Basándose en esto, se puede ver que una manera de generar un algoritmo competitivo en esta media corresponde a predecir la clase solo cuando exista una gran seguridad de la clase. 
+La precisión complementa el recall, al calcular la probabilidad de los ejemplos correctamente clasificados como $p$ dadas las predicciones de los ejemplos. Es decir, en la probabilidad condicional se observa que se conocen las predicciones positivas y de esas predicciones se mide si estas son correctamente clasificadas. Basándose en esto, se puede ver que una manera de generar un algoritmo competitivo en esta medida corresponde a predecir la clase solo cuando exista una gran seguridad de la clase. 
 
 $$
 \begin{split}
@@ -176,13 +176,13 @@ Finalmente la medida de rendimiento quedaría como $\sum_x H(\mathbb P(\mathcal 
 
 ### Área Bajo la Curva *ROC* {#sec-roc-curve}
 
-El área bajo la curva *ROC* (*Relative Operating Characteristic*) es una medida de rendimiento que también está pasada en la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$ con la característica de que la clase se selecciona en base a un umbral $\rho$. Es decir, dado un ejemplo $x$, este ejemplo pertenece a la clase $p$ si $\mathbb P(\mathcal Y=p \mid \mathcal X=x) \geq \rho.$
+El área bajo la curva *ROC* (*Receiver Operating Characteristic*) es una medida de rendimiento que también está basada en la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$ con la característica de que la clase se selecciona en base a un umbral $\rho$. Es decir, dado un ejemplo $x$, este ejemplo pertenece a la clase $p$ si $\mathbb P(\mathcal Y=p \mid \mathcal X=x) \geq \rho.$
 
-Se observa que modificando el umbral $\rho$ se tienen diferentes tablas de confusión, para cada tabla de confusión posible se calcula la tasa de verdaderos positivos (TPR) que corresponde al recall (@sec-recall), i.e., $\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=p),$ y la tasa de falsos positivos (FPR) que es $\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=n).$ Cada par de TPR y FPR representan un punto de la curva *ROC*. El rendimiento corresponde al área debajo de la curva delimitada por los pares TPR y FPR.
+Se observa que modificando el umbral $\rho$ se tienen diferentes tablas de confusión, para cada tabla de confusión posible se calcula la tasa de verdaderos positivos (TPR) que corresponde al recall (@sec-recall), i.e., $\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=p),$ y la tasa de falsos positivos (FPR) que es $\mathbb P(\mathcal{\hat Y}=p \mid \mathcal Y=n).$ Cada par de TPR y FPR representa un punto de la curva *ROC*. El rendimiento corresponde al área debajo de la curva delimitada por los pares TPR y FPR.
 
 ### Ejemplo {#sec-rendimiento-ejemplo-clasificacion}
 
-El ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta el momento. En el siguiente código se observa el procedimiento para cargar los datos, después los datos se dividen en entrenamiento y prueba (@sec-conjunto-entre-prueba), se entrena el algoritmo Analizador Discriminante Cuadrático y se predice el conjunto de prueba. Por ahora este algoritmo se utiliza como una caja negra. Es un clasificador que, para cada clase, estima una distribución normal de las variables de entrada (sus medias y una matriz de covarianza, que indica cómo varían las variables en conjunto) y asigna a cada ejemplo la clase más probable. Se entrena con `fit` y predice con `predict`. Su funcionamiento se describe en la @sec-estimacion-parametros, que se verá más adelante.
+El ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) se utiliza para ilustrar el uso de las medidas de rendimiento presentadas hasta el momento. En el siguiente código se observa el procedimiento para cargar los datos, después los datos se dividen en entrenamiento y prueba (@sec-conjunto-entre-prueba), se entrena el algoritmo Analizador Discriminante Cuadrático y se predice el conjunto de prueba. Por ahora este algoritmo se utiliza como una caja negra. Es un clasificador que, para cada clase, estima una distribución normal de las variables de entrada (sus medias y una matriz de covarianza, que indica cómo varían las variables en conjunto) y asigna a cada ejemplo la clase más probable. Se entrena con `fit` y predice con `predict`. Su funcionamiento se describe en la @sec-estimacion-parametros, que se verá más adelante.
 
 ```{python}
 #| echo: true
@@ -197,7 +197,7 @@ hy_gaussian = gaussian.predict(G)
 :::{.callout-note}
 #### CompStats 
 
-Para medir el rendimiento de los algoritmos se utilizará la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) descrita en @Nava2024. Esta librería permite obtener el error estándar de la estadística calculada, así como hacer una comparación entre el rendimiento de diferentes algoritmos incluyendo la significacia estadísitca. 
+Para medir el rendimiento de los algoritmos se utilizará la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) descrita en @Nava2024. Esta librería permite obtener el error estándar de la estadística calculada, así como hacer una comparación entre el rendimiento de diferentes algoritmos incluyendo la significancia estadística. 
 :::
 
 Para medir la exactitud del algoritmo anterior, se utiliza la función `accuracy_score` tal y como se muestra en el siguiente código. 
@@ -242,7 +242,7 @@ Markdown(tab)
 :::{.callout-note}
 ### Comparación de cobertura por clase
 
-Continuando con el rendimiento y utilizando las características de la librería, es posible comparar el rendimiento entre dos o más algoritmos. En este ejemplo, se comparará el rendimiento en la cobertura por clase contra el algoritmo Bayesiano Ingenuo, otro clasificador que también se usa como caja negra. Este algoritmo hace lo mismo que el anterior pero supone que, dentro de cada clase, las variables de entrada son independientes entre sí, por lo que solamente estima una media y una varianza por variable. Se describirá en la @sec-cl-bayesiano-ingenuo. En las siguientes dos lineas se entrena el algoritmo y se predice las clases en el conjunto de prueba. 
+Continuando con el rendimiento y utilizando las características de la librería, es posible comparar el rendimiento entre dos o más algoritmos. En este ejemplo, se comparará el rendimiento en la cobertura por clase contra el algoritmo Bayesiano Ingenuo, otro clasificador que también se usa como caja negra. Este algoritmo hace lo mismo que el anterior pero supone que, dentro de cada clase, las variables de entrada son independientes entre sí, por lo que solamente estima una media y una varianza por variable. Se describirá en la @sec-cl-bayesiano-ingenuo. En las siguientes dos líneas se entrena el algoritmo y se predice las clases en el conjunto de prueba. 
 
 ```{python} 
 #| echo: true
@@ -277,7 +277,7 @@ recall.plot(comp_legend='Comparación',
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
-Medir el rendimiento del algoritmo Bayesiano Ingenuo (el clasificador que supone variables independientes dentro de cada clase, el cual se describirá en la @sec-cl-bayesiano-ingenuo) en el problema del del Iris (ver @sec-iris) utilizando la función $F_\beta$ (@sec-f1) variando $\beta$ entre $[0, 1],$ tal y como se muestra en la @fig-actividad-fbeta
+Medir el rendimiento del algoritmo Bayesiano Ingenuo (el clasificador que supone variables independientes dentro de cada clase, el cual se describirá en la @sec-cl-bayesiano-ingenuo) en el problema del Iris (ver @sec-iris) utilizando la función $F_\beta$ (@sec-f1) variando $\beta$ entre $[0, 1],$ tal y como se muestra en la @fig-actividad-fbeta
 
 ```{python}
 #| label: fig-actividad-fbeta
@@ -318,7 +318,7 @@ grafica()
 ```
 :::
 
-Por otro lado, para calcular el valor de la entropía cruzada se requiere la predicción de la probabilidad de cada clase, lo cual se obtiene con el siguiente instrucción
+Por otro lado, para calcular el valor de la entropía cruzada se requiere la predicción de la probabilidad de cada clase, lo cual se obtiene con la siguiente instrucción
 
 ```{python}
 #| echo: true
@@ -427,7 +427,7 @@ La predicción en el conjunto de prueba sería:
 hy = m.predict(G)
 ```
 
-Las diferentes medidas de rendimiento para problemas de regresión se puede calcular de la siguiente manera. 
+Las diferentes medidas de rendimiento para problemas de regresión se pueden calcular de la siguiente manera. 
 
 El error cuadrático medio (@eq-mse), se calcula mediante la siguiente función
 
@@ -461,9 +461,9 @@ Además de los conjuntos de Entrenamiento y Prueba (@sec-conjunto-entre-prueba),
 
 La mayoría de algoritmos de aprendizaje tiene hiperparámetros que pueden ser ajustados para optimizar su comportamiento al conjunto de datos que se está analizando. Estos hiperparámetros pueden estar dentro del algoritmo o pueden ser modificaciones al conjunto de datos para adecuarlos al algoritmo. El segundo caso es el que se analizará en esta unidad. Es decir, se seleccionarán las variables que facilitan el aprendizaje. 
 
-Para optimizar los parámetros es necesario medir el rendimiento del algoritmo, es decir, observar como se comporta el algoritmo en el proceso de predicción. La manera trivial sería utilizar el conjunto de prueba $\mathcal G$ para medir el rendimiento. Pero es necesario recordar que este conjunto no debe ser visto durante el aprendizaje y la optimización de los parámetros es parte de ese proceso. Si se usara $\mathcal G$ entonces dejaría de ser el conjunto de prueba y se tendría que seleccionar otro conjunto de prueba. 
+Para optimizar los parámetros es necesario medir el rendimiento del algoritmo, es decir, observar cómo se comporta el algoritmo en el proceso de predicción. La manera trivial sería utilizar el conjunto de prueba $\mathcal G$ para medir el rendimiento. Pero es necesario recordar que este conjunto no debe ser visto durante el aprendizaje y la optimización de los parámetros es parte de ese proceso. Si se usara $\mathcal G$ entonces dejaría de ser el conjunto de prueba y se tendría que seleccionar otro conjunto de prueba. 
 
-Entonces para optimizar los parámetros del algoritmo se selecciona del conjunto de entrenamiento, i.e., $\mathcal T$, el **conjunto de validación**, $\mathcal V$. Este conjunto tiene la característica que $\mathcal T \cap \mathcal V \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal V \cup \mathcal G = \mathcal D.$ Una manera de realizar estos es seleccionar primeramente el conjunto de prueba $\mathcal G$ y de los datos restantes generar los conjuntos de entrenamiento $\mathcal T$ y validación $\mathcal V.$
+Entonces para optimizar los parámetros del algoritmo se selecciona del conjunto de entrenamiento, i.e., $\mathcal T$, el **conjunto de validación**, $\mathcal V$. Este conjunto tiene la característica que $\mathcal T \cap \mathcal V \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal V \cup \mathcal G = \mathcal D.$ Una manera de realizar esto es seleccionar primeramente el conjunto de prueba $\mathcal G$ y de los datos restantes generar los conjuntos de entrenamiento $\mathcal T$ y validación $\mathcal V.$
 
 Para ejemplificar esta idea se utiliza el ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utiliza un Bayesiano Ingenuo (variables independientes dentro de cada clase) o se estima la matriz de covarianza completa (la que además captura cómo se relacionan las variables entre sí). Ambos son los clasificadores usados como cajas negras en la @sec-rendimiento-ejemplo-clasificacion. 
 
@@ -492,7 +492,7 @@ T, V, y_t, y_v = train_test_split(T, y_t,
                                   test_size=0.3)
 ```
 
-En este momento ya se tienen todos los elementos para medir el rendimiento de cada hiperparámetro. Empezando por el clasificador con la matriz de covarianza completa, donde la primera linea entrena el clasificador, en la segunda se predicen las clases en el conjunto de validación y en la tercera se calcula el promedio de cobertura por clase (i.e., *macro-recall*).  
+En este momento ya se tienen todos los elementos para medir el rendimiento de cada hiperparámetro. Empezando por el clasificador con la matriz de covarianza completa, donde la primera línea entrena el clasificador, en la segunda se predicen las clases en el conjunto de validación y en la tercera se calcula el promedio de cobertura por clase (i.e., *macro-recall*).  
 
 ```{python}
 #| echo: true
@@ -515,7 +515,7 @@ hy_ingenuo = ingenuo.predict(V)
 recall.use_tqdm = False
 ```
 
-Faltaría solamente medir la cobertura en la predicciones que se tienen en la variable `hy_ingenuo` tal y como se muestra en la primera línea del siguiente código y la gráfica de la comparación se indica en la segunda línea. La @fig-cobertura-validacion muestra la comparación de rendimiento indicando la significancia estadística de la comparación.  
+Faltaría solamente medir la cobertura en las predicciones que se tienen en la variable `hy_ingenuo` tal y como se muestra en la primera línea del siguiente código y la gráfica de la comparación se indica en la segunda línea. La @fig-cobertura-validacion muestra la comparación de rendimiento indicando la significancia estadística de la comparación.  
 
 ```{python}
 #| echo: true
@@ -530,7 +530,7 @@ recall.plot(comp_legend='Comparación',
             var_name='Rendimiento')
 ```
 
-Comparando el rendimiento de los dos hiperparámetros se observa cual de los dos modelos obtiene el mejor rendimiento. Con el fin de completar el ejemplo se describe calcular el rendimiento en  $\mathcal G$ del algoritmo con la matriz de covarianza completa. El procedimiento utilizado es 
+Comparando el rendimiento de los dos hiperparámetros se observa cuál de los dos modelos obtiene el mejor rendimiento. Con el fin de completar el ejemplo se describe cómo calcular el rendimiento en  $\mathcal G$ del algoritmo con la matriz de covarianza completa. El procedimiento utilizado es 
 
 ```{python}
 #| echo: true
@@ -546,7 +546,7 @@ dando un valor de `{python} Markdown(f'${recall.statistic:0.4f}$')` con un error
 
 ### k-Iteraciones de Validación Cruzada {#sec-kfold-cross-validation}
 
-Cuando se cuenta con pocos datos para medir el rendimiento del algoritmo es común utilizar la técnica de _k-fold cross-validation_ la cual consiste en partir $k$ veces el conjunto de entrenamiento para generar $k$ conjuntos de `{python} Markdown(f'${accuracy.statistic:0.4f}$')` con un error estándar de `{python} Markdown(f'${accuracy.se:0.4f}.$')` entrenamiento y validación. 
+Cuando se cuenta con pocos datos para medir el rendimiento del algoritmo es común utilizar la técnica de _k-fold cross-validation_ la cual consiste en partir $k$ veces el conjunto de entrenamiento para generar $k$ conjuntos de entrenamiento y validación. 
 
 La idea se ilustra con la siguiente tabla, donde se asume que los datos son divididos en 5 bloques ($k=5$), cada columna de la tabla ilustra los datos de ese bloque. Si los datos se dividen en $k=5$ bloques, entonces existen $k$ iteraciones que son representadas por cada renglón de la siguiente tabla, quitando el encabezado de la misma. La letra en cada celda identifica el uso que se le dará a esos datos en la respectiva iteración, es decir, $\mathcal T$ representa que se usará como conjunto de entrenamiento y $\mathcal V$ se usa para identificar aquellos datos que se usarán como conjunto de validación.
 
@@ -560,7 +560,7 @@ El objetivo es entrenar y probar el rendimiento del algoritmo $k$ veces usando l
 |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |$\mathcal V$   |
 |$\mathcal T$   |$\mathcal V$   |$\mathcal T$   |$\mathcal T$   |$\mathcal T$   |
 
-Se utiliza el mismo problema para medir el rendimiento del hiperparámetro del clasificador Gausiano. Lo primero es seleccionar el conjunto de prueba ($\mathcal G$) que se realiza con el siguiente código. 
+Se utiliza el mismo problema para medir el rendimiento del hiperparámetro del clasificador Gaussiano. Lo primero es seleccionar el conjunto de prueba ($\mathcal G$) que se realiza con el siguiente código. 
 
 ```{python}
 #| echo: true
@@ -569,7 +569,7 @@ T, G, y_t, y_g = train_test_split(D, y,
                                   test_size=0.2)
 ```
 
-La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` de la siguiente manera. La primera línea crear una variable para guardar el rendimiento. En la segunda línea se inicializa el procedimiento indicando que los datos sean tomados al azar. Después se realiza el ciclo con las $k$ iteraciones, para cada iteración se genera un índice `ts` que indica cuales son los datos del conjunto de entrenamiento y `vs` que corresponde a los datos de validación. Se estiman los parámetros usando `ts` tal y como se observa en la cuarta línea. Habiendo estimado los parámetros se predicen los datos del conjunto de validación (5 línea). Se mide la cobertura promedio (i.e. *macro-recall*) en la última linea. 
+La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` de la siguiente manera. La primera línea crea una variable para guardar el rendimiento. En la segunda línea se inicializa el procedimiento indicando que los datos sean tomados al azar. Después se realiza el ciclo con las $k$ iteraciones, para cada iteración se genera un índice `ts` que indica cuáles son los datos del conjunto de entrenamiento y `vs` que corresponde a los datos de validación. Se estiman los parámetros usando `ts` tal y como se observa en la cuarta línea. Habiendo estimado los parámetros se predicen los datos del conjunto de validación (quinta línea). Se mide la cobertura promedio (i.e. *macro-recall*) en la última línea. 
 
 ```{python}
 #| echo: true

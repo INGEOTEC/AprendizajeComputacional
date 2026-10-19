@@ -25,7 +25,7 @@ El **error estándar** está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde
 
 ### Media {#sec-error-estandar-media}
 
-Una de las estadísticas donde si se puede calcular analíticamente $\sqrt{\mathbb V(\hat \theta)}$ es la media, es decir, se tiene una muestra $\mathcal D$ con $N$ elementos independientes y idénticamente distribuidos, entonces la media corresponde a
+Una de las estadísticas donde sí se puede calcular analíticamente $\sqrt{\mathbb V(\hat \theta)}$ es la media, es decir, se tiene una muestra $\mathcal D$ con $N$ elementos independientes y idénticamente distribuidos, entonces la media corresponde a
 
 $$\bar x = \frac{1}{N} \sum_{x \in \mathcal D} x.$$
 
@@ -49,16 +49,16 @@ donde $\sigma^2$ es la varianza de la distribución. Es importante notar que $\m
 
 ### Ejemplo: Media {#sec-ejemplo-normal-1d}
 
-El siguiente ejemplo complementa la información al presentar el error estándar de la media cuando los datos vienen de una distribución Gausiana. Suponiendo que se tiene $1000$ muestras de una distribución Gausiana $\mathcal N(1, 4),$ i.e., $\mu=1$ y $\sigma=2$. La error estándar de estimar la media con esos datos está dado por $\mathbb V(\hat \mu) = \frac{\sigma}{\sqrt{N}} = \frac{2}{\sqrt{1000}}=0.0632.$ 
+El siguiente ejemplo complementa la información al presentar el error estándar de la media cuando los datos vienen de una distribución Gaussiana. Suponiendo que se tienen $1000$ muestras de una distribución Gaussiana $\mathcal N(1, 4),$ i.e., $\mu=1$ y $\sigma=2$. El error estándar de estimar la media con esos datos está dado por $\mathbb V(\hat \mu) = \frac{\sigma}{\sqrt{N}} = \frac{2}{\sqrt{1000}}=0.0632.$ 
 
-Continuado con el ejemplo, se simula la generación de esta población de $1000$ elementos. El primer paso es iniciar la clase `norm` (que implementa una distribución Gausiana) para que se simule $\mathcal N(1, 4).$ Es importante notar que el parámetro `scale` de `norm` corresponde a la desviación estándar $\sigma.$
+Continuando con el ejemplo, se simula la generación de esta población de $1000$ elementos. El primer paso es iniciar la clase `norm` (que implementa una distribución Gaussiana) para que se simule $\mathcal N(1, 4).$ Es importante notar que el parámetro `scale` de `norm` corresponde a la desviación estándar $\sigma.$
 
 ```{python}
 #| echo: true
 p1 = norm(loc=1, scale=2)
 ```
 
-Usando `p1` se simulan 500 poblaciones de 1000 elementos cada una, y para cada una de esas poblaciones se calcula su media. La primera linea crea la muestra $\mathcal D$ y a continuación se calcula la media por cada población, renglón de `D`.
+Usando `p1` se simulan 500 poblaciones de 1000 elementos cada una, y para cada una de esas poblaciones se calcula su media. La primera línea crea la muestra $\mathcal D$ y a continuación se calcula la media por cada población, renglón de `D`.
 
 ```{python}
 #| echo: true
@@ -116,9 +116,9 @@ Por lo tanto el error estándar es: $\textsf{se}(\mathbf w) = \sigma \sqrt{(X^\i
 
 Existen ocasiones donde no se cuenta con una ecuación cerrada para $\mathbb V(\hat \theta)$, un ejemplo sería la mediana. En aquellas estadísticas donde no se tenga el error estándar no se pueda calcular analíticamente se puede utilizar Bootstrap. 
 
-Bootstrap es un procedimiento que permite calcular el error estándar. Suponiendo que se la estadística se calcula mediante la realización de $N$ variables aleatorias, $\mathcal X \sim F$, es decir, $\theta = g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N).$ Por ejemplo, la media es $g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N) = \frac{1}{N} \sum_i^N \mathcal X_i.$
+Bootstrap es un procedimiento que permite calcular el error estándar. Suponiendo que la estadística se calcula mediante la realización de $N$ variables aleatorias, $\mathcal X \sim F$, es decir, $\theta = g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N).$ Por ejemplo, la media es $g(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_N) = \frac{1}{N} \sum_i^N \mathcal X_i.$
 
-El Bootstrap simula la distribución $\theta$ mediante la selección con remplazo de $N$ elementos del conjunto de la muestra $\mathcal D = (x_1, x_2, \ldots, x_n)$ donde $x_i \sim F$. Es decir, se genera un nuevo conjunto $\mathcal D_j = (x_{j_1}, x_{j_2}, \ldots, x_{j_n})$ donde $x_{j_1}$ podría ser $x_4$ de $\mathcal D$ y dado que se selecciona con reemplazo entonces $x_4$ podría aparecer otra vez en $\mathcal D_j.$ Utilizando $\mathcal D_j$ se puede estimar la estadística $\hat \theta_j = g(x_{j_1}, x_{j_2}, \ldots, x_{j_n}).$ Bootstrap repite el proceso anterior $B$ donde en cada iteración se selecciona con reemplazo $N$ veces $\mathcal D$. Utilizando las $\theta_j$ calculadas se estima $\mathbb V(\theta)$ con la siguiente ecuación
+El Bootstrap simula la distribución $\theta$ mediante la selección con remplazo de $N$ elementos del conjunto de la muestra $\mathcal D = (x_1, x_2, \ldots, x_n)$ donde $x_i \sim F$. Es decir, se genera un nuevo conjunto $\mathcal D_j = (x_{j_1}, x_{j_2}, \ldots, x_{j_n})$ donde $x_{j_1}$ podría ser $x_4$ de $\mathcal D$ y dado que se selecciona con reemplazo entonces $x_4$ podría aparecer otra vez en $\mathcal D_j.$ Utilizando $\mathcal D_j$ se puede estimar la estadística $\hat \theta_j = g(x_{j_1}, x_{j_2}, \ldots, x_{j_n}).$ Bootstrap repite el proceso anterior $B$ veces donde en cada iteración se selecciona con reemplazo $N$ veces $\mathcal D$. Utilizando las $\theta_j$ calculadas se estima $\mathbb V(\theta)$ con la siguiente ecuación
 
 $$\mathbb V(\hat \theta) = \frac{1}{B} \sum_{j=1}^B (\hat \theta_j - \frac{1}{B} \sum_k^B \hat \theta_k)^2.$$
 
@@ -131,7 +131,7 @@ Utilizando los datos generados en la @sec-ejemplo-normal-1d se puede calcular el
 D_mediana = D[0]
 ```
 
-La variable `D_mediana` tiene la muestra $\mathcal D$ con la que se trabajará para estimar el error estándar de la mediana. Se tienen que generar $B$ repeticiones de muestrear $\mathcal D$ $N$ veces con reemplazo. Esto se puede implementar usando índices y números aleatorios de $[0, N)$ considerando que en Python el primer índice es $0$. Este procedimiento se muestra en la primera linea del siguiente código. El arreglo `S` contiene los índices para realizar las $B$ muestras, en la segunda linea se itera por los renglones de `S` y en cada operación se calcula la mediana. Es decir, en cada iteración se está calculando un $\hat \theta_i$ que corresponde a la mediana. Finalmente, se calcula la desviación estándar de la lista `B` y ese valor corresponde a error estándar de la mediana. 
+La variable `D_mediana` tiene la muestra $\mathcal D$ con la que se trabajará para estimar el error estándar de la mediana. Se tienen que generar $B$ repeticiones de muestrear $\mathcal D$ $N$ veces con reemplazo. Esto se puede implementar usando índices y números aleatorios de $[0, N)$ considerando que en Python el primer índice es $0$. Este procedimiento se muestra en la primera línea del siguiente código. El arreglo `S` contiene los índices para realizar las $B$ muestras, en la segunda línea se itera por los renglones de `S` y en cada operación se calcula la mediana. Es decir, en cada iteración se está calculando un $\hat \theta_i$ que corresponde a la mediana. Finalmente, se calcula la desviación estándar de la lista `B` y ese valor corresponde al error estándar de la mediana. 
 
 ```{python}
 #| echo: true
@@ -147,7 +147,7 @@ from IPython.display import Markdown
 Markdown(f"`se` tiene un valor de ${se:0.4f}.$")
 ```
 
-Considerando que se generaron $500$ poblaciones de $1000$ elementos que se encuentra en la variable `D` se puede visualizar el histograma de las medianas calculadas con `D` y aquellas obtenidas con Bootstrap. Se guardan estos dos valores en un `DataFrame` para posteriormente graficar el histograma, como se muestra en el siguiente código y en la @fig-histograma-mediana.
+Considerando que se generaron $500$ poblaciones de $1000$ elementos que se encuentran en la variable `D` se puede visualizar el histograma de las medianas calculadas con `D` y aquellas obtenidas con Bootstrap. Se guardan estos dos valores en un `DataFrame` para posteriormente graficar el histograma, como se muestra en el siguiente código y en la @fig-histograma-mediana.
 
 
 ```{python}

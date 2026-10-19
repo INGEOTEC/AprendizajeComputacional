@@ -38,11 +38,11 @@ El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una re
 
 ## Clasificación { #sec-arboles-clasificacion }
 
-Utilizando el procedimiento para generar tres Distribuciones Gausianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
+Utilizando el procedimiento para generar tres Distribuciones Gaussianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
 
 ```{python}
 #| code-fold: true
-#| fig-cap: Tres distribuciones Gausianas
+#| fig-cap: Tres distribuciones Gaussianas
 #| label: fig-arboles-tres-distribuciones
 seed = 1
 X_1 = multivariate_normal(mean=[5, 5],
@@ -91,7 +91,7 @@ hojas_f = ', '.join([f'#{x}' for x in hojas[:-1]])
 hojas_f = f'{hojas_f}, y #{hojas[-1]}'
 ```
 
-Por ejemplo el nodo raíz del árbol tiene una entropía de `{python} entropia_raiz`, la función de decisión es `{python} funcion_decision` que indica que todos los elementos con un valor en `{python} componente` menor o igual del valor calculado están del lado izquierdo. Los hojas (nodos `{python} hojas_f`) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es $0$, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple. 
+Por ejemplo el nodo raíz del árbol tiene una entropía de `{python} entropia_raiz`, la función de decisión es `{python} funcion_decision` que indica que todos los elementos con un valor en `{python} componente` menor o igual del valor calculado están del lado izquierdo. Las hojas (nodos `{python} hojas_f`) no cuentan con una función de corte, dado que son la parte final del árbol. En el árbol mostrado se observa que la entropía en todos los casos es $0$, lo cual indica que todos los elementos que llegaron a ese nodo son de la misma clase. No en todos los casos las hojas tienen entropía cero y existen parámetros en la creación del árbol que permiten crear árboles más simples. Por ejemplo, hay hojas que tienen muy pocos ejemplos, uno se podría preguntar ¿qué pasaría si esas hojas se eliminan? para tener un árbol más simple. 
 
 ```{python}
 #| echo: false
@@ -103,7 +103,7 @@ else:
   desc = Markdown(f'los nodos [{nodos}]')
 ```
 
-La siguiente @fig-arboles-arbol-decision-funcion muestra el árbol generado cuando se remueven `{python} desc`. Se observa un árbol con menos nodos, aunque la entropía en es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo. 
+La siguiente @fig-arboles-arbol-decision-funcion muestra el árbol generado cuando se remueven `{python} desc`. Se observa un árbol con menos nodos, aunque la entropía es diferente de cero en algunas hojas. La segunda parte de la figura muestra la función de decisión que genera el árbol de decisión. Se observa que cada regla divide el espacio en dos usando la información que se muestra en cada nodo. 
 
 ```{python}
 #| code-fold: true
@@ -136,7 +136,7 @@ Utilizando el árbol y la función de decisión mostrada en @fig-arboles-arbol-d
 
 ### Entrenamiento { #sec-clasificacion-entrenamiento }
 
-Existen diferentes sistemas para la generación de un árbol de decisión (e.g., @Quinlan1986) la mayoría de ellos comparten las siguiente estructura general. La construcción un árbol se realiza mediante un procedimiento recursivo en donde se aplica la función de corte $f_m(\mathbf x) = x_i \leq a$ en el nodo $m$, donde el parámetro $a$ y la componente $x_i$ se identifican utilizando los datos que llegan al nodo $m$ de tal manera que se maximice una función de costo.
+Existen diferentes sistemas para la generación de un árbol de decisión (e.g., @Quinlan1986) la mayoría de ellos comparten la siguiente estructura general. La construcción de un árbol se realiza mediante un procedimiento recursivo en donde se aplica la función de corte $f_m(\mathbf x) = x_i \leq a$ en el nodo $m$, donde el parámetro $a$ y la componente $x_i$ se identifican utilizando los datos que llegan al nodo $m$ de tal manera que se maximice una función de costo.
 
 Una función de costo podría estar basada en la entropía, es decir, para cada posible corte se mide la entropía en los nodos generados y se calcula la esperanza de la entropía de la siguiente manera. 
 
@@ -154,7 +154,7 @@ def H(arr):
     return - (b * np.log2(b, where=b != 0)).sum()
 ```
 
-La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento `corte_var`. Este procedimiento asume que las etiquetas (`labels`) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable `mejor` para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función `np.diff`; dado que está quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calculan el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. 
+La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento `corte_var`. Este procedimiento asume que las etiquetas (`labels`) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable `mejor` para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función `np.diff`; dado que esta quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calcula el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. 
 
 
 ```{python}
@@ -188,7 +188,7 @@ En el siguiente ejemplo se usa la función `corte_var`; la función regresa un c
 costo, indice = corte_var(np.array([0, 0, 1, 0, 0, 0]))
 ```
 
-Con la función `corte_var` se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento `corte` encuentra el mínimo con respecto de $x_i$, está función recibe los índices (`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $0$ al número de elemento del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función `corte_var` donde se observa como las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. Finalmente, se regresa `mejor` y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  
+Con la función `corte_var` se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento `corte` encuentra el mínimo con respecto de $x_i$, esta función recibe los índices (`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $0$ al número de elementos del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función `corte_var` donde se observa cómo las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. Finalmente, se regresa `mejor` y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  
 
 ```{python}
 #| echo: true
@@ -230,12 +230,12 @@ perf, i, j = best
 ```
 
 ::: {.callout-note}
-La función `corte` no verifica que se esté en una hoja, entonces si se hace el corte en una hora regresará `(np.inf, none, None)`
+La función `corte` no verifica que se esté en una hoja, entonces si se hace el corte en una hoja regresará `(np.inf, none, None)`
 :::
 
 ### Ejemplo: Breast Cancer Wisconsin
 
-Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.
+Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Con las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.
 
 ```{python}
 #| echo: true
@@ -262,7 +262,7 @@ hy = arbol.predict(G)
 error_f = Markdown(f'${(y_g != hy).mean():0.4f}$')
 ```
 
-El error en el conjunto de prueba $\mathcal G$ es `{python} error_f`, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gausianas (@sec-gaussina-perf-breast_cancer). La siguiente instrucción muestra el cálculo del error. 
+El error en el conjunto de prueba $\mathcal G$ es `{python} error_f`, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gaussianas (@sec-gaussina-perf-breast_cancer). La siguiente instrucción muestra el cálculo del error. 
 
 ```{python}
 #| echo: true
@@ -328,7 +328,7 @@ X, y = load_diabetes(return_X_y=True)
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 ```
 
-Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestran la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho. 
+Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestra la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho. 
 
 ```{python}
 #| echo: true
@@ -337,7 +337,7 @@ _ = tree.plot_tree(arbol, max_depth=1)
 ```
 
 
-El siguiente método implementa la función de corte para regresión se puede observar que la única diferente con la función `corte_var` definida en clasificación (@sec-arboles-clasificacion) es que la entropía `H` se cambia por la varianza `np.var`. 
+El siguiente método implementa la función de corte para regresión se puede observar que la única diferencia con la función `corte_var` definida en clasificación (@sec-arboles-clasificacion) es que la entropía `H` se cambia por la varianza `np.var`. 
 
 ```{python}
 #| echo: true
