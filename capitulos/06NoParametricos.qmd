@@ -48,7 +48,7 @@ if not isfile('a1882_25.dat'):
 
 ## Introducción {#sec-intro-07}
 
-Los métodos paramétricos asumen que los datos provienen de un modelo común, esto da la ventaja de que el problema de estimar el modelo se limita a encontrar los parámetros del mismo, por ejemplo los parámetros de una distribución Gausiana. Por otro lado en los métodos no paramétricos asumen que datos similares se comportan de manera similar, estos algoritmos también se les conoces como algoritmos de memoria o basados en instancias.
+Los métodos paramétricos asumen que los datos provienen de un modelo común, esto da la ventaja de que el problema de estimar el modelo se limita a encontrar los parámetros del mismo, por ejemplo los parámetros de una distribución Gaussiana. Por otro lado en los métodos no paramétricos asumen que datos similares se comportan de manera similar, estos algoritmos también se les conoce como algoritmos de memoria o basados en instancias.
 
 ## Histogramas {#sec-no-parametricos-histogramas}
 
@@ -62,7 +62,7 @@ $$
 B_1 = [0, \frac{1}{m}), B_2=[\frac{1}{m}, \frac{2}{m}), \ldots, B_m=[\frac{m-1}{m}, 1],
 $$ 
 
-donde $m$ es el número de bins y $h=\frac{1}{m}$. Se puede definir a $\hat p_j = \frac{1}{N} \sum_{x \in \mathcal D} 1( x \in B_j )$ y $p_j = \int_{B_j} f(u) du$, donde $p_j$ es la probabilidad del $j$-ésimo bin y $\hat p_j$ es su estimación. Usando está definición se puede definir la estimación de $f$ como: 
+donde $m$ es el número de bins y $h=\frac{1}{m}$. Se puede definir a $\hat p_j = \frac{1}{N} \sum_{x \in \mathcal D} 1( x \in B_j )$ y $p_j = \int_{B_j} f(u) du$, donde $p_j$ es la probabilidad del $j$-ésimo bin y $\hat p_j$ es su estimación. Usando esta definición se puede definir la estimación de $f$ como: 
 
 $$
 \hat f(x) = \sum_{j=1}^N \frac{\hat p_j}{h} 1(x \in B_j).
@@ -76,7 +76,7 @@ $$
 
 ### Selección del tamaño del bin
 
-Una parte crítica para usar un histograma es la selección de $h$ o equivalente el número de bins del estimador. Utilizando el método descrito en @Wasserman2004, el cual se basa en minimizar el riesgo haciendo una validación cruzada, obteniendo la siguiente ecuación:
+Una parte crítica para usar un histograma es la selección de $h$ o equivalentemente el número de bins del estimador. Utilizando el método descrito en @Wasserman2004, el cual se basa en minimizar el riesgo haciendo una validación cruzada, obteniendo la siguiente ecuación:
 
 $$
 \hat J(h) = \frac{2}{(N-1) h} - \frac{N+1}{(N-1) h} \sum_{j=1}^N {\hat p}^2_j.
@@ -96,7 +96,7 @@ D = D[D <= 0.2]
 
 Haciendo un paréntesis en el ejemplo, para poder calcular $\hat p_j$ es necesario calcular el histograma; dado que los valores están normalizados podemos realizar el histograma utilizando algunas funciones de `numpy` y librerías tradicionales. 
 
-Para el ilustrar el método para generar el histograma se genera un histograma con 100 bins (primera línea). El siguiente paso (segunda línea) es encontrar los límites de los bins, para este proceso se usa la función `np.linspace`. En la tercera línea se encuentra el bin de cada elemento, con la característica que `np.searchsorted` regresa $0$ si el valor es menor que el límite inferior y el tamaño del arreglo si es mayor. Entonces las líneas $4$ y $5$ se encargan de arreglar estas dos características. Finalmente se cuenta el número de elementos que pertenecen a cada bin con la ayuda de la clase `Counter`.
+Para ilustrar el método para generar el histograma se genera un histograma con 100 bins (primera línea). El siguiente paso (segunda línea) es encontrar los límites de los bins, para este proceso se usa la función `np.linspace`. En la tercera línea se encuentra el bin de cada elemento, con la característica que `np.searchsorted` regresa $0$ si el valor es menor que el límite inferior y el tamaño del arreglo si es mayor. Entonces las líneas $4$ y $5$ se encargan de arreglar estas dos características. Finalmente se cuenta el número de elementos que pertenecen a cada bin con la ayuda de la clase `Counter`.
 
 ```{python} 
 #| echo: true
@@ -198,7 +198,7 @@ $$
 
 Dado un conjunto $\mathcal D=(x_1, \ldots, x_N)$, es decir, donde se conoce la posición de $x$ en $\mathcal D$ y una medida de distancia $d$, los $k$ vecinos cercanos a $x$, $\textsf{kNN}(x)$, se puede calcular ordenando $\mathcal D$ de la siguiente manera. Sea $(\pi_1, \pi_2, \ldots, \pi_N)$ la permutación tal que $x_{\pi_1}=\textsf{arg min}_{w \in \mathcal D} d(x, w)$, donde $w_{\pi_1} \in \mathcal D$, $\pi_2$ corresponde al segundo índice menor, y así sucesivamente. Usando esta notación los $k$ vecinos corresponden a $\textsf{kNN}(x)=(x_{\pi_1}, x_{\pi_2}, \ldots, x_{\pi_k}).$ 
 
-Una maneara intuitiva de definir $h$ sería en lugar de pensar en un valor constante para toda la función, utilizar la distancia que existe con el $k$ vecino mas cercano, es decir, $h=d(w_{\pi_k}, x)=d_k(x)$, donde $w_{\pi_k} \in \mathcal D$. Remplazando esto en el estimado de densidad por kernel se obtiene:
+Una manera intuitiva de definir $h$ sería en lugar de pensar en un valor constante para toda la función, utilizar la distancia que existe con el $k$ vecino más cercano, es decir, $h=d(w_{\pi_k}, x)=d_k(x)$, donde $w_{\pi_k} \in \mathcal D$. Remplazando esto en el estimado de densidad por kernel se obtiene:
 
 $$
 \hat f(x) = \frac{1}{d_k(x) N} \sum_{w \in \mathcal D} K(\frac{x - w}{d_k(x)}).
@@ -259,11 +259,11 @@ T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
 
 #### $\textsf{kNN}$
 
-Lo primero que se realiza es la función para calcular los $\textsf{kNN}(x)$ esto se puede generando una función `kNN` que recibe de parámetros $x$, el conjunto $\mathcal D$, la cantidad de vecinos ($k$) y la distancia. 
+Lo primero que se realiza es la función para calcular los $\textsf{kNN}(x)$ esto se puede hacer generando una función `kNN` que recibe de parámetros $x$, el conjunto $\mathcal D$, la cantidad de vecinos ($k$) y la distancia. 
 
 El código de la función `kNN` se muestra a continuación, donde en la primera línea se convierte a $x$ en un arreglo de dos dimensiones. Esto tiene el objetivo de generar un código que pueda buscar los $k$ vecinos cercanos de un conjunto de puntos. Por ejemplo, se podría calcular los vecinos cercanos de todo el conjunto $\mathcal G.$
 
-La segunda línea calcula los vecinos cercanos usando la función `argsort` lo único que se tiene que conocer es el eje donde se va a realizar la operación que en este caso el $0.$ La transpuesta es para regresar el índice de los vecinos en cada renglón. 
+La segunda línea calcula los vecinos cercanos usando la función `argsort` lo único que se tiene que conocer es el eje donde se va a realizar la operación que en este caso es el $0.$ La transpuesta es para regresar el índice de los vecinos en cada renglón. 
 
 ```{python} 
 #| echo: true
@@ -272,7 +272,7 @@ def kNN(x, D, k=1, d=lambda x, y: pairwise_distances(x, y)):
     return (d(D, x).argsort(axis=0))[:k].T
 ``` 
 
-En este momento es importante mencionar que el problema de los $k$ vecinos cercanos tiene muchas aplicaciones además del los algoritmos de aprendizaje supervisado que se verán en esta unidad. Por ejemplo, cuando uno tiene una colección de objetos que podrían ser documentos, videos, fotografías o cualquier objeto, este problema permite encontrar los objetos más cercanos a un objeto dado. Lo que se desea es que el algoritmo regrese el resultado lo antes posible y por ese motivo no se puede utilizar el algoritmo que se acaba de mencionar dado que compara $x$ contra todos los elementos de $\mathcal D.$ El área que estudia este tipo de problemas es el área de Recuperación de Información.  
+En este momento es importante mencionar que el problema de los $k$ vecinos cercanos tiene muchas aplicaciones además de los algoritmos de aprendizaje supervisado que se verán en esta unidad. Por ejemplo, cuando uno tiene una colección de objetos que podrían ser documentos, videos, fotografías o cualquier objeto, este problema permite encontrar los objetos más cercanos a un objeto dado. Lo que se desea es que el algoritmo regrese el resultado lo antes posible y por ese motivo no se puede utilizar el algoritmo que se acaba de mencionar dado que compara $x$ contra todos los elementos de $\mathcal D.$ El área que estudia este tipo de problemas es el área de Recuperación de Información.  
 
 Por ejemplo, el siguiente código calcula los cinco vecinos más cercanos de los tres primeros elementos de $\mathcal G.$
 
@@ -291,7 +291,7 @@ knn.kneighbors(G[:3], return_distance=False)
 
 #### $N_c(x)$
 
-El clasificador se basa en la función $N_c(x)$, esta función se implementa conociendo las etiquetas y $\textsf{kNN}(x)$. Aunque $N_c(x)$ requiere el parámetro de la clase, la función calculará $N_c(x)$ para todas las clases. La función `N_c` recibe de parámetros todos los parámetros de `kNN` y además requiere la clases de cada elemento de $\mathcal D$ estas clases se dan como un arreglo adicional. El siguiente código muestra la función, donde en la primera línea se calcula los $k$ vecinos y después se transforman los índices a las clases correspondientes, el resultado es guardado en la variable `knn`. La segunda línea usa la clase `Counter` para contar la frecuencia de cada clase en cada ejemplo dado en `x`. 
+El clasificador se basa en la función $N_c(x)$, esta función se implementa conociendo las etiquetas y $\textsf{kNN}(x)$. Aunque $N_c(x)$ requiere el parámetro de la clase, la función calculará $N_c(x)$ para todas las clases. La función `N_c` recibe de parámetros todos los parámetros de `kNN` y además requiere las clases de cada elemento de $\mathcal D$ estas clases se dan como un arreglo adicional. El siguiente código muestra la función, donde en la primera línea se calcula los $k$ vecinos y después se transforman los índices a las clases correspondientes, el resultado es guardado en la variable `knn`. La segunda línea usa la clase `Counter` para contar la frecuencia de cada clase en cada ejemplo dado en `x`. 
 
 ```{python} 
 #| echo: true
@@ -373,7 +373,7 @@ hy = regresion(G, T, y_t, k=5)
 error = np.fabs(y_g - hy).mean()
 ```
 
-La clase equivalente a `KNeighborsClassifier` para regresión es `KNeighborsRegressor` la cual se puede utilizar asi. 
+La clase equivalente a `KNeighborsClassifier` para regresión es `KNeighborsRegressor` la cual se puede utilizar así. 
 
 ```{python}
 #| echo: true

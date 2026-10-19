@@ -42,17 +42,17 @@ Los métodos paramétricos se identifican por asumir que los datos provienen de 
 
 ## Metodología {#sec-metodologia-met-parametricos}
 
-Hasta el momento se han presentado ejemplos de los pasos 4 y 5 de la metodología general (ver @sec-metodologia-general); esto fue en la @sec-prediccion-normal y en la @sec-error-clasificacion. Esta sección complementa los ejemplos anteriores al utilizar todos pasos de la metodología general de aprendizaje supervisado (ver @sec-metodologia-general). En particular se enfoca al paso 3 que corresponde al diseño del algoritmo $f$ que modela el fenómeno de interés utilizando los datos $\mathcal T \subset \mathcal D.$
+Hasta el momento se han presentado ejemplos de los pasos 4 y 5 de la metodología general (ver @sec-metodologia-general); esto fue en la @sec-prediccion-normal y en la @sec-error-clasificacion. Esta sección complementa los ejemplos anteriores al utilizar todos los pasos de la metodología general de aprendizaje supervisado (ver @sec-metodologia-general). En particular se enfoca al paso 3 que corresponde al diseño del algoritmo $f$ que modela el fenómeno de interés utilizando los datos $\mathcal T \subset \mathcal D.$
 
 El algoritmo $f$ corresponde a asumir que los datos $\mathcal D$ provienen de una distribución $F$ la cual tiene una serie de parámetros $\theta$ que son identificados con $\mathcal T.$
 
 ## Estimación de Parámetros {#sec-estimacion-parametros-gnal}
 
-Se inicia la descripción de métodos paramétricos presentando el procedimiento general para estimar los parámetros de una distribución. Se cuenta con un conjunto $\mathcal D$ donde los elementos $x \in \mathcal D$ son $x \in \mathbb R^d$. Los elementos $x \in \mathcal D$ tienen un distribución $F$, i.e., $x \sim F$, son independientes y $F$ está definida por la función de densidad de probabilidad $f_{\theta}$, que a su vez está definida por $\theta$ parámetros. Utilizando $\mathcal D$ el objetivo es identificar los parámetros $\theta$ que hacen observar a $\mathcal D$ lo más probable. 
+Se inicia la descripción de métodos paramétricos presentando el procedimiento general para estimar los parámetros de una distribución. Se cuenta con un conjunto $\mathcal D$ donde los elementos $x \in \mathcal D$ son $x \in \mathbb R^d$. Los elementos $x \in \mathcal D$ tienen una distribución $F$, i.e., $x \sim F$, son independientes y $F$ está definida por la función de densidad de probabilidad $f_{\theta}$, que a su vez está definida por $\theta$ parámetros. Utilizando $\mathcal D$ el objetivo es identificar los parámetros $\theta$ que hacen observar a $\mathcal D$ lo más probable. 
 
 ### Verosimilitud {#sec-verosimilitud}
 
-Una solución para maximizar el observar $\mathcal D$ es maximizando la verosimilitud. La verosimilitud es la función distribución conjunta de los elementos en $\mathcal D$, i.e., $f_\theta(x_1, x_2, \ldots, x_N).$ Considerando que la muestras son independientes entonces $f_\theta(x_1, x_2, \ldots, x_N) = \prod_{x \in \mathcal D} f_\theta (x).$ La función de verosimilitud considera la ecuación anterior como una función de los parámetros $\theta,$ es decir,
+Una solución para maximizar el observar $\mathcal D$ es maximizando la verosimilitud. La verosimilitud es la función distribución conjunta de los elementos en $\mathcal D$, i.e., $f_\theta(x_1, x_2, \ldots, x_N).$ Considerando que las muestras son independientes entonces $f_\theta(x_1, x_2, \ldots, x_N) = \prod_{x \in \mathcal D} f_\theta (x).$ La función de verosimilitud considera la ecuación anterior como una función de los parámetros $\theta,$ es decir,
 
 $$
 \mathcal L(\theta) = \prod_{x \in \mathcal D} f_\theta (x),
@@ -94,7 +94,7 @@ $$
 
 ### Ejemplo: Distribución Gaussiana {#sec-estimacion-distribucion-gausiana}
 
-Esta sección sigue un camino práctico, presentando el código para estimar los parámetros de una distribución Gaussiana donde se conocen todos los parámetros. La distribución se usa para generar 1000 muestras y después de esta población se estiman los parámetros; de estas manera se tienen todos los elementos para comparar los parámetros reales $\theta$ de los parámetros estimados $\hat \theta.$
+Esta sección sigue un camino práctico, presentando el código para estimar los parámetros de una distribución Gaussiana donde se conocen todos los parámetros. La distribución se usa para generar 1000 muestras y después de esta población se estiman los parámetros; de esta manera se tienen todos los elementos para comparar los parámetros reales $\theta$ de los parámetros estimados $\hat \theta.$
 
 La distribución que se usará se utilizó para generar un problema sintético (ver @sec-tres-normales) de tres clases. Los parámetros de la distribución son: $\mathbf \mu = [5, 5]^\intercal$ y  $\Sigma = \begin{pmatrix} 4 & 0 \\ 0 & 2 \\ \end{pmatrix}.$ La siguiente instrucción se puede utilizar para generar 1000 muestras de esa distribución. 
 
@@ -191,7 +191,7 @@ X_3 = p3.rvs(size=1000)
 :::
 :::
 
-Específicamente, las entradas que definían a cada clase están en la variables `X_1`, `X_2` y `X_3`. Entonces las clases se pueden colocar en la variable `y` tal como se indica a continuación. 
+Específicamente, las entradas que definían a cada clase están en las variables `X_1`, `X_2` y `X_3`. Entonces las clases se pueden colocar en la variable `y` tal como se indica a continuación. 
 
 
 ```{python}
@@ -200,7 +200,7 @@ X = np.concatenate((X_1, X_2, X_3))
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 ```
 
-Las variables `X` y `y` contiene la información del conjunto $\mathcal D = (\mathcal X, \mathcal Y)$ donde cada renglón de `X` es una realización de la variable aleatoria $\mathcal X$ y equivalentemente cada elemento en `y` es una realización de $\mathcal Y.$
+Las variables `X` y `y` contienen la información del conjunto $\mathcal D = (\mathcal X, \mathcal Y)$ donde cada renglón de `X` es una realización de la variable aleatoria $\mathcal X$ y equivalentemente cada elemento en `y` es una realización de $\mathcal Y.$
 
 El procedimiento para dividir $\mathcal D$ en el conjunto de entrenamiento, $\mathcal T$, y el de prueba, $\mathcal G$, se describió en la @sec-conjunto-entre-prueba del capítulo de Rendimiento (@sec-rendimiento-cap). En este caso, $\mathcal T$ se utiliza para estimar los parámetros del modelo (por ejemplo, para maximizar la verosimilitud, @sec-estimacion-distribucion-gausiana) y $\mathcal G$ para medir su rendimiento. La división se realiza con la siguiente instrucción.
 
@@ -213,13 +213,13 @@ T, G, y_t, y_g = train_test_split(X, y,
 
 ## Clasificador {#sec-model-clasificacion}
 
-El inicio de métodos paramétricos es el Teorema de Bayes (@eq-teorema-bayes) $\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$ donde se usa la verosimilitud $\mathbb P(\mathcal X \mid \mathcal Y)$ y el prior $\mathbb P(\mathcal Y)$ para definir la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$. En métodos paramétricos se asume que se puede modelar la verosimilitud con una distribución particular, que por lo generar es una distribución Gaussiana multivariada. Es decir, la variable aleatoria $\mathcal X$ dado $\mathcal Y$ (i.e., $\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde se observa que los parámetros de la distribución Gaussiana dependen de la variable aleatoria $\mathcal Y$ y estos pueden ser identificados cuando $\mathcal Y$ tiene un valor específico. 
+El inicio de métodos paramétricos es el Teorema de Bayes (@eq-teorema-bayes) $\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)}$ donde se usa la verosimilitud $\mathbb P(\mathcal X \mid \mathcal Y)$ y la probabilidad a priori $\mathbb P(\mathcal Y)$ para definir la probabilidad a posteriori $\mathbb P(\mathcal Y \mid \mathcal X)$. En métodos paramétricos se asume que se puede modelar la verosimilitud con una distribución particular, que por lo general es una distribución Gaussiana multivariada. Es decir, la variable aleatoria $\mathcal X$ dado $\mathcal Y$ (i.e., $\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde se observa que los parámetros de la distribución Gaussiana dependen de la variable aleatoria $\mathcal Y$ y estos pueden ser identificados cuando $\mathcal Y$ tiene un valor específico. 
 
 ### Estimación de Parámetros {#sec-estimacion-parametros}
 
 Dado que por definición del problema (ver @sec-tres-normales) se conoce que la verosimilitud para cada clase proviene de una Gaussiana, i.e., $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ en esta sección se estimarán los parámetros utilizando este conocimiento. 
 
-El primer paso en la estimación de parámetros es calcular el prior $\mathbb P(\mathcal Y)$, el cual corresponde a clasificar el evento sin observar el valor de $\mathcal X.$ Esto se puede modelar mediante una distribución Categórica con parámetros $p_i$ donde $\sum_i^K p_i = 1$. Estos parámetros se pueden estimar utilizando la función `np.unique` de la siguiente manera
+El primer paso en la estimación de parámetros es calcular la probabilidad a priori $\mathbb P(\mathcal Y)$, el cual corresponde a clasificar el evento sin observar el valor de $\mathcal X.$ Esto se puede modelar mediante una distribución Categórica con parámetros $p_i$ donde $\sum_i^K p_i = 1$. Estos parámetros se pueden estimar utilizando la función `np.unique` de la siguiente manera
 
 ```{python}
 #| echo: true
@@ -227,9 +227,9 @@ labels, counts = np.unique(y_t, return_counts=True)
 prior = counts / counts.sum()
 ```
 
-La variable `prior` contiene en el primer elemento `{python} Markdown(f'$\mathbb P(\mathcal Y=1) = {prior[0]:0.4f},$')` en el segundo `{python} Markdown(f'$\mathbb P(\mathcal Y=2) = {prior[1]:0.4f}$')` y en el tercero `{python} Markdown(f'$\mathbb P(\mathcal Y=3) = {prior[2]:0.4f}$')` que es aproximadamente $\frac{1}{3}$ el cual es el valor real del prior. 
+La variable `prior` contiene en el primer elemento `{python} Markdown(f'$\mathbb P(\mathcal Y=1) = {prior[0]:0.4f},$')` en el segundo `{python} Markdown(f'$\mathbb P(\mathcal Y=2) = {prior[1]:0.4f}$')` y en el tercero `{python} Markdown(f'$\mathbb P(\mathcal Y=3) = {prior[2]:0.4f}$')` que es aproximadamente $\frac{1}{3}$ el cual es el valor real de la probabilidad a priori. 
 
-Siguiendo los pasos en estimación de parámetros de una Gaussiana (@sec-estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gaussiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3.$ El algoritmo de clasificación que estima $\mu$ y $\Sigma$ para cada clase se le conoce como **Analizador Discriminante Cuadrático** implementando en la clase `QuadraticDiscriminantAnalysis`.
+Siguiendo los pasos en estimación de parámetros de una Gaussiana (@sec-estimacion-distribucion-gausiana) se pueden estimar los parámetros para cada Gaussiana dada la clase. Es decir, se tiene que estimar los parámetros $\mu$ y $\Sigma$ para la clase $1$, $2$ y $3.$ El algoritmo de clasificación que estima $\mu$ y $\Sigma$ para cada clase se le conoce como **Analizador Discriminante Cuadrático** implementado en la clase `QuadraticDiscriminantAnalysis`.
 
 Una implementación directa para la estimación de los parámetros se puede realizar iterando por las etiquetas contenidas en la variable `labels` y seleccionando los datos en `T` que corresponden a la clase analizada, ver el uso de la variable `mask` en la línea 4 y 5. Después se inicializa una instancia de la clase `multivariate_normal` para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista `likelihood`.
 
@@ -342,7 +342,7 @@ def predict(X, likelihood, prior, labels):
 
 ::: {.callout-note}
 
-La predicción en la clase `QuadraticDiscriminantAnalysis` se puede realizar invocando al siguiente método tal y como se muestra en la siguiente linea. 
+La predicción en la clase `QuadraticDiscriminantAnalysis` se puede realizar invocando al siguiente método tal y como se muestra en la siguiente línea. 
 ```{python}
 #| echo: true
 
@@ -386,7 +386,7 @@ El error utilizado `qda_hy` corresponde a `{python} Markdown(f'${(y_g != qda_hy)
 ::: {.callout-tip collapse="true"}
 #### Actividad
 
-Utilizando la probabilidad en el conjunto de prueba, que se tiene en la variable `qda_prob`, calcular la variación del número de elementos que son asociados a la acción nula cuando se varía el nivel de riesgo (ver @sec-seleccion-accion-nula), incluir en la figura o en una figura adicional, la dinámica del error en el conjunto de prueba para los elementos válidos. La @fig-actividad-riesgo-nulo-error muestra el resultado de este proceso. Se observa como van disminuyendo el número de elementos asociados a la acción nula cuando el riesgo se incrementa y al mismo tiempo como el error aumenta.
+Utilizando la probabilidad en el conjunto de prueba, que se tiene en la variable `qda_prob`, calcular la variación del número de elementos que son asociados a la acción nula cuando se varía el nivel de riesgo (ver @sec-seleccion-accion-nula), incluir en la figura o en una figura adicional, la dinámica del error en el conjunto de prueba para los elementos válidos. La @fig-actividad-riesgo-nulo-error muestra el resultado de este proceso. Se observa cómo va disminuyendo el número de elementos asociados a la acción nula cuando el riesgo se incrementa y al mismo tiempo cómo el error aumenta.
 
 ```{python}
 #| label: fig-actividad-riesgo-nulo-error
@@ -448,11 +448,11 @@ El error estándar calculado con los datos mostrados en la figura anterior es `{
 
 ## Clasificador Bayesiano Ingenuo {#sec-cl-bayesiano-ingenuo}
 
-Uno de los clasificadores mas utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. En la @sec-model-clasificacion se asumió que la variable aleatoria $\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde $\mu_{\mathcal Y} \in \mathbb R^d$, $\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}$ y $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ es la función de densidad de probabilidad conjunta.
+Uno de los clasificadores más utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. En la @sec-model-clasificacion se asumió que la variable aleatoria $\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ dado $\mathcal Y$ ($\mathcal X_{\mid \mathcal Y}$) es $\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),$ donde $\mu_{\mathcal Y} \in \mathbb R^d$, $\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}$ y $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)$ es la función de densidad de probabilidad conjunta.
 
 En el clasificador Bayesiano Ingenuo se asume que las variables $\mathcal X_i$ y $\mathcal X_j$ para $i \neq j$ son independientes, esto trae como consecuencia que $f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).$ Esto quiere decir que cada variable está definida como una Gaussiana donde se tiene que identificar $\mu$ y $\sigma^2.$
 
-La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que en se calcula $\sigma^2$ de cada variable en lugar de la covarianza $\Sigma$, esto se puede observar en la quinta línea donde se usa la función `np.var` en el primer eje. El resto del código es equivalente al usado en la @sec-estimacion-parametros.
+La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que se calcula $\sigma^2$ de cada variable en lugar de la covarianza $\Sigma$, esto se puede observar en la quinta línea donde se usa la función `np.var` en el primer eje. El resto del código es equivalente al usado en la @sec-estimacion-parametros.
 
 ```{python}
 #| echo: true
@@ -498,7 +498,7 @@ El siguiente código muestra su uso.
 naive = GaussianNB().fit(T, y_t)
 ```
 
-Los parámetros $\mu$ se encuentran se pueden consultar con la siguiente instrucción
+Los parámetros $\mu$ se pueden consultar con la siguiente instrucción
 
 ```{python} 
 #| echo: true
@@ -537,7 +537,7 @@ T, G, y_t, y_g = train_test_split(X, y, test_size=0.2,
 
 ### Entrenamiento
 
-Los dos modelos que se utilizarán será el clasificador de Análisis Discriminante Cuadrático y Bayesiano Ingenuo, utilizando las clases `QuadraticDiscriminantAnalysis` y `GaussianNB`. Las siguientes dos instrucciones inicializan estos dos clasificadores. 
+Los dos modelos que se utilizarán serán el clasificador de Análisis Discriminante Cuadrático y Bayesiano Ingenuo, utilizando las clases `QuadraticDiscriminantAnalysis` y `GaussianNB`. Las siguientes dos instrucciones inicializan estos dos clasificadores. 
 
 ```{python}
 #| echo: true
@@ -547,7 +547,7 @@ naive = GaussianNB().fit(T, y_t)
 
 ### Predicción
 
-Habiendo definido los dos clasificadores, las predicciones del conjunto de prueba se realiza de la siguiente manera. 
+Habiendo definido los dos clasificadores, las predicciones del conjunto de prueba se realizan de la siguiente manera. 
 
 ```{python}
 #| echo: true
@@ -597,9 +597,9 @@ B = [diff_f(s) for s in S]
 se = np.std(B, axis=0)
 ```
 
-El error estándar de la diferencia de rendimiento es de `{python} Markdown(f'${se:0.4f}$')`, una procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de `{python} Markdown(f'${diff / se:0.4f}$')`. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gaussiana. 
+El error estándar de la diferencia de rendimiento es de `{python} Markdown(f'${se:0.4f}$')`, un procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de `{python} Markdown(f'${diff / se:0.4f}$')`. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gaussiana. 
 
-El histograma de los datos que se tienen en la variable `B` se observa en la @fig-diff-cl-bayesianos. Se puede ver que la forma del histograma asemeja una distribución Gaussiana y que el cero esta en el cuerpo de la Gaussiana, tal y como lo confirmó el cociente que se calculado.
+El histograma de los datos que se tienen en la variable `B` se observa en la @fig-diff-cl-bayesianos. Se puede ver que la forma del histograma asemeja una distribución Gaussiana y que el cero está en el cuerpo de la Gaussiana, tal y como lo confirmó el cociente que se calculó.
 
 ```{python}
 #| label: fig-diff-cl-bayesianos
@@ -627,7 +627,7 @@ teniendo el valor de `{python} p_value_f`, lo que significa que se tiene una con
 
 
 ::: {.callout-note}
-El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) (@Nava2024), en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera linea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última linea gráfica el rendimiento. 
+El error es el complemento de la exactitud (@sec-accuracy), utilizando la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) (@Nava2024), en particular la función que implementa la exactitud, se puede medir el rendimiento de los dos algoritmos tal y como se muestra en el siguiente código. En la primera línea se mide el rendimiento de QDA y en la segunda el rendimiento que corresponde a Bayesiano Ingenuo. La última línea grafica el rendimiento. 
 
 ```{python}
 #| echo: true
@@ -697,7 +697,7 @@ $$
 \end{split}
 $$
 
-El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $d$ derivadas parciales para cada uno de los coeficientes $\mathbf w$. En este proceso se observar que el término $N \log \frac{1}{\sigma \sqrt{2\pi}}$ no depende de $\mathbf w$ entonces no afecta el máximo siendo una constante en el proceso de derivación y por lo tanto se desprecia. Lo mismo pasa para la constante $\frac{1}{2\sigma^2}$. Una vez obtenidos los parámetros $\mathcal w$ se obtiene el valor $\sigma.$ 
+El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $d$ derivadas parciales para cada uno de los coeficientes $\mathbf w$. En este proceso se observa que el término $N \log \frac{1}{\sigma \sqrt{2\pi}}$ no depende de $\mathbf w$ entonces no afecta el máximo siendo una constante en el proceso de derivación y por lo tanto se desprecia. Lo mismo pasa para la constante $\frac{1}{2\sigma^2}$. Una vez obtenidos los parámetros $\mathcal w$ se obtiene el valor $\sigma.$ 
 
 Una manera equivalente de plantear este problema es como un problema de álgebra lineal, donde se tiene una matriz de observaciones $X$ que se construyen con las variables $\mathbf x$ de $\mathcal X,$ donde cada renglón de $X$ es una observación, y el vector dependiente $\mathbf y$ donde cada elemento es la respuesta correspondiente a la observación.
 
@@ -707,7 +707,7 @@ $$
 X \mathbf w = \mathbf y,
 $$
 
-donde para identificar $\mathbf w$ se pueden realizar lo siguiente
+donde para identificar $\mathbf w$ se puede realizar lo siguiente
 
 $$
 X^\intercal X \mathbf w = X^\intercal \mathbf y.
@@ -752,7 +752,7 @@ w_f = Markdown(f'$\\mathbf w=[{w_f}, \\ldots]$')
 w_0 = Markdown(f'$w_0={m.intercept_:0.2f}$')
 ```
 
-Los primeros tres coeficientes de la regresión lineal son `{python} w_f` y `{python} w_0` lo cual se encuentran en las siguientes variables
+Los primeros tres coeficientes de la regresión lineal son `{python} w_f` y `{python} w_0` los cuales se encuentran en las siguientes variables
 
 ```{python}
 #| echo: true
@@ -783,7 +783,7 @@ se_f = ', '.join([f'{v:0.2f}' for v in (w / se)[:3]])
 se_f = Markdown(f'$[{se_f}, \\ldots]$')
 ```
 
-y para saber si los coeficientes son significativamente diferente de cero se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes valores `{python} se_f`, para las tres primeras componentes. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tiene un coeficiente que estadísticamente no es diferente de cero. 
+y para saber si los coeficientes son significativamente diferentes de cero se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes valores `{python} se_f`, para las tres primeras componentes. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tienen un coeficiente que estadísticamente no es diferente de cero. 
 
 La predicción del conjunto de prueba se puede realizar con la siguiente instrucción
 
@@ -852,7 +852,7 @@ p_value = dist.cdf(0)
 p_value = Markdown(f'${p_value:0.4f}$')
 ```
 
-Finalmente, se calcula el área bajo la curva a la izquierda del cero, teniendo un valor de `{python} p_value` lo cual indica que los dos modelos son similares. En este caso se prefiere el modelo más simple porque se observar que incluir el cuadrado de las variables no contribuye a generar un mejor model. El área bajo la curva se calcula con el siguiente código. 
+Finalmente, se calcula el área bajo la curva a la izquierda del cero, teniendo un valor de `{python} p_value` lo cual indica que los dos modelos son similares. En este caso se prefiere el modelo más simple porque se observa que incluir el cuadrado de las variables no contribuye a generar un mejor modelo. El área bajo la curva se calcula con el siguiente código. 
 
 ```{python}
 #| echo: true
@@ -903,7 +903,7 @@ La función objetivo se genera, con la función `cp.norm` como se muestra a cont
 norm = cp.norm(y_t - (T@w + w0), 2)
 ```
 
-Las últimas instrucciones corresponden a indicar que se está desea minimizar la función objetivo, construir el problema de optimización e introducir el problema al optimizador tal y como se observa en el siguiente código. 
+Las últimas instrucciones corresponden a indicar que se desea minimizar la función objetivo, construir el problema de optimización e introducir el problema al optimizador tal y como se observa en el siguiente código. 
 
 ```{python}
 #| echo: true
@@ -912,7 +912,7 @@ prob = cp.Problem(obj)
 valor = prob.solve()
 ```
 
-Habiendo descrito el uso de la norma $L_2$ la cual tiene una solución analítica es cuestión de cambiar el parámetro en la función `cp.norm` para estimar los coeficientes $\mathbf w$ y $w_0$ usando la norma $L_1$, como se muestra en la siguientes instrucciones. 
+Habiendo descrito el uso de la norma $L_2$ la cual tiene una solución analítica es cuestión de cambiar el parámetro en la función `cp.norm` para estimar los coeficientes $\mathbf w$ y $w_0$ usando la norma $L_1$, como se muestra en las siguientes instrucciones. 
 
 
 ```{python}
@@ -939,7 +939,7 @@ mse.plot(comp_legend='Comparación',
          var_name='Rendimiento')
 ```
 
-Tener el problema de regresión como un problema de optimización, permite incluir de manera eficiente restricciones que pueden mejorar el rendimiento del regresor. Por ejemplo se podría restringir la norma de los coeficientes i.e., $\mathbf w$ para que sea menor que un parámetros, tal y como se muestra en la @eq-min-restricciones donde la norma $L_1$ de los coeficientes debe de ser menor al parámetro $\gamma$. 
+Tener el problema de regresión como un problema de optimización, permite incluir de manera eficiente restricciones que pueden mejorar el rendimiento del regresor. Por ejemplo se podría restringir la norma de los coeficientes i.e., $\mathbf w$ para que sea menor que un parámetro, tal y como se muestra en la @eq-min-restricciones donde la norma $L_1$ de los coeficientes debe de ser menor al parámetro $\gamma$. 
 
 $$
 \begin{split}
@@ -949,7 +949,7 @@ $$
 \end{split}
 $$ {#eq-min-restricciones}
 
-El siguiente código muestra las instrucciones para codificar y resolver el problema descrito en la @eq-min-restricciones utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). La primera instrucción genera el parámetro $\gamma$ con el valor $1500$ (segunda linea), el resto de las lineas se han visto previamente, la única diferencia es la restricción $\mid\mid \mathbf w \mid\mid_1 \leq \gamma$ que se observa en la penúltima linea. 
+El siguiente código muestra las instrucciones para codificar y resolver el problema descrito en la @eq-min-restricciones utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). La primera instrucción genera el parámetro $\gamma$ con el valor $1500$ (segunda línea), el resto de las líneas se han visto previamente, la única diferencia es la restricción $\mid\mid \mathbf w \mid\mid_1 \leq \gamma$ que se observa en la penúltima línea. 
 
 ```{python}
 #| echo: true
@@ -961,7 +961,7 @@ prob = cp.Problem(obj, [cp.norm(w, 1) <= gamma])
 value = prob.solve()
 ```
 
-Se decidió utilizar la norma $L_1$ en la restricción porque esa norma hace que algunos de los coeficientes estimados sean cero o muy cercanos a cero, por ejemplo con el valor de $\gamma$ seleccionado se tienen `{python} (np.fabs(w.value)<1e-5).sum()` coeficientes menores que $10^{-5}$. En el siguiente código, la primera linea reemplaza los coeficientes cercanos a cero por ese valor y se genera la figura que presenta el rendimiento de los sistemas evaluados.
+Se decidió utilizar la norma $L_1$ en la restricción porque esa norma hace que algunos de los coeficientes estimados sean cero o muy cercanos a cero, por ejemplo con el valor de $\gamma$ seleccionado se tienen `{python} (np.fabs(w.value)<1e-5).sum()` coeficientes menores que $10^{-5}$. En el siguiente código, la primera línea reemplaza los coeficientes cercanos a cero por ese valor y se genera la figura que presenta el rendimiento de los sistemas evaluados.
 
 ```{python}
 #| echo: true
@@ -977,4 +977,4 @@ mse(G @ w.value + w0.value, name=f'gamma').plot(
     var_name='Rendimiento')
 ```
 
-En la @fig-rendimiento-ols-l1-l2-gamma se observa que el mejor rendimiento se obtiene con el sistema donde los coeficientes son seleccionados con la restricción de la norma $L_1$, aunque cabe mencionar que todos los sistemas son estadísticamente equivalentes entre si. 
+En la @fig-rendimiento-ols-l1-l2-gamma se observa que el mejor rendimiento se obtiene con el sistema donde los coeficientes son seleccionados con la restricción de la norma $L_1$, aunque cabe mencionar que todos los sistemas son estadísticamente equivalentes entre sí. 

@@ -26,21 +26,21 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-02}
 
-Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una certeza absoluta sobre la respuesta dada. Por ejemplo, si uno diseña un algoritmo que ordene un conjunto de números uno esperan que ese algoritmo siempre regrese el orden correcto independientemente de la entrada dada, es mas un algoritmo de ordenamiento que en ocasiones se equivoca se consideraría de manera estricta erróneo.
+Al diseñar una solución a un problema particular lo mejor que uno puede esperar es tener una certeza absoluta sobre la respuesta dada. Por ejemplo, si uno diseña un algoritmo que ordene un conjunto de números uno espera que ese algoritmo siempre regrese el orden correcto independientemente de la entrada dada, es más, un algoritmo de ordenamiento que en ocasiones se equivoca se consideraría de manera estricta erróneo.
 
-Sin embargo, existen problemas cuyas características, como incertidumbre en la captura de los datos, variables que no se pueden medir, entre otros factores hacen que lo mejor que se puede esperar es un algoritmo exacto y preciso. Todos los problemas que trataremos en Aprendizaje Computacional caen dentro del segundo escenario. El lenguaje que nos permite describir de manera adecuada este tipo de ambiente, que se caracteriza por variables aleatorios es el de la probabilidad. En el capítulo anterior (@sec-rendimiento-cap) se describió cómo medir qué tan bien (o mal) decide un algoritmo. En esta unidad se describe cómo construir un clasificador que decide con base en probabilidades y cómo ajustar la decisión cuando los errores tienen costos diferentes.
+Sin embargo, existen problemas cuyas características, como incertidumbre en la captura de los datos, variables que no se pueden medir, entre otros factores hacen que lo mejor que se puede esperar es un algoritmo exacto y preciso. Todos los problemas que trataremos en Aprendizaje Computacional caen dentro del segundo escenario. El lenguaje que nos permite describir de manera adecuada este tipo de ambiente, que se caracteriza por variables aleatorias es el de la probabilidad. En el capítulo anterior (@sec-rendimiento-cap) se describió cómo medir qué tan bien (o mal) decide un algoritmo. En esta unidad se describe cómo construir un clasificador que decide con base en probabilidades y cómo ajustar la decisión cuando los errores tienen costos diferentes.
 
 ## Probabilidad {#sec-teoria-decision-probabilidad}
 
-En @sec-aprendizaje-supervisado se describió que el punto de inicio de aprendizaje supervisado es el conjunto $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar una método que capture de la relación entre $x$ y $y$.
+En @sec-aprendizaje-supervisado se describió que el punto de inicio de aprendizaje supervisado es el conjunto $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar un método que capture la relación entre $x$ y $y$.
 
-Se pueden tratar la variables $x$ y $y$ de $\mathcal D$ como dos variables aleatorias $\mathcal X$ y $\mathcal Y$, respectivamente; en este dominio el problema de identificar la respuesta ($\mathcal Y$) dada la entrada ($\mathcal X$) se puede describir como encontrar la probabilidad de observar $\mathcal Y$ habiendo visto $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$.
+Se pueden tratar las variables $x$ y $y$ de $\mathcal D$ como dos variables aleatorias $\mathcal X$ y $\mathcal Y$, respectivamente; en este dominio el problema de identificar la respuesta ($\mathcal Y$) dada la entrada ($\mathcal X$) se puede describir como encontrar la probabilidad de observar $\mathcal Y$ habiendo visto $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$.
 
 ### Ejemplos
 
 Por ejemplo, en un problema de clasificación binaria se tiene que la respuesta tiene dos posibles valores, e.g., $\mathcal Y=\{0, 1\}$. Entonces el problema es saber si dada una entrada $x$ el valor de la respuesta es $1$ o $0$. Utilizando probabilidad la pregunta quedaría como conocer la probabilidad de que $\mathcal Y=1$ o $\mathcal Y=0$ cuando se observa $\mathcal X=x$, es decir, encontrar $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$ y compararlo contra $\mathbb P(\mathcal Y=0 \mid \mathcal X=x)$. Tomando en cuenta estos valores de probabilidad se puede concluir el valor de la salida dado que $\mathcal X=x$. También está el caso que las probabilidades sean iguales, e.g., si $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)=\mathbb P(\mathcal Y=0 \mid \mathcal X=x)=0.5$ o que su diferencia sea muy pequeña y entonces se toma la decisión de desconocer el valor de la salida.
 
-Para el caso de regresión ($y \in \mathbb R$), el problema se puede plantear asumiendo que $\mathcal Y$ proviene de una distribución particular cuyos parámetros están dados por la entrada $\mathcal X$. Por ejemplo, en regresión lineal se asume que $\mathcal Y$ proviene de una distribución Gaussiana con parámetros dados por $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$ donde los parámetros de la función $g$ son identificados mediante $\mathcal X$ y $\epsilon \sim \mathcal N(0, \sigma^2)$ es el error con media cero y desviación estándar $\sigma$. Con estas condiciones la salida $y$ es $\mathbb E[\mathcal Y \mid \mathcal X=x];$ asumiendo que se esa variable se distribuye como una normal entonces $\mathbb E[\mathcal Y \mid \mathcal X=x]= \mathbb E[g(x) + \epsilon]=g(x) + \mathbb E[\epsilon]=g(x).$
+Para el caso de regresión ($y \in \mathbb R$), el problema se puede plantear asumiendo que $\mathcal Y$ proviene de una distribución particular cuyos parámetros están dados por la entrada $\mathcal X$. Por ejemplo, en regresión lineal se asume que $\mathcal Y$ proviene de una distribución Gaussiana con parámetros dados por $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X=x) = \mathcal N(g(x) + \epsilon, \sigma^2),$ donde los parámetros de la función $g$ son identificados mediante $\mathcal X$ y $\epsilon \sim \mathcal N(0, \sigma^2)$ es el error con media cero y desviación estándar $\sigma$. Con estas condiciones la salida $y$ es $\mathbb E[\mathcal Y \mid \mathcal X=x];$ asumiendo que esa variable se distribuye como una normal entonces $\mathbb E[\mathcal Y \mid \mathcal X=x]= \mathbb E[g(x) + \epsilon]=g(x) + \mathbb E[\epsilon]=g(x).$
 
 ## Teorema de Bayes
 
@@ -78,7 +78,7 @@ p3 = multivariate_normal(mean=[12.5, -3.5],
                          cov=[[2, 3], [3, 7]])
 ```
 
-Los parámetros de la distribución son el vector de medías y la matriz de covarianza, para la primera distribución estos corresponden a $\mathbf \mu = [5, 5]^\intercal$ y 
+Los parámetros de la distribución son el vector de medias y la matriz de covarianza, para la primera distribución estos corresponden a $\mathbf \mu = [5, 5]^\intercal$ y 
 
 $$
 \Sigma = \begin{pmatrix} 
@@ -87,7 +87,7 @@ $$
          \end{pmatrix}.
 $$
 
-Una vez definidas las distribuciones podemos generar números aleatorios de las mismas, en el siguiente código se generar 1000 vectores aleatorios de las tres distribuciones. 
+Una vez definidas las distribuciones podemos generar números aleatorios de las mismas, en el siguiente código se generan 1000 vectores aleatorios de las tres distribuciones. 
 
 ```{python}
 #| echo: true
@@ -96,11 +96,11 @@ X_2 = p2.rvs(size=1000)
 X_3 = p3.rvs(size=1000)
 ```
 
-Para graficar estas tres nubes de puntos se puede hacer uso del siguiente código, donde se hace uso de la librería `pandas` y `seaborn` para la generar la gráfica.
+Para graficar estas tres nubes de puntos se puede hacer uso del siguiente código, donde se hace uso de la librería `pandas` y `seaborn` para generar la gráfica.
 
 ```{python}
 #| label: fig-gaussian-3classes
-#| fig-cap: "Muestras de 3 distribuciones Gausianas"
+#| fig-cap: "Muestras de 3 distribuciones Gaussianas"
 #| echo: true
 D = np.concatenate((X_1, X_2, X_3))
 clase = [1] * 1000 + [2] * 1000 + [3] * 1000
@@ -119,7 +119,7 @@ Generar una nube de puntos similar a la que se muestra en la @fig-guasiana-alarg
 
 ```{python} 
 #| label: fig-guasiana-alargada-x
-#| fig-cap: "Distribución Gausiana"
+#| fig-cap: "Distribución Gaussiana"
 #| echo: false
 ejemplo = multivariate_normal(mean=[5, 5],
                               cov=[[20, -5], [-5, 2]])
@@ -151,7 +151,7 @@ posterior = (np.vstack([p1.pdf(X),
                         p3.pdf(X)]) * 1 / 3).T
 ```
 
-La evidencia (@eq-evidencia) es un factor normalizador que hace que las probabilidad sume a uno, el siguiente código calcula la evidencia, $\mathbb P(\mathcal X)$ 
+La evidencia (@eq-evidencia) es un factor normalizador que hace que las probabilidades sumen a uno, el siguiente código calcula la evidencia, $\mathbb P(\mathcal X)$ 
 
 ```{python}
 #| echo: true
@@ -174,14 +174,14 @@ indice = posterior.argmax(axis=1)
 prediccion = clase[indice]
 ```
 
-En la variable `prediccion` se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó `X` se sabe que los primero 1000 elementos pertenecen a la clase $1$, los siguientes 1000 a la clase $2$ y los restantes a la clase $3$. A continuación se muestra el arreglo `y` que tiene esta estructura. 
+En la variable `prediccion` se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó `X` se sabe que los primeros 1000 elementos pertenecen a la clase $1$, los siguientes 1000 a la clase $2$ y los restantes a la clase $3$. A continuación se muestra el arreglo `y` que tiene esta estructura. 
 
 ```{python}
 #| echo: true
 y = np.array([1] * 1000 + [2] * 1000 + [3] * 1000)
 ```
 
-Teniendo las predicciones y los valores de reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.  
+Teniendo las predicciones y los valores reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.  
 
 ```{python}
 #| label: fig-gaussian-3classes-error
@@ -205,14 +205,14 @@ Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, es
 error_f = Markdown(f'${(y != prediccion).mean():0.4f}$')
 ```
 
-El ejemplo sirve también para ilustrar el 5 paso de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el `error` es `{python} error_f`.
+El ejemplo sirve también para ilustrar el quinto paso de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el `error` es `{python} error_f`.
 
 ```{python}
 #| echo: true
 error = (y != prediccion).mean()
 ```
 
-La siguiente siguiente pregunta es conocer cuánto varia este error si se vuelve a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer esta variabilidad de la medición del error es calculando su **error estándar**. 
+La siguiente pregunta es conocer cuánto varía este error si se vuelve a realizar el muestreo de las distribuciones `p1`, `p2` y `p3`. Una manera de conocer esta variabilidad de la medición del error es calculando su **error estándar**. 
 
 ```{python}
 #| echo: false
@@ -226,7 +226,7 @@ El error estándar (ver @sec-error-estandar) está definido como $\sqrt{\mathbb 
 se_formula = np.sqrt(error * (1 - error) / 3000)
 ```
 
-Aunque el error estándar del parámetro $p$ de la distribución Bernoulli si se puede calcular analíticamente, se usará la técnica de Bootstrap (ver @sec-bootstrap) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar $B$ muestras de $N$ elementos con remplazo de los datos. En este caso los datos son los errores entre `y` y `prediccion`. Siguiendo el método descrito en el apéndice (@sec-bootstrap) se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las $B$ repeticiones las cuales consisten en calcular $\hat p$. Se puede observar como se usa directamente `y` y `prediccion` junto con el arreglo de índices `s` para calcular la media del error. Finalmente se calcula la desviación estándar de `B` (tercera línea) y ese valor corresponde al error estándar. 
+Aunque el error estándar del parámetro $p$ de la distribución Bernoulli sí se puede calcular analíticamente, se usará la técnica de Bootstrap (ver @sec-bootstrap) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar $B$ muestras de $N$ elementos con remplazo de los datos. En este caso los datos son los errores entre `y` y `prediccion`. Siguiendo el método descrito en el apéndice (@sec-bootstrap) se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las $B$ repeticiones las cuales consisten en calcular $\hat p$. Se puede observar cómo se usa directamente `y` y `prediccion` junto con el arreglo de índices `s` para calcular la media del error. Finalmente se calcula la desviación estándar de `B` (tercera línea) y ese valor corresponde al error estándar. 
 
 
 ```{python}
@@ -243,7 +243,7 @@ se_f = Markdown(f"${se:0.4f}$")
 
 El error estándar, `se`, calculado es `{python} se_f`. 
 
-El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés; mediante la técnica de muestreo boostrap se simuló está distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista `B`.
+El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés; mediante la técnica de muestreo bootstrap se simuló esta distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista `B`.
 
 ```{python}
 #| label: fig-gaussian-3classes-distribucion
@@ -314,7 +314,7 @@ es decir, ningún clasificador puede tener un error esperado menor al de la regl
 
 ## Riesgo
 
-Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autentificación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho mas grave que no dejar entrar a una persona con los privilegios adecuados.
+Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autenticación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho más grave que no dejar entrar a una persona con los privilegios adecuados.
 
 Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir $\alpha_i$ como la acción que se toma al seleccionar la clase $\mathcal Y=i$. Entonces el riesgo esperado por tomar la acción $\alpha_i$ está definido por:
 
@@ -338,13 +338,13 @@ R(\alpha_i \mid x) &= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X
 \end{split}
 $$ 
 
-Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que mínimo riesgo corresponde a la clase más probable.
+Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que el mínimo riesgo corresponde a la clase más probable.
 
 ### Acción nula
 
 En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.
 
-La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento mas adecuado sería incrementar el número de acciones, $\alpha$ de tal manera que la acción $\alpha_{K+1}$ corresponda a la intervención esperada, esto para cualquier problema de $K$ clases.
+La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento más adecuado sería incrementar el número de acciones, $\alpha$ de tal manera que la acción $\alpha_{K+1}$ corresponda a la intervención esperada, esto para cualquier problema de $K$ clases.
 
 La extensión del costo $0/1$ para este caso estaría definida como:
 
@@ -367,7 +367,7 @@ $$
 
 Tomando en cuenta lo que hemos visto hasta el momento y usando como base el costo $0/1$ que incluye la acción nula, se puede observar que el riesgo de seleccionar una clase está dado por $R(\alpha_i \mid x) = 1 - \mathbb P(\mathcal Y=i \mid \mathcal X=x)$ y el riesgo de la acción nula es $R(\alpha_{K+1} \mid x) = \lambda$.
 
-En esta circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$
+En estas circunstancias se selecciona la clase $\hat y$ si es la clase con la probabilidad máxima (i.e., $\hat y = \textsf{arg max}_k \mathbb P(\mathcal Y=k \mid \mathcal X=x)$) y además $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$
 
 
 ### Ejemplo 
@@ -394,7 +394,7 @@ La @fig-2-guasiana-alargada-x muestra el conjunto de datos donde se realizará e
 
 ```{python} 
 #| label: fig-2-guasiana-alargada-x
-#| fig-cap: "Dos distribución Gausianas asociadas a dos clases"
+#| fig-cap: "Dos distribuciones Gaussianas asociadas a dos clases"
 #| code-fold: true
 #| echo: true
 
@@ -428,7 +428,7 @@ hy = np.array([m[i]
 error = (y != hy).mean()
 ```
 
-El error que se tiene corresponde a `{python} Markdown(f'{error:0.4f}')`. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuales son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
+El error que se tiene corresponde a `{python} Markdown(f'{error:0.4f}')`. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuáles son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
 
 ```{python} 
 #| echo: true
@@ -437,7 +437,7 @@ riesgo = 0.20
 valid = posterior.max(axis=1) > 1 - riesgo
 ```
 
-Utilizando `valid` se puede calcular el error de aquellos elementos los cuales tiene una clase positiva o negativa. El siguiente código calcula el error. 
+Utilizando `valid` se puede calcular el error de aquellos elementos los cuales tienen una clase positiva o negativa. El siguiente código calcula el error. 
 
 ```{python}
 #| echo: true
@@ -447,7 +447,7 @@ error = (y[valid] != hy[valid]).mean()
 
 El error obtenido con los elementos válidos es `{python} Markdown(f'${error:0.4f}$')`, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es `{python} valid.sum()`. 
 
-Para completar el ejemplo, la @fig-2-guasiana-original-reducido muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se pueden observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula. 
+Para completar el ejemplo, la @fig-2-guasiana-original-reducido muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se puede observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula. 
 
 
 ```{python} 

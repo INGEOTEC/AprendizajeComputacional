@@ -37,13 +37,13 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-12}
 
-Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseño; por ejemplo, asumir que los datos provienen de una distribución gaussiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesgo este mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
+Como se ha visto hasta el momento, cada algoritmo de clasificación y regresión tiene un sesgo, este puede provenir de los supuestos que se asumieron cuando se entrenó o diseñó; por ejemplo, asumir que los datos provienen de una distribución gaussiana multivariada o que se pueden separar los ejemplos mediante un hiperplano, entre otros. Dado un problema se desea seleccionar aquel algoritmo que tiene el mejor rendimiento, visto de otra manera, se selecciona el algoritmo cuyo sesgo esté mejor alineado al problema. Una manera complementaria sería utilizar varios algoritmos y tratar de predecir basados en las predicciones individuales de cada algoritmo. En esta unidad se explicarán diferentes metodologías que permiten combinar predicciones de algoritmos de clasificación y regresión. 
 
 ## Fundamentos {#sec-fundamentos}
 
-La descripción de ensambles se empieza observando el siguiente comportamiento. Suponiendo que se cuenta con $M$ algoritmos de clasificación binaria cada uno tiene una exactitud de $p=0.51$ y estos son completamente independientes. El proceso de clasificar un elemento corresponde a preguntar la clase a los $M$ clasificadores y la clase que se recibe mayor votos es la clase seleccionada, esta votación se comporta como una variable aleatoria que tiene una distribución Binomial. Suponiendo con la clase del elemento es $1$, en esta condición la función cumulativa de distribución ($\textsf{cdf}$) con parámetros $k=\lfloor \frac{M}{2}\rfloor,$ $n=M$ y $p=0.51$ indica seleccionar la clase $0$ y $1 - \textsf{cdf}$ corresponde a la probabilidad de seleccionar la clase $1$. 
+La descripción de ensambles se empieza observando el siguiente comportamiento. Suponiendo que se cuenta con $M$ algoritmos de clasificación binaria cada uno tiene una exactitud de $p=0.51$ y estos son completamente independientes. El proceso de clasificar un elemento corresponde a preguntar la clase a los $M$ clasificadores y la clase que recibe más votos es la clase seleccionada, esta votación se comporta como una variable aleatoria que tiene una distribución Binomial. Suponiendo que la clase del elemento es $1$, en esta condición la función acumulada de distribución ($\textsf{cdf}$) con parámetros $k=\lfloor \frac{M}{2}\rfloor,$ $n=M$ y $p=0.51$ indica seleccionar la clase $0$ y $1 - \textsf{cdf}$ corresponde a la probabilidad de seleccionar la clase $1$. 
 
-La @fig-ensambles-acc-bin muestra como cambia la exactitud, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene una exactitud de $p=0.51,$ se puede observar que cuando $M=501$ el rendimiento es $0.673$ y con $9,999$ clasificadores se tiene un valor de $0.977.$
+La @fig-ensambles-acc-bin muestra cómo cambia la exactitud, cuando el número de clasificadores se incrementa, cada uno de esos clasificadores son independientes y tiene una exactitud de $p=0.51,$ se puede observar que cuando $M=501$ el rendimiento es $0.673$ y con $9,999$ clasificadores se tiene un valor de $0.977.$
 
 
 ```{python}
@@ -85,13 +85,13 @@ $$
 
 Por otro lado la varianza del promedio (i.e., $\mathbb V(\bar y)$) está dada por $\mathbb V(\bar y)=\frac{1}{M} \mathbb V(\hat y)$, que se deriva siguiendo los pasos del error estándar de la media (@sec-error-estandar-media).
 
-Esto quiere decir que si se tienen $M$ regresores independientes, entonces el error cuadrado de su promedio es menor que el error de cada regresor individual, esto es porque su la varianza se reduce tal y como se mostró. 
+Esto quiere decir que si se tienen $M$ regresores independientes, entonces el error cuadrado de su promedio es menor que el error de cada regresor individual, esto es porque su varianza se reduce tal y como se mostró. 
 
 Tanto en el caso de clasificación como en el caso del error cuadrado, es poco probable contar con clasificadores y regresores que sean completamente independientes, entonces sus predicciones van a estar relacionadas en algún grado y no se podrá llegar a las reducciones obtenidas en el procedimiento presentado. 
 
 ## Bagging {#sec-bagging}
 
-Siguiendo con la idea de combinar $M$ instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa la técnica de Bootstrap (@sec-bootstrap) para generar $M$ instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.
+Siguiendo con la idea de combinar $M$ instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa en la técnica de Bootstrap (@sec-bootstrap) para generar $M$ instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.
 
 ### Ejemplo: Dígitos
 
@@ -107,7 +107,7 @@ T, G, y_t, y_g = train_test_split(X, y,
 
 Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (@sec-svm) y Árboles de Decisión (@sec-arboles-decision). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging. 
 
-La siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el macro-recall (@sec-macro). El rendimiento se presenta en una tabla para facilitar la comparación. 
+Las siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el macro-recall (@sec-macro). El rendimiento se presenta en una tabla para facilitar la comparación. 
 
 ```{python}
 #| echo: true
@@ -134,7 +134,7 @@ B = np.random.randint(T.shape[0],
                       size=(11, T.shape[0]))
 ```
 
-Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entra los máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.
+Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entrena las máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.
 
 ```{python}
 #| echo: true
@@ -160,7 +160,7 @@ btree_recall = recall_score(y_g, hy,
                             average="macro")
 ```
 
-Como se mencionó, la predicción final se puede realizar de dos manera en clasificación una es usando votación, como se vió en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculas las probabilidad de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa está información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que $1$ y menor que $-1$ y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo. 
+Como se mencionó, la predicción final se puede realizar de dos maneras en clasificación una es usando votación, como se vio en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculan las probabilidades de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa esta información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que $1$ y menor que $-1$ y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo. 
 
 ```{python}
 #| echo: true
@@ -185,7 +185,7 @@ ctree_recall = recall_score(y_g,
 
 Finalmente, la @tbl-ensambles-perf-cl muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma. 
 
-Comparando los diferentes rendimientos, se puede observar que no existe mucha diferencia en rendimiento en las M.S.V Lineal y que la mayor mejora se presentó en los Árboles de Decisión. Este comportamiento es esperado dado que para que Bagging funciones adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo. 
+Comparando los diferentes rendimientos, se puede observar que no existe mucha diferencia en rendimiento en las M.S.V Lineal y que la mayor mejora se presentó en los Árboles de Decisión. Este comportamiento es esperado dado que para que Bagging funcione adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo. 
 
 ```{python}
 #| echo: false
@@ -205,7 +205,7 @@ Markdown(txt)
 
 ### Ejemplo: Diabetes
 
-Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestra a continuación. 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestran a continuación. 
 
 ```{python}
 #| echo: true
@@ -215,7 +215,7 @@ T, G, y_t, y_g = train_test_split(X, y,
                                   test_size=0.2)
 ```
 
-Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como mediada de rendimiento el porcentaje del error absoluto (@eq-mape); tal y como se muestran en las siguientes instrucciones. 
+Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como medida de rendimiento el porcentaje del error absoluto (@eq-mape); tal y como se muestran en las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
@@ -241,7 +241,7 @@ Al igual que en el caso de clasificación, la siguiente instrucción genera los 
 B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
 ```
 
-En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrena las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y se en la tercera se realiza el promedio y se mide el rendimiento. 
+En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrenan las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y en la tercera se realiza el promedio y se mide el rendimiento. 
 
 ```{python}
 #| echo: true
@@ -279,7 +279,7 @@ txt += f'|Promedio ($M=11$)|{_}|\n'
 Markdown(txt)
 ```
 
-Hasta este momento los ensambles han sido de $M=11$ elementos, queda la duda como varía el rendimiento con respecto al tamaño del ensamble. La @fig-ensamble-variacion muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $M=2,\ldots,500.$ Se observa que alrededor que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor de $M=100.$ Finalmente se ve que el rendimiento es estable cuando $M>200.$
+Hasta este momento los ensambles han sido de $M=11$ elementos, queda la duda cómo varía el rendimiento con respecto al tamaño del ensamble. La @fig-ensamble-variacion muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $M=2,\ldots,500.$ Se observa que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor de $M=100.$ Finalmente se ve que el rendimiento es estable cuando $M>200.$
  
 ```{python}
 #| code-fold: true
@@ -316,7 +316,7 @@ donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_pe
 
 ## Bosques Aleatorios (Random Forest) 
 
-En la sección anterior se vió como se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general Bagging (@sec-bagging) creado con árboles de decisión se les conoce como bosques aleatorios. @breiman2001randomforest propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación. 
+En la sección anterior se vio cómo se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general Bagging (@sec-bagging) creado con árboles de decisión se les conoce como bosques aleatorios. @breiman2001randomforest propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación. 
 
 El uso de árboles aleatorios es directo mediante las clases `RandomForestClassifier` y `RandomForestRegressor` tal y como se muestra en el siguiente código:  
 
@@ -361,7 +361,7 @@ sns.relplot(data=df, x='Min Samples Split',
 
 ## Stack Generalization
 
-Continuando con la descripción de ensambles, se puede observar que Bagging en el caso de la media se puede representar como $\sum_i^M \frac{1}{M} \hat y^i,$ donde el factor $\frac{1}{M}$ se puede observar como un parámetro a identificar. Entonces la idea siguiente sería como se podría estimar parámetros para cada uno de los estimadores bases, e.g., $\sum_i^M w_i \hat y^i$ donde $w_i$ para bagging corresponde a $\frac{1}{M}.$ Se podría ir más allá y pensar que las predicciones $\mathbf y=(\hat y^1, \ldots, \hat y^M)$ podrían ser la entrada a otro estimador. 
+Continuando con la descripción de ensambles, se puede observar que Bagging en el caso de la media se puede representar como $\sum_i^M \frac{1}{M} \hat y^i,$ donde el factor $\frac{1}{M}$ se puede observar como un parámetro a identificar. Entonces la idea siguiente sería cómo se podría estimar parámetros para cada uno de los estimadores bases, e.g., $\sum_i^M w_i \hat y^i$ donde $w_i$ para bagging corresponde a $\frac{1}{M}.$ Se podría ir más allá y pensar que las predicciones $\mathbf y=(\hat y^1, \ldots, \hat y^M)$ podrían ser la entrada a otro estimador. 
 
 Esa es la idea detrás de Stack Generalization, @WOLPERT1992241 propone utilizar las predicciones de los estimadores bases como las entradas de otro estimador. Para poder llevar este proceso es necesario contar con un conjunto independiente del conjunto de entrenamiento para encontrar los parámetros del estimador que combina las predicciones. 
 
@@ -431,7 +431,7 @@ El rendimiento de este cambio es `{python} Markdown(f"${mape:0.4f}$")`.
 
 ::: {.callout-note}
 
-Las classes `StackingClassifier` y `StackingRegressor` implementan la idea de Stack Generalization. El siguiente código muestra su uso en el ejemplo de diabetes, utilizando los algoritmos de vecinos cercanos y máquinas de soporte vectorial. 
+Las clases `StackingClassifier` y `StackingRegressor` implementan la idea de Stack Generalization. El siguiente código muestra su uso en el ejemplo de diabetes, utilizando los algoritmos de vecinos cercanos y máquinas de soporte vectorial. 
 
 ```{python}
 #| echo: true
