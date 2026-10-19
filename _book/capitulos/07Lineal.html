@@ -363,7 +363,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar diferentes métodos lineales de discriminación para atacar problemas de clasificación.</p>
 <section id="paquetes-usados" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">6.1</span> Paquetes usados</h2>
-<div id="a86df7e6" class="cell" data-execution_count="1">
+<div id="c9ef17aa" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> LinearSVC, SVC, LinearSVR</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
@@ -697,7 +697,7 @@ Figura&nbsp;6.6: Problema multiclase
 \end{split}
 \tag{6.2}\]</span></span></p>
 <p>El problema de optimización de la <a href="#eq-svm-separable" class="quarto-xref">Ecuación&nbsp;<span>6.2</span></a> tiene solución solamente que los ejemplos sean linealmente separables. El siguiente código muestra la códificación de la <a href="#eq-svm-separable" class="quarto-xref">Ecuación&nbsp;<span>6.2</span></a> utilizando <a href="https://www.cvxpy.org/index.html">CVXPY</a> (<span class="citation" data-cites="cvxpy">Diamond y Boyd (<a href="18Referencias.html#ref-cvxpy" role="doc-biblioref">2016</a>)</span>). Las primeras dos lineas corresponden a los datos de clasificación, <code>X</code> tiene las variables independientes y <code>y</code> corresponde a la clase. Las variables del problema de optimización están en <code>w</code> y <code>w0</code>; las restricciones están codificadas en la variable <code>constraints</code>y la función objetivo en la variable <code>obj</code>. La penúltima linea genera el problema de optimización y se resuelve en la última instrucción.</p>
-<div id="2a993a86" class="cell" data-execution_count="9">
+<div id="4a7fe376" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> X_1.shape[<span class="dv">0</span>] <span class="op">+</span> [<span class="op">-</span><span class="dv">1</span>] <span class="op">*</span> X_2.shape[<span class="dv">0</span>])</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> cp.Variable(X.shape[<span class="dv">1</span>])</span>
@@ -720,7 +720,7 @@ Actividad
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Graficar la función de decisión encontrada al optimizar la <a href="#eq-svm-separable" class="quarto-xref">Ecuación&nbsp;<span>6.2</span></a>. La función de decisión se observa en color verde con la leyenda <span class="math inline">\(g(x)\)</span>; además se incluye la función encontrada por una MSV lineal identificada con la leyenda <span class="math inline">\(g_{\textsf{msv}}.\)</span> Modificar el parámetro <code>C</code> (utilizar un número cercano a cero y un número considerablemente grande e.g.&nbsp;<span class="math inline">\(1^{10}\)</span>) de la clase <code>LinearSVC</code> y grafique nuevamente las funciones de decisión para tener una intución de lo que está haciendo ese parámetro.</p>
-<div id="9d52f895" class="cell" data-execution_count="10">
+<div id="978280d4" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -733,11 +733,11 @@ Actividad
 </div>
 </div>
 <p>El problema de clasificación anterior se puede modificar para generar un problema que no sea linealmente separable, una manera es cambiar un ejemplo de clase tal y como se muestra en la siguiente instrucción.</p>
-<div id="2572516e" class="cell" data-execution_count="11">
+<div id="1daf028e" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y[<span class="op">-</span><span class="dv">1</span>] <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Con la modificación anterior el problema de optimización se vuelve infactible tal y como se puede observar al ejecutar el siguiente código,</p>
-<div id="34ef6814" class="cell" data-execution_count="12">
+<div id="b4f7ca2a" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>constraints <span class="op">=</span> [cp.multiply(X <span class="op">@</span> w <span class="op">+</span> w0, y) <span class="op">&gt;=</span> <span class="dv">1</span>]</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>obj <span class="op">=</span> cp.norm(w) <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> cp.Problem(cp.Minimize(obj), constraints<span class="op">=</span>constraints)</span>
@@ -754,7 +754,7 @@ Actividad
 \end{split}
 \tag{6.3}\]</span></span></p>
 <p>La <a href="#eq-svm" class="quarto-xref">Ecuación&nbsp;<span>6.3</span></a> se códifica utilizando las siguientes instrucciones. El producto punto <span class="math inline">\(\mathbf w \cdot \mathbf w\)</span> se codifica utilizando la función <code>cp.quad_over_lin</code>, se observa que la variable <span class="math inline">\(\xi_i\)</span> está en el arreglo <code>xi</code>, que el parámetro <span class="math inline">\(C\)</span> está en una variable con el mismo nombre y que se le asigna el valor de <span class="math inline">\(1\)</span>.</p>
-<div id="f15ce5f2" class="cell" data-execution_count="13">
+<div id="677f2721" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> cp.Parameter(pos<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>xi <span class="op">=</span> cp.Variable(y.shape[<span class="dv">0</span>], nonneg<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>constraints <span class="op">=</span> [cp.multiply(X <span class="op">@</span> w <span class="op">+</span> w0, y) <span class="op">&gt;=</span> <span class="dv">1</span> <span class="op">-</span> xi]</span>
@@ -769,7 +769,7 @@ Actividad
 \mathbf w = \sum_i \alpha_i y_i \mathbf x_i,
 \tag{6.4}\]</span></span></p>
 <p>donde <span class="math inline">\(\alpha_i\)</span> son los valores de las variables duales de las restricciones. Para comprobar la <a href="#eq-hiperplano" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>, el siguiente código muestra en la variable <code>alpha</code> los valores de las variables duales y la variable <code>w_codificado</code> tiene el valor del hiperplano, lo cual se puede comparar con el valor que está en el atributo <code>w.value</code>.</p>
-<div id="1060ef5e" class="cell" data-execution_count="14">
+<div id="57ba82e4" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> constraints[<span class="dv">0</span>].dual_value</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>w_codificado <span class="op">=</span> (np.c_[alpha <span class="op">*</span> y] <span class="op">*</span> X).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -874,13 +874,13 @@ Figura&nbsp;6.8: Hiperplanos para diferentes valores de <span class="math inline
 </div>
 </div>
 <p>Continuando con el comportamiento de las MSV lineales, está se encuentra implementada en la clase <code>LinearSVC</code> y su uso se ejemplifica utilizando el problema de dígitos (<a href="20ConjuntosDatos.html#sec-digitos" class="quarto-xref"><span>Sección B.3.3</span></a>); los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba utilizando las siguientes instrucciones.</p>
-<div id="bdbfd93f" class="cell" data-execution_count="17">
+<div id="05a3af94" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Xtrain, Xtest, ytrain, ytest <span class="op">=</span> train_test_split(D, y,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                                random_state<span class="op">=</span><span class="dv">21</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El modelo se entrena siguiendo un procedimiento equivalente al de los otros modelos de clasificación vistos hasta ahora, tal y como se muestra a continuación.</p>
-<div id="ea9f2181" class="cell" data-execution_count="18">
+<div id="96158943" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>svm <span class="op">=</span> LinearSVC().fit(Xtrain, ytrain)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>svm_n <span class="op">=</span> make_pipeline(Normalizer(),</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                      LinearSVC()).fit(Xtrain,</span>
@@ -888,7 +888,7 @@ Figura&nbsp;6.8: Hiperplanos para diferentes valores de <span class="math inline
 </div>
 <p>En algunas ocasiones el rendimiento de MSV mejora cuando las entradas están normalizadas a tener una longitud uno.</p>
 <p>En algunas ocasiones, el rendimiento de las MSV mejora cuando las entradas están normalizadas a tener una longitud unitaria. El siguiente código muestra un flujo de trabajo donde el primer paso es normalizar las entradas para tener una longitud unitaria y, posteriormente, se entrena una MSV.</p>
-<div id="4e216d40" class="cell" data-execution_count="19">
+<div id="0ae53eaf" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>svm_n <span class="op">=</span> make_pipeline(Normalizer(),</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                      LinearSVC()).fit(Xtrain,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                                       ytrain)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -925,7 +925,7 @@ Figura&nbsp;6.9: Comparación entre MSV con y sin normalización
 <h3 data-number="6.4.1" class="anchored" data-anchor-id="kernel"><span class="header-section-number">6.4.1</span> Kernel</h3>
 <p>En lugar de utilizar directamente las características <span class="math inline">\(\mathbf x\)</span> se puede realizar una transformación <span class="math inline">\(\phi\)</span> a estas características, esto haría que el hiperplano (<a href="#eq-hiperplano" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>) quede cómo <span class="math inline">\(\mathbf w = \sum_i \alpha_i y_i \phi(\mathbf x_i)\)</span>, pasando esto a la función discrimintante <span class="math inline">\(g\)</span> queda como <span class="math inline">\(g(\mathbf x) = \sum_i \alpha_i y_i \phi(\mathbf x_i) \cdot \phi(x) + w_0.\)</span> El producto punto se puede cambiar por una función <strong>Kernel</strong>, i.e., <span class="math inline">\(K(\mathbf x_i, \mathbf x_j) = \phi(\mathbf x_i) \cdot \phi(\mathbf x_j)\)</span> lo cual hace que sea innecesaria la transformación al espacio <span class="math inline">\(\phi.\)</span></p>
 <p>La función discriminante está dada por <span class="math inline">\(g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x) + w_0,\)</span> donde aquellos elementos donde <span class="math inline">\(\alpha_i &gt; 0\)</span> se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.</p>
-<p>La <a href="#fig-lineal-kernel" class="quarto-xref">Figura&nbsp;<span>6.10</span></a> muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la <a href="12ReduccionDim.html#sec-pca" class="quarto-xref"><span>Sección 11.5</span></a>), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase <span class="math inline">\(0\)</span>, después se observan las clases <span class="math inline">\(1\)</span> y del lado derecho las clases <span class="math inline">\(2\)</span>. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases <span class="math inline">\(1\)</span> y <span class="math inline">\(2\)</span> que corresponden a las que no son linealmente separables.</p>
+<p>La <a href="#fig-lineal-kernel" class="quarto-xref">Figura&nbsp;<span>6.10</span></a> muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la <a href="12ReduccionDim.html#sec-pca" class="quarto-xref"><span>Sección 11.5</span></a>), las clases se encuentran en color azul, naranja y verde. En color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase <span class="math inline">\(0\)</span>, después se observan las clases <span class="math inline">\(1\)</span> y del lado derecho las clases <span class="math inline">\(2\)</span>. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases <span class="math inline">\(1\)</span> y <span class="math inline">\(2\)</span> que corresponden a las que no son linealmente separables.</p>
 <div id="cell-fig-lineal-kernel" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Código</summary>
@@ -964,7 +964,7 @@ Figura&nbsp;6.10: Visualización de los vectores de soporte usando PCA.
 </div>
 </div>
 <p>El uso de la MSV con un kernel polinomial de grado dos se ejemplifica en el siguiente código.</p>
-<div id="8aec4378" class="cell" data-execution_count="22">
+<div id="93db718e" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>svm_k <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>).fit(Xtrain, ytrain)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La <a href="#fig-comp-svm-todos" class="quarto-xref">Figura&nbsp;<span>6.11</span></a> muestra el rendimiento de las MSV lineal con entradas originales y normalizadas, y una MSV con un kernel estimado en el paso anterior; se observa que el el kernel hace que el rendimiento sea estadísticamente superior a las MSV lineales.</p>
@@ -996,16 +996,16 @@ Figura&nbsp;6.11: Comparación entre MSV lineales y con kernel polinomial de gra
 <section id="regresión" class="level3" data-number="6.4.2">
 <h3 data-number="6.4.2" class="anchored" data-anchor-id="regresión"><span class="header-section-number">6.4.2</span> Regresión</h3>
 <p>Las máquinas de soporte vectorial también se pueden utilizar para resolver problemas de regresión; su uso se ejemplifica utilizando el problema de Diabetes (<a href="05Parametricos.html#sec-diabetes" class="quarto-xref"><span>Sección 4.9.1</span></a>), como se muestra en las siguiente dos instrucciones.</p>
-<div id="97f131e9" class="cell" data-execution_count="24">
+<div id="dfbde056" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>Xtrain, Xtest, ytrain, ytest <span class="op">=</span> train_test_split(X, y, random_state<span class="op">=</span><span class="dv">13</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La clase <code>LinearSVR</code> implementa la máquina de soporte vectorial lineal y su uso sigue la misma dinámica que en el case de clasificación, e.g.,</p>
-<div id="3b01ac5e" class="cell" data-execution_count="25">
+<div id="8c16f453" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>svr <span class="op">=</span> LinearSVR(C<span class="op">=</span><span class="dv">100</span>).fit(Xtrain, ytrain)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>hy_svr <span class="op">=</span> svr.predict(Xtest)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>donde la varianza capturada por el modelo (<a href="02Rendimiento.html#eq-r2" class="quarto-xref">Ecuación&nbsp;<span>2.7</span></a>) es: 0.4324.</p>
+<p>donde la varianza capturada por el modelo (<a href="02Rendimiento.html#eq-r2" class="quarto-xref">Ecuación&nbsp;<span>2.7</span></a>) es: 0.4351.</p>
 </section>
 </section>
 <section id="sec-regresion-logistica" class="level2" data-number="6.5">
@@ -1048,7 +1048,7 @@ Figura&nbsp;6.11: Comparación entre MSV lineales y con kernel polinomial de gra
 E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \log C(x) + (1-y) \log (1 -  C(x)).
 \tag{6.5}\]</span></span></p>
 <p>Es importante notar que la ecuación anterior corresponde a Entropía cruzada (<a href="02Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 2.3.7</span></a>), donde <span class="math inline">\(y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))\)</span> y <span class="math inline">\(C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)\)</span> y los términos <span class="math inline">\(1-y\)</span> y <span class="math inline">\(1-C(\mathbf x)\)</span> corresponde a la otra clase.</p>
-<p>Otra característica de <span class="math inline">\(E(\mathbf w, w_0 \mid \mathcal D)\)</span> es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización para encontrar los parámetros <span class="math inline">\(\mathbf w\)</span> y <span class="math inline">\(w_0\)</span>. En esta unidad el problema se resuelve con <a href="https://www.cvxpy.org/index.html">CVXPY</a> (<span class="citation" data-cites="cvxpy">Diamond y Boyd (<a href="18Referencias.html#ref-cvxpy" role="doc-biblioref">2016</a>)</span>), tomándolo como una herramienta que regresa los parámetros que minimizan la función; en la <a href="08Optimizacion.html" class="quarto-xref"><span>Capítulo 7</span></a>, más adelante, se describe cómo resolver este mismo problema con descenso por gradiente.</p>
+<p>Otra característica de <span class="math inline">\(E(\mathbf w, w_0 \mid \mathcal D)\)</span> es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización para encontrar los parámetros <span class="math inline">\(\mathbf w\)</span> y <span class="math inline">\(w_0\)</span>. En esta unidad el problema se resuelve con <a href="https://www.cvxpy.org/index.html">CVXPY</a> (<span class="citation" data-cites="cvxpy">Diamond y Boyd (<a href="18Referencias.html#ref-cvxpy" role="doc-biblioref">2016</a>)</span>), tomándolo como una herramienta que regresa los parámetros que minimizan la función. En la <a href="08Optimizacion.html" class="quarto-xref"><span>Capítulo 7</span></a>, más adelante, se describe cómo resolver este mismo problema con descenso por gradiente.</p>
 <p>En el caso de regresión logística, el logaritmo de la verosimilitud está dada por la <a href="#eq-log-likelihood-logistica" class="quarto-xref">Ecuación&nbsp;<span>6.6</span></a>; esta función es cóncava, lo cual hace que pueda ser maximizada por algún algoritmo de optimización convexa.</p>
 <p><span id="eq-log-likelihood-logistica"><span class="math display">\[
 \log \ell(\mathbf w, w_0) = \sum_i y_i \mathbf w \cdot \mathbf x_i + w_0 - \log (1 + \exp^{\mathbf w \cdot \mathbf x_i + w_0})
@@ -1060,7 +1060,7 @@ E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \lo
 \end{split}
 \tag{6.7}\]</span></span></p>
 <p>La <a href="#eq-reg-logistica" class="quarto-xref">Ecuación&nbsp;<span>6.7</span></a> se puede codificar <a href="https://www.cvxpy.org/index.html">CVXPY</a> (<span class="citation" data-cites="cvxpy">Diamond y Boyd (<a href="18Referencias.html#ref-cvxpy" role="doc-biblioref">2016</a>)</span>) utilizando las siguientes instrucciones. Las primeras dos líneas ponen en la variable <code>X</code> las variables independientes y en <code>y</code> la clase. En <code>w</code> y <code>w0</code> están las parámetros del modelo, es decir, las variables a optimizar, siguiendo por el parámetro <code>C</code> que penaliza la complejidad. La variable <code>verosimilitud</code> calcula la <a href="#eq-log-likelihood-logistica" class="quarto-xref">Ecuación&nbsp;<span>6.6</span></a>, el problema de optimización se encuentra en la variable <code>prob</code> y se optimiza la última línea.</p>
-<div id="a37a23b4" class="cell" data-execution_count="26">
+<div id="06297bb8" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2))</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> X_1.shape[<span class="dv">0</span>] <span class="op">+</span> [<span class="dv">0</span>] <span class="op">*</span> X_2.shape[<span class="dv">0</span>])</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> cp.Variable(X.shape[<span class="dv">1</span>])</span>
@@ -1081,7 +1081,7 @@ E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \lo
 \tag{6.8}\]</span></span></p>
 <p>y <span class="math inline">\(\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0),\)</span> donde <span class="math inline">\(\textsf{softmax}\)</span> transforma un vector <span class="math inline">\(\mathbf v\)</span> de <span class="math inline">\(K\)</span> valores en probabilidades, <span class="math inline">\(\textsf{softmax}(\mathbf v)_i = \frac{\exp v_i}{\sum_{j=1}^K \exp v_j},\)</span> y es la generalización de la función sigmoide a <span class="math inline">\(K\)</span> clases (ver también <a href="11RedesNeuronales.html#eq-softmax" class="quarto-xref">Ecuación&nbsp;<span>10.1</span></a>). Siguiendo el procedimiento anterior el siguiente código códifica en <a href="https://www.cvxpy.org/index.html">CVXPY</a> el problema de regresión logística multinomial.</p>
 <p>En la primera línea se cargan los datos del problema de clasificación, en las variables <code>X</code> y <code>y</code>, la segunda línea cuenta el número de clases. La variable <code>Wt</code> y <code>W0</code> contienen los parámetros del modelo es decir <span class="math inline">\(W^\intercal\)</span> y <span class="math inline">\(W_0\)</span>, <code>den</code> calcula el valor del denominador de la función <span class="math inline">\(\textsf{softmax}\)</span> y <code>logit</code> corresponde al numerador solamente de la clase medida. La variable <code>verosimilitud</code> contienen el valor calculado en la <a href="#eq-log-likelihood-multinomial" class="quarto-xref">Ecuación&nbsp;<span>6.8</span></a>, el problema de optimización está en <code>prob</code> y se ejecuta en la última linea.</p>
-<div id="917f7068" class="cell" data-execution_count="27">
+<div id="82ab946f" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>nclasses <span class="op">=</span> np.unique(y).shape[<span class="dv">0</span>]</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>Wt <span class="op">=</span> cp.Variable((X.shape[<span class="dv">1</span>], nclasses))</span>
@@ -1138,14 +1138,14 @@ Figura&nbsp;6.12: Comparación de dos métodos lineales
 </div>
 </div>
 <p>Complementando la comparación anterior con los datos del iris que se pueden obtener con las siguientes dos instrucciones.</p>
-<div id="95133a73" class="cell" data-execution_count="29">
+<div id="b730f538" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(D, y,</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.4</span>,</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Los clasificadores a comparar son una máquina de soporte vectorial lineal, una máquina de soporte vectorial usando un kernel polinomial de grado <span class="math inline">\(1\)</span> y una regresión logística, tal y como se muestra en el siguiente código.</p>
-<div id="4b3ef976" class="cell" data-execution_count="30">
+<div id="7d53e86b" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>svm <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T, y_t)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>svm_k <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">1</span>).fit(T, y_t)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> LogisticRegression().fit(T, y_t)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2240,7 +2240,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-589"><a href="#cb29-589" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-590"><a href="#cb29-590" aria-hidden="true" tabindex="-1"></a>La función discriminante está dada por $g(\mathbf x) = \sum_i^N \alpha_i y_i K(\mathbf x_i, \mathbf x) + w_0,$ donde aquellos elementos donde $\alpha_i &gt; 0$ se les conoce como los vectores de soporte. Estos elementos son los que se encuentran en el margen, dentro del margen y en el lado incorrecto de la función discriminante.</span>
 <span id="cb29-591"><a href="#cb29-591" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-592"><a href="#cb29-592" aria-hidden="true" tabindex="-1"></a>La @fig-lineal-kernel muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la @sec-pca), las clases se encuentran en color azul, naranja y verde; en color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. </span>
+<span id="cb29-592"><a href="#cb29-592" aria-hidden="true" tabindex="-1"></a>La @fig-lineal-kernel muestra los datos del iris (proyectados a dos dimensiones, para poder dibujarlos, con Análisis de Componentes Principales, técnica que se describirá en la @sec-pca), las clases se encuentran en color azul, naranja y verde. En color rojo se muestran los vectores de soporte. La figura derecha muestra en color negro aquellos vectores de soporte que se encuentran en el lado incorrecto del hiperplano. Por otro lado se puede observar como los vectores de soporte separan las clases, del lado izquierdo se encuentran todos los elementos de la clase $0$, después se observan las clases $1$ y del lado derecho las clases $2$. Los vectores de soporte están en la frontera de las clases y los errores se encuentran entre las clases $1$ y $2$ que corresponden a las que no son linealmente separables. </span>
 <span id="cb29-593"><a href="#cb29-593" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-596"><a href="#cb29-596" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb29-597"><a href="#cb29-597" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
@@ -2367,7 +2367,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb29-726"><a href="#cb29-726" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-727"><a href="#cb29-727" aria-hidden="true" tabindex="-1"></a>Es importante notar que la ecuación anterior corresponde a Entropía cruzada (@sec-entropia-cruzada), donde $y=\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x))$ y $C(\mathbf x)=\mathbb{\hat P}(\mathcal Y=y \mid \mathcal X=\mathbf x)$ y los términos $1-y$ y $1-C(\mathbf x)$ corresponde a la otra clase. </span>
 <span id="cb29-728"><a href="#cb29-728" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-729"><a href="#cb29-729" aria-hidden="true" tabindex="-1"></a>Otra característica de $E(\mathbf w, w_0 \mid \mathcal D)$ es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización para encontrar los parámetros $\mathbf w$ y $w_0$. En esta unidad el problema se resuelve con <span class="co">[</span><span class="ot">CVXPY</span><span class="co">](https://www.cvxpy.org/index.html)</span> (@cvxpy), tomándolo como una herramienta que regresa los parámetros que minimizan la función; en la @sec-optimizacion, más adelante, se describe cómo resolver este mismo problema con descenso por gradiente. </span>
+<span id="cb29-729"><a href="#cb29-729" aria-hidden="true" tabindex="-1"></a>Otra característica de $E(\mathbf w, w_0 \mid \mathcal D)$ es que no tiene una solución cerrada y por lo tanto es necesario utilizar un método de optimización para encontrar los parámetros $\mathbf w$ y $w_0$. En esta unidad el problema se resuelve con <span class="co">[</span><span class="ot">CVXPY</span><span class="co">](https://www.cvxpy.org/index.html)</span> (@cvxpy), tomándolo como una herramienta que regresa los parámetros que minimizan la función. En la @sec-optimizacion, más adelante, se describe cómo resolver este mismo problema con descenso por gradiente. </span>
 <span id="cb29-730"><a href="#cb29-730" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-731"><a href="#cb29-731" aria-hidden="true" tabindex="-1"></a>En el caso de regresión logística, el logaritmo de la verosimilitud está dada por la @eq-log-likelihood-logistica; esta función es cóncava, lo cual hace que pueda ser maximizada por algún algoritmo de optimización convexa. </span>
 <span id="cb29-732"><a href="#cb29-732" aria-hidden="true" tabindex="-1"></a></span>

@@ -44,7 +44,7 @@ Para el análisis de políticas públicas esta pregunta es central: un modelo qu
 
 Se parte de un conjunto de datos $\mathcal D = (\mathcal X, \mathcal Y)$ donde cada renglón de $\mathcal X$ es una realización de la variable aleatoria de entrada y cada elemento de $\mathcal Y$ es la realización de la variable que se desea predecir. El objetivo en aprendizaje supervisado es diseñar un algoritmo (función en este caso) que modele la relación entre $\mathcal X$ y $\mathcal Y$, y para conocer qué tan bien lo hace es necesario medir su rendimiento en instancias que no han sido vistas en el entrenamiento. Medirlo con los mismos datos que se usaron para ajustar el algoritmo produce estimaciones optimistas, porque el algoritmo puede memorizar particularidades de esos datos.
 
-En consecuencia, los datos se dividen en dos conjuntos: el conjunto de entrenamiento, $\mathcal T$, que se utiliza para encontrar el algoritmo, y el conjunto de prueba, $\mathcal G$, que se utiliza únicamente para medir el rendimiento. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir los datos de Breast Cancer Wisconsin (descritos en la @sec-breast-cancer-wisconsin) en estos conjuntos; en la @sec-rendimiento-ejemplo-clasificacion se utilizan para medir el rendimiento de un clasificador.
+En consecuencia, los datos se dividen en dos conjuntos, el conjunto de entrenamiento, $\mathcal T$, que se utiliza para encontrar el algoritmo, y el conjunto de prueba, $\mathcal G$, que se utiliza únicamente para medir el rendimiento. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir los datos de Breast Cancer Wisconsin (descritos en la @sec-breast-cancer-wisconsin) en estos conjuntos. En la @sec-rendimiento-ejemplo-clasificacion se utilizan para medir el rendimiento de un clasificador.
 
 ```{python}
 #| echo: true
@@ -163,7 +163,7 @@ $$
 
 Una función de costo que ha sido muy utilizada en redes neuronales y en particular en aprendizaje profundo es la **Entropía Cruzada** (Cross Entropy) que para una distribución discreta se define como: $H(P, Q) = - \sum_x P(x) \log Q(x)$. 
 
-Muchos clasificadores, además de la clase, entregan una estimación de la probabilidad de cada clase dado el ejemplo (la probabilidad *a posteriori*), la cual se denota $\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$ Para cada ejemplo $x$ se tiene $\mathbb P(\mathcal Y=k \mid \mathcal X=x)$ y el clasificador predice $\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$ Utilizando estas definiciones se puede decir que $P=\mathbb P$ y $Q=\mathbb{\hat P}$ en la definición de entropía cruzada; entonces
+Muchos clasificadores, además de la clase, entregan una estimación de la probabilidad de cada clase dado el ejemplo (la probabilidad *a posteriori*), la cual se denota $\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$ Para cada ejemplo $x$ se tiene $\mathbb P(\mathcal Y=k \mid \mathcal X=x)$ y el clasificador predice $\mathbb{\hat P}(\mathcal Y=k \mid \mathcal X=x).$ Utilizando estas definiciones se puede decir que $P=\mathbb P$ y $Q=\mathbb{\hat P}$ en la definición de entropía cruzada. Entonces
 
 $$
 \begin{split}
@@ -182,7 +182,7 @@ Se observa que modificando el umbral $\rho$ se tienen diferentes tablas de confu
 
 ### Ejemplo {#sec-rendimiento-ejemplo-clasificacion}
 
-El ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta el momento. En el siguiente código se observa el procedimiento para cargar los datos, después los datos se dividen en entrenamiento y prueba (@sec-conjunto-entre-prueba); se entrena el algoritmo Analizador Discriminante Cuadrático y se predice el conjunto de prueba. Por ahora este algoritmo se utiliza como una caja negra: es un clasificador que, para cada clase, estima una distribución normal de las variables de entrada (sus medias y una matriz de covarianza, que indica cómo varían las variables en conjunto) y asigna a cada ejemplo la clase más probable. Se entrena con `fit` y predice con `predict`; su funcionamiento se describe en la @sec-estimacion-parametros, que se verá más adelante.
+El ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) se utiliza para ilustrar el uso de la medidas de rendimiento presentadas hasta el momento. En el siguiente código se observa el procedimiento para cargar los datos, después los datos se dividen en entrenamiento y prueba (@sec-conjunto-entre-prueba), se entrena el algoritmo Analizador Discriminante Cuadrático y se predice el conjunto de prueba. Por ahora este algoritmo se utiliza como una caja negra. Es un clasificador que, para cada clase, estima una distribución normal de las variables de entrada (sus medias y una matriz de covarianza, que indica cómo varían las variables en conjunto) y asigna a cada ejemplo la clase más probable. Se entrena con `fit` y predice con `predict`. Su funcionamiento se describe en la @sec-estimacion-parametros, que se verá más adelante.
 
 ```{python}
 #| echo: true
@@ -242,7 +242,7 @@ Markdown(tab)
 :::{.callout-note}
 ### Comparación de cobertura por clase
 
-Continuando con el rendimiento y utilizando las características de la librería, es posible comparar el rendimiento entre dos o más algoritmos. En este ejemplo, se comparará el rendimiento en la cobertura por clase contra el algoritmo Bayesiano Ingenuo, otro clasificador que también se usa como caja negra. Este algoritmo hace lo mismo que el anterior pero supone que, dentro de cada clase, las variables de entrada son independientes entre sí, por lo que solamente estima una media y una varianza por variable; se describirá en la @sec-cl-bayesiano-ingenuo. En las siguientes dos lineas se entrena el algoritmo y se predice las clases en el conjunto de prueba. 
+Continuando con el rendimiento y utilizando las características de la librería, es posible comparar el rendimiento entre dos o más algoritmos. En este ejemplo, se comparará el rendimiento en la cobertura por clase contra el algoritmo Bayesiano Ingenuo, otro clasificador que también se usa como caja negra. Este algoritmo hace lo mismo que el anterior pero supone que, dentro de cada clase, las variables de entrada son independientes entre sí, por lo que solamente estima una media y una varianza por variable. Se describirá en la @sec-cl-bayesiano-ingenuo. En las siguientes dos lineas se entrena el algoritmo y se predice las clases en el conjunto de prueba. 
 
 ```{python} 
 #| echo: true
@@ -408,7 +408,7 @@ $$ {#eq-r2}
 
 ### Ejemplo
 
-Las medidas anteriores se ejemplifican utilizando el conjunto de datos de diabetes (que también se analiza en la @sec-diabetes), el cual se puede descargar y modelar mediante una regresión lineal, de la siguiente manera. La regresión lineal se utiliza como caja negra: es un modelo que predice la respuesta como una suma ponderada de las variables de entrada, $\mathbf w \cdot \mathbf x + w_0,$ donde los pesos se ajustan a los datos de entrenamiento minimizando el error cuadrático; se describirá en la @sec-regresion-ols.
+Las medidas anteriores se ejemplifican utilizando el conjunto de datos de diabetes (que también se analiza en la @sec-diabetes), el cual se puede descargar y modelar mediante una regresión lineal, de la siguiente manera. La regresión lineal se utiliza como caja negra. Es un modelo que predice la respuesta como una suma ponderada de las variables de entrada, $\mathbf w \cdot \mathbf x + w_0,$ donde los pesos se ajustan a los datos de entrenamiento minimizando el error cuadrático. Se describirá en la @sec-regresion-ols.
 
 
 ```{python}
@@ -465,7 +465,7 @@ Para optimizar los parámetros es necesario medir el rendimiento del algoritmo, 
 
 Entonces para optimizar los parámetros del algoritmo se selecciona del conjunto de entrenamiento, i.e., $\mathcal T$, el **conjunto de validación**, $\mathcal V$. Este conjunto tiene la característica que $\mathcal T \cap \mathcal V \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal V \cup \mathcal G = \mathcal D.$ Una manera de realizar estos es seleccionar primeramente el conjunto de prueba $\mathcal G$ y de los datos restantes generar los conjuntos de entrenamiento $\mathcal T$ y validación $\mathcal V.$
 
-Para ejemplificar esta idea se utiliza el ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utiliza un Bayesiano Ingenuo (variables independientes dentro de cada clase) o se estima la matriz de covarianza completa (la que además captura cómo se relacionan las variables entre sí); ambos son los clasificadores usados como cajas negras en la @sec-rendimiento-ejemplo-clasificacion. 
+Para ejemplificar esta idea se utiliza el ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utiliza un Bayesiano Ingenuo (variables independientes dentro de cada clase) o se estima la matriz de covarianza completa (la que además captura cómo se relacionan las variables entre sí). Ambos son los clasificadores usados como cajas negras en la @sec-rendimiento-ejemplo-clasificacion. 
 
 El primer paso es obtener los datos del problema, lo cual se muestra en la siguiente instrucción.
 
