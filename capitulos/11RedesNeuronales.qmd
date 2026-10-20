@@ -10,7 +10,9 @@ import jax
 import jax.lax as lax
 import jax.numpy as jnp
 import optax
-from sklearn.datasets import load_iris, load_digits
+from CompStats.metrics import r2_score
+from sklearn.datasets import load_iris, load_digits, load_diabetes
+from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -31,7 +33,7 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-11}
 
-Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que más han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.
+Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que más han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial. Al final del capítulo se presentan un ejemplo de clasificación (Dígitos) y uno de regresión (@sec-redes-neuronales-regresion).
 
 ## Regresión Logística Multinomial {#sec-regresion-logistica-multinomial}
 
@@ -447,3 +449,188 @@ error_f = Markdown(f'${error_f:0.4f}$')
 ```
 
 El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. 
+
+## Ejemplo: Diabetes {#sec-redes-neuronales-regresion}
+
+Para ejemplificar el uso de una red neuronal en un problema de regresión se utilizan los datos de Diabetes (@sec-diabetes), donde se desea predecir una medida cuantitativa de la progresión de la enfermedad a partir de $10$ variables de cada paciente. Los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba con las siguientes instrucciones; se fija la semilla (`random_state=0`) para que la partición sea la misma en cada ejecución.
+
+```{python}
+#| echo: true
+X, y = load_diabetes(return_X_y=True)
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2, random_state=0)
+```
+
+Al igual que en el ejemplo anterior, las entradas se normalizan para que tengan media cero y desviación estándar uno; los parámetros de la normalización se encuentran únicamente en el conjunto de entrenamiento (`T`) y se aplican tanto a `T` como a `G`. 
+
+```{python}
+#| echo: true
+normalize = StandardScaler().fit(T)
+T = normalize.transform(T)
+G = normalize.transform(G)
+```
+
+En regresión también conviene normalizar la variable dependiente. Los valores de $y$ se encuentran en una escala muy distinta a la de las entradas, mientras que la red se inicializa para producir salidas cercanas a cero. Por este motivo, la red se entrena para predecir la variable dependiente normalizada con la media y la desviación estándar del conjunto de entrenamiento, y sus predicciones se regresan a la escala original antes de medir el rendimiento. Las siguientes instrucciones calculan estos dos valores y la variable dependiente normalizada de entrenamiento. 
+
+```{python}
+#| echo: true
+mu, sigma = y_t.mean(), y_t.std()
+yt_n = (y_t - mu) / sigma
+```
+
+La estructura de la red es la misma que en el ejemplo de Dígitos, con dos capas ocultas y función de activación $\textsf{ReLU}$. La diferencia está en la capa de salida: en clasificación tenía una neurona por clase y las salidas pasaban por $\textsf{softmax}$ para interpretarse como probabilidades, en regresión se predice un único número, por lo que la última capa tiene una sola neurona y su salida se utiliza tal cual, es decir, no se le aplica ninguna función. La estructura $\mathbb R^{10} \rightarrow \mathbb R^{32} \rightarrow \mathbb R^{16} \rightarrow \mathbb R$ queda representada en la siguiente lista. 
+
+```{python}
+#| echo: true
+d = [T.shape[1], 32, 16, 1]
+```
+
+```{python}
+#| echo: false
+t_shape_dm_f = Markdown(f'${T.shape[1]}$')
+salida_f = Markdown(f'${d[-1]}$')
+```
+
+Se observa que la única restricción para la primera capa es que tenga la dimensión del vector de entrada, que en este caso es `{python} t_shape_dm_f` (`T.shape[1]`), y que la última capa tiene dimensión `{python} salida_f` porque se predice un único valor. 
+
+Los parámetros iniciales (`parametros_iniciales`) y la red (`ann`) son los mismos que se definieron en el ejemplo de Dígitos; la función `ann` regresa una matriz con una sola columna, por lo que en la función de pérdida se aplica `flatten` para obtener un vector. Como medida de error se utiliza el error cuadrático medio (@eq-mse), que es la función que se minimiza en regresión (@sec-regresion-ols). 
+
+```{python}
+#| echo: true
+@jax.jit
+def media_error_cuadratico(params, D, y):
+    return ((ann(params, D).flatten() - y) ** 2).mean()
+```
+
+El optimizador es Adam, igual que en el ejemplo anterior. La función `adam_regresion` sigue la misma estructura que `adam`; las diferencias son que la función de error es `media_error_cuadratico` y que los datos de entrenamiento se reciben como parámetros (`X` y `y`) en lugar de estar fijos en la función. 
+
+```{python}
+#| echo: true
+def adam_regresion(optimizer, params, X, y, epocas=500):
+    @jax.jit
+    def update_finite(a, b):
+        m = jnp.isfinite(b)
+        return jnp.where(m, b, a)
+    
+    @jax.jit
+    def update(params, opt_state, X, y):
+        loss_value, grads = error_grad(params, X, y)
+        updates, opt_state = optimizer.update(grads, opt_state, params)
+        params = optax.apply_updates(params, updates)
+        return params, opt_state, loss_value
+    
+    opt_state = optimizer.init(params)
+    error_grad  = jax.value_and_grad(media_error_cuadratico)    
+    error = []
+    for i in range(epocas):
+        p, opt_state, loss_value = update(params, opt_state, X, y)
+        params = jax.tree.map(update_finite, params, p)
+        error.append(loss_value)
+    return params, error
+```
+
+La red se entrena con las siguientes instrucciones, que primero generan los parámetros iniciales, después inicializan el optimizador y finalmente llaman a `adam_regresion` con los datos de entrenamiento normalizados. Es importante notar que el conjunto de entrenamiento es pequeño comparado con el número de parámetros de la red, por lo que entrenar durante demasiadas épocas hace que la red se ajuste al ruido del conjunto de entrenamiento (sobreajuste); en este ejemplo se utiliza una tasa de aprendizaje pequeña y un número moderado de épocas. El número de épocas es un hiperparámetro que se puede seleccionar con un conjunto de validación (@sec-validacion-cruzada). 
+
+```{python}
+#| echo: true
+params = parametros_iniciales(d)
+optimizer = optax.adam(learning_rate=1e-3)
+p, error = adam_regresion(optimizer, params, T, yt_n, epocas=200)
+```
+
+La @fig-redes-neuronales-regresion-error muestra cómo el error cuadrático medio (calculado sobre la variable dependiente normalizada) disminuye conforme avanzan las épocas.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Error cuadrático medio en el conjunto de entrenamiento en cada época.
+#| label: fig-redes-neuronales-regresion-error
+df = pd.DataFrame(dict(error=np.array(error),
+                       epoca=np.arange(1, len(error) + 1)))
+_ = sns.relplot(data=df, x='epoca', y='error', kind='line')
+```
+
+Para medir el rendimiento en el conjunto de prueba, las predicciones de la red se regresan a la escala original, es decir, se multiplican por la desviación estándar `sigma` y se suma la media `mu`. Como referencia se ajusta una regresión lineal (@sec-regresion-ols) con los mismos datos de entrenamiento y se obtienen sus predicciones en el conjunto de prueba. 
+
+```{python}
+#| echo: true
+hy_ann = np.array(ann(p, G).flatten()) * sigma + mu
+hy_lr = LinearRegression().fit(T, y_t).predict(G)
+```
+
+El rendimiento se mide con el coeficiente de determinación $R^2$ (@eq-r2) implementado en `CompStats`, tal y como se hizo en @sec-rendimiento-regresion. La siguiente instrucción calcula el $R^2$ de la red neuronal en el conjunto de prueba; el parámetro `name` es el nombre con el que aparecerá la red en las comparaciones.
+
+```{python}
+#| echo: true
+r2 = r2_score(y_g, hy_ann, name='Red Neuronal', use_tqdm=False)
+```
+
+```{python}
+#| echo: false
+r2_ann_f = Markdown(f'${r2.statistic:0.4f}$')
+r2_ann_se_f = Markdown(f'${r2.se:0.4f}.$')
+```
+
+El $R^2$ de la red neuronal es `{python} r2_ann_f` con un error estándar de `{python} r2_ann_se_f` Para compararla con la regresión lineal se agregan sus predicciones al mismo objeto y se grafican, el resultado se muestra en la @fig-redes-neuronales-regresion-compstats.
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento ($R^2$) de la red neuronal y de la regresión lineal en el conjunto de prueba.
+#| label: fig-redes-neuronales-regresion-compstats
+r2(hy_lr, name='Regresión Lineal')
+r2.plot(comp_legend='Comparación',
+        winner_legend='Mejor',
+        tie_legend='Equivalente',
+        loser_legend='Diferente',
+        alg_legend='Algoritmo',
+        var_name='Rendimiento')
+```
+
+```{python}
+#| echo: false
+r2_lr_f = Markdown(f'${r2.statistic["Regresión Lineal"]:0.4f}$')
+r2_lr_se_f = Markdown(f'${r2.se["Regresión Lineal"]:0.4f}.$')
+```
+
+En la figura se observa el $R^2$ de cada algoritmo con su intervalo de confianza, estimado mediante bootstrap. La figura también indica cuál es el algoritmo con el mejor rendimiento (`Mejor`) y, para el otro algoritmo, si su rendimiento es estadísticamente equivalente (`Equivalente`) o diferente (`Diferente`) con respecto al mejor. El $R^2$ de la regresión lineal es `{python} r2_lr_f` con un error estándar de `{python} r2_lr_se_f`
+
+Finalmente, la @fig-redes-neuronales-regresion-prediccion muestra el valor real contra el valor predicho por la red neuronal en el conjunto de prueba, la línea punteada es la identidad, es decir, las predicciones perfectas. 
+
+```{python}
+#| code-fold: true
+#| fig-cap: Valor real contra valor predicho por la red neuronal en el conjunto de prueba.
+#| label: fig-redes-neuronales-regresion-prediccion
+df = pd.DataFrame(dict(real=y_g, predicho=hy_ann))
+g = sns.relplot(data=df, x='real', y='predicho')
+lim = [df.min().min(), df.max().max()]
+g.ax.plot(lim, lim, linestyle='--', color='gray')
+```
+
+::: {.callout-tip collapse="true"}
+### Actividad 
+
+Comparar el rendimiento ($R^2$) en el conjunto de prueba de redes neuronales con diferente número de neuronas en las capas ocultas, i.e., modificando los valores $32$ y $16$ de la lista `d`, tal y como se muestra en la @fig-actividad-redes-regresion. Utilizar los mismos datos de Diabetes, la misma partición y el mismo procedimiento de entrenamiento descrito en esta sección; el rendimiento se compara con `CompStats`. 
+
+```{python}
+#| echo: false
+#| label: fig-actividad-redes-regresion
+#| fig-cap: Rendimiento ($R^2$) de redes neuronales con diferente número de neuronas en las capas ocultas.
+
+r2_act = None
+for ocultas in [(4, 2), (8, 4), (16, 8), (32, 16)]:
+    d_act = [T.shape[1], *ocultas, 1]
+    p_act, _ = adam_regresion(optax.adam(learning_rate=1e-3),
+                              parametros_iniciales(d_act),
+                              T, yt_n, epocas=200)
+    hy_act = np.array(ann(p_act, G).flatten()) * sigma + mu
+    nombre = f'{ocultas[0]}-{ocultas[1]}'
+    if r2_act is None:
+        r2_act = r2_score(y_g, hy_act, name=nombre, use_tqdm=False)
+    else:
+        r2_act(hy_act, name=nombre)
+r2_act.plot(comp_legend='Comparación',
+            winner_legend='Mejor',
+            tie_legend='Equivalente',
+            loser_legend='Diferente',
+            alg_legend='Algoritmo',
+            var_name='Rendimiento')
+```
+:::
