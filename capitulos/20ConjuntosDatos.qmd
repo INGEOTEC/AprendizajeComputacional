@@ -1,6 +1,6 @@
 # Conjunto de Datos
 
-El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso.  
+El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
 
 ## Paquetes usados {.unnumbered}
 
@@ -28,11 +28,328 @@ PALETTE = mpl.cm.Paired
 sns.set_style('whitegrid')
 ```
 
-## Problemas Sintéticos
+## Problemas de Política Pública {#sec-datos-politica-publica}
+
+Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta: a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela y cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente. Todos se procesaron con los scripts de la carpeta `scripts/datos/` (uno por conjunto) y los archivos resultantes están versionados en la carpeta `datos/` del repositorio; los capítulos y este apéndice sólo leen esos archivos, nunca los descargan. La @tbl-conjunto-datos-politica-publica resume los cinco conjuntos: el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores.
+
+```{python}
+#| echo: false
+CONJUNTOS = {
+    'pobreza': dict(archivo='enigh_pobreza.csv.gz',
+                    objetivo='pobre_ingresos',
+                    aparte=['factor']),
+    'seguridad': dict(archivo='envipe_seguridad.csv.gz',
+                      objetivo='victima_delito',
+                      aparte=['factor']),
+    'salud': dict(archivo='ensanut_salud.csv.gz',
+                  objetivo='diabetes',
+                  aparte=['factor']),
+    'educacion': dict(archivo='sep_f911_educacion.csv.gz',
+                      objetivo='tasa_abandono',
+                      aparte=['clave_cct']),
+    'territorio': dict(archivo='censo_denue_territorio.csv',
+                       objetivo='grado_promedio_escolaridad',
+                       aparte=['clave_ageb', 'municipio', 'pct_viv_internet',
+                               'pct_sin_servicio_salud',
+                               'pct_jefatura_femenina'])}
+DATOS_PP = {k: pd.read_csv(f'../datos/{v["archivo"]}')
+            for k, v in CONJUNTOS.items()}
+N_PP = {k: d.shape[0] for k, d in DATOS_PP.items()}
+D_PP = {k: d.shape[1] - 1 - len(CONJUNTOS[k]['aparte'])
+        for k, d in DATOS_PP.items()}
+pp_f = lambda x: Markdown(f'${x}$')
+```
+
+```{python}
+#| echo: false
+#| tbl-cap: Problemas de política pública
+#| label: tbl-conjunto-datos-politica-publica
+FILAS = [
+    ('Pobreza', 'pobreza', 'Hogar', 'Clasificación (binaria)', '2022',
+     'ENIGH, INEGI'),
+    ('Seguridad', 'seguridad', 'Persona', 'Clasificación (binaria)', '2025',
+     'ENVIPE, INEGI'),
+    ('Salud', 'salud', 'Adulto', 'Clasificación (binaria)', '2022',
+     'ENSANUT, INSP'),
+    ('Educación', 'educacion', 'Secundaria', 'Regresión', '2023-2025',
+     'Formato 911, SEP'),
+    ('Territorio', 'territorio', 'AGEB urbana', 'Regresión', '2020 y 2026',
+     'Censo y DENUE, INEGI')]
+txt = '|Nombre | Unidad | Tamaño ($N$) | Dimensión ($d$) | Tarea | Año | Fuente |\n'
+txt += '|-------|--------|--------------|-----------------|-------|-----|--------|\n'
+for nombre, clave, unidad, tarea, anio, fuente in FILAS:
+    txt += (f'|{nombre}|{unidad}|${N_PP[clave]}$|${D_PP[clave]}$|'
+            f'{tarea}|{anio}|{fuente}|\n')
+Markdown(txt)
+```
+
+### Pobreza {#sec-datos-pobreza}
+
+Los programas de transferencias necesitan decidir qué hogares son elegibles, pero medir el ingreso de un hogar es costoso, poco confiable y, en el caso de la informalidad, casi imposible de verificar. Una alternativa es la *prueba de medios sustituta* (*proxy means test*): predecir si un hogar es pobre a partir de características fáciles de observar de su vivienda y de su composición, y usar esa predicción para focalizar. La tarea de este conjunto es precisamente esa: clasificar si un hogar se encuentra por debajo de la línea de pobreza por ingresos sin usar ninguna variable de ingreso ni de gasto.
+
+```{python}
+#| echo: false
+LINEA_RURAL, LINEA_URBANA = 2970.19, 4157.63
+linea_rural_f = Markdown(f'\\${LINEA_RURAL:,.2f}')
+linea_urbana_f = Markdown(f'\\${LINEA_URBANA:,.2f}')
+pobreza = DATOS_PP['pobreza']
+n_pobreza_f = pp_f(pobreza.shape[0])
+d_pobreza_f = pp_f(D_PP['pobreza'])
+tasa_pobreza_f = Markdown(f'${100 * pobreza.pobre_ingresos.mean():0.1f}\\%$')
+tasa_pobreza_pond_f = Markdown(
+    '$' + f'{100 * np.average(pobreza.pobre_ingresos, weights=pobreza.factor):0.1f}'
+    + '\\%$')
+tasa_rural_f = Markdown(
+    f'${100 * pobreza[pobreza.ambito == "rural"].pobre_ingresos.mean():0.1f}\\%$')
+tasa_urbano_f = Markdown(
+    f'${100 * pobreza[pobreza.ambito == "urbano"].pobre_ingresos.mean():0.1f}\\%$')
+```
+
+**Ficha**
+
+- **Fuente:** Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH) 2022, Nueva Serie, del INEGI (@enigh2022), [datos abiertos](https://www.inegi.org.mx/programas/enigh/nc/2022/). La línea de pobreza por ingresos de agosto de 2022 (canasta alimentaria más no alimentaria, valor mensual por persona) es la que publica el CONEVAL (@coneval-lpi): `{python} linea_rural_f` en el ámbito rural y `{python} linea_urbana_f` en el urbano.
+- **Licencia:** Términos de libre uso de la información del INEGI.
+- **Unidad de observación:** hogar.
+- **Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ `{python} n_pobreza_f` hogares de la encuesta.
+- **Variables:** $d=$ `{python} d_pobreza_f` predictoras observables de la vivienda y el hogar: entidad federativa, tamaño de localidad, tipo de hogar, número y edades de los integrantes, sexo, edad y escolaridad de la jefatura, materiales de la vivienda (paredes, techo, piso), cuartos y dormitorios, servicios (agua, drenaje, electricidad, combustible para cocinar, basura), tenencia, bienes y equipamiento (vehículos, computadoras, refrigeradores, lavadoras, internet, etc.). No hay ninguna variable de ingreso ni de gasto. La columna `factor` es el factor de expansión de la encuesta y no es predictora.
+- **Objetivo y tarea:** `pobre_ingresos` vale $1$ cuando el ingreso corriente per cápita mensual del hogar (el ingreso corriente trimestral entre tres y entre el número de integrantes) es menor que la línea de pobreza de su ámbito (rural si la localidad tiene menos de $2500$ habitantes). Es una tarea de clasificación binaria; es una aproximación a la medición oficial, no la replica.
+- **Script:** `scripts/datos/enigh_pobreza.py`, que genera `datos/enigh_pobreza.csv.gz`.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+pobreza = pd.read_csv('../datos/enigh_pobreza.csv.gz')
+```
+
+En la muestra, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`; si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Proporción de hogares bajo la línea de pobreza por ingresos según la escolaridad de la jefatura del hogar.
+#| label: fig-datos-pobreza
+orden = ['sin instrucción', 'primaria incompleta', 'primaria completa',
+         'secundaria incompleta', 'secundaria completa',
+         'preparatoria incompleta', 'preparatoria completa',
+         'profesional incompleta', 'profesional completa', 'posgrado']
+fig, ax = plt.subplots(figsize=(7, 4))
+_ = sns.barplot(pobreza, y='escolaridad_jefe', x='pobre_ingresos',
+                order=orden, errorbar=None, ax=ax, color=PALETTE(1))
+_ = ax.set(xlabel='Proporción bajo la línea de pobreza',
+           ylabel='Escolaridad de la jefatura')
+```
+
+### Seguridad {#sec-datos-seguridad}
+
+La prevención del delito y el despliegue policial se planean con estadísticas oficiales, pero las denuncias sólo registran una parte de los delitos. Las encuestas de victimización permiten estudiar quién es víctima y qué relación tiene con las condiciones del entorno y la percepción de inseguridad. La tarea de este conjunto es clasificar si una persona fue víctima de algún delito durante el año de referencia. Como las víctimas son una minoría, el problema es de clases desbalanceadas: equivocarse al no identificar a una víctima y equivocarse al marcar a quien no lo es no cuestan lo mismo, lo que será relevante al hablar de decisiones y costos.
+
+```{python}
+#| echo: false
+seguridad = DATOS_PP['seguridad']
+n_seguridad_f = pp_f(seguridad.shape[0])
+d_seguridad_f = pp_f(D_PP['seguridad'])
+tasa_victima_f = Markdown(f'${100 * seguridad.victima_delito.mean():0.1f}\\%$')
+tasa_victima_pond_f = Markdown(
+    '$' + f'{100 * np.average(seguridad.victima_delito, weights=seguridad.factor):0.1f}'
+    + '\\%$')
+n_victimas_f = pp_f(int(seguridad.victima_delito.sum()))
+```
+
+**Ficha**
+
+- **Fuente:** Encuesta Nacional de Victimización y Percepción sobre Seguridad Pública (ENVIPE) 2026 del INEGI (@envipe2026), [datos abiertos](https://www.inegi.org.mx/programas/envipe/2026/). Es la edición más reciente publicada al preparar los datos; el periodo de referencia es el año 2025.
+- **Licencia:** Términos de libre uso de la información del INEGI.
+- **Unidad de observación:** persona de $18$ años o más seleccionada como informante.
+- **Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ `{python} n_seguridad_f` personas.
+- **Variables:** $d=$ `{python} d_seguridad_f` predictoras: entidad, dominio (urbano, complemento urbano o rural), sexo, edad, nivel de instrucción, condición de actividad, tamaño del hogar, tiempo en la vivienda y las preguntas de percepción de la encuesta (temas que preocupan, percepción de seguridad en la colonia, el municipio, el estado y en lugares específicos, problemas e incivilidades en la colonia, temor a ser víctima y expectativas). No se incluyen variables que sean consecuencia de la victimización, como las medidas de protección, los cambios de conducta por temor, el contacto con autoridades o la denuncia. La columna `factor` es el factor de expansión y no es predictora.
+- **Objetivo y tarea:** `victima_delito` vale $1$ cuando la persona declara haber sido víctima, durante $2025$, de algún delito personal (robo o asalto, otro tipo de robo, fraude, extorsión, amenazas, lesiones, secuestro, delitos sexuales u otros). Los delitos que afectan al hogar, como el robo de vehículo o a casa habitación, no forman parte del objetivo. Es una tarea de clasificación binaria con clases desbalanceadas.
+- **Script:** `scripts/datos/envipe_seguridad.py`, que genera `datos/envipe_seguridad.csv.gz`.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+seguridad = pd.read_csv('../datos/envipe_seguridad.csv.gz')
+```
+
+En la muestra hay `{python} n_victimas_f` víctimas, es decir, `{python} tasa_victima_f` de las personas (`{python} tasa_victima_pond_f` al ponderar con el factor de expansión). La @fig-datos-seguridad muestra la proporción de víctimas por grupo de edad y sexo.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Proporción de personas que fueron víctimas de algún delito personal por grupo de edad y sexo.
+#| label: fig-datos-seguridad
+grupo = pd.cut(seguridad.edad, [17, 29, 44, 59, 120],
+               labels=['18 a 29', '30 a 44', '45 a 59', '60 o más'])
+df = pd.DataFrame(dict(grupo=grupo, sexo=seguridad.sexo,
+                       victima=seguridad.victima_delito))
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.barplot(df, x='grupo', y='victima', hue='sexo',
+                errorbar=None, palette='Paired', ax=ax)
+_ = ax.set(xlabel='Edad', ylabel='Proporción de víctimas')
+```
+
+### Salud {#sec-datos-salud}
+
+Los sistemas de salud no pueden hacer pruebas de glucosa a toda la población adulta con la misma frecuencia, por lo que el tamizaje se dirige a las personas con más riesgo. Saber qué características permiten anticipar el diagnóstico de diabetes, y cuántos casos se perderían con cada regla de focalización, es una decisión de política de salud pública. La tarea de este conjunto es clasificar si una persona adulta tiene un diagnóstico médico previo de diabetes. Hay que tener presente que un diagnóstico previo no es lo mismo que la presencia de la enfermedad, pues las personas sin acceso a servicios de salud pueden tener diabetes sin saberlo.
+
+```{python}
+#| echo: false
+salud = DATOS_PP['salud']
+n_salud_f = pp_f(salud.shape[0])
+d_salud_f = pp_f(D_PP['salud'])
+n_diabetes_f = pp_f(int(salud.diabetes.sum()))
+tasa_diabetes_f = Markdown(f'${100 * salud.diabetes.mean():0.1f}\\%$')
+edad_min_f = pp_f(int(salud.edad.min()))
+edad_max_f = pp_f(int(salud.edad.max()))
+```
+
+**Ficha**
+
+- **Fuente:** Encuesta Nacional de Salud y Nutrición Continua (ENSANUT) 2022 del Instituto Nacional de Salud Pública (INSP) (@ensanut2022), [bases de datos](https://ensanut.insp.mx/encuestas/ensanutcontinua2022/descargas.php). Se combinan el cuestionario de salud de adultos, el de antropometría y tensión arterial y el índice de bienestar del hogar.
+- **Licencia:** acceso libre para investigación y docencia, citando al INSP como fuente.
+- **Unidad de observación:** persona adulta con mediciones de peso, talla y tensión arterial; las edades van de `{python} edad_min_f` a `{python} edad_max_f` años. Se excluyen las mujeres embarazadas o en lactancia y las personas con diabetes sólo durante el embarazo.
+- **Tamaño:** $N=$ `{python} n_salud_f` personas.
+- **Variables:** $d=$ `{python} d_salud_f` predictoras: entidad, tamaño de localidad, quintil del índice de bienestar del hogar, sexo, edad, peso, talla, índice de masa corporal y tensión arterial medidos, diagnóstico previo de hipertensión, antecedentes familiares de diabetes (padre, madre y hermanos), tabaquismo y consumo de alcohol. No se incluye ninguna pregunta sobre el tratamiento ni las complicaciones de la diabetes. La columna `factor` es el ponderador de la encuesta y no es predictora.
+- **Objetivo y tarea:** `diabetes` vale $1$ cuando un médico le dijo a la persona que tiene diabetes (o azúcar alta en la sangre). Se eligió diabetes y no hipertensión porque hay suficientes casos: es una tarea de clasificación binaria.
+- **Script:** `scripts/datos/ensanut_salud.py`, que genera `datos/ensanut_salud.csv.gz`.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+salud = pd.read_csv('../datos/ensanut_salud.csv.gz')
+```
+
+En el conjunto hay `{python} n_diabetes_f` personas con diagnóstico de diabetes, es decir, `{python} tasa_diabetes_f`. La @fig-datos-salud muestra que la proporción aumenta con la edad y con el índice de masa corporal.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Proporción de personas con diagnóstico previo de diabetes por grupo de edad y categoría del índice de masa corporal.
+#| label: fig-datos-salud
+grupo = pd.cut(salud.edad, [19, 29, 39, 49, 59, 69],
+               labels=['20 a 29', '30 a 39', '40 a 49', '50 a 59', '60 a 69'])
+imc = pd.cut(salud.imc, [0, 25, 30, 100],
+             labels=['menor a 25', '25 a 30', 'mayor a 30'])
+df = pd.DataFrame(dict(grupo=grupo, imc=imc, diabetes=salud.diabetes))
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.barplot(df, x='grupo', y='diabetes', hue='imc',
+                errorbar=None, palette='Paired', ax=ax)
+_ = ax.set(xlabel='Edad', ylabel='Proporción con diabetes')
+_ = ax.legend(title='IMC')
+```
+
+### Educación {#sec-datos-educacion}
+
+El abandono escolar es uno de los principales obstáculos para que la educación cumpla su papel como mecanismo de movilidad social, y la transición de la primaria a la secundaria y de la secundaria a la educación media superior es un momento crítico. Los programas de becas, de tutoría y de reinserción tienen recursos limitados y deben decidir qué planteles apoyar primero. La tarea de este conjunto es predecir, para cada secundaria, la tasa de abandono escolar a partir de las características del plantel; como la variable objetivo es numérica, se trata de un problema de regresión.
+
+```{python}
+#| echo: false
+educacion = DATOS_PP['educacion']
+n_educacion_f = pp_f(educacion.shape[0])
+d_educacion_f = pp_f(D_PP['educacion'])
+media_abandono_f = Markdown(f'${educacion.tasa_abandono.mean():0.1f}\\%$')
+mediana_abandono_f = Markdown(f'${educacion.tasa_abandono.median():0.1f}\\%$')
+p90_abandono_f = Markdown(f'${educacion.tasa_abandono.quantile(0.9):0.1f}\\%$')
+sin_abandono_f = Markdown(
+    f'${100 * (educacion.tasa_abandono == 0).mean():0.1f}\\%$')
+MIN_BASE = 30
+min_base_f = pp_f(MIN_BASE)
+```
+
+**Ficha**
+
+- **Fuente:** Estadística del Formato 911 de la Secretaría de Educación Pública (SEP), registro del alumnado y personal docente de educación básica, media superior y superior (@sep-f911), publicada en [datos.gob.mx](https://www.datos.gob.mx/dataset/registro_alumnado_personal_docente_educacion_basica_media_superior_formato_911). Se usan los archivos de educación básica, nivel secundaria, de los ciclos escolares 2023-2024 y 2024-2025 (este último es el más reciente disponible al preparar los datos).
+- **Licencia:** Creative Commons Atribución 4.0 (CC-BY-4.0).
+- **Unidad de observación:** secundaria-turno, identificada por su clave de centro de trabajo (`clave_cct`) y su turno. Sólo se incluyen los planteles que aparecen en los dos ciclos y que al inicio del ciclo 2023-2024, descontando a los egresados, tenían al menos `{python} min_base_f` alumnos, porque las tasas de planteles más pequeños son muy inestables; también se descartan los que no reportan docentes o grupos.
+- **Tamaño:** $N=$ `{python} n_educacion_f` planteles.
+- **Variables:** $d=$ `{python} d_educacion_f` predictoras, todas del ciclo 2023-2024: entidad, sostenimiento (público o privado y su tipo), tipo de servicio (general, técnica, telesecundaria o Conafe), turno, organización de los docentes, número de alumnos, de grupos y de docentes, alumnos por docente y por grupo, porcentajes de mujeres, de alumnos de primer grado y de repetidores, aulas en uso, laboratorios y talleres. La columna `clave_cct` identifica al plantel y no es predictora. No se usa ninguna cifra del ciclo 2024-2025 como predictora, pues forma parte del objetivo.
+- **Objetivo y tarea:** `tasa_abandono` es la tasa de abandono escolar del ciclo 2023-2024 con la definición de la SEP, que compara las matrículas de dos ciclos consecutivos: $100\left(1 - \frac{M_{t+1} - NI_{t+1}}{M_t - E_t}\right)$, donde $M_t$ es la matrícula al inicio del ciclo $t$ (2023-2024), $M_{t+1}$ la del ciclo siguiente, $NI_{t+1}$ el nuevo ingreso a primer grado del ciclo siguiente y $E_t$ los egresados del ciclo $t$. Entre planteles hay traslados, por lo que en un plantel individual la tasa puede ser negativa (recibe más alumnos de los que pierde); en esos casos se acota a cero. Es una tarea de regresión.
+- **Script:** `scripts/datos/sep_f911_educacion.py`, que genera `datos/sep_f911_educacion.csv.gz`.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+educacion = pd.read_csv('../datos/sep_f911_educacion.csv.gz')
+```
+
+La tasa de abandono tiene media `{python} media_abandono_f` y mediana `{python} mediana_abandono_f`; el $10\%$ de los planteles con más abandono tiene al menos `{python} p90_abandono_f`, y `{python} sin_abandono_f` de los planteles tienen una tasa de cero (incluye los casos acotados). La @fig-datos-educacion muestra la distribución de la tasa de abandono.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Distribución de la tasa de abandono escolar de las secundarias.
+#| label: fig-datos-educacion
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.histplot(educacion, x='tasa_abandono', bins=40, ax=ax,
+                 color=PALETTE(1))
+_ = ax.set(xlabel='Tasa de abandono (%)', ylabel='Número de planteles')
+```
+
+### Territorio {#sec-datos-territorio}
+
+Los censos son la mejor fuente de condiciones sociales a escala de barrio, pero se levantan cada diez años; entre un censo y otro, la planeación urbana y la focalización territorial de programas necesitan aproximaciones con información más reciente. El Directorio Estadístico Nacional de Unidades Económicas (DENUE) se actualiza con frecuencia y dice qué negocios hay en cada zona. La tarea de este conjunto es predecir un indicador censal, el grado promedio de escolaridad, a partir de la composición de establecimientos del DENUE de cada AGEB urbana (área geoestadística básica) del estado de Aguascalientes.
+
+```{python}
+#| echo: false
+territorio = DATOS_PP['territorio']
+n_territorio_f = pp_f(territorio.shape[0])
+d_territorio_f = pp_f(D_PP['territorio'])
+POB_MINIMA = 100
+pob_minima_f = pp_f(POB_MINIMA)
+media_grado_f = Markdown(f'${territorio.grado_promedio_escolaridad.mean():0.2f}$')
+min_grado_f = Markdown(f'${territorio.grado_promedio_escolaridad.min():0.2f}$')
+max_grado_f = Markdown(f'${territorio.grado_promedio_escolaridad.max():0.2f}$')
+n_est_f = pp_f(int(territorio.est_total.sum()))
+n_internet_nd_f = pp_f(int(territorio.pct_viv_internet.isna().sum()))
+n_salud_nd_f = pp_f(int(territorio.pct_sin_servicio_salud.isna().sum()))
+n_jefatura_nd_f = pp_f(int(territorio.pct_jefatura_femenina.isna().sum()))
+n_sin_est_f = pp_f(int((territorio.est_total == 0).sum()))
+```
+
+**Ficha**
+
+- **Fuente:** Censo de Población y Vivienda 2020, resultados por AGEB y manzana urbana de Aguascalientes (@censo2020), [datos abiertos](https://www.inegi.org.mx/contenidos/programas/ccpv/2020/datosabiertos/ageb_manzana/ageb_mza_urbana_01_cpv2020_csv.zip), y DENUE de Aguascalientes, edición 05_2026 (@denue), [descarga](https://www.inegi.org.mx/contenidos/masiva/denue/denue_01_csv.zip). Ambos son del INEGI.
+- **Licencia:** Términos de libre uso de la información del INEGI.
+- **Unidad de observación:** AGEB urbana. Se usan los renglones de total por AGEB del censo y se descartan los AGEB con menos de `{python} pob_minima_f` habitantes, donde el grado promedio de escolaridad es muy inestable, y aquellos cuyo valor está suprimido.
+- **Tamaño:** $N=$ `{python} n_territorio_f` AGEB, con `{python} n_est_f` establecimientos del DENUE en total; `{python} n_sin_est_f` AGEB no tienen ningún establecimiento y su conteo es cero.
+- **Variables:** $d=$ `{python} d_territorio_f` predictoras: el número de establecimientos por sector SCIAN (agropecuario, minería, manufactura, comercio al por mayor y al por menor, servicios profesionales, educación, salud, alojamiento y alimentos, entre otros) y por estrato de personal ocupado, el total de establecimientos y dos columnas de tamaño del AGEB (`pob_total` y `viviendas_habitadas`). Los tres indicadores censales adicionales (`pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`) sirven como objetivos alternativos y no deben usarse como predictoras cuando el objetivo es la escolaridad. Las columnas `clave_ageb` y `municipio` identifican el AGEB y no son predictoras.
+- **Objetivo y tarea:** `grado_promedio_escolaridad` es el grado promedio de escolaridad de la población de $15$ años o más en 2020. Es una tarea de regresión.
+- **Valores suprimidos:** el censo oculta algunos valores por confidencialidad (`*`) o los reporta como no disponibles (`N/D`). Aquí se tratan explícitamente: se descartan los AGEB cuyo objetivo está suprimido y los porcentajes de los indicadores adicionales quedan vacíos cuando su numerador o su denominador está suprimido; hay `{python} n_internet_nd_f`, `{python} n_salud_nd_f` y `{python} n_jefatura_nd_f` valores vacíos en `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`, respectivamente.
+- **Desfase temporal:** el censo es de 2020 y el DENUE de 2026, por lo que los establecimientos son más recientes que la población que se describe.
+- **Script:** `scripts/datos/censo_denue_territorio.py`, que genera `datos/censo_denue_territorio.csv`.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+territorio = pd.read_csv('../datos/censo_denue_territorio.csv')
+```
+
+El grado promedio de escolaridad tiene media `{python} media_grado_f`, con un mínimo de `{python} min_grado_f` y un máximo de `{python} max_grado_f` años. La @fig-datos-territorio muestra el grado promedio de escolaridad contra el número de establecimientos por cada mil habitantes de cada AGEB.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Grado promedio de escolaridad y establecimientos del DENUE por cada mil habitantes en las AGEB urbanas de Aguascalientes.
+#| label: fig-datos-territorio
+df = territorio.copy()
+df['establecimientos_por_mil'] = 1000 * df.est_total / df.pob_total
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.scatterplot(df, x='establecimientos_por_mil',
+                    y='grado_promedio_escolaridad', ax=ax, alpha=0.6,
+                    color=PALETTE(1))
+_ = ax.set(xlabel='Establecimientos por cada mil habitantes',
+           ylabel='Grado promedio de escolaridad')
+```
+
+## Problemas Sintéticos y Clásicos {#sec-datos-sinteticos-clasicos}
+
+En esta sección se conservan los problemas sintéticos y los conjuntos clásicos de clasificación y regresión que se usan, en el resto del libro, para ilustrar el funcionamiento de los algoritmos.
+
+### Problemas Sintéticos
 
 En esta sección se presentan los problemas sintéticos que corresponden aquellos problemas en los que se conocen todos los parámetros y se usan para mostrar algunas características de los algoritmos.
 
-## Mezcla de Clases
+#### Mezcla de Clases
 
 ```{python}
 #| echo: true
@@ -63,7 +380,7 @@ _ = sns.relplot(data=df, kind='scatter', x='x',
 ```               
 
 
-### Clases Separadas
+#### Clases Separadas
 
 ```{python}
 #| echo: true
@@ -91,7 +408,7 @@ _ = sns.relplot(data=df, kind='scatter', x='x',
 ```   
 
 
-## Problemas de Clasificación
+### Problemas de Clasificación
 
 En esta sección se listan los problemas de clasificación utilizados durante el curso. La @tbl-conjunto-datos-clasificacion resume las principales características de los problemas utilizados. Se incluye la entropía como una medida que está relacionada al desbalance de clases, la entropía está normalizada para que su rango se encuentre entre $[0, 1].$
 
@@ -120,7 +437,7 @@ txt += datos(D, 'Vino')
 Markdown(txt)
 ```
 
-### Breast Cancer Wisconsin {#sec-breast-cancer-wisconsin} 
+#### Breast Cancer Wisconsin {#sec-breast-cancer-wisconsin} 
 
 El conjunto de datos de Breast Cancer Wisconsin (ver @breast-cancer-wisconsin) se obtiene con el siguiente código. La @fig-conjunto-datos-wisconsin muestra una proyección utilizando PCA de este conjunto de datos. 
 
@@ -150,7 +467,7 @@ fig.tick_params(bottom=False, top=False,
 _ = fig.set(xlabel=None, ylabel=None)
 ```
 
-### Iris {#sec-iris} 
+#### Iris {#sec-iris} 
 
 Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por @iris; este problema se descarga con la siguiente instrucción. La @fig-conjunto-datos-iris muestra una visualización de estos datos mediante PCA. 
 
@@ -180,7 +497,7 @@ _ = fig.set(xlabel=None, ylabel=None)
 ```
 
 
-### Dígitos {#sec-digitos}
+#### Dígitos {#sec-digitos}
 
 El conjunto de Dígitos (ver @digits) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando la siguiente instrucción. La @fig-conjunto-datos-digits muestra una proyección de estos datos utilizando UMAP con ocho vecinos. 
 
@@ -209,7 +526,7 @@ fig.tick_params(bottom=False, top=False,
 _ = fig.set(xlabel=None, ylabel=None)
 ```
 
-### Vino
+#### Vino
 
 El conjunto de Vino se obtiene con la siguiente instrucción. La @fig-conjunto-datos-wine muestra una proyección de estos datos utilizando PCA. 
 
@@ -239,11 +556,11 @@ fig.tick_params(bottom=False, top=False,
 _ = fig.set(xlabel=None, ylabel=None)
 ```
 
-## Problemas de Regresión
+### Problemas de Regresión
 
 En esta sección se listan los problemas de regresión utilizados para ejemplificar los algoritmos y su rendimiento. 
 
-### Problema Sintético
+#### Problema Sintético
 
 El siguiente ejemplo es un problema de regresión sintético que se forma de la suma de dos funciones trascendentales como se muestra en el siguiente código. 
 
@@ -265,7 +582,7 @@ df.set_index('X', inplace=True)
 fig = sns.relplot(df, kind='line')
 ```
 
-### Diabetes
+#### Diabetes
 
 El conjunto de datos Diabetes es un problema que se puede recuperar usando el siguiente código. 
 

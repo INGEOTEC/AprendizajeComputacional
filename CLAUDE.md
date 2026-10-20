@@ -28,6 +28,10 @@ quarto preview                                         # live preview while edit
 - `_freeze/` and `_book/` are both tracked in git (despite the docstring in `render.py` saying `_book/` is ignored); `.quarto/`, `capitulos/*_files` and `*.quarto_ipynb` are ignored.
 - The mermaid diagram in `01Introduccion.qmd` is the reason for the headless-Chrome setup in both the workflow and `postCreate.sh`; keep those apt lists in sync if either changes.
 
+## Data (`datos/` and `scripts/datos/`)
+
+The public-policy datasets of the appendix (`capitulos/20ConjuntosDatos.qmd`) are processed files versioned in `datos/` (each < 5 MB), regenerated with `python scripts/datos/<script>.py` (needs network; raw downloads go to `~/.cache/aprendizaje-computacional/`, outside the repo, overridable with `APRENDIZAJE_CACHE`). Rendering never downloads anything: chapters only read `pd.read_csv('../datos/...')`. `datos/README.md` lists each file's script, source and license.
+
 ## Branching
 
 `develop` is the working branch (also `base_branch` in `.issue-pilot.json`); `master` is what CI publishes. Open PRs from `develop` (or feature branches) toward `master`.
