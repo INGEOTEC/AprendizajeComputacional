@@ -30,7 +30,7 @@ sns.set_style('whitegrid')
 
 ## Problemas de Política Pública {#sec-datos-politica-publica}
 
-Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta: a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela y cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente. Todos se procesaron con los scripts de la carpeta `scripts/datos/` (uno por conjunto) y los archivos resultantes están versionados en la carpeta `datos/` del repositorio; los capítulos y este apéndice sólo leen esos archivos, nunca los descargan. La @tbl-conjunto-datos-politica-publica resume los cinco conjuntos: el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores.
+Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta: a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela y cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente. Los archivos procesados están en el release `datos-v1` del repositorio del libro y el código de cada subsección los lee directamente de ahí. La @tbl-conjunto-datos-politica-publica resume los cinco conjuntos: el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores.
 
 ```{python}
 #| echo: false
@@ -52,7 +52,9 @@ CONJUNTOS = {
                        aparte=['clave_ageb', 'municipio', 'pct_viv_internet',
                                'pct_sin_servicio_salud',
                                'pct_jefatura_femenina'])}
-DATOS_PP = {k: pd.read_csv(f'../datos/{v["archivo"]}')
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
+DATOS_PP = {k: pd.read_csv(f'{URL_DATOS}/{v["archivo"]}')
             for k, v in CONJUNTOS.items()}
 N_PP = {k: d.shape[0] for k, d in DATOS_PP.items()}
 D_PP = {k: d.shape[1] - 1 - len(CONJUNTOS[k]['aparte'])
@@ -113,13 +115,12 @@ tasa_urbano_f = Markdown(
 - **Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ `{python} n_pobreza_f` hogares de la encuesta.
 - **Variables:** $d=$ `{python} d_pobreza_f` predictoras observables de la vivienda y el hogar: entidad federativa, tamaño de localidad, tipo de hogar, número y edades de los integrantes, sexo, edad y escolaridad de la jefatura, materiales de la vivienda (paredes, techo, piso), cuartos y dormitorios, servicios (agua, drenaje, electricidad, combustible para cocinar, basura), tenencia, bienes y equipamiento (vehículos, computadoras, refrigeradores, lavadoras, internet, etc.). No hay ninguna variable de ingreso ni de gasto. La columna `factor` es el factor de expansión de la encuesta y no es predictora.
 - **Objetivo y tarea:** `pobre_ingresos` vale $1$ cuando el ingreso corriente per cápita mensual del hogar (el ingreso corriente trimestral entre tres y entre el número de integrantes) es menor que la línea de pobreza de su ámbito (rural si la localidad tiene menos de $2500$ habitantes). Es una tarea de clasificación binaria; es una aproximación a la medición oficial, no la replica.
-- **Script:** `scripts/datos/enigh_pobreza.py`, que genera `datos/enigh_pobreza.csv.gz`.
 
 El siguiente código lee el archivo.
 
 ```{python}
 #| echo: true
-pobreza = pd.read_csv('../datos/enigh_pobreza.csv.gz')
+pobreza = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz')
 ```
 
 En la muestra, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`; si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
@@ -163,13 +164,12 @@ n_victimas_f = pp_f(int(seguridad.victima_delito.sum()))
 - **Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ `{python} n_seguridad_f` personas.
 - **Variables:** $d=$ `{python} d_seguridad_f` predictoras: entidad, dominio (urbano, complemento urbano o rural), sexo, edad, nivel de instrucción, condición de actividad, tamaño del hogar, tiempo en la vivienda y las preguntas de percepción de la encuesta (temas que preocupan, percepción de seguridad en la colonia, el municipio, el estado y en lugares específicos, problemas e incivilidades en la colonia, temor a ser víctima y expectativas). No se incluyen variables que sean consecuencia de la victimización, como las medidas de protección, los cambios de conducta por temor, el contacto con autoridades o la denuncia. La columna `factor` es el factor de expansión y no es predictora.
 - **Objetivo y tarea:** `victima_delito` vale $1$ cuando la persona declara haber sido víctima, durante $2025$, de algún delito personal (robo o asalto, otro tipo de robo, fraude, extorsión, amenazas, lesiones, secuestro, delitos sexuales u otros). Los delitos que afectan al hogar, como el robo de vehículo o a casa habitación, no forman parte del objetivo. Es una tarea de clasificación binaria con clases desbalanceadas.
-- **Script:** `scripts/datos/envipe_seguridad.py`, que genera `datos/envipe_seguridad.csv.gz`.
 
 El siguiente código lee el archivo.
 
 ```{python}
 #| echo: true
-seguridad = pd.read_csv('../datos/envipe_seguridad.csv.gz')
+seguridad = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/envipe_seguridad.csv.gz')
 ```
 
 En la muestra hay `{python} n_victimas_f` víctimas, es decir, `{python} tasa_victima_f` de las personas (`{python} tasa_victima_pond_f` al ponderar con el factor de expansión). La @fig-datos-seguridad muestra la proporción de víctimas por grupo de edad y sexo.
@@ -211,13 +211,12 @@ edad_max_f = pp_f(int(salud.edad.max()))
 - **Tamaño:** $N=$ `{python} n_salud_f` personas.
 - **Variables:** $d=$ `{python} d_salud_f` predictoras: entidad, tamaño de localidad, quintil del índice de bienestar del hogar, sexo, edad, peso, talla, índice de masa corporal y tensión arterial medidos, diagnóstico previo de hipertensión, antecedentes familiares de diabetes (padre, madre y hermanos), tabaquismo y consumo de alcohol. No se incluye ninguna pregunta sobre el tratamiento ni las complicaciones de la diabetes. La columna `factor` es el ponderador de la encuesta y no es predictora.
 - **Objetivo y tarea:** `diabetes` vale $1$ cuando un médico le dijo a la persona que tiene diabetes (o azúcar alta en la sangre). Se eligió diabetes y no hipertensión porque hay suficientes casos: es una tarea de clasificación binaria.
-- **Script:** `scripts/datos/ensanut_salud.py`, que genera `datos/ensanut_salud.csv.gz`.
 
 El siguiente código lee el archivo.
 
 ```{python}
 #| echo: true
-salud = pd.read_csv('../datos/ensanut_salud.csv.gz')
+salud = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/ensanut_salud.csv.gz')
 ```
 
 En el conjunto hay `{python} n_diabetes_f` personas con diagnóstico de diabetes, es decir, `{python} tasa_diabetes_f`. La @fig-datos-salud muestra que la proporción aumenta con la edad y con el índice de masa corporal.
@@ -264,13 +263,12 @@ min_base_f = pp_f(MIN_BASE)
 - **Tamaño:** $N=$ `{python} n_educacion_f` planteles.
 - **Variables:** $d=$ `{python} d_educacion_f` predictoras, todas del ciclo 2023-2024: entidad, sostenimiento (público o privado y su tipo), tipo de servicio (general, técnica, telesecundaria o Conafe), turno, organización de los docentes, número de alumnos, de grupos y de docentes, alumnos por docente y por grupo, porcentajes de mujeres, de alumnos de primer grado y de repetidores, aulas en uso, laboratorios y talleres. La columna `clave_cct` identifica al plantel y no es predictora. No se usa ninguna cifra del ciclo 2024-2025 como predictora, pues forma parte del objetivo.
 - **Objetivo y tarea:** `tasa_abandono` es la tasa de abandono escolar del ciclo 2023-2024 con la definición de la SEP, que compara las matrículas de dos ciclos consecutivos: $100\left(1 - \frac{M_{t+1} - NI_{t+1}}{M_t - E_t}\right)$, donde $M_t$ es la matrícula al inicio del ciclo $t$ (2023-2024), $M_{t+1}$ la del ciclo siguiente, $NI_{t+1}$ el nuevo ingreso a primer grado del ciclo siguiente y $E_t$ los egresados del ciclo $t$. Entre planteles hay traslados, por lo que en un plantel individual la tasa puede ser negativa (recibe más alumnos de los que pierde); en esos casos se acota a cero. Es una tarea de regresión.
-- **Script:** `scripts/datos/sep_f911_educacion.py`, que genera `datos/sep_f911_educacion.csv.gz`.
 
 El siguiente código lee el archivo.
 
 ```{python}
 #| echo: true
-educacion = pd.read_csv('../datos/sep_f911_educacion.csv.gz')
+educacion = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/sep_f911_educacion.csv.gz')
 ```
 
 La tasa de abandono tiene media `{python} media_abandono_f` y mediana `{python} mediana_abandono_f`; el $10\%$ de los planteles con más abandono tiene al menos `{python} p90_abandono_f`, y `{python} sin_abandono_f` de los planteles tienen una tasa de cero (incluye los casos acotados). La @fig-datos-educacion muestra la distribución de la tasa de abandono.
@@ -316,13 +314,12 @@ n_sin_est_f = pp_f(int((territorio.est_total == 0).sum()))
 - **Objetivo y tarea:** `grado_promedio_escolaridad` es el grado promedio de escolaridad de la población de $15$ años o más en 2020. Es una tarea de regresión.
 - **Valores suprimidos:** el censo oculta algunos valores por confidencialidad (`*`) o los reporta como no disponibles (`N/D`). Aquí se tratan explícitamente: se descartan los AGEB cuyo objetivo está suprimido y los porcentajes de los indicadores adicionales quedan vacíos cuando su numerador o su denominador está suprimido; hay `{python} n_internet_nd_f`, `{python} n_salud_nd_f` y `{python} n_jefatura_nd_f` valores vacíos en `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`, respectivamente.
 - **Desfase temporal:** el censo es de 2020 y el DENUE de 2026, por lo que los establecimientos son más recientes que la población que se describe.
-- **Script:** `scripts/datos/censo_denue_territorio.py`, que genera `datos/censo_denue_territorio.csv`.
 
 El siguiente código lee el archivo.
 
 ```{python}
 #| echo: true
-territorio = pd.read_csv('../datos/censo_denue_territorio.csv')
+territorio = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/censo_denue_territorio.csv')
 ```
 
 El grado promedio de escolaridad tiene media `{python} media_grado_f`, con un mínimo de `{python} min_grado_f` y un máximo de `{python} max_grado_f` años. La @fig-datos-territorio muestra el grado promedio de escolaridad contra el número de establecimientos por cada mil habitantes de cada AGEB.

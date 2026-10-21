@@ -1,4 +1,4 @@
-"""Prepara ``datos/envipe_seguridad.csv.gz``: victimización de las personas.
+"""Prepara ``envipe_seguridad.csv.gz``: victimización de las personas.
 
 Fuente: Encuesta Nacional de Victimización y Percepción sobre Seguridad
 Pública (ENVIPE) 2026, INEGI (datos abiertos; periodo de referencia: el año

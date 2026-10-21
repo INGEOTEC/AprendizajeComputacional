@@ -1,4 +1,4 @@
-"""Prepara ``datos/sep_f911_educacion.csv.gz``: abandono escolar por secundaria.
+"""Prepara ``sep_f911_educacion.csv.gz``: abandono escolar por secundaria.
 
 Fuente: Estadística del Formato 911 de la Secretaría de Educación Pública
 (SEP), "Registro del alumnado y personal docente de educación básica, media

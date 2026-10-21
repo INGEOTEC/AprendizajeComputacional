@@ -1,4 +1,4 @@
-"""Prepara ``datos/enigh_pobreza.csv.gz``: focalización de la pobreza por ingresos.
+"""Prepara ``enigh_pobreza.csv.gz``: focalización de la pobreza por ingresos.
 
 Fuente: Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH) 2022,
 Nueva Serie, INEGI (datos abiertos, tablas ``concentradohogar``, ``viviendas``

@@ -1,4 +1,4 @@
-"""Prepara ``datos/ensanut_salud.csv.gz``: diagnóstico previo de diabetes en adultos.
+"""Prepara ``ensanut_salud.csv.gz``: diagnóstico previo de diabetes en adultos.
 
 Fuente: Encuesta Nacional de Salud y Nutrición Continua (ENSANUT) 2022,
 Instituto Nacional de Salud Pública (INSP). Se usan tres archivos CSV de la

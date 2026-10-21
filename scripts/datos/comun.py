@@ -1,11 +1,15 @@
 """Utilidades compartidas por los scripts de preparación de datos.
 
 Cada script de ``scripts/datos/`` descarga la fuente oficial a un caché que
-vive **fuera del repositorio** y escribe el archivo procesado en ``datos/``.
-El render del libro nunca descarga nada: sólo lee ``datos/``.
+vive **fuera del repositorio** y escribe el archivo procesado en un directorio
+de salida, también fuera del repositorio. Los archivos procesados se publican
+como assets del release ``datos-v1`` de GitHub (ver ``README.md``); el libro
+los lee de ahí.
 
 El caché es ``~/.cache/aprendizaje-computacional/`` y se puede cambiar con la
-variable de entorno ``APRENDIZAJE_CACHE``.
+variable de entorno ``APRENDIZAJE_CACHE``. La salida va por omisión a la
+subcarpeta ``salida/`` del caché y se puede cambiar con
+``APRENDIZAJE_SALIDA``.
 
 Sólo usa la biblioteca estándar; los scripts que la importan necesitan además
 ``pandas`` y ``numpy`` (ya incluidos en ``requirements.txt``). Cuando una
@@ -22,8 +26,6 @@ import urllib.request
 from pathlib import Path
 from urllib.parse import urlencode
 
-REPO = Path(__file__).resolve().parents[2]
-DATOS = REPO / "datos"
 SEMILLA = 0
 LIMITE_BYTES = 5 * 1024 * 1024
 
@@ -47,6 +49,13 @@ def cache_dir() -> Path:
     """Carpeta del caché de descargas (se crea si no existe)."""
     ruta = Path(os.environ.get("APRENDIZAJE_CACHE",
                                Path.home() / ".cache" / "aprendizaje-computacional"))
+    ruta.mkdir(parents=True, exist_ok=True)
+    return ruta
+
+
+def salida_dir() -> Path:
+    """Carpeta donde se escriben los archivos procesados (se crea si no existe)."""
+    ruta = Path(os.environ.get("APRENDIZAJE_SALIDA", cache_dir() / "salida"))
     ruta.mkdir(parents=True, exist_ok=True)
     return ruta
 
@@ -102,10 +111,9 @@ def descargar(url: str, nombre: str | None = None, datos: dict | None = None,
 
 
 def guardar(df, nombre: str) -> Path:
-    """Escribe ``df`` en ``datos/<nombre>`` (CSV, comprimido si el nombre
+    """Escribe ``df`` en ``salida_dir()/<nombre>`` (CSV, comprimido si el nombre
     termina en ``.gz``) de forma determinista y verifica el límite de tamaño."""
-    DATOS.mkdir(exist_ok=True)
-    ruta = DATOS / nombre
+    ruta = salida_dir() / nombre
     if nombre.endswith(".gz"):
         # mtime fijo: el mismo contenido produce exactamente el mismo archivo.
         import gzip
@@ -117,6 +125,6 @@ def guardar(df, nombre: str) -> Path:
     tam = ruta.stat().st_size
     if tam >= LIMITE_BYTES:
         raise RuntimeError(f"{ruta} pesa {tam} bytes, supera el límite de 5 MB")
-    print(f"{ruta.relative_to(REPO)}: {len(df)} filas, {df.shape[1]} columnas, "
+    print(f"{ruta}: {len(df)} filas, {df.shape[1]} columnas, "
           f"{tam / 1024:.0f} KiB", flush=True)
     return ruta

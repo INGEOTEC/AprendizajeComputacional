@@ -1,4 +1,4 @@
-"""Prepara ``datos/censo_denue_territorio.csv``: escolaridad y economía local por AGEB.
+"""Prepara ``censo_denue_territorio.csv``: escolaridad y economía local por AGEB.
 
 Fuentes (INEGI, datos abiertos):
   - Censo de Población y Vivienda 2020, resultados por AGEB urbana y manzana,
