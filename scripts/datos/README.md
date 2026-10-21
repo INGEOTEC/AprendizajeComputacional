@@ -17,9 +17,10 @@ aprendizaje) están en el apéndice.
 
 ## Reglas
 
-- Cada archivo pesa menos de 5 MB (`comun.guardar` lo verifica) y no contiene
-  identificadores directos de personas.
-- Los scripts son idempotentes y deterministas (muestreos con semilla fija): correr
+- Los archivos no contienen identificadores directos de personas
+  (`comun.guardar` lo verifica) y no se muestrean: se publican todos los registros
+  que cumplen los filtros de cada script.
+- Los scripts son idempotentes y deterministas: correr
   uno dos veces produce exactamente el mismo archivo.
 - Las descargas crudas van a un caché fuera del repositorio,
   `~/.cache/aprendizaje-computacional/` (se cambia con `APRENDIZAJE_CACHE`), y los

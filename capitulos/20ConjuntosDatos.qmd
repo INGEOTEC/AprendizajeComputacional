@@ -112,7 +112,7 @@ tasa_urbano_f = Markdown(
 - **Fuente:** Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH) 2022, Nueva Serie, del INEGI (@enigh2022), [datos abiertos](https://www.inegi.org.mx/programas/enigh/nc/2022/). La línea de pobreza por ingresos de agosto de 2022 (canasta alimentaria más no alimentaria, valor mensual por persona) es la que publica el CONEVAL (@coneval-lpi) y vale `{python} linea_rural_f` en el ámbito rural y `{python} linea_urbana_f` en el urbano.
 - **Licencia:** Términos de libre uso de la información del INEGI.
 - **Unidad de observación:** hogar.
-- **Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ `{python} n_pobreza_f` hogares de la encuesta.
+- **Tamaño:** $N=$ `{python} n_pobreza_f` hogares, que son todos los de la encuesta con información completa en las variables usadas.
 - **Variables:** $d=$ `{python} d_pobreza_f` predictoras observables de la vivienda y el hogar, entre ellas la entidad federativa, el tamaño de localidad, el tipo de hogar, el número y las edades de los integrantes, el sexo, la edad y la escolaridad de la jefatura, los materiales de la vivienda (paredes, techo, piso), los cuartos y dormitorios, los servicios (agua, drenaje, electricidad, combustible para cocinar, basura), la tenencia, y los bienes y el equipamiento (vehículos, computadoras, refrigeradores, lavadoras, internet, etc.). No hay ninguna variable de ingreso ni de gasto. La columna `factor` es el factor de expansión de la encuesta y no es predictora.
 - **Objetivo y tarea:** `pobre_ingresos` vale $1$ cuando el ingreso corriente per cápita mensual del hogar (el ingreso corriente trimestral entre tres y entre el número de integrantes) es menor que la línea de pobreza de su ámbito (rural si la localidad tiene menos de $2500$ habitantes). Es una tarea de clasificación binaria; es una aproximación a la medición oficial, no la replica.
 
@@ -123,7 +123,7 @@ El siguiente código lee el archivo.
 pobreza = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz')
 ```
 
-En la muestra, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`; si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
+En el conjunto, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`; si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
 
 ```{python}
 #| code-fold: true
@@ -161,7 +161,7 @@ n_victimas_f = pp_f(int(seguridad.victima_delito.sum()))
 - **Fuente:** Encuesta Nacional de Victimización y Percepción sobre Seguridad Pública (ENVIPE) 2026 del INEGI (@envipe2026), [datos abiertos](https://www.inegi.org.mx/programas/envipe/2026/). Es la edición más reciente publicada al preparar los datos; el periodo de referencia es el año 2025.
 - **Licencia:** Términos de libre uso de la información del INEGI.
 - **Unidad de observación:** persona de $18$ años o más seleccionada como informante.
-- **Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ `{python} n_seguridad_f` personas.
+- **Tamaño:** $N=$ `{python} n_seguridad_f` personas, que son todas las seleccionadas como informantes en la encuesta que respondieron si fueron víctimas de algún delito personal.
 - **Variables:** $d=$ `{python} d_seguridad_f` predictoras, entre ellas la entidad, el dominio (urbano, complemento urbano o rural), el sexo, la edad, el nivel de instrucción, la condición de actividad, el tamaño del hogar, el tiempo en la vivienda y las preguntas de percepción de la encuesta (temas que preocupan, percepción de seguridad en la colonia, el municipio, el estado y en lugares específicos, problemas e incivilidades en la colonia, temor a ser víctima y expectativas). No se incluyen variables que sean consecuencia de la victimización, como las medidas de protección, los cambios de conducta por temor, el contacto con autoridades o la denuncia. La columna `factor` es el factor de expansión y no es predictora.
 - **Objetivo y tarea:** `victima_delito` vale $1$ cuando la persona declara haber sido víctima, durante $2025$, de algún delito personal (robo o asalto, otro tipo de robo, fraude, extorsión, amenazas, lesiones, secuestro, delitos sexuales u otros). Los delitos que afectan al hogar, como el robo de vehículo o a casa habitación, no forman parte del objetivo. Es una tarea de clasificación binaria con clases desbalanceadas.
 
@@ -172,7 +172,7 @@ El siguiente código lee el archivo.
 seguridad = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/envipe_seguridad.csv.gz')
 ```
 
-En la muestra hay `{python} n_victimas_f` víctimas, es decir, `{python} tasa_victima_f` de las personas (`{python} tasa_victima_pond_f` al ponderar con el factor de expansión). La @fig-datos-seguridad muestra la proporción de víctimas por grupo de edad y sexo.
+En el conjunto hay `{python} n_victimas_f` víctimas, es decir, `{python} tasa_victima_f` de las personas (`{python} tasa_victima_pond_f` al ponderar con el factor de expansión). La @fig-datos-seguridad muestra la proporción de víctimas por grupo de edad y sexo.
 
 ```{python}
 #| code-fold: true

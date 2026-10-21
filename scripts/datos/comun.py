@@ -26,8 +26,9 @@ import urllib.request
 from pathlib import Path
 from urllib.parse import urlencode
 
-SEMILLA = 0
-LIMITE_BYTES = 5 * 1024 * 1024
+# Columnas que nunca deben publicarse: identifican directamente a una persona.
+IDENTIFICADORES = ("folio", "curp", "rfc", "nombre", "telefono", "correo",
+                   "domicilio")
 
 # Claves de entidad federativa (INEGI) y su nombre.
 ENTIDADES = {
@@ -112,7 +113,13 @@ def descargar(url: str, nombre: str | None = None, datos: dict | None = None,
 
 def guardar(df, nombre: str) -> Path:
     """Escribe ``df`` en ``salida_dir()/<nombre>`` (CSV, comprimido si el nombre
-    termina en ``.gz``) de forma determinista y verifica el límite de tamaño."""
+    termina en ``.gz``) de forma determinista y verifica que ninguna columna
+    sea un identificador directo de personas."""
+    directos = [c for c in df.columns
+                if c.lower().startswith(IDENTIFICADORES)]
+    if directos:
+        raise RuntimeError(f"{nombre} tiene columnas que identifican "
+                           f"directamente a personas: {directos}")
     ruta = salida_dir() / nombre
     if nombre.endswith(".gz"):
         # mtime fijo: el mismo contenido produce exactamente el mismo archivo.
@@ -123,8 +130,6 @@ def guardar(df, nombre: str) -> Path:
     else:
         df.to_csv(ruta, index=False, lineterminator="\n")
     tam = ruta.stat().st_size
-    if tam >= LIMITE_BYTES:
-        raise RuntimeError(f"{ruta} pesa {tam} bytes, supera el límite de 5 MB")
     print(f"{ruta}: {len(df)} filas, {df.shape[1]} columnas, "
           f"{tam / 1024:.0f} KiB", flush=True)
     return ruta

@@ -358,7 +358,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="941babe7" class="cell" data-execution_count="1">
+<div id="5f59a459" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                             load_diabetes,<span class="op">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                             load_digits, load_iris,<span class="op">\</span></span>
@@ -410,7 +410,7 @@ Tabla&nbsp;B.1: Problemas de política pública
 <tr class="odd">
 <td>Pobreza</td>
 <td>Hogar</td>
-<td><span class="math inline">\(20000\)</span></td>
+<td><span class="math inline">\(89988\)</span></td>
 <td><span class="math inline">\(42\)</span></td>
 <td>Clasificación (binaria)</td>
 <td>2022</td>
@@ -419,7 +419,7 @@ Tabla&nbsp;B.1: Problemas de política pública
 <tr class="even">
 <td>Seguridad</td>
 <td>Persona</td>
-<td><span class="math inline">\(30000\)</span></td>
+<td><span class="math inline">\(91797\)</span></td>
 <td><span class="math inline">\(49\)</span></td>
 <td>Clasificación (binaria)</td>
 <td>2025</td>
@@ -467,15 +467,15 @@ Tabla&nbsp;B.1: Problemas de política pública
 <li><strong>Fuente:</strong> Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH) 2022, Nueva Serie, del INEGI (<span class="citation" data-cites="enigh2022">Instituto Nacional de Estadística y Geografía (<a href="18Referencias.html#ref-enigh2022" role="doc-biblioref">2023</a>)</span>), <a href="https://www.inegi.org.mx/programas/enigh/nc/2022/">datos abiertos</a>. La línea de pobreza por ingresos de agosto de 2022 (canasta alimentaria más no alimentaria, valor mensual por persona) es la que publica el CONEVAL (<span class="citation" data-cites="coneval-lpi">Consejo Nacional de Evaluación de la Política de Desarrollo Social (<a href="18Referencias.html#ref-coneval-lpi" role="doc-biblioref">2025</a>)</span>) y vale $2,970.19 en el ámbito rural y $4,157.63 en el urbano.</li>
 <li><strong>Licencia:</strong> Términos de libre uso de la información del INEGI.</li>
 <li><strong>Unidad de observación:</strong> hogar.</li>
-<li><strong>Tamaño:</strong> una muestra aleatoria, con semilla fija, de <span class="math inline">\(N=\)</span> <span class="math inline">\(20000\)</span> hogares de la encuesta.</li>
+<li><strong>Tamaño:</strong> <span class="math inline">\(N=\)</span> <span class="math inline">\(89988\)</span> hogares, que son todos los de la encuesta con información completa en las variables usadas.</li>
 <li><strong>Variables:</strong> <span class="math inline">\(d=\)</span> <span class="math inline">\(42\)</span> predictoras observables de la vivienda y el hogar, entre ellas la entidad federativa, el tamaño de localidad, el tipo de hogar, el número y las edades de los integrantes, el sexo, la edad y la escolaridad de la jefatura, los materiales de la vivienda (paredes, techo, piso), los cuartos y dormitorios, los servicios (agua, drenaje, electricidad, combustible para cocinar, basura), la tenencia, y los bienes y el equipamiento (vehículos, computadoras, refrigeradores, lavadoras, internet, etc.). No hay ninguna variable de ingreso ni de gasto. La columna <code>factor</code> es el factor de expansión de la encuesta y no es predictora.</li>
 <li><strong>Objetivo y tarea:</strong> <code>pobre_ingresos</code> vale <span class="math inline">\(1\)</span> cuando el ingreso corriente per cápita mensual del hogar (el ingreso corriente trimestral entre tres y entre el número de integrantes) es menor que la línea de pobreza de su ámbito (rural si la localidad tiene menos de <span class="math inline">\(2500\)</span> habitantes). Es una tarea de clasificación binaria; es una aproximación a la medición oficial, no la replica.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="ff8237a3" class="cell" data-execution_count="6">
+<div id="5bad1e03" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>En la muestra, la proporción de hogares bajo la línea de pobreza es <span class="math inline">\(32.5\%\)</span>; si se ponderan los hogares con el factor de expansión es <span class="math inline">\(34.1\%\)</span>. Por ámbito, es <span class="math inline">\(36.0\%\)</span> en los hogares rurales y <span class="math inline">\(30.3\%\)</span> en los urbanos. La <a href="#fig-datos-pobreza" class="quarto-xref">Figura&nbsp;<span>B.1</span></a> muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.</p>
+<p>En el conjunto, la proporción de hogares bajo la línea de pobreza es <span class="math inline">\(32.7\%\)</span>; si se ponderan los hogares con el factor de expansión es <span class="math inline">\(34.5\%\)</span>. Por ámbito, es <span class="math inline">\(35.6\%\)</span> en los hogares rurales y <span class="math inline">\(30.9\%\)</span> en los urbanos. La <a href="#fig-datos-pobreza" class="quarto-xref">Figura&nbsp;<span>B.1</span></a> muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.</p>
 <div id="cell-fig-datos-pobreza" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Código</summary>
@@ -511,15 +511,15 @@ Figura&nbsp;B.1: Proporción de hogares bajo la línea de pobreza por ingresos s
 <li><strong>Fuente:</strong> Encuesta Nacional de Victimización y Percepción sobre Seguridad Pública (ENVIPE) 2026 del INEGI (<span class="citation" data-cites="envipe2026">Instituto Nacional de Estadística y Geografía (<a href="18Referencias.html#ref-envipe2026" role="doc-biblioref">2026b</a>)</span>), <a href="https://www.inegi.org.mx/programas/envipe/2026/">datos abiertos</a>. Es la edición más reciente publicada al preparar los datos; el periodo de referencia es el año 2025.</li>
 <li><strong>Licencia:</strong> Términos de libre uso de la información del INEGI.</li>
 <li><strong>Unidad de observación:</strong> persona de <span class="math inline">\(18\)</span> años o más seleccionada como informante.</li>
-<li><strong>Tamaño:</strong> una muestra aleatoria, con semilla fija, de <span class="math inline">\(N=\)</span> <span class="math inline">\(30000\)</span> personas.</li>
+<li><strong>Tamaño:</strong> <span class="math inline">\(N=\)</span> <span class="math inline">\(91797\)</span> personas, que son todas las seleccionadas como informantes en la encuesta que respondieron si fueron víctimas de algún delito personal.</li>
 <li><strong>Variables:</strong> <span class="math inline">\(d=\)</span> <span class="math inline">\(49\)</span> predictoras, entre ellas la entidad, el dominio (urbano, complemento urbano o rural), el sexo, la edad, el nivel de instrucción, la condición de actividad, el tamaño del hogar, el tiempo en la vivienda y las preguntas de percepción de la encuesta (temas que preocupan, percepción de seguridad en la colonia, el municipio, el estado y en lugares específicos, problemas e incivilidades en la colonia, temor a ser víctima y expectativas). No se incluyen variables que sean consecuencia de la victimización, como las medidas de protección, los cambios de conducta por temor, el contacto con autoridades o la denuncia. La columna <code>factor</code> es el factor de expansión y no es predictora.</li>
 <li><strong>Objetivo y tarea:</strong> <code>victima_delito</code> vale <span class="math inline">\(1\)</span> cuando la persona declara haber sido víctima, durante <span class="math inline">\(2025\)</span>, de algún delito personal (robo o asalto, otro tipo de robo, fraude, extorsión, amenazas, lesiones, secuestro, delitos sexuales u otros). Los delitos que afectan al hogar, como el robo de vehículo o a casa habitación, no forman parte del objetivo. Es una tarea de clasificación binaria con clases desbalanceadas.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="ca09a5a0" class="cell" data-execution_count="9">
+<div id="42ad18f8" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>seguridad <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/envipe_seguridad.csv.gz'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>En la muestra hay <span class="math inline">\(1562\)</span> víctimas, es decir, <span class="math inline">\(5.2\%\)</span> de las personas (<span class="math inline">\(5.2\%\)</span> al ponderar con el factor de expansión). La <a href="#fig-datos-seguridad" class="quarto-xref">Figura&nbsp;<span>B.2</span></a> muestra la proporción de víctimas por grupo de edad y sexo.</p>
+<p>En el conjunto hay <span class="math inline">\(5034\)</span> víctimas, es decir, <span class="math inline">\(5.5\%\)</span> de las personas (<span class="math inline">\(5.7\%\)</span> al ponderar con el factor de expansión). La <a href="#fig-datos-seguridad" class="quarto-xref">Figura&nbsp;<span>B.2</span></a> muestra la proporción de víctimas por grupo de edad y sexo.</p>
 <div id="cell-fig-datos-seguridad" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Código</summary>
@@ -559,7 +559,7 @@ Figura&nbsp;B.2: Proporción de personas que fueron víctimas de algún delito p
 <li><strong>Objetivo y tarea:</strong> <code>diabetes</code> vale <span class="math inline">\(1\)</span> cuando un médico le dijo a la persona que tiene diabetes (o azúcar alta en la sangre). Se eligió diabetes y no hipertensión porque hay suficientes casos, y es una tarea de clasificación binaria.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="9d5aa0a9" class="cell" data-execution_count="12">
+<div id="bf2d5996" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>salud <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/ensanut_salud.csv.gz'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En el conjunto hay <span class="math inline">\(558\)</span> personas con diagnóstico de diabetes, es decir, <span class="math inline">\(9.1\%\)</span>. La <a href="#fig-datos-salud" class="quarto-xref">Figura&nbsp;<span>B.3</span></a> muestra que la proporción aumenta con la edad y con el índice de masa corporal.</p>
@@ -604,7 +604,7 @@ Figura&nbsp;B.3: Proporción de personas con diagnóstico previo de diabetes por
 <li><strong>Objetivo y tarea:</strong> <code>tasa_abandono</code> es la tasa de abandono escolar del ciclo 2023-2024 con la definición de la SEP, que compara las matrículas de dos ciclos consecutivos y es igual a <span class="math inline">\(100\left(1 - \frac{M_{t+1} - NI_{t+1}}{M_t - E_t}\right)\)</span>, donde <span class="math inline">\(M_t\)</span> es la matrícula al inicio del ciclo <span class="math inline">\(t\)</span> (2023-2024), <span class="math inline">\(M_{t+1}\)</span> la del ciclo siguiente, <span class="math inline">\(NI_{t+1}\)</span> el nuevo ingreso a primer grado del ciclo siguiente y <span class="math inline">\(E_t\)</span> los egresados del ciclo <span class="math inline">\(t\)</span>. Entre planteles hay traslados, por lo que en un plantel individual la tasa puede ser negativa (recibe más alumnos de los que pierde); en esos casos se acota a cero. Es una tarea de regresión.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="efd3a237" class="cell" data-execution_count="15">
+<div id="860e54dc" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>educacion <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/sep_f911_educacion.csv.gz'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La tasa de abandono tiene media <span class="math inline">\(6.9\%\)</span> y mediana <span class="math inline">\(4.8\%\)</span>; el <span class="math inline">\(10\%\)</span> de los planteles con más abandono tiene al menos <span class="math inline">\(16.2\%\)</span>, y <span class="math inline">\(26.2\%\)</span> de los planteles tienen una tasa de cero (incluye los casos acotados). La <a href="#fig-datos-educacion" class="quarto-xref">Figura&nbsp;<span>B.4</span></a> muestra la distribución de la tasa de abandono.</p>
@@ -645,7 +645,7 @@ Figura&nbsp;B.4: Distribución de la tasa de abandono escolar de las secundarias
 <li><strong>Desfase temporal:</strong> el censo es de 2020 y el DENUE de 2026, por lo que los establecimientos son más recientes que la población que se describe.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="92040b3b" class="cell" data-execution_count="18">
+<div id="74ca9c20" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/censo_denue_territorio.csv'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>El grado promedio de escolaridad tiene media <span class="math inline">\(10.80\)</span>, con un mínimo de <span class="math inline">\(6.92\)</span> y un máximo de <span class="math inline">\(15.45\)</span> años. La <a href="#fig-datos-territorio" class="quarto-xref">Figura&nbsp;<span>B.5</span></a> muestra el grado promedio de escolaridad contra el número de establecimientos por cada mil habitantes de cada AGEB.</p>
@@ -684,7 +684,7 @@ Figura&nbsp;B.5: Grado promedio de escolaridad y establecimientos del DENUE por 
 <p>En esta sección se presentan los problemas sintéticos que corresponden aquellos problemas en los que se conocen todos los parámetros y se usan para mostrar algunas características de los algoritmos.</p>
 <section id="mezcla-de-clases" class="level4" data-number="B.2.1.1">
 <h4 data-number="B.2.1.1" class="anchored" data-anchor-id="mezcla-de-clases"><span class="header-section-number">B.2.1.1</span> Mezcla de Clases</h4>
-<div id="7267525e" class="cell" data-execution_count="20">
+<div id="b0867029" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
@@ -723,7 +723,7 @@ Figura&nbsp;B.6: Muestras de 3 distribuciones gaussianas
 </section>
 <section id="clases-separadas" class="level4" data-number="B.2.1.2">
 <h4 data-number="B.2.1.2" class="anchored" data-anchor-id="clases-separadas"><span class="header-section-number">B.2.1.2</span> Clases Separadas</h4>
-<div id="60c53349" class="cell" data-execution_count="22">
+<div id="d85a68ff" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(<span class="dv">1000</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="op">-</span><span class="dv">5</span>, <span class="op">-</span><span class="dv">10</span>],</span>
@@ -825,7 +825,7 @@ Tabla&nbsp;B.2: Problemas de clasificación
 <section id="sec-breast-cancer-wisconsin" class="level4" data-number="B.2.2.1">
 <h4 data-number="B.2.2.1" class="anchored" data-anchor-id="sec-breast-cancer-wisconsin"><span class="header-section-number">B.2.2.1</span> Breast Cancer Wisconsin</h4>
 <p>El conjunto de datos de Breast Cancer Wisconsin (ver <span class="citation" data-cites="breast-cancer-wisconsin">Street, Wolberg, y Mangasarian (<a href="18Referencias.html#ref-breast-cancer-wisconsin" role="doc-biblioref">1993</a>)</span>) se obtiene con el siguiente código. La <a href="#fig-conjunto-datos-wisconsin" class="quarto-xref">Figura&nbsp;<span>B.8</span></a> muestra una proyección utilizando PCA de este conjunto de datos.</p>
-<div id="f0456a61" class="cell" data-execution_count="25">
+<div id="91089b30" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="cell-fig-conjunto-datos-wisconsin" class="cell" data-execution_count="26">
@@ -863,7 +863,7 @@ Figura&nbsp;B.8: Proyección mediante PCA del problema de Breast Cancer Wisconsi
 <section id="sec-iris" class="level4" data-number="B.2.2.2">
 <h4 data-number="B.2.2.2" class="anchored" data-anchor-id="sec-iris"><span class="header-section-number">B.2.2.2</span> Iris</h4>
 <p>Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por <span class="citation" data-cites="iris">Fisher (<a href="18Referencias.html#ref-iris" role="doc-biblioref">1936</a>)</span>; este problema se descarga con la siguiente instrucción. La <a href="#fig-conjunto-datos-iris" class="quarto-xref">Figura&nbsp;<span>B.9</span></a> muestra una visualización de estos datos mediante PCA.</p>
-<div id="3d4842b0" class="cell" data-execution_count="27">
+<div id="bf6911af" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="cell-fig-conjunto-datos-iris" class="cell" data-execution_count="28">
@@ -901,7 +901,7 @@ Figura&nbsp;B.9: Proyección mediante PCA del problema del Iris.
 <section id="sec-digitos" class="level4" data-number="B.2.2.3">
 <h4 data-number="B.2.2.3" class="anchored" data-anchor-id="sec-digitos"><span class="header-section-number">B.2.2.3</span> Dígitos</h4>
 <p>El conjunto de Dígitos (ver <span class="citation" data-cites="digits">Xu, Krzyzak, y Suen (<a href="18Referencias.html#ref-digits" role="doc-biblioref">1992</a>)</span>) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando la siguiente instrucción. La <a href="#fig-conjunto-datos-digits" class="quarto-xref">Figura&nbsp;<span>B.10</span></a> muestra una proyección de estos datos utilizando UMAP con ocho vecinos.</p>
-<div id="dff42871" class="cell" data-execution_count="29">
+<div id="bd7784ff" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="cell-fig-conjunto-datos-digits" class="cell" data-execution_count="30">
@@ -938,7 +938,7 @@ Figura&nbsp;B.10: Proyección mediante UMAP del problema de Dígitos con ocho ve
 <section id="vino" class="level4" data-number="B.2.2.4">
 <h4 data-number="B.2.2.4" class="anchored" data-anchor-id="vino"><span class="header-section-number">B.2.2.4</span> Vino</h4>
 <p>El conjunto de Vino se obtiene con la siguiente instrucción. La <a href="#fig-conjunto-datos-wine" class="quarto-xref">Figura&nbsp;<span>B.11</span></a> muestra una proyección de estos datos utilizando PCA.</p>
-<div id="47ff5aae" class="cell" data-execution_count="31">
+<div id="1f46194c" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_wine(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="cell-fig-conjunto-datos-wine" class="cell" data-execution_count="32">
@@ -981,7 +981,7 @@ Figura&nbsp;B.11: Proyección mediante PCA del problema del Vino.
 <section id="problema-sintético" class="level4" data-number="B.2.3.1">
 <h4 data-number="B.2.3.1" class="anchored" data-anchor-id="problema-sintético"><span class="header-section-number">B.2.3.1</span> Problema Sintético</h4>
 <p>El siguiente ejemplo es un problema de regresión sintético que se forma de la suma de dos funciones trascendentales como se muestra en el siguiente código.</p>
-<div id="ff4d4ccc" class="cell" data-execution_count="33">
+<div id="68b70fea" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1010,7 +1010,7 @@ Figura&nbsp;B.12: Problema de Regresión
 <section id="diabetes" class="level4" data-number="B.2.3.2">
 <h4 data-number="B.2.3.2" class="anchored" data-anchor-id="diabetes"><span class="header-section-number">B.2.3.2</span> Diabetes</h4>
 <p>El conjunto de datos Diabetes es un problema que se puede recuperar usando el siguiente código.</p>
-<div id="39d3f1a2" class="cell" data-execution_count="35">
+<div id="480d9f48" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
@@ -1645,7 +1645,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Fuente:** Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH) 2022, Nueva Serie, del INEGI (@enigh2022), <span class="co">[</span><span class="ot">datos abiertos</span><span class="co">](https://www.inegi.org.mx/programas/enigh/nc/2022/)</span>. La línea de pobreza por ingresos de agosto de 2022 (canasta alimentaria más no alimentaria, valor mensual por persona) es la que publica el CONEVAL (@coneval-lpi) y vale <span class="in">`{python} linea_rural_f`</span> en el ámbito rural y <span class="in">`{python} linea_urbana_f`</span> en el urbano.</span>
 <span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Licencia:** Términos de libre uso de la información del INEGI.</span>
 <span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Unidad de observación:** hogar.</span>
-<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ <span class="in">`{python} n_pobreza_f`</span> hogares de la encuesta.</span>
+<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tamaño:** $N=$ <span class="in">`{python} n_pobreza_f`</span> hogares, que son todos los de la encuesta con información completa en las variables usadas.</span>
 <span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Variables:** $d=$ <span class="in">`{python} d_pobreza_f`</span> predictoras observables de la vivienda y el hogar, entre ellas la entidad federativa, el tamaño de localidad, el tipo de hogar, el número y las edades de los integrantes, el sexo, la edad y la escolaridad de la jefatura, los materiales de la vivienda (paredes, techo, piso), los cuartos y dormitorios, los servicios (agua, drenaje, electricidad, combustible para cocinar, basura), la tenencia, y los bienes y el equipamiento (vehículos, computadoras, refrigeradores, lavadoras, internet, etc.). No hay ninguna variable de ingreso ni de gasto. La columna <span class="in">`factor`</span> es el factor de expansión de la encuesta y no es predictora.</span>
 <span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Objetivo y tarea:** <span class="in">`pobre_ingresos`</span> vale $1$ cuando el ingreso corriente per cápita mensual del hogar (el ingreso corriente trimestral entre tres y entre el número de integrantes) es menor que la línea de pobreza de su ámbito (rural si la localidad tiene menos de $2500$ habitantes). Es una tarea de clasificación binaria; es una aproximación a la medición oficial, no la replica.</span>
 <span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a></span>
@@ -1656,7 +1656,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-135"><a href="#cb27-135" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz'</span>)</span>
 <span id="cb27-136"><a href="#cb27-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-137"><a href="#cb27-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a>En la muestra, la proporción de hogares bajo la línea de pobreza es <span class="in">`{python} tasa_pobreza_f`</span>; si se ponderan los hogares con el factor de expansión es <span class="in">`{python} tasa_pobreza_pond_f`</span>. Por ámbito, es <span class="in">`{python} tasa_rural_f`</span> en los hogares rurales y <span class="in">`{python} tasa_urbano_f`</span> en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.</span>
+<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a>En el conjunto, la proporción de hogares bajo la línea de pobreza es <span class="in">`{python} tasa_pobreza_f`</span>; si se ponderan los hogares con el factor de expansión es <span class="in">`{python} tasa_pobreza_pond_f`</span>. Por ámbito, es <span class="in">`{python} tasa_rural_f`</span> en los hogares rurales y <span class="in">`{python} tasa_urbano_f`</span> en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.</span>
 <span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
@@ -1694,7 +1694,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-177"><a href="#cb27-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Fuente:** Encuesta Nacional de Victimización y Percepción sobre Seguridad Pública (ENVIPE) 2026 del INEGI (@envipe2026), <span class="co">[</span><span class="ot">datos abiertos</span><span class="co">](https://www.inegi.org.mx/programas/envipe/2026/)</span>. Es la edición más reciente publicada al preparar los datos; el periodo de referencia es el año 2025.</span>
 <span id="cb27-178"><a href="#cb27-178" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Licencia:** Términos de libre uso de la información del INEGI.</span>
 <span id="cb27-179"><a href="#cb27-179" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Unidad de observación:** persona de $18$ años o más seleccionada como informante.</span>
-<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tamaño:** una muestra aleatoria, con semilla fija, de $N=$ <span class="in">`{python} n_seguridad_f`</span> personas.</span>
+<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tamaño:** $N=$ <span class="in">`{python} n_seguridad_f`</span> personas, que son todas las seleccionadas como informantes en la encuesta que respondieron si fueron víctimas de algún delito personal.</span>
 <span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Variables:** $d=$ <span class="in">`{python} d_seguridad_f`</span> predictoras, entre ellas la entidad, el dominio (urbano, complemento urbano o rural), el sexo, la edad, el nivel de instrucción, la condición de actividad, el tamaño del hogar, el tiempo en la vivienda y las preguntas de percepción de la encuesta (temas que preocupan, percepción de seguridad en la colonia, el municipio, el estado y en lugares específicos, problemas e incivilidades en la colonia, temor a ser víctima y expectativas). No se incluyen variables que sean consecuencia de la victimización, como las medidas de protección, los cambios de conducta por temor, el contacto con autoridades o la denuncia. La columna <span class="in">`factor`</span> es el factor de expansión y no es predictora.</span>
 <span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Objetivo y tarea:** <span class="in">`victima_delito`</span> vale $1$ cuando la persona declara haber sido víctima, durante $2025$, de algún delito personal (robo o asalto, otro tipo de robo, fraude, extorsión, amenazas, lesiones, secuestro, delitos sexuales u otros). Los delitos que afectan al hogar, como el robo de vehículo o a casa habitación, no forman parte del objetivo. Es una tarea de clasificación binaria con clases desbalanceadas.</span>
 <span id="cb27-183"><a href="#cb27-183" aria-hidden="true" tabindex="-1"></a></span>
@@ -1705,7 +1705,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-190"><a href="#cb27-190" aria-hidden="true" tabindex="-1"></a>seguridad <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/envipe_seguridad.csv.gz'</span>)</span>
 <span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-192"><a href="#cb27-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>En la muestra hay <span class="in">`{python} n_victimas_f`</span> víctimas, es decir, <span class="in">`{python} tasa_victima_f`</span> de las personas (<span class="in">`{python} tasa_victima_pond_f`</span> al ponderar con el factor de expansión). La @fig-datos-seguridad muestra la proporción de víctimas por grupo de edad y sexo.</span>
+<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>En el conjunto hay <span class="in">`{python} n_victimas_f`</span> víctimas, es decir, <span class="in">`{python} tasa_victima_f`</span> de las personas (<span class="in">`{python} tasa_victima_pond_f`</span> al ponderar con el factor de expansión). La @fig-datos-seguridad muestra la proporción de víctimas por grupo de edad y sexo.</span>
 <span id="cb27-194"><a href="#cb27-194" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>

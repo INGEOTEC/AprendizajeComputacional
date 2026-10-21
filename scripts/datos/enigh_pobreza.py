@@ -20,8 +20,7 @@ características observables de la vivienda y el hogar (lo que usaría un
 *proxy means test*): no se incluye ninguna variable de ingreso ni de gasto.
 Se conserva el factor de expansión (``factor``) como columna aparte.
 
-Se toma una muestra aleatoria de ``N_MUESTRA`` hogares con semilla fija para
-mantener el archivo pequeño.
+Se conservan todos los hogares con información completa, sin muestreo.
 
 Dependencias extra: ninguna (pandas y numpy de requirements.txt).
 Uso: ``python scripts/datos/enigh_pobreza.py``
@@ -38,7 +37,6 @@ URL = ("https://www.inegi.org.mx/contenidos/programas/enigh/nc/2022/"
        "datosabiertos/conjunto_de_datos_enigh_ns_2022_csv.zip")
 LINEA_RURAL = 2970.19
 LINEA_URBANA = 4157.63
-N_MUESTRA = 20000
 
 TAM_LOCALIDAD = {1: "100 mil o más", 2: "15 mil a 99,999", 3: "2,500 a 14,999",
                  4: "menos de 2,500"}
@@ -163,8 +161,7 @@ def main() -> None:
         sal[nuevo] = d[col].fillna(0).astype(int)
 
     sal = sal.dropna().reset_index(drop=True)  # unos ~110 hogares con "&"
-    muestra = sal.sample(n=N_MUESTRA, random_state=comun.SEMILLA).sort_index()
-    comun.guardar(muestra, "enigh_pobreza.csv.gz")
+    comun.guardar(sal, "enigh_pobreza.csv.gz")
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ victimización: medidas de protección y gasto en protección, cambios de
 conducta por temor, contacto con autoridades o denuncia, ni nada del módulo
 de victimización. Se conserva el factor de expansión (``factor``).
 
-Se toma una muestra aleatoria de ``N_MUESTRA`` personas con semilla fija.
+Se conservan todas las personas que cumplen los filtros, sin muestreo.
 
 Dependencias extra: ninguna (pandas y numpy de requirements.txt).
 Uso: ``python scripts/datos/envipe_seguridad.py``
@@ -40,7 +40,6 @@ import comun
 
 URL = ("https://www.inegi.org.mx/contenidos/programas/envipe/2026/"
        "datosabiertos/conjunto_de_datos_envipe_2026_csv.zip")
-N_MUESTRA = 30000
 
 NIVEL = {0: "ninguno", 1: "preescolar", 2: "primaria", 3: "secundaria",
          4: "carrera técnica con secundaria", 5: "normal básica",
@@ -149,8 +148,7 @@ def main() -> None:
     if faltantes.any():
         print("Valores sin recodificar:\n", faltantes[faltantes > 0])
         raise SystemExit(1)
-    muestra = sal.sample(n=N_MUESTRA, random_state=comun.SEMILLA).sort_index()
-    comun.guardar(muestra, "envipe_seguridad.csv.gz")
+    comun.guardar(sal, "envipe_seguridad.csv.gz")
 
 
 if __name__ == "__main__":
