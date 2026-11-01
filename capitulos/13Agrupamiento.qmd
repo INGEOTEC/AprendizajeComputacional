@@ -328,15 +328,17 @@ fig.set(xlabel=None, ylabel=None)
 
 Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir. En este caso particular se utilizó un problema de clasificación para ilustrar el procedimiento de k-medias, entonces se cuenta con una clase para cada elemento $x \in \mathcal D$. Además se sabe que el problema del iris tiene tres clases, entonces utilizando los tres grupos obtenidos previamente podemos medir qué tanto se parecen estos tres grupos a las clases del iris. Es decir, se puede saber si el algoritmo de k-medias agrupa los elementos de tal manera que cada grupo corresponda a una clase del iris. 
 
+Los grupos generados se encuentran en la lista `cl` y las clases se encuentran en `y`. La lista `y` tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase $0$, los siguientes $50$ son clase $1$ y los últimos son la clase $2$. Dado que K-medias no conoce las clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en `cl` están organizados de la siguiente manera aproximadamente los $50$ primeros elementos son del grupo $1$, los siguientes son grupo $0$ y finalmente los últimos son grupo $2$. Entonces se puede hacer una transformación que asigne a cada grupo una clase. La siguiente instrucción prueba todas las permutaciones de las tres clases y se queda con la que obtiene la mayor exactitud, la cual se guarda en la variable `perm`.
+
 ```{python}
-#| echo: false
+#| echo: true
 perms = list(permutations([0, 1, 2]))
 perfs = [(metrics.accuracy_score(y, np.array(x)[cl]), x)
          for x in perms]
 perm = np.r_[sorted(perfs, key=lambda x: x[0])[-1][1]]
 ```
 
-Los grupos generados se encuentran en la lista `cl` y las clases se encuentran en `y`. La lista `y` tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase $0$, los siguientes $50$ son clase $1$ y los últimos son la clase $2$. Dado que K-medias no conoce las clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en `cl` están organizados de la siguiente manera aproximadamente los $50$ primeros elementos son del grupo $1$, los siguientes son grupo $0$ y finalmente los últimos son grupo $2$. Entonces se puede hacer una transformación usando la variable `perm` con la siguiente información `{python} perm`.
+La variable `perm` contiene `{python} perm`.
 
 ```{python}
 #| echo: false
