@@ -1,0 +1,220 @@
+# Selección de Variables {#sec-seleccion-variables}
+
+El **objetivo** de la unidad es aplicar procedimientos de selección de variables en un problema de regresión, a saber, filtros basados en estadísticas, selección hacia adelante y hacia atrás, y selección mediante un modelo, y comparar las variables que elige cada uno con las que elige Lasso.
+
+## Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+from sklearn.linear_model import LinearRegression, Lasso, LassoCV
+from sklearn.model_selection import train_test_split, KFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import f_regression, SelectKBest,\
+                                      SequentialFeatureSelector,\
+                                      SelectFromModel
+from sklearn.metrics import r2_score as r2
+import numpy as np
+import pandas as pd
+from matplotlib import pylab as plt
+import matplotlib as mpl
+import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
+PALETTE = mpl.cm.Paired
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+sns.set_style('whitegrid')
+```
+
+## Introducción {#sec-intro-seleccion-variables}
+
+Lasso (@sec-lasso) selecciona variables al mismo tiempo que ajusta el modelo, y el modelo reducido (@sec-regresion-ols-reducido) quitó las variables cuyo estadístico $t$ era pequeño. Este capítulo presenta los procedimientos clásicos de selección, que son los filtros basados en estadísticas, la búsqueda hacia adelante y hacia atrás, y la selección mediante un modelo, y los compara con lo que eligió Lasso.
+
+Todos parten de la idea de que existen variables que no contribuyen a la solución o cuyo aporte ya está dado por otras. Esto trae como consecuencia, en el mejor de los casos, un mayor costo computacional o de recolección y, en uno menos afortunado, un modelo con un rendimiento menor al que se hubiera obtenido seleccionando las variables.
+
+Los datos son los de Abandono Escolar y la preparación es la misma que en la @sec-regresion-datos, por lo que no se vuelve a explicar. El siguiente código lee los datos, codifica las variables categóricas, separa los conjuntos de entrenamiento y prueba con el mismo `random_state` y estandariza con $\mathcal T$.
+
+```{python}
+#| echo: true
+educacion = pd.read_csv(f'{URL_DATOS}/sep_f911_educacion.csv.gz')
+constantes = [c for c in educacion.columns if educacion[c].nunique() == 1]
+X = educacion.drop(columns=['tasa_abandono', 'clave_cct'] + constantes)
+y = educacion['tasa_abandono'].to_numpy()
+X = pd.get_dummies(X, drop_first=True, dtype=float)
+columnas = X.columns
+T, G, y_t, y_g = train_test_split(X.to_numpy(), y, test_size=0.2,
+                                  random_state=0)
+escala = StandardScaler().fit(T)
+T = escala.transform(T)
+G = escala.transform(G)
+```
+
+Para comparar con Lasso se recalcula el $\lambda$ que selecciona la validación cruzada (@sec-seleccion-lambda).
+
+```{python}
+#| echo: true
+kfold = KFold(n_splits=5, shuffle=True, random_state=0)
+lambdas = np.logspace(-3, 1, 30)
+lasso_cv = LassoCV(cv=kfold, alphas=lambdas, max_iter=5000).fit(T, y_t)
+lambda_opt = lasso_cv.alpha_
+```
+
+```{python}
+#| echo: false
+d_f = Markdown(f'${X.shape[1]}$')
+lambda_opt_f = Markdown(f'${lambda_opt:0.4f}$')
+```
+
+El $\lambda$ seleccionado es `{python} lambda_opt_f` y Lasso conserva el subconjunto de variables con coeficiente distinto de cero de entre las `{python} d_f` variables.
+
+## Basada en Estadísticas {#sec-seleccion-var-estadistica}
+
+Una manera de seleccionar es descartar las variables que no tienen relación con la respuesta. En regresión, la prueba es la estadística $F$ de la regresión lineal simple de $y$ sobre cada variable, cuya hipótesis nula es que el coeficiente es cero. Está implementada en la función `f_regression`. (En clasificación la prueba equivalente es Kruskal-Wallis, o ANOVA si se supone normalidad.) Con esas estadísticas se pueden ordenar las variables y seleccionar las $k$ mejores con `SelectKBest`.
+
+```{python}
+#| echo: true
+f_est, p_valores = f_regression(T, y_t)
+sel = SelectKBest(score_func=f_regression, k=10).fit(T, y_t)
+seleccionadas = columnas[sel.get_support()]
+```
+
+```{python}
+#| echo: false
+seleccionadas_f = Markdown(', '.join(f'`{c}`' for c in seleccionadas))
+coinciden_f = Markdown(
+    f'${len(set(seleccionadas) & set(columnas[lasso_cv.coef_ != 0]))}$')
+```
+
+Las diez variables con mayor estadística $F$ son `{python} seleccionadas_f`. De ellas, `{python} coinciden_f` están entre las que conserva Lasso con el $\lambda$ elegido por validación cruzada.
+
+### Ventajas y Limitaciones
+
+Las técnicas basadas en estadísticas requieren de pocos recursos computacionales y están basadas en pruebas que permiten saber cuáles son las razones de su funcionamiento. Estas fortalezas también son origen de sus debilidades, pues observan las variables de manera aislada y no consideran que pueden interactuar. Por otro lado, la selección es agnóstica del algoritmo de aprendizaje utilizado.
+
+## Selección hacia Adelante y hacia Atrás {#sec-seleccion-adelante}
+
+Un procedimiento que pone en el centro del proceso de selección al algoritmo de aprendizaje utilizado es **Selección hacia Adelante** y su complemento, **Selección hacia Atrás.** El algoritmo de selección hacia adelante es un procedimiento iterativo que selecciona una variable a la vez guiada por el rendimiento de esa variable cuando es usada en el algoritmo de aprendizaje. Al igual que los procedimientos anteriores, no modifica las características del problema, solamente selecciona las que se consideran relevantes.
+
+En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = \{(x_i, y_i)\},$ con una función $L$ que mide el rendimiento del algoritmo de aprendizaje $\mathcal H.$ La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización se puede dividir $\mathcal T$ en dos conjuntos, entrenamiento y validación, o utilizar $k$ iteraciones de validación cruzada.
+
+Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando esta notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset$, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continúa si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
+
+Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.
+
+Ilustrando la primera iteración en el problema de abandono escolar, $\mathcal H$ es la regresión lineal y $L$ es $R^2$ medido con validación cruzada. Como inicialmente $\pi^0 = \emptyset$, solo es necesario ajustar un modelo con cada una de las variables por separado. El siguiente código itera por todas las variables, selecciona en `T1` los datos con esa única variable, hace $k$ iteraciones de validación cruzada y guarda el rendimiento en `perf`.
+
+```{python}
+#| echo: true
+perf = []
+for var in range(T.shape[1]):
+    T1 = T[:, [var]]
+    hy_v = np.zeros_like(y_t)
+    for tr, vs in kfold.split(T1):
+        hy_v[vs] = LinearRegression().fit(T1[tr], y_t[tr]).predict(T1[vs])
+    perf.append(r2(y_t, hy_v))
+```
+
+```{python}
+#| echo: false
+mejor = int(np.argmax(perf))
+mejor_f = Markdown(f'`{columnas[mejor]}`')
+perf_mejor_f = Markdown(f'${perf[mejor]:0.4f}$')
+n_pos_f = Markdown(f'${int((np.array(perf) > 0).sum())}$')
+```
+
+La @fig-rendimiento-sel muestra el $R^2$ de cada variable en la primera iteración. La mejor variable es `{python} mejor_f` con un $R^2$ de `{python} perf_mejor_f`, y solo `{python} n_pos_f` de las `{python} d_f` variables tienen un $R^2$ de validación positivo, es decir, mejor que predecir siempre la media. Esta variable es la que se agregaría en la primera iteración.
+
+```{python}
+#| fig-cap: Rendimiento ($R^2$) de cada variable en la primera iteración de la selección hacia adelante.
+#| label: fig-rendimiento-sel
+#| code-fold: true
+fig, ax = plt.subplots(figsize=(12, 4))
+ax.bar(range(len(perf)), perf, color=PALETTE(1))
+ax.set_xticks(range(len(perf)))
+ax.set_xticklabels(columnas, rotation=90)
+_ = ax.set(xlabel='Variable', ylabel='$R^2$ de validación')
+```
+
+::: {.callout-note}
+
+El algoritmo de selección hacia adelante y hacia atrás se implementa en la clase `SequentialFeatureSelector`. Para que el procedimiento no tarde, se pide seleccionar diez variables.
+
+```{python}
+#| echo: true
+seq = SequentialFeatureSelector(LinearRegression(), n_features_to_select=10,
+                                direction='forward', scoring='r2',
+                                cv=kfold, n_jobs=-1).fit(T, y_t)
+adelante = columnas[seq.get_support()]
+```
+
+```{python}
+#| echo: false
+adelante_f = Markdown(', '.join(f'`{c}`' for c in adelante))
+```
+
+Las variables que selecciona el procedimiento hacia adelante son `{python} adelante_f`. La selección hacia atrás se obtiene con `direction='backward'`. Empieza con todas las variables y elimina una a la vez, la que menos deteriora el rendimiento. Con `{python} d_f` variables es mucho más lenta que la selección hacia adelante, pues cada eliminación evalúa casi todas las variables en cada una de las iteraciones de validación cruzada, y por eso no se ejecuta aquí. Como ambos son algoritmos voraces, cada uno llega a un óptimo local distinto y las variables que selecciona la versión hacia atrás no tienen por qué coincidir con las de la versión hacia adelante.
+:::
+
+### Ventajas y Limitaciones
+
+Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto es, para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que solo puedan garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Complementando esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$ subconjuntos de variables. En los algoritmos vistos se observa un máximo de $d$ elementos de ese total.
+
+## Selección mediante Modelo {#sec-seleccion-por-modelo}
+
+Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Considerando que las variables están estandarizadas, el valor absoluto de un coeficiente de una regresión lineal indica el efecto que tiene esa variable en el resultado y permite ordenarlas por importancia. La clase `SelectFromModel` selecciona las características que el modelo considera más importantes. Con `max_features` se indica cuántas y `prefit=True` indica que el modelo ya está entrenado. El siguiente código lo ilustra con el Lasso del $\lambda$ óptimo.
+
+```{python}
+#| echo: true
+lasso_opt = Lasso(alpha=lambda_opt, max_iter=5000).fit(T, y_t)
+sel = SelectFromModel(lasso_opt, max_features=4,
+                      threshold=-np.inf, prefit=True)
+cuatro = columnas[sel.get_support()]
+```
+
+```{python}
+#| echo: false
+cuatro_f = Markdown(', '.join(f'`{c}`' for c in cuatro))
+```
+
+Las cuatro variables con mayor coeficiente en valor absoluto son `{python} cuatro_f`. Habiendo descrito el procedimiento, es necesario encontrar cuál es el número de variables que produce el mejor rendimiento. Para esto se realizan $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation), donde se varía el número de variables y en cada caso se mide el rendimiento con $R^2$ (@sec-rendimiento-regresion).
+
+```{python}
+#| echo: true
+perf_sel = []
+for dim in range(2, T.shape[1] + 1):
+    modelo = SelectFromModel(lasso_opt, max_features=dim,
+                             threshold=-np.inf, prefit=True)
+    Dt = modelo.transform(T)
+    hy_v = np.zeros_like(y_t)
+    for tr, vs in kfold.split(Dt):
+        m_sel = LinearRegression().fit(Dt[tr], y_t[tr])
+        hy_v[vs] = m_sel.predict(Dt[vs])
+    perf_sel.append(dict(r2=r2(y_t, hy_v), numero=dim))
+perf_sel = pd.DataFrame(perf_sel)
+```
+
+```{python}
+#| echo: false
+fila = perf_sel.loc[perf_sel.r2.idxmax()]
+mejor_num_f = Markdown(f'${int(fila.numero)}$')
+mejor_r2_f = Markdown(f'${fila.r2:0.4f}$')
+r2_2_f = Markdown(f'${perf_sel.r2.iloc[0]:0.4f}$')
+r2_todas_f = Markdown(f'${perf_sel.r2.iloc[-1]:0.4f}$')
+r2_10_f = Markdown(f'${perf_sel.r2.iloc[perf_sel.numero.tolist().index(10)]:0.4f}$')
+```
+
+La @fig-seleccion-por-modelo muestra el $R^2$ en validación cruzada desde el modelo con las dos variables más importantes hasta el que usa todas. El rendimiento pasa de `{python} r2_2_f` con dos variables a `{python} r2_10_f` con diez, y llega a un máximo de `{python} mejor_r2_f` con `{python} mejor_num_f` variables. Con todas las variables vale `{python} r2_todas_f`. Es decir, el rendimiento mejora rápidamente con las primeras variables y después se estabiliza, de manera que agregar las últimas casi no lo modifica.
+
+```{python}
+#| fig-cap: Rendimiento ($R^2$) en validación cruzada variando el número de variables seleccionadas.
+#| label: fig-seleccion-por-modelo
+#| code-fold: true
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.plot(perf_sel.numero, perf_sel.r2)
+_ = ax.set(xlabel='Número de variables', ylabel='$R^2$ de validación')
+```
+
+Los procedimientos de este capítulo comparten una idea que se retoma en la @sec-regresion-focalizacion. Cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política.

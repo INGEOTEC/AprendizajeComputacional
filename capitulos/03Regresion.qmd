@@ -1,6 +1,6 @@
 # Regresión y Regularización {#sec-regresion-regularizacion}
 
-El **objetivo** de la unidad es evaluar la regresión lineal por su capacidad de predecir observaciones no vistas, comprender el compromiso entre sesgo y varianza, aplicar las regularizaciones Ridge, Lasso y Elastic Net seleccionando su hiperparámetro con validación cruzada, seleccionar variables y resolver un problema de política de predicción.
+El **objetivo** de la unidad es evaluar la regresión lineal por su capacidad de predecir observaciones no vistas, comprender el compromiso entre sesgo y varianza, aplicar las regularizaciones Ridge, Lasso y Elastic Net seleccionando su hiperparámetro con validación cruzada y resolver un problema de política de predicción.
 
 ## Paquetes usados {.unnumbered}
 
@@ -36,11 +36,11 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-regresion}
 
-Quien ha cursado Econometría conoce los Mínimos Cuadrados Ordinarios (MCO) como la herramienta para estimar $\hat\beta$, interpretarlo, calcular su error estándar y probar si es distinto de cero. En este capítulo el mismo modelo se usa con otro propósito. Siguiendo a @mullainathan2017machine, el objetivo ya no es $\hat\beta$ sino $\hat y$: el modelo se evalúa por la calidad de sus predicciones en el conjunto de prueba $\mathcal G$ (@sec-conjunto-entre-prueba), con las medidas de @sec-rendimiento-regresion, y su complejidad no se controla especificando a mano qué variables entran, sino con regularización y con validación cruzada (@sec-validacion-cruzada). La referencia general sobre regularización es @hastie2009elements, cuyo capítulo 3 es de acceso libre.
+Quien ha cursado Econometría conoce los Mínimos Cuadrados Ordinarios (MCO) como la herramienta para estimar $\hat\beta$, interpretarlo, calcular su error estándar y probar si es distinto de cero. En este capítulo el mismo modelo se usa con otro propósito. Siguiendo a @mullainathan2017machine, el objetivo ya no es $\hat\beta$ sino $\hat y$. El modelo se evalúa por la calidad de sus predicciones en el conjunto de prueba $\mathcal G$ (@sec-conjunto-entre-prueba), con las medidas de @sec-rendimiento-regresion, y su complejidad no se controla especificando a mano qué variables entran, sino con regularización y con validación cruzada (@sec-validacion-cruzada). La referencia general sobre regularización es @hastie2009elements, cuyo capítulo 3 es de acceso libre.
 
-El problema que guía el capítulo es predecir la tasa de abandono escolar de cada secundaria a partir de las características del plantel (@sec-datos-educacion), para decidir a qué planteles ofrecer primero un programa de tutorías o de becas. Es un *prediction policy problem* en el sentido de @kleinberg2015prediction (@sec-prediccion-vs-causal): la decisión necesita saber cuáles planteles tienen una tasa de abandono alta, $\hat y$, y no el efecto causal que tendría modificar alguna de sus características.
+El problema que guía el capítulo es predecir la tasa de abandono escolar de cada secundaria a partir de las características del plantel (@sec-datos-educacion), para decidir a qué planteles ofrecer primero un programa de tutorías o de becas. Es un *prediction policy problem* en el sentido de @kleinberg2015prediction (@sec-prediccion-vs-causal). La decisión necesita saber cuáles planteles tienen una tasa de abandono alta, $\hat y$, y no el efecto causal que tendría modificar alguna de sus características.
 
-El capítulo presenta primero MCO y su deducción por máxima verosimilitud; después, el compromiso entre sesgo y varianza que explica por qué un modelo con más variables no siempre predice mejor; sigue con las regularizaciones Ridge, Lasso y Elastic Net y con la selección de su hiperparámetro $\lambda$ por validación cruzada; continúa con la selección de variables y con la razón por la cual los coeficientes de un modelo regularizado no se interpretan como efectos; y termina con la focalización de un programa social, un problema de clasificación donde la regularización sirve para pedir pocas variables.
+El capítulo presenta primero MCO y su deducción por máxima verosimilitud. Después presenta el compromiso entre sesgo y varianza, que explica por qué un modelo con más variables no siempre predice mejor. Sigue con las regularizaciones Ridge, Lasso y Elastic Net y con la selección de su hiperparámetro $\lambda$ por validación cruzada. Continúa con la razón por la cual los coeficientes de un modelo regularizado no se interpretan como efectos y termina con la focalización de un programa social, un problema de clasificación donde la regularización sirve para pedir pocas variables. La selección de variables, que Lasso hace de manera implícita, se trata en el siguiente capítulo (@sec-seleccion-variables).
 
 ## Datos: Abandono Escolar {#sec-regresion-datos}
 
@@ -51,7 +51,7 @@ Los datos son los de Educación, descritos en la ficha del apéndice (@sec-datos
 educacion = pd.read_csv(f'{URL_DATOS}/sep_f911_educacion.csv.gz')
 ```
 
-La columna `clave_cct` identifica al plantel y no es una variable predictora, por lo que se descarta junto con la variable que se quiere predecir. También se descartan las columnas constantes, que no aportan información y que hacen singular a la matriz $X^\intercal X$; en lugar de listarlas a mano se detectan con el siguiente código.
+La columna `clave_cct` identifica al plantel y no es una variable predictora, por lo que se descarta junto con la variable que se quiere predecir. También se descartan las columnas constantes, que no aportan información y que hacen singular a la matriz $X^\intercal X$. En lugar de listarlas a mano, se detectan con el siguiente código.
 
 ```{python}
 #| echo: true
@@ -65,7 +65,7 @@ y = educacion['tasa_abandono'].to_numpy()
 constantes_f = Markdown(', '.join(f'`{c}`' for c in constantes))
 ```
 
-Las columnas `{python} constantes_f` son constantes. Por otro lado, la regresión necesita números y varias de las variables son texto (la entidad, el sostenimiento, el tipo de servicio, el turno y la organización de los docentes). Cada categoría se convierte en una variable indicadora que vale uno cuando el plantel pertenece a esa categoría y cero en otro caso (*one-hot*; en econometría, variables *dummy*). Por cada variable se omite una categoría de referencia, pues de lo contrario la suma de las indicadoras sería idéntica a la constante del modelo y la matriz $X^\intercal X$ no tendría inversa.
+Las columnas `{python} constantes_f` son constantes. Por otro lado, la regresión necesita números y varias de las variables son texto (la entidad, el sostenimiento, el tipo de servicio, el turno y la organización de los docentes). Cada categoría se convierte en una variable indicadora que vale uno cuando el plantel pertenece a esa categoría y cero en otro caso (*one-hot*, o variables *dummy* en econometría). Por cada variable se omite una categoría de referencia, pues de lo contrario la suma de las indicadoras sería idéntica a la constante del modelo y la matriz $X^\intercal X$ no tendría inversa.
 
 ```{python}
 #| echo: true
@@ -79,7 +79,7 @@ d_f = Markdown(f'${X.shape[1]}$')
 n_f = Markdown(f'${X.shape[0]}$')
 ```
 
-La matriz de diseño tiene $N=$ `{python} n_f` renglones y $d=$ `{python} d_f` columnas. El siguiente paso es separar el conjunto de entrenamiento $\mathcal T$ del de prueba $\mathcal G$ (@sec-conjunto-entre-prueba) y estandarizar las columnas para que tengan media cero y desviación estándar uno. La estandarización utiliza estadísticas de los datos, por lo que se ajusta solamente con $\mathcal T$ y después se aplica a $\mathcal G$; si se ajustara con todos los datos, información del conjunto de prueba influiría en el entrenamiento. La codificación de las categorías, en cambio, no aprende nada de $y$, y por eso se puede hacer antes de separar los datos y así garantizar las mismas columnas en ambos conjuntos.
+La matriz de diseño tiene $N=$ `{python} n_f` renglones y $d=$ `{python} d_f` columnas. El siguiente paso es separar el conjunto de entrenamiento $\mathcal T$ del de prueba $\mathcal G$ (@sec-conjunto-entre-prueba) y estandarizar las columnas para que tengan media cero y desviación estándar uno. La estandarización utiliza estadísticas de los datos, por lo que se ajusta solamente con $\mathcal T$ y después se aplica a $\mathcal G$. Si se ajustara con todos los datos, información del conjunto de prueba influiría en el entrenamiento. La codificación de las categorías, en cambio, no aprende nada de $y$, y por eso se puede hacer antes de separar los datos y así garantizar las mismas columnas en ambos conjuntos.
 
 ```{python}
 #| echo: true
@@ -90,11 +90,11 @@ T = escala.transform(T)
 G = escala.transform(G)
 ```
 
-Se estandarizan todas las columnas, incluidas las indicadoras, para que la penalización de las secciones siguientes trate a todos los coeficientes en la misma escala; es una decisión discutible, porque un coeficiente de una indicadora estandarizada ya no se lee como "el efecto de pertenecer a la categoría". Como el objetivo es predecir, esta lectura no se necesita.
+Se estandarizan todas las columnas, incluidas las indicadoras, para que la penalización de las secciones siguientes trate a todos los coeficientes en la misma escala. Es una decisión discutible, porque un coeficiente de una indicadora estandarizada ya no se lee como "el efecto de pertenecer a la categoría". Como el objetivo es predecir, esta lectura no se necesita.
 
 ## Mínimos Cuadrados Ordinarios {#sec-regresion-ols}
 
-El estimador de MCO es el que se conoce de econometría; la diferencia entre clasificación y regresión como se describió en la @sec-aprendizaje-supervisado es que en regresión $\mathcal Y \in \mathbb R.$ Para ponerlo en el contexto de los métodos paramétricos, se asume que $\mathcal Y \sim \mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)$, de tal manera que $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)].$
+El estimador de MCO es el que se conoce en econometría. En regresión, a diferencia de clasificación (@sec-aprendizaje-supervisado), la respuesta es real, $\mathcal Y \in \mathbb R.$ Para ponerlo en el contexto de los métodos paramétricos, se asume que $\mathcal Y \sim \mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)$, de tal manera que $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)].$
 
 Trabajando con $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)],$ se considera lo siguiente $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x, 0) + \mathcal N(0, \sigma^2)]$ que implica que el error $\epsilon$ es independiente de $\mathbf x$, lo cual se transforma en $y = \mathbf w \cdot \mathbf x + \mathbb E[\epsilon],$ donde $\mathbb E[\epsilon]=0.$ Por lo tanto $y = \mathbf w \cdot \mathbf x.$
 
@@ -161,9 +161,9 @@ w_0_f = Markdown(f'$w_0={w_0:0.2f}$')
 media_f = Markdown(f'${y_t.mean():0.2f}$')
 ```
 
-Los tres coeficientes con mayor valor absoluto corresponden a las variables `{python} w_top_f`, y el término independiente es `{python} w_0_f`. Como todas las columnas están estandarizadas, $w_0$ es la media de `y_t`, que vale `{python} media_f`: un plantel promedio en todas las variables tiene la tasa de abandono promedio.
+Los tres coeficientes con mayor valor absoluto corresponden a las variables `{python} w_top_f`, y el término independiente es `{python} w_0_f`. Como todas las columnas están estandarizadas, $w_0$ es la media de `y_t`, que vale `{python} media_f`. Es decir, un plantel promedio en todas las variables tiene la tasa de abandono promedio.
 
-Siguiendo la costumbre de la econometría, la pregunta es si estos coeficientes son estadísticamente distintos de cero. Para contestarla se estima $\sigma$ como la desviación estándar del error y el error estándar de cada coeficiente se calcula con la inversa de la matriz $X^\intercal X$; se utiliza la pseudoinversa (`np.linalg.pinv`) por estabilidad numérica.
+Siguiendo la costumbre de la econometría, la pregunta es si estos coeficientes son estadísticamente distintos de cero. Para contestarla se estima $\sigma$ como la desviación estándar del error y el error estándar de cada coeficiente se calcula con la inversa de la matriz $X^\intercal X$, para lo cual se utiliza la pseudoinversa (`np.linalg.pinv`) por estabilidad numérica.
 
 ```{python}
 #| echo: true
@@ -178,7 +178,7 @@ t = w / se
 n_no_sig_f = Markdown(f'${int((np.fabs(t) < 2).sum())}$')
 ```
 
-El cociente `t` es el estadístico $t$ de cada coeficiente; `{python} n_no_sig_f` de los `{python} d_f` coeficientes tienen un valor absoluto menor que $2$, es decir, no son estadísticamente distintos de cero. En econometría esto llevaría a reespecificar el modelo; aquí la pregunta es otra: si quitar esas variables **mejora la predicción**.
+El cociente `t` es el estadístico $t$ de cada coeficiente. Un total de `{python} n_no_sig_f` de los `{python} d_f` coeficientes tienen un valor absoluto menor que $2$, es decir, no son estadísticamente distintos de cero. En econometría esto llevaría a reespecificar el modelo. Aquí interesa saber si quitar esas variables **mejora la predicción**.
 
 La predicción del conjunto de prueba y su rendimiento, medido con $R^2$ (@eq-r2), se obtienen con las siguientes instrucciones. La función `r2_score` de `CompStats` regresa un objeto con el valor de la medida y su error estándar, calculado con bootstrap, lo cual permite comparar algoritmos más adelante.
 
@@ -195,7 +195,7 @@ r2_ols_f = Markdown(f'${r2_ols.statistic:0.4f}$')
 r2_ols_se_f = Markdown(f'${r2_ols.se:0.4f}$')
 ```
 
-El $R^2$ de MCO en el conjunto de prueba es `{python} r2_ols_f`, con un error estándar de `{python} r2_ols_se_f`. Es un valor bajo en términos absolutos: las características del plantel que registra el Formato 911 explican una parte pequeña de las diferencias en la tasa de abandono, lo cual es frecuente en problemas sociales. La @fig-regresion-lineal-scatter presenta las predicciones contra los valores reales, junto con la recta identidad que correspondería a un modelo sin error.
+El $R^2$ de MCO en el conjunto de prueba es `{python} r2_ols_f`, con un error estándar de `{python} r2_ols_se_f`. Es un valor bajo en términos absolutos, pues las características del plantel que registra el Formato 911 explican una parte pequeña de las diferencias en la tasa de abandono, lo cual es frecuente en problemas sociales. La @fig-regresion-lineal-scatter presenta las predicciones contra los valores reales, junto con la recta identidad que correspondería a un modelo sin error.
 
 ```{python}
 #| label: fig-regresion-lineal-scatter
@@ -208,7 +208,7 @@ ax.plot(lim, lim, color='k')
 _ = ax.set(xlabel='Predicción', ylabel='Tasa de abandono')
 ```
 
-Las predicciones están comprimidas en un rango estrecho alrededor de la media, mientras que las tasas observadas llegan a valores mucho mayores; el modelo subestima a la mayoría de los planteles con tasas altas, que son justamente los que un programa quisiera identificar.
+Las predicciones están comprimidas en un rango estrecho alrededor de la media, mientras que las tasas observadas llegan a valores mucho mayores. El modelo subestima a la mayoría de los planteles con tasas altas, que son justamente los que un programa quisiera identificar.
 
 ### Modelo Reducido {#sec-regresion-ols-reducido}
 
@@ -240,7 +240,7 @@ dif_r2_f = Markdown(f'${r2(y_g, hy) - r2(y_g, hy2):0.4f}$')
 n_mask_f = Markdown(f'${int(mask.sum())}$')
 ```
 
-La figura se lee de la siguiente manera: el punto es el $R^2$ de cada modelo, el segmento su intervalo de confianza obtenido con bootstrap y los colores indican si la diferencia con el mejor modelo es estadísticamente significativa. El modelo reducido, con `{python} n_mask_f` variables, tiene un $R^2$ de `{python} r2_red_f`, `{python} dif_r2_f` menos que el modelo completo, y la figura lo marca como diferente del mejor. La diferencia es pequeña en magnitud, pero quitar las variables "no significativas" no mejora la predicción; incluso la perjudica un poco. La significancia individual de los coeficientes no es, entonces, un criterio para predecir. Esto motiva los métodos de las siguientes secciones, que controlan la complejidad del modelo con un criterio de predicción y no con pruebas de hipótesis.
+En la figura, el punto es el $R^2$ de cada modelo, el segmento su intervalo de confianza obtenido con bootstrap y los colores indican si la diferencia con el mejor modelo es estadísticamente significativa. El modelo reducido, con `{python} n_mask_f` variables, tiene un $R^2$ de `{python} r2_red_f`, `{python} dif_r2_f` menos que el modelo completo, y la figura lo marca como diferente del mejor. La diferencia es pequeña en magnitud, pero quitar las variables "no significativas" no mejora la predicción e incluso la perjudica un poco. La significancia individual de los coeficientes no es, entonces, un criterio para predecir. Esto motiva los métodos de las siguientes secciones, que controlan la complejidad del modelo con un criterio de predicción y no con pruebas de hipótesis.
 
 ## Sesgo y Varianza {#sec-sesgo-varianza}
 
@@ -250,7 +250,22 @@ $$
 \mathbb E[(y - \hat f(\mathbf x))^2] = \underbrace{(\mathbb E[\hat f(\mathbf x)] - f(\mathbf x))^2}_{\text{sesgo}^2} + \underbrace{\mathbb E[(\hat f(\mathbf x) - \mathbb E[\hat f(\mathbf x)])^2]}_{\text{varianza}} + \underbrace{\sigma^2}_{\text{ruido}},
 $$ {#eq-sesgo-varianza}
 
-donde $f$ es la función verdadera, $\sigma^2$ es la varianza del ruido que ningún modelo puede eliminar y el valor esperado de $\hat f$ es sobre las muestras con las que se podría haber entrenado el modelo. En palabras, un modelo rígido se equivoca de manera parecida en todas las muestras (sesgo), mientras que un modelo flexible cambia mucho de una muestra a otra (varianza). Es el mismo fenómeno que muestran la @fig-sobre-aprendizaje y la @fig-sub-aprendizaje de la Introducción.
+donde $f$ es la función verdadera, $\sigma^2$ es la varianza del ruido que ningún modelo puede eliminar y el valor esperado de $\hat f$ es sobre las muestras con las que se podría haber entrenado el modelo.
+
+Esta descomposición se deduce de la siguiente manera. Se supone que $y = f(\mathbf x) + \epsilon$, con $\mathbb E[\epsilon]=0$ y $\mathbb V[\epsilon]=\sigma^2$, y que $\epsilon$ es independiente de $\hat f(\mathbf x)$, porque el ruido de la observación nueva no participó en el entrenamiento. Para abreviar se escribe $f$ y $\hat f$ en lugar de $f(\mathbf x)$ y $\hat f(\mathbf x)$. Sumando y restando $\mathbb E[\hat f]$ el error de predicción se escribe como $y - \hat f = (f - \mathbb E[\hat f]) + (\mathbb E[\hat f] - \hat f) + \epsilon.$ Al elevarlo al cuadrado y tomar el valor esperado, se tiene
+
+$$
+\begin{split}
+\mathbb E[(y - \hat f)^2] &= \mathbb E\left[\left((f - \mathbb E[\hat f]) + (\mathbb E[\hat f] - \hat f) + \epsilon\right)^2\right] \\
+&= (f - \mathbb E[\hat f])^2 + \mathbb E[(\mathbb E[\hat f] - \hat f)^2] + \mathbb E[\epsilon^2] \\
+&\quad + 2 (f - \mathbb E[\hat f]) \, \mathbb E[\mathbb E[\hat f] - \hat f] + 2 (f - \mathbb E[\hat f]) \, \mathbb E[\epsilon] + 2 \, \mathbb E[(\mathbb E[\hat f] - \hat f) \, \epsilon] \\
+&= (\mathbb E[\hat f] - f)^2 + \mathbb E[(\hat f - \mathbb E[\hat f])^2] + \sigma^2.
+\end{split}
+$$
+
+Los tres términos cruzados valen cero. En el primero, $f - \mathbb E[\hat f]$ es una constante que sale del valor esperado y $\mathbb E[\mathbb E[\hat f] - \hat f] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$ En el segundo, $\mathbb E[\epsilon]=0.$ En el tercero, como $\epsilon$ es independiente de $\hat f$, el valor esperado del producto es el producto de los valores esperados, es decir, $\mathbb E[\mathbb E[\hat f] - \hat f] \, \mathbb E[\epsilon] = 0.$ Además, $\mathbb E[\epsilon^2] = \sigma^2$ porque $\epsilon$ tiene media cero. Los tres términos que quedan son el sesgo al cuadrado, la varianza de $\hat f$ y el ruido, que son los de la @eq-sesgo-varianza.
+
+En palabras, un modelo rígido se equivoca de manera parecida en todas las muestras (sesgo), mientras que un modelo flexible cambia mucho de una muestra a otra (varianza). Es el mismo fenómeno que muestran la @fig-sobre-aprendizaje y la @fig-sub-aprendizaje de la Introducción.
 
 Solo en una simulación se conoce la función verdadera y se pueden repetir las muestras, por lo que el compromiso se ilustra con el problema sintético de regresión del apéndice, $f(x) = \sin(x) + 0.3 \cos(3x)$ (@fig-regresion-trascendental). Se generan $100$ muestras de $30$ puntos con ruido gaussiano de desviación estándar $0.3$ y en cada una se ajustan polinomios de grado $1$, $3$ y $12$, es decir, una regresión lineal sobre las variables $x, x^2, \ldots, x^g$.
 
@@ -303,7 +318,7 @@ filas = '\n'.join(f'|{g}|${sesgo2[g]:0.4f}$|${varianza[g]:0.4f}$|'
 Markdown('|Grado|Sesgo$^2$|Varianza|\n|---|---|---|\n' + filas)
 ```
 
-El polinomio de grado $1$ es una recta: el promedio de sus predicciones está lejos de la función verdadera (sesgo alto) pero las rectas de las diferentes muestras se parecen entre sí (varianza baja). El polinomio de grado $12$ hace lo contrario: puede seguir cada muestra, pero cada muestra produce una curva muy distinta y las curvas oscilan de manera violenta, sobre todo en los extremos, donde varias se salen de la figura (varianza altísima). Con una varianza tan grande, el promedio de las $100$ curvas todavía está dominado por unas pocas curvas extremas y por eso su sesgo estimado también es grande. El grado $3$ tiene el mejor equilibrio entre ambos, tal y como lo cuantifica la @tbl-sesgo-varianza: es el de menor suma de sesgo$^2$ y varianza. La regularización que se presenta a continuación es una manera de reducir la varianza a cambio de aceptar un poco de sesgo.
+El polinomio de grado $1$ es una recta. El promedio de sus predicciones está lejos de la función verdadera (sesgo alto) pero las rectas de las diferentes muestras se parecen entre sí (varianza baja). El polinomio de grado $12$ hace lo contrario. Puede seguir cada muestra, pero cada muestra produce una curva muy distinta y las curvas oscilan de manera violenta, sobre todo en los extremos, donde varias se salen de la figura (varianza altísima). Con una varianza tan grande, el promedio de las $100$ curvas todavía está dominado por unas pocas curvas extremas y por eso su sesgo estimado también es grande. El grado $3$ tiene el mejor equilibrio entre ambos, tal y como lo cuantifica la @tbl-sesgo-varianza, pues es el de menor suma de sesgo$^2$ y varianza. La regularización que se presenta a continuación es una manera de reducir la varianza a cambio de aceptar un poco de sesgo.
 
 ## Regresión Ridge {#sec-ridge}
 
@@ -313,7 +328,7 @@ $$
 \min_{\mathbf w, w_0} \mid\mid \mathbf y - X\mathbf w - w_0 \mid\mid_2^2 + \lambda \mid\mid \mathbf w \mid\mid_2^2,
 $$ {#eq-ridge}
 
-donde $\lambda \ge 0$ controla cuánto se encogen los coeficientes hacia cero; con $\lambda = 0$ se obtiene MCO. Esta función objetivo tiene solución cerrada, $\mathbf w = (X^\intercal X + \lambda I)^{-1} X^\intercal \mathbf y$ (cuando las columnas están centradas, que es el caso aquí, el término independiente es la media de $\mathbf y$). La penalización depende de la escala de cada variable, pues un coeficiente de una variable medida en unidades pequeñas es grande y se penalizaría más; por eso las variables se estandarizaron en la @sec-regresion-datos. En scikit-learn el hiperparámetro $\lambda$ se llama `alpha`; en el texto se usa $\lambda$ y en el código `alpha`.
+donde $\lambda \ge 0$ controla cuánto se encogen los coeficientes hacia cero. Con $\lambda = 0$ se obtiene MCO. Esta función objetivo tiene solución cerrada, $\mathbf w = (X^\intercal X + \lambda I)^{-1} X^\intercal \mathbf y$ (cuando las columnas están centradas, que es el caso aquí, el término independiente es la media de $\mathbf y$). La penalización depende de la escala de cada variable, pues un coeficiente de una variable medida en unidades pequeñas es grande y se penalizaría más. Por eso las variables se estandarizaron en la @sec-regresion-datos. En scikit-learn el hiperparámetro $\lambda$ se llama `alpha`. En el texto se usa $\lambda$ y en el código `alpha`.
 
 ```{python}
 #| echo: true
@@ -326,7 +341,7 @@ norma_ols_f = Markdown(f'${np.linalg.norm(w):0.4f}$')
 norma_ridge_f = Markdown(f'${np.linalg.norm(ridge.coef_):0.4f}$')
 ```
 
-La norma $L_2$ de los coeficientes de MCO es `{python} norma_ols_f` y la del modelo Ridge con $\lambda=10$ es `{python} norma_ridge_f`, es decir, los coeficientes se encogieron. La @fig-ridge-camino muestra cada uno de los coeficientes en función de $\lambda$; se omite la leyenda porque son demasiadas variables.
+La norma $L_2$ de los coeficientes de MCO es `{python} norma_ols_f` y la del modelo Ridge con $\lambda=10$ es `{python} norma_ridge_f`, es decir, los coeficientes se encogieron. La @fig-ridge-camino muestra cada uno de los coeficientes en función de $\lambda$. Se omite la leyenda porque son demasiadas variables.
 
 ```{python}
 #| echo: true
@@ -354,7 +369,7 @@ $$
 \min_{\mathbf w, w_0} \frac{1}{2N} \mid\mid \mathbf y - X\mathbf w - w_0 \mid\mid_2^2 + \lambda \mid\mid \mathbf w \mid\mid_1,
 $$ {#eq-lasso}
 
-donde se utiliza la normalización $\frac{1}{2N}$ porque es la que usa la clase `Lasso` de scikit-learn. La norma $L_1$ hace que algunos coeficientes sean **exactamente cero**, por lo que Lasso selecciona variables al mismo tiempo que ajusta el modelo. A diferencia de Ridge, no tiene una solución cerrada; se resuelve numéricamente, en scikit-learn por descenso por coordenadas (la idea general de la optimización numérica se presenta en @sec-optimizacion).
+donde se utiliza la normalización $\frac{1}{2N}$ porque es la que usa la clase `Lasso` de scikit-learn. La norma $L_1$ hace que algunos coeficientes sean **exactamente cero**, por lo que Lasso selecciona variables al mismo tiempo que ajusta el modelo. A diferencia de Ridge, no tiene una solución cerrada y se resuelve numéricamente, en scikit-learn por descenso por coordenadas (la idea general de la optimización numérica se presenta en @sec-optimizacion).
 
 ```{python}
 #| echo: true
@@ -398,10 +413,12 @@ _ = ax.set(xlabel='$\\lambda$', ylabel='Coeficientes distintos de cero')
 
 En contraste con Ridge, los coeficientes de Lasso llegan a cero de manera abrupta y, para $\lambda$ suficientemente grande, el modelo se reduce a la media de $\mathbf y$ (todos los coeficientes son cero).
 
+Que Lasso seleccione variables al mismo tiempo que ajusta el modelo es una de sus ventajas. En el siguiente capítulo (@sec-seleccion-variables) se presentan otros procedimientos de selección de variables y se comparan con lo que elige Lasso.
+
 ::: {.callout-note}
 ### Lasso como problema con restricción
 
-La forma penalizada de Lasso es equivalente a un problema de optimización con restricción: minimizar el error sujeto a que la norma $L_1$ de los coeficientes no supere un valor $\gamma$ (a cada $\lambda$ le corresponde un $\gamma$), tal y como se muestra en la @eq-min-restricciones.
+La forma penalizada de Lasso es equivalente a un problema de optimización con restricción, que consiste en minimizar el error sujeto a que la norma $L_1$ de los coeficientes no supere un valor $\gamma$ (a cada $\lambda$ le corresponde un $\gamma$), tal y como se muestra en la @eq-min-restricciones.
 
 $$
 \begin{split}
@@ -433,18 +450,20 @@ norma_cp_f = Markdown(f'${np.fabs(w_cp.value).sum():0.4f}$')
 norma_ols_1_f = Markdown(f'${np.fabs(w).sum():0.4f}$')
 ```
 
-La norma $L_1$ de los coeficientes de MCO es `{python} norma_ols_1_f`; con $\gamma=20$ la restricción está activa y `{python} n_cp_f` de los coeficientes quedan por debajo de $10^{-5}$, es decir, son prácticamente cero, y la norma $L_1$ de la solución es `{python} norma_cp_f`.
+La norma $L_1$ de los coeficientes de MCO es `{python} norma_ols_1_f`. Con $\gamma=20$ la restricción está activa y `{python} n_cp_f` de los coeficientes quedan por debajo de $10^{-5}$, es decir, son prácticamente cero, y la norma $L_1$ de la solución es `{python} norma_cp_f`.
 :::
 
 ### Elastic Net {#sec-elastic-net}
 
-Elastic Net (@zou2005regularization) combina las dos penalizaciones
+Elastic Net (@zou2005regularization) combina las penalizaciones de Ridge y de Lasso
 
 $$
-\min_{\mathbf w, w_0} \frac{1}{2N} \mid\mid \mathbf y - X\mathbf w - w_0 \mid\mid_2^2 + \lambda \left( \rho \mid\mid \mathbf w \mid\mid_1 + \frac{1 - \rho}{2} \mid\mid \mathbf w \mid\mid_2^2 \right),
+\min_{\mathbf w, w_0} \frac{1}{2N} \mid\mid \mathbf y - X\mathbf w - w_0 \mid\mid_2^2 + \lambda \left( \underbrace{\rho \mid\mid \mathbf w \mid\mid_1}_{\text{Lasso}} + \underbrace{\frac{1 - \rho}{2} \mid\mid \mathbf w \mid\mid_2^2}_{\text{Ridge}} \right),
 $$ {#eq-elastic-net}
 
-donde el parámetro $\rho$ (`l1_ratio` en scikit-learn) mezcla las dos normas: con $\rho=1$ es Lasso y con $\rho$ cercano a cero se comporta como Ridge. Es útil cuando hay grupos de variables correlacionadas; Lasso tiende a elegir una de ellas, casi al azar, mientras que Elastic Net reparte el coeficiente entre las variables del grupo.
+donde $\rho \mid\mid \mathbf w \mid\mid_1$ es la penalización de Lasso (@eq-lasso) y $\frac{1 - \rho}{2} \mid\mid \mathbf w \mid\mid_2^2$ la de Ridge (@eq-ridge). El parámetro $\lambda$ controla la fuerza total de la penalización y el parámetro $\rho$ (`l1_ratio` en scikit-learn) el reparto entre las dos normas. Con $\rho=1$ se obtiene Lasso y con $\rho$ cercano a cero el modelo se comporta como Ridge.
+
+Al igual que Lasso tiene una forma con restricción (@eq-min-restricciones), Elastic Net equivale a minimizar el error sujeto a que una combinación de las dos normas, $\rho \mid\mid \mathbf w \mid\mid_1 + \frac{1 - \rho}{2} \mid\mid \mathbf w \mid\mid_2^2$, no supere un valor $\gamma$. Es útil cuando hay grupos de variables correlacionadas, porque Lasso tiende a elegir una de ellas, casi al azar, mientras que Elastic Net reparte el coeficiente entre las variables del grupo.
 
 ```{python}
 #| echo: true
@@ -460,7 +479,7 @@ Este modelo, con $\lambda=0.5$ y $\rho=0.5$, tiene `{python} n_cero_enet_f` coef
 
 ## Selección de $\lambda$ por Validación Cruzada {#sec-seleccion-lambda}
 
-El parámetro $\lambda$ es un hiperparámetro: no se estima al minimizar el error de entrenamiento (siempre elegiría $\lambda=0$) y tampoco debe elegirse con el conjunto de prueba $\mathcal G$, pues este se reserva para medir el rendimiento final (@sec-validacion-cruzada). Se elige con $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation) dentro de $\mathcal T$: para cada valor de $\lambda$ se entrena con $k-1$ partes, se predice la parte restante y se calcula el error cuadrático medio; el valor elegido es el que lo minimiza. El siguiente código muestra el procedimiento a mano para Lasso.
+El parámetro $\lambda$ es un hiperparámetro. No se estima al minimizar el error de entrenamiento (siempre elegiría $\lambda=0$) y tampoco debe elegirse con el conjunto de prueba $\mathcal G$, pues este se reserva para medir el rendimiento final (@sec-validacion-cruzada). Se elige con $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation) dentro de $\mathcal T$. Para cada valor de $\lambda$ se entrena con $k-1$ partes, se predice la parte restante y se calcula el error cuadrático medio, y el valor elegido es el que lo minimiza. El siguiente código muestra el procedimiento a mano para Lasso.
 
 ```{python}
 #| echo: true
@@ -481,11 +500,11 @@ lambda_opt = lambdas[np.argmin(error_cv)]
 lambda_opt_f = Markdown(f'${lambda_opt:0.4f}$')
 ```
 
-La @fig-lambda-validacion muestra el error de validación en función de $\lambda$; el valor que lo minimiza es $\lambda=$ `{python} lambda_opt_f`.
+La @fig-lambda-validacion muestra el error de validación en función de $\lambda$. El valor que lo minimiza es $\lambda=$ `{python} lambda_opt_f`.
 
 ```{python}
 #| label: fig-lambda-validacion
-#| fig-cap: Error cuadrático medio de validación cruzada de Lasso en función de $\lambda$; la línea vertical indica el valor óptimo.
+#| fig-cap: Error cuadrático medio de validación cruzada de Lasso en función de $\lambda$. La línea vertical indica el valor óptimo.
 #| code-fold: true
 fig, ax = plt.subplots(figsize=(6, 4))
 ax.plot(lambdas, error_cv)
@@ -514,7 +533,7 @@ n_lasso_f = Markdown(f'${int((lasso_cv.coef_ != 0).sum())}$')
 n_enet_f = Markdown(f'${int((enet_cv.coef_ != 0).sum())}$')
 ```
 
-`LassoCV` selecciona $\lambda=$ `{python} lasso_alpha_f`, que coincide con el valor calculado a mano; `RidgeCV` selecciona $\lambda=$ `{python} ridge_alpha_f`, y `ElasticNetCV` selecciona $\lambda=$ `{python} enet_alpha_f` con $\rho=$ `{python} enet_rho_f`. Con estos valores, Lasso mantiene `{python} n_lasso_f` coeficientes distintos de cero y Elastic Net `{python} n_enet_f`, de un total de `{python} d_f`.
+`LassoCV` selecciona $\lambda=$ `{python} lasso_alpha_f`, que coincide con el valor calculado a mano. `RidgeCV` selecciona $\lambda=$ `{python} ridge_alpha_f`, y `ElasticNetCV` selecciona $\lambda=$ `{python} enet_alpha_f` con $\rho=$ `{python} enet_rho_f`. Con estos valores, Lasso mantiene `{python} n_lasso_f` coeficientes distintos de cero y Elastic Net `{python} n_enet_f`, de un total de `{python} d_f`.
 
 La @fig-regresion-comparacion compara, en el conjunto de prueba, el rendimiento de MCO y del modelo reducido (@sec-regresion-ols-reducido) con el de Ridge, Lasso y Elastic Net con el $\lambda$ seleccionado por validación cruzada.
 
@@ -530,162 +549,11 @@ r2_ols.plot(comp_legend='Comparación', winner_legend='Mejor',
             alg_legend='Algoritmo', var_name='Rendimiento')
 ```
 
-Con $N=$ `{python} n_f` y $d=$ `{python} d_f` ninguno de los modelos regularizados supera a MCO: Ridge, Lasso y Elastic Net son estadísticamente equivalentes a él, y el único modelo que la figura marca como diferente es el reducido. Con muchos datos y pocas variables MCO ya tiene poca varianza y la regularización tiene poco que corregir. La ganancia de Lasso, cuando existe, es un modelo con menos variables y el mismo rendimiento, que es lo que interesa cuando el modelo se aplica con información que hay que recabar; aquí es modesta, pues conserva `{python} n_lasso_f` de las `{python} d_f` variables. El $R^2$ es bajo en todos los casos: ningún método puede extraer de las características del plantel más información de la que tienen.
-
-## Selección de Variables {#sec-seleccion-variables}
-
-Lasso ya selecciona variables al mismo tiempo que ajusta el modelo. Esta sección presenta los procedimientos clásicos de selección (filtros estadísticos, búsqueda hacia adelante y hacia atrás, y selección mediante un modelo) y los compara con lo que eligió Lasso. Todos parten de la idea de que existen variables que no contribuyen a la solución o cuyo aporte ya está dado por otras. Esto trae como consecuencia, en el mejor de los casos, un mayor costo computacional o de recolección y, en uno menos afortunado, un modelo con un rendimiento menor al que se hubiera obtenido seleccionando las variables.
-
-### Basada en Estadísticas {#sec-seleccion-var-estadistica}
-
-Una manera de seleccionar es descartar las variables que no tienen relación con la respuesta. En regresión, la prueba es la estadística $F$ de la regresión lineal simple de $y$ sobre cada variable, cuya hipótesis nula es que el coeficiente es cero; está implementada en la función `f_regression`. (En clasificación la prueba equivalente es Kruskal-Wallis, o ANOVA si se supone normalidad.) Con esas estadísticas se pueden ordenar las variables y seleccionar las $k$ mejores con `SelectKBest`.
-
-```{python}
-#| echo: true
-f_est, p_valores = f_regression(T, y_t)
-sel = SelectKBest(score_func=f_regression, k=10).fit(T, y_t)
-seleccionadas = columnas[sel.get_support()]
-```
-
-```{python}
-#| echo: false
-seleccionadas_f = Markdown(', '.join(f'`{c}`' for c in seleccionadas))
-coinciden_f = Markdown(
-    f'${len(set(seleccionadas) & set(columnas[lasso_cv.coef_ != 0]))}$')
-```
-
-Las diez variables con mayor estadística $F$ son `{python} seleccionadas_f`. De ellas, `{python} coinciden_f` están entre las que conserva Lasso con el $\lambda$ elegido por validación cruzada.
-
-#### Ventajas y Limitaciones
-
-Las técnicas basadas en estadísticas requieren de pocos recursos computacionales y están basadas en pruebas que permiten saber cuáles son las razones de su funcionamiento. Estas fortalezas también son origen de sus debilidades: observan las variables de manera aislada y no consideran que pueden interactuar. Por otro lado, la selección es agnóstica del algoritmo de aprendizaje utilizado.
-
-### Selección hacia Adelante y hacia Atrás {#sec-seleccion-adelante}
-
-Un procedimiento que pone en el centro del proceso de selección al algoritmo de aprendizaje utilizado es **Selección hacia Adelante** y su complemento, **Selección hacia Atrás.** El algoritmo de selección hacia adelante es un procedimiento iterativo que selecciona una variable a la vez guiada por el rendimiento de esa variable cuando es usada en el algoritmo de aprendizaje. Al igual que los procedimientos anteriores, no modifica las características del problema, solamente selecciona las que se consideran relevantes.
-
-En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = \{(x_i, y_i)\},$ con una función $L$ que mide el rendimiento del algoritmo de aprendizaje $\mathcal H.$ La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización se puede dividir $\mathcal T$ en dos conjuntos, entrenamiento y validación, o utilizar $k$ iteraciones de validación cruzada.
-
-Suponga un conjunto $\pi \subseteq \{1, 2, \ldots, d\}$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando esta notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset$, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continúa si $\mathcal P^{j+1} > \mathcal P^j$ donde $\mathcal P^0 = 0$.
-
-Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.
-
-Ilustrando la primera iteración en el problema de abandono escolar, $\mathcal H$ es la regresión lineal y $L$ es $R^2$ medido con validación cruzada. Como inicialmente $\pi^0 = \emptyset$, solo es necesario ajustar un modelo con cada una de las variables por separado. El siguiente código itera por todas las variables, selecciona en `T1` los datos con esa única variable, hace $k$ iteraciones de validación cruzada y guarda el rendimiento en `perf`.
-
-```{python}
-#| echo: true
-perf = []
-for var in range(T.shape[1]):
-    T1 = T[:, [var]]
-    hy_v = np.zeros_like(y_t)
-    for tr, vs in kfold.split(T1):
-        hy_v[vs] = LinearRegression().fit(T1[tr], y_t[tr]).predict(T1[vs])
-    perf.append(r2(y_t, hy_v))
-```
-
-```{python}
-#| echo: false
-mejor = int(np.argmax(perf))
-mejor_f = Markdown(f'`{columnas[mejor]}`')
-perf_mejor_f = Markdown(f'${perf[mejor]:0.4f}$')
-n_pos_f = Markdown(f'${int((np.array(perf) > 0).sum())}$')
-```
-
-La @fig-rendimiento-sel muestra el $R^2$ de cada variable en la primera iteración. La mejor variable es `{python} mejor_f` con un $R^2$ de `{python} perf_mejor_f`, y solo `{python} n_pos_f` de las `{python} d_f` variables tienen un $R^2$ de validación positivo, es decir, mejor que predecir siempre la media. Esta variable es la que se agregaría en la primera iteración.
-
-```{python}
-#| fig-cap: Rendimiento ($R^2$) de cada variable en la primera iteración de la selección hacia adelante.
-#| label: fig-rendimiento-sel
-#| code-fold: true
-fig, ax = plt.subplots(figsize=(12, 4))
-ax.bar(range(len(perf)), perf, color=PALETTE(1))
-ax.set_xticks(range(len(perf)))
-ax.set_xticklabels(columnas, rotation=90)
-_ = ax.set(xlabel='Variable', ylabel='$R^2$ de validación')
-```
-
-::: {.callout-note}
-
-El algoritmo de selección hacia adelante y hacia atrás se implementa en la clase `SequentialFeatureSelector`. Para que el procedimiento no tarde, se pide seleccionar diez variables.
-
-```{python}
-#| echo: true
-seq = SequentialFeatureSelector(LinearRegression(), n_features_to_select=10,
-                                direction='forward', scoring='r2',
-                                cv=kfold, n_jobs=-1).fit(T, y_t)
-adelante = columnas[seq.get_support()]
-```
-
-```{python}
-#| echo: false
-adelante_f = Markdown(', '.join(f'`{c}`' for c in adelante))
-```
-
-Las variables que selecciona el procedimiento hacia adelante son `{python} adelante_f`. La selección hacia atrás se obtiene con `direction='backward'`: empieza con todas las variables y elimina una a la vez, la que menos deteriora el rendimiento. Con `{python} d_f` variables es mucho más lenta que la selección hacia adelante, pues cada eliminación evalúa casi todas las variables en cada una de las iteraciones de validación cruzada, y por eso no se ejecuta aquí; como ambos son algoritmos voraces, cada uno llega a un óptimo local distinto y las variables que selecciona la versión hacia atrás no tienen por qué coincidir con las de la versión hacia adelante.
-:::
-
-#### Ventajas y Limitaciones
-
-Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto es, para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que solo puedan garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Complementando esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$ subconjuntos de variables; en los algoritmos vistos se observa un máximo de $d$ elementos de ese total.
-
-### Selección mediante Modelo {#sec-seleccion-por-modelo}
-
-Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Considerando que las variables están estandarizadas, el valor absoluto de un coeficiente de una regresión lineal indica el efecto que tiene esa variable en el resultado y permite ordenarlas por importancia. La clase `SelectFromModel` selecciona las características que el modelo considera más importantes; con `max_features` se indica cuántas y `prefit=True` indica que el modelo ya está entrenado. El siguiente código lo ilustra con el Lasso del $\lambda$ óptimo.
-
-```{python}
-#| echo: true
-lasso_opt = Lasso(alpha=lambda_opt, max_iter=5000).fit(T, y_t)
-sel = SelectFromModel(lasso_opt, max_features=4,
-                      threshold=-np.inf, prefit=True)
-cuatro = columnas[sel.get_support()]
-```
-
-```{python}
-#| echo: false
-cuatro_f = Markdown(', '.join(f'`{c}`' for c in cuatro))
-```
-
-Las cuatro variables con mayor coeficiente en valor absoluto son `{python} cuatro_f`. Habiendo descrito el procedimiento, es necesario encontrar cuál es el número de variables que produce el mejor rendimiento. Para esto se realizan $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation), donde se varía el número de variables y en cada caso se mide el rendimiento con $R^2$ (@sec-rendimiento-regresion).
-
-```{python}
-#| echo: true
-perf_sel = []
-for dim in range(2, T.shape[1] + 1):
-    modelo = SelectFromModel(lasso_opt, max_features=dim,
-                             threshold=-np.inf, prefit=True)
-    Dt = modelo.transform(T)
-    hy_v = np.zeros_like(y_t)
-    for tr, vs in kfold.split(Dt):
-        m_sel = LinearRegression().fit(Dt[tr], y_t[tr])
-        hy_v[vs] = m_sel.predict(Dt[vs])
-    perf_sel.append(dict(r2=r2(y_t, hy_v), numero=dim))
-perf_sel = pd.DataFrame(perf_sel)
-```
-
-```{python}
-#| echo: false
-fila = perf_sel.loc[perf_sel.r2.idxmax()]
-mejor_num_f = Markdown(f'${int(fila.numero)}$')
-mejor_r2_f = Markdown(f'${fila.r2:0.4f}$')
-r2_2_f = Markdown(f'${perf_sel.r2.iloc[0]:0.4f}$')
-r2_todas_f = Markdown(f'${perf_sel.r2.iloc[-1]:0.4f}$')
-r2_10_f = Markdown(f'${perf_sel.r2.iloc[perf_sel.numero.tolist().index(10)]:0.4f}$')
-```
-
-La @fig-seleccion-por-modelo muestra el $R^2$ en validación cruzada desde el modelo con las dos variables más importantes hasta el que usa todas. El rendimiento pasa de `{python} r2_2_f` con dos variables a `{python} r2_10_f` con diez, y llega a un máximo de `{python} mejor_r2_f` con `{python} mejor_num_f` variables; con todas las variables vale `{python} r2_todas_f`. Es decir, el rendimiento mejora rápidamente con las primeras variables y después se estabiliza, de manera que agregar las últimas casi no lo modifica.
-
-```{python}
-#| fig-cap: Rendimiento ($R^2$) en validación cruzada variando el número de variables seleccionadas.
-#| label: fig-seleccion-por-modelo
-#| code-fold: true
-fig, ax = plt.subplots(figsize=(6, 4))
-ax.plot(perf_sel.numero, perf_sel.r2)
-_ = ax.set(xlabel='Número de variables', ylabel='$R^2$ de validación')
-```
+Con $N=$ `{python} n_f` y $d=$ `{python} d_f` ninguno de los modelos regularizados supera a MCO. Ridge, Lasso y Elastic Net son estadísticamente equivalentes a él y el único modelo que la figura marca como diferente es el reducido. Con muchos datos y pocas variables MCO ya tiene poca varianza y la regularización tiene poco que corregir. La ganancia de Lasso, cuando existe, es un modelo con menos variables y el mismo rendimiento, que es lo que interesa cuando el modelo se aplica con información que hay que recabar. Aquí es modesta, pues conserva `{python} n_lasso_f` de las `{python} d_f` variables. El $R^2$ es bajo en todos los casos, pues ningún método puede extraer de las características del plantel más información de la que tienen.
 
 ## Los Coeficientes no se Interpretan Causalmente {#sec-coeficientes-regularizados}
 
-Lasso y Ridge son útiles para predecir, pero sus coeficientes no se leen como los de MCO en un estudio de efectos. La razón es que las variables que Lasso conserva no son estables: con variables correlacionadas, pequeños cambios en la muestra cambian la variable que entra y la que sale. El siguiente código lo muestra ajustando `LassoCV` en $10$ submuestras aleatorias del $50\%$ de $\mathcal T$ y registrando qué variables tienen un coeficiente distinto de cero, y el $R^2$ de cada modelo en el conjunto de prueba.
+Lasso y Ridge son útiles para predecir, pero sus coeficientes no se leen como los de MCO en un estudio de efectos. La razón es que las variables que Lasso conserva no son estables. Con variables correlacionadas, pequeños cambios en la muestra cambian la variable que entra y la que sale. El siguiente código lo muestra ajustando `LassoCV` en $10$ submuestras aleatorias del $50\%$ de $\mathcal T$ y registrando qué variables tienen un coeficiente distinto de cero, y el $R^2$ de cada modelo en el conjunto de prueba.
 
 ```{python}
 #| echo: true
@@ -722,7 +590,7 @@ ax.set_xticklabels(columnas[orden], rotation=90)
 _ = ax.set(xlabel='Variable', ylabel='Frecuencia de selección')
 ```
 
-Varias variables entran y salen según la muestra aunque el rendimiento sea casi idéntico. Es el **efecto Rashomon** de @breiman2001statistical, que existen muchos modelos distintos con la misma capacidad de predicción, y es también el hallazgo del ejemplo de los precios de la vivienda de @mullainathan2017machine. La conclusión es que un coeficiente de Lasso (o de Ridge) dice cuánto contribuye esa variable a predecir **dado el resto de variables que el algoritmo eligió**, y no cuál sería el efecto de modificarla; con variables correlacionadas, la que sale puede ser una sustituta de la que importa.
+Varias variables entran y salen según la muestra aunque el rendimiento sea casi idéntico. Es el **efecto Rashomon** de @breiman2001statistical, que existen muchos modelos distintos con la misma capacidad de predicción, y es también el hallazgo del ejemplo de los precios de la vivienda de @mullainathan2017machine. La conclusión es que un coeficiente de Lasso (o de Ridge) dice cuánto contribuye esa variable a predecir **dado el resto de variables que el algoritmo eligió**, y no cuál sería el efecto de modificarla. Con variables correlacionadas, la que sale puede ser una sustituta de la que importa.
 
 Hay un caso donde la selección con Lasso sí es un problema para quien busca un efecto. Cuando lo que interesa es el efecto de una variable (un tratamiento) y Lasso se usa para elegir los controles, seleccionar con un solo Lasso de $y$ sesga la estimación, porque omite controles que predicen poco $y$ pero mucho el tratamiento. @belloni2014high proponen la *post-double-selection*, que selecciona los controles que predicen $y$ y los que predicen el tratamiento. Ese procedimiento se desarrolla en el capítulo de Aprendizaje Computacional e Inferencia Causal (en preparación), y la interpretación de los modelos predictivos se trata en el capítulo de Interpretabilidad y Equidad (en preparación).
 
@@ -734,9 +602,9 @@ Lea las secciones sobre regularización de @mullainathan2017machine y la introdu
 
 ## Focalización: un Problema de Política de Predicción {#sec-regresion-focalizacion}
 
-Un programa social con recursos limitados necesita decidir a qué hogares dirigirse. Verificar el ingreso de cada hogar es costoso, por lo que muchos programas usan una *prueba de medios sustituta* (*proxy means test*): se predice si un hogar es pobre con **pocas** variables observables de la vivienda y el hogar, porque cada variable que se incluye hay que verificarla en campo. Los datos son los de Pobreza del apéndice (@sec-datos-pobreza).
+Un programa social con recursos limitados necesita decidir a qué hogares dirigirse. Verificar el ingreso de cada hogar es costoso, por lo que muchos programas usan una *prueba de medios sustituta* (*proxy means test*). Con ella se predice si un hogar es pobre con **pocas** variables observables de la vivienda y el hogar, porque cada variable que se incluye hay que verificarla en campo. Los datos son los de Pobreza del apéndice (@sec-datos-pobreza).
 
-Es un problema de clasificación, no de regresión: el objetivo `pobre_ingresos` es binario. Se usa regresión logística con penalización $L_1$ como una caja negra; el modelo se describe en la @sec-regresion-logistica y aquí basta saber que `fit` y `predict` funcionan igual y que la penalización $L_1$ vuelve cero algunos coeficientes, como en Lasso. En scikit-learn el hiperparámetro es `C`, el **inverso** de $\lambda$: un valor pequeño de `C` es una penalización más fuerte. Se codifica y se estandariza igual que antes; no se usa el factor de expansión (`factor`) porque el objetivo es la decisión por hogar y no una estimación de la población.
+Es un problema de clasificación y no de regresión, pues el objetivo `pobre_ingresos` es binario. Se usa regresión logística con penalización $L_1$ como una caja negra. El modelo se describe en la @sec-regresion-logistica y aquí basta saber que `fit` y `predict` funcionan igual y que la penalización $L_1$ vuelve cero algunos coeficientes, como en Lasso. En scikit-learn el hiperparámetro es `C`, el **inverso** de $\lambda$, de manera que un valor pequeño de `C` es una penalización más fuerte. Se codifica y se estandariza igual que antes. No se usa el factor de expansión (`factor`) porque el objetivo es la decisión por hogar y no una estimación de la población.
 
 ```{python}
 #| echo: true
@@ -815,16 +683,16 @@ cob_todas_f = Markdown(f'${resultados.cobertura.iloc[-1]:0.4f}$')
 n_todas_f = Markdown(f'${resultados.variables.iloc[-1]}$')
 ```
 
-La @tbl-pmt y la @fig-pmt-variables muestran que con `{python} n_chico_f` variables se alcanza una cobertura de `{python} cob_chico_f`, frente a `{python} cob_todas_f` con `{python} n_todas_f` variables; con `{python} n_2_f` variables la cobertura es `{python} cob_2_f`, `{python} frac_2_f` de la que se logra con todas. La precisión casi no cambia. Reducir el número de variables cuesta, entonces, algo de cobertura, y la política debe decidir cuánta está dispuesta a perder a cambio de verificar menos información en campo. Las variables con mayor coeficiente en valor absoluto en el modelo más pequeño son `{python} nombres_chico_f`.
+La @tbl-pmt y la @fig-pmt-variables muestran que con `{python} n_chico_f` variables se alcanza una cobertura de `{python} cob_chico_f`, frente a `{python} cob_todas_f` con `{python} n_todas_f` variables. Con `{python} n_2_f` variables la cobertura es `{python} cob_2_f`, `{python} frac_2_f` de la que se logra con todas. La precisión casi no cambia. Reducir el número de variables cuesta, entonces, algo de cobertura, y la política debe decidir cuánta está dispuesta a perder a cambio de verificar menos información en campo. Las variables con mayor coeficiente en valor absoluto en el modelo más pequeño son `{python} nombres_chico_f`.
 
-En términos de política, la cobertura es la proporción de hogares pobres que el programa alcanza y $1 -$ precisión es la proporción de beneficiarios que no son pobres; son los errores de exclusión y de inclusión, respectivamente. El modelo se evaluó con el umbral que usa `predict` por omisión; qué umbral usar cuando ambos errores cuestan distinto se trata en @sec-teoria-decision-bayesianas.
+En términos de política, la cobertura es la proporción de hogares pobres que el programa alcanza y $1 -$ precisión es la proporción de beneficiarios que no son pobres. Son, respectivamente, los errores de exclusión y de inclusión. El modelo se evaluó con el umbral que usa `predict` por omisión. Qué umbral usar cuando ambos errores cuestan distinto se trata en @sec-teoria-decision-bayesianas.
 
 ## Actividades {.unnumbered}
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
-Repita el procedimiento del capítulo (MCO, Ridge y Lasso con $\lambda$ seleccionado por validación cruzada, y comparación con `CompStats`) con el conjunto de Territorio (@sec-datos-territorio): el objetivo es `grado_promedio_escolaridad` y se descartan `clave_ageb`, `municipio`, `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`. Con un número pequeño de renglones y de variables la regularización debe notarse más que en Educación. Conteste: ¿qué sectores de establecimientos selecciona Lasso? ¿Cambian si se repite con otra partición?
+Repita el procedimiento del capítulo (MCO, Ridge y Lasso con $\lambda$ seleccionado por validación cruzada, y comparación con `CompStats`) con el conjunto de Territorio (@sec-datos-territorio). El objetivo es `grado_promedio_escolaridad` y se descartan `clave_ageb`, `municipio`, `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`. Con un número pequeño de renglones y de variables la regularización debe notarse más que en Educación. Conteste las siguientes preguntas. ¿Qué sectores de establecimientos selecciona Lasso? ¿Cambian si se repite con otra partición?
 
 ```{python}
 #| echo: false
@@ -861,5 +729,5 @@ n_a_f = Markdown(f'${X_a.shape[0]}$')
 d_a_f = Markdown(f'${X_a.shape[1]}$')
 ```
 
-El resultado esperado se muestra en la @fig-actividad-territorio, con $N=$ `{python} n_a_f` AGEB y $d=$ `{python} d_a_f` variables; las variables que conserva Lasso son `{python} sectores_f`.
+El resultado esperado se muestra en la @fig-actividad-territorio, con $N=$ `{python} n_a_f` AGEB y $d=$ `{python} d_a_f` variables. Las variables que conserva Lasso son `{python} sectores_f`.
 :::
