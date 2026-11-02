@@ -252,18 +252,38 @@ $$ {#eq-sesgo-varianza}
 
 donde $f$ es la función verdadera, $\sigma^2$ es la varianza del ruido que ningún modelo puede eliminar y el valor esperado de $\hat f$ es sobre las muestras con las que se podría haber entrenado el modelo.
 
-Esta descomposición se deduce de la siguiente manera. Se supone que $y = f(\mathbf x) + \epsilon$, con $\mathbb E[\epsilon]=0$ y $\mathbb V[\epsilon]=\sigma^2$, y que $\epsilon$ es independiente de $\hat f(\mathbf x)$, porque el ruido de la observación nueva no participó en el entrenamiento. Para abreviar se escribe $f$ y $\hat f$ en lugar de $f(\mathbf x)$ y $\hat f(\mathbf x)$. Sumando y restando $\mathbb E[\hat f]$ el error de predicción se escribe como $y - \hat f = (f - \mathbb E[\hat f]) + (\mathbb E[\hat f] - \hat f) + \epsilon.$ Al elevarlo al cuadrado y tomar el valor esperado, se tiene
+Esta descomposición se deduce en varios pasos. El primero es entender de dónde viene la aleatoriedad. El modelo $\hat f$ se entrena con un conjunto $\mathcal T$ que es una muestra aleatoria. Con otra muestra se obtendría otro modelo, así que $\hat f(\mathbf x)$ es una variable aleatoria aun cuando $\mathbf x$ sea fijo, y $\mathbb E[\hat f(\mathbf x)]$ es la predicción promedio en $\mathbf x$ sobre todos los conjuntos de entrenamiento posibles. La simulación que se presenta más adelante aproxima ese promedio con las predicciones de los $100$ modelos ajustados. Por otro lado, la observación nueva tiene su propio ruido $\epsilon$. El valor esperado de la @eq-sesgo-varianza es, entonces, sobre las dos fuentes de aleatoriedad, el conjunto de entrenamiento $\mathcal T$ y el ruido $\epsilon$.
+
+Los supuestos son los siguientes. La respuesta es $y = f(\mathbf x) + \epsilon$, con $\mathbb E[\epsilon]=0$ y $\mathbb V[\epsilon]=\sigma^2$. El ruido $\epsilon$ es independiente de $\hat f$, porque el ruido de la observación nueva no participó en el entrenamiento. Además, $f(\mathbf x)$ y $\mathbb E[\hat f(\mathbf x)]$ son números fijos y no variables aleatorias. Para abreviar se escribe $f$ y $\hat f$ en lugar de $f(\mathbf x)$ y $\hat f(\mathbf x)$.
+
+Se sustituye $y$ en el error de predicción y después se suma y se resta $\mathbb E[\hat f]$ para agrupar,
 
 $$
 \begin{split}
-\mathbb E[(y - \hat f)^2] &= \mathbb E\left[\left((f - \mathbb E[\hat f]) + (\mathbb E[\hat f] - \hat f) + \epsilon\right)^2\right] \\
-&= (f - \mathbb E[\hat f])^2 + \mathbb E[(\mathbb E[\hat f] - \hat f)^2] + \mathbb E[\epsilon^2] \\
-&\quad + 2 (f - \mathbb E[\hat f]) \, \mathbb E[\mathbb E[\hat f] - \hat f] + 2 (f - \mathbb E[\hat f]) \, \mathbb E[\epsilon] + 2 \, \mathbb E[(\mathbb E[\hat f] - \hat f) \, \epsilon] \\
-&= (\mathbb E[\hat f] - f)^2 + \mathbb E[(\hat f - \mathbb E[\hat f])^2] + \sigma^2.
+y - \hat f &= f + \epsilon - \hat f \\
+&= \underbrace{(f - \mathbb E[\hat f])}_{a} + \underbrace{(\mathbb E[\hat f] - \hat f)}_{b} + \epsilon.
 \end{split}
 $$
 
-Los tres términos cruzados valen cero. En el primero, $f - \mathbb E[\hat f]$ es una constante que sale del valor esperado y $\mathbb E[\mathbb E[\hat f] - \hat f] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$ En el segundo, $\mathbb E[\epsilon]=0.$ En el tercero, como $\epsilon$ es independiente de $\hat f$, el valor esperado del producto es el producto de los valores esperados, es decir, $\mathbb E[\mathbb E[\hat f] - \hat f] \, \mathbb E[\epsilon] = 0.$ Además, $\mathbb E[\epsilon^2] = \sigma^2$ porque $\epsilon$ tiene media cero. Los tres términos que quedan son el sesgo al cuadrado, la varianza de $\hat f$ y el ruido, que son los de la @eq-sesgo-varianza.
+El término $a$ es una constante, $b$ depende del conjunto de entrenamiento y $\epsilon$ del ruido de la observación nueva. Al elevar al cuadrado el trinomio se obtienen seis términos,
+
+$$
+(a + b + \epsilon)^2 = a^2 + b^2 + \epsilon^2 + 2ab + 2a\epsilon + 2b\epsilon.
+$$
+
+Se toma el valor esperado de cada término usando la linealidad del valor esperado, y la constante $a$ sale del valor esperado,
+
+$$
+\mathbb E[(y - \hat f)^2] = a^2 + \mathbb E[b^2] + \mathbb E[\epsilon^2] + \underbrace{2a\,\mathbb E[b]}_{=0} + \underbrace{2a\,\mathbb E[\epsilon]}_{=0} + \underbrace{2\,\mathbb E[b\,\epsilon]}_{=0}.
+$$
+
+Cada término cruzado vale cero por una razón distinta:
+
+- $2a\,\mathbb E[b]$ vale cero porque $\mathbb E[b] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$
+- $2a\,\mathbb E[\epsilon]$ vale cero porque $\mathbb E[\epsilon]=0.$
+- $2\,\mathbb E[b\,\epsilon] = 2\,\mathbb E[b]\,\mathbb E[\epsilon]$ por independencia, y vale cero porque ambos valores esperados son cero.
+
+Quedan tres términos. El primero es $a^2 = (\mathbb E[\hat f] - f)^2$, el sesgo al cuadrado. El segundo es $\mathbb E[b^2] = \mathbb E[(\hat f - \mathbb E[\hat f])^2]$, la varianza de $\hat f$, y el signo de $b$ no importa porque se eleva al cuadrado. El tercero es $\mathbb E[\epsilon^2] = \mathbb V[\epsilon] + \mathbb E[\epsilon]^2 = \sigma^2 + 0 = \sigma^2$, por la definición de varianza, y es el ruido. Con esto se obtiene la @eq-sesgo-varianza.
 
 En palabras, un modelo rígido se equivoca de manera parecida en todas las muestras (sesgo), mientras que un modelo flexible cambia mucho de una muestra a otra (varianza). Es el mismo fenómeno que muestran la @fig-sobre-aprendizaje y la @fig-sub-aprendizaje de la Introducción.
 
