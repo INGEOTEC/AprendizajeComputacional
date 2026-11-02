@@ -1,6 +1,6 @@
 # Métodos Paramétricos {#sec-metodos-parametricos}
 
-El **objetivo** de la unidad es conocer las características de los modelos paramétricos y aplicar máxima verosimilitud para estimar los parámetros del modelo paramétrico en problemas de regresión y clasificación.
+El **objetivo** de la unidad es conocer las características de los modelos paramétricos y aplicar máxima verosimilitud para estimar los parámetros del modelo paramétrico en problemas de clasificación.
 
 ## Paquetes usados {.unnumbered}
 
@@ -9,18 +9,15 @@ El **objetivo** de la unidad es conocer las características de los modelos para
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
-from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer,\
-                             load_diabetes
+from sklearn.datasets import load_breast_cancer
 from scipy.stats import norm, multivariate_normal
 from scipy.special import logsumexp
 from matplotlib import pylab as plt
 import numpy as np
-import cvxpy as cp
 import pandas as pd
 import seaborn as sns
-from CompStats.metrics import accuracy_score, mean_squared_error
+from CompStats.metrics import accuracy_score
 ```
 
 ```{python}
@@ -39,6 +36,8 @@ np.set_printoptions(precision=4)
 Existen diferentes tipos de algoritmos que se puede utilizar para resolver problemas de aprendizaje supervisado y no supervisado. En particular, esta unidad se enfoca en presentar las técnicas que se pueden caracterizar como métodos paramétricos. 
 
 Los métodos paramétricos se identifican por asumir que los datos provienen de una distribución de la cual se desconocen los parámetros y el procedimiento es encontrar los parámetros de la distribución que mejor modelen los datos. Una vez obtenidos los parámetros se cuenta con todos los elementos para utilizar el modelo y predecir la característica para la cual fue entrenada. 
+
+La regresión lineal, que también es un método paramétrico, se presentó en @sec-regresion-regularizacion; este capítulo se concentra en clasificación.
 
 ## Metodología {#sec-metodologia-met-parametricos}
 
@@ -669,312 +668,3 @@ score.plot(comp_legend='Comparación',
 ```
 
 :::
-
-## Regresión {#sec-regresion-ols}
-
-Hasta este momento se han revisado métodos paramétricos en clasificación, ahora es el turno de abordar el problema de regresión. La diferencia entre clasificación y regresión como se describió en la @sec-aprendizaje-supervisado es que en regresión $\mathcal Y \in \mathbb R.$
-
-El procedimiento de regresión que se describe en esta sección es regresión de **Mínimos Cuadrados Ordinaria** (OLS -*Ordinary Least Squares*-), en el cual se asume que $\mathcal Y \sim \mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)$, de tal manera que $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)].$
-
-Trabajando con $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x + \epsilon, \sigma^2)],$ se considera lo siguiente $y = \mathbb E[\mathcal N(\mathbf w \cdot \mathbf x, 0) + \mathcal N(0, \sigma^2)]$ que implica que el error $\epsilon$ es independiente de $\mathbf x$, lo cual se transforma en $y = \mathbf w \cdot \mathbf x + \mathbb E[\epsilon],$ donde $\mathbb E[\epsilon]=0.$ Por lo tanto $y = \mathbf w \cdot \mathbf x.$
-
-La función de densidad de probabilidad de una Gaussiana corresponde a
-
-$$
-f(\alpha) = \frac{1}{\sigma \sqrt{2 \pi}} \exp{-\frac{1}{2} (\frac{\alpha -  \mu}{\sigma})^2},
-$$
-
-donde $\alpha$, en el caso de regresión, corresponde a $\mathbf w \cdot \mathbf x$ (i.e., $\alpha = \mathbf w \cdot \mathbf x$).
-
-Utilizando el método de verosimilitud el cual corresponde a maximizar 
-
-$$
-\begin{split}
-\mathcal L(\mathbf w, \sigma) &= \prod_{(\mathbf x, y) \in \mathcal D} f(\mathbf w \cdot \mathbf x) \\
-&= \prod_{(\mathbf x, y) \in \mathcal D} \frac{1}{\sigma \sqrt{2\pi}} \exp{(-\frac{1}{2} (\frac{\mathbf w \cdot \mathbf x -  y}{\sigma})^2)} \\
-\ell(\mathbf w, \sigma) &= \sum_{(\mathbf x, y) \in \mathcal D}\log \frac{1}{\sigma \sqrt{2\pi}}  -\frac{1}{2} (\frac{\mathbf w \cdot \mathbf x -  y}{\sigma})^2 \\
-&= - \frac{1}{2\sigma^2}  \sum_{(\mathbf x, y) \in \mathcal D} (\mathbf w \cdot \mathbf x -  y)^2 - N \log \frac{1}{\sigma \sqrt{2\pi}}.
-\end{split}
-$$
-
-El valor de cada parámetro se obtiene al calcular la derivada parcial con respecto al parámetro de interés, entonces se resuelven $d$ derivadas parciales para cada uno de los coeficientes $\mathbf w$. En este proceso se observa que el término $N \log \frac{1}{\sigma \sqrt{2\pi}}$ no depende de $\mathbf w$ entonces no afecta el máximo siendo una constante en el proceso de derivación y por lo tanto se desprecia. Lo mismo pasa para la constante $\frac{1}{2\sigma^2}$. Una vez obtenidos los parámetros $\mathcal w$ se obtiene el valor $\sigma.$ 
-
-Una manera equivalente de plantear este problema es como un problema de álgebra lineal, donde se tiene una matriz de observaciones $X$ que se construyen con las variables $\mathbf x$ de $\mathcal X,$ donde cada renglón de $X$ es una observación, y el vector dependiente $\mathbf y$ donde cada elemento es la respuesta correspondiente a la observación.
-
-Viéndolo como un problema de álgebra lineal lo que se tiene es 
-
-$$
-X \mathbf w = \mathbf y,
-$$
-
-donde para identificar $\mathbf w$ se puede realizar lo siguiente
-
-$$
-X^\intercal X \mathbf w = X^\intercal \mathbf y.
-$$
-
-Despejando $\mathbf w$ se tiene
-
-$$
-\mathbf w = (X^\intercal X)^{-1} X^\intercal \mathbf y.
-$$
-
-Previamente se ha presentado el error estándar de cada parámetro que se ha estimado, en caso de la regresión el error estándar (@sec-error-estandar-ols) de $\mathcal w_j$ es $\sigma \sqrt{(X^\intercal X)^{-1}_{jj}}.$
-
-### Ejemplo: Diabetes {#sec-diabetes}
-
-Esta sección ilustra el proceso de resolver un problema de regresión utilizando OLS. El problema a resolver se obtiene mediante la función `load_diabetes` de la siguiente manera
-
-```{python}
-#| echo: True
-X, y = load_diabetes(return_X_y=True)
-```
-
-El siguiente paso es generar los conjuntos de entrenamiento y prueba (@sec-conjunto-entre-prueba)
-
-```{python}
-#| echo: true
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2,
-                                  random_state=seed)
-```
-
-Con el conjunto de entrenamiento `T` y `y_t` se estiman los parámetros de la regresión lineal tal y como se muestra a continuación
-
-```{python}
-#| echo: true
-m = LinearRegression().fit(T, y_t)
-```
-
-```{python}
-#| echo: false
-w_f = ', '.join([f'{v:0.2f}' for v in m.coef_[:3]])
-w_f = Markdown(f'$\\mathbf w=[{w_f}, \\ldots]$')
-w_0 = Markdown(f'$w_0={m.intercept_:0.2f}$')
-```
-
-Los primeros tres coeficientes de la regresión lineal son `{python} w_f` y `{python} w_0` los cuales se encuentran en las siguientes variables
-
-```{python}
-#| echo: true
-w = m.coef_
-w_0 = m.intercept_
-```
-
-La pregunta es si estos coeficientes son estadísticamente diferentes de cero, esto se puede conocer calculando el error estándar de cada coeficiente. Para lo cual se requiere estimar $\sigma$ que corresponde a la desviación estándar del error tal y como se muestra en las siguientes instrucciones.
-
-```{python}
-#| echo: true
-error = y_t - m.predict(T)
-std_error = np.std(error)
-```
-
-El error estándar de $\mathbf w$ es 
-
-```{python}
-#| echo: true
-diag = np.arange(T.shape[1])
-_ = np.sqrt((np.dot(T.T, T)**(-1))[diag, diag])
-se = std_error * _
-```
-
-```{python}
-#| echo: false
-se_f = ', '.join([f'{v:0.2f}' for v in (w / se)[:3]])
-se_f = Markdown(f'$[{se_f}, \\ldots]$')
-```
-
-y para saber si los coeficientes son significativamente diferentes de cero se calcula el cociente `m.coef_` entre `se`; teniendo los siguientes valores `{python} se_f`, para las tres primeras componentes. Se observa que hay varios coeficientes con valor absoluto menor que 2, lo cual significa que esas variables tienen un coeficiente que estadísticamente no es diferente de cero. 
-
-La predicción del conjunto de prueba se puede realizar con la siguiente instrucción
-
-```{python}
-#| echo: true
-hy = m.predict(G)
-```
-
-Finalmente, la @fig-regresion-lineal-scatter muestra las predicciones contra las mediciones reales. También se incluye la línea que ilustra el modelo ideal. 
-
-```{python}
-#| label: fig-regresion-lineal-scatter
-#| fig-cap: Regresión Lineal
-#| code-fold: true
-sns.scatterplot(x=hy, y=y_g)
-_min = min(y_g.min(), hy.min())
-_max = max(y_g.max(), hy.max())
-sns.set_style('whitegrid')
-fig = sns.lineplot(x=[_min, _max], y=[_min, _max])
-```
-
-Complementando el ejemplo anterior, se realiza un modelo que primero elimina las variables que no son estadísticamente diferentes de cero (primera línea) y después crea nuevas variables al incluir el cuadrado, ver las líneas dos y tres del siguiente código. 
-
-```{python}
-#| echo: true
-mask = np.fabs(m.coef_ / se) >= 2
-T2 = np.concatenate((T[:, mask], T[:, mask]**2), axis=1)
-G2 = np.concatenate((G[:, mask], G[:, mask]**2), axis=1)
-```
-
-Se observa que la identificación de los coeficientes $\mathbf w$ sigue siendo lineal aun y cuando la representación ya no es lineal por incluir el cuadrado. Siguiendo los pasos descritos previamente, se inicializa el modelo y después se realiza la predicción.
-
-```{python}
-#| echo: true
-m2 = LinearRegression().fit(T2, y_t)
-hy2 = m2.predict(G2)
-```
-
-```{python}
-#| echo: false
-diff_f = Markdown(f'${((y_g - hy2)**2).mean() -  ((y_g - hy)**2).mean():0.4f}$')
-```
-
-En este momento se compara si la diferencia entre el error cuadrático medio, del primer y segundo modelo, la diferencia es `{python} diff_f` indicando que el primer modelo es mejor. 
-
-```python
-diff = ((y_g - hy2)**2).mean() -  ((y_g - hy)**2).mean()
-```
-
-Para comprobar si esta diferencia es significativa se calcula el error estándar, utilizando bootstrap (@sec-bootstrap) tal y como se muestra a continuación. 
-
-```{python}
-#| echo: true
-S = np.random.randint(y_g.shape[0],
-                      size=(500, y_g.shape[0]))
-B = [((y_g[s] - hy2[s])**2).mean() -
-      ((y_g[s] - hy[s])**2).mean()
-     for s in S]
-se = np.std(B, axis=0)
-```
-
-```{python}
-#| echo: false
-dist = norm(loc=diff, scale=se)
-p_value = dist.cdf(0)
-p_value = Markdown(f'${p_value:0.4f}$')
-```
-
-Finalmente, se calcula el área bajo la curva a la izquierda del cero, teniendo un valor de `{python} p_value` lo cual indica que los dos modelos son similares. En este caso se prefiere el modelo más simple porque se observa que incluir el cuadrado de las variables no contribuye a generar un mejor modelo. El área bajo la curva se calcula con el siguiente código. 
-
-```{python}
-#| echo: true
-dist = norm(loc=diff, scale=se)
-p_value = dist.cdf(0)
-```
-
-::: {.callout-note}
-
-Utilizando la librería `CompStats` se puede hacer una comparación del rendimiento de la regresión lineal utilizando todas las variables y solo aquellas que son estadísticamente significantes, tal y como se muestra en la @fig-rendimiento-ols-compstats
-
-```{python}
-#| echo: true
-#| fig-cap: Rendimiento entre modelo con variables originales y selección de variables.
-#| label: fig-rendimiento-ols-compstats
-
-mse = mean_squared_error(y_g, hy, name='Completo')
-mse(hy2, name='Reducido')
-mse.plot(comp_legend='Comparación',
-         winner_legend='Mejor',
-         tie_legend='Equivalente',
-         loser_legend='Diferente',
-         alg_legend='Algoritmo',
-         var_name='Rendimiento')
-```
-:::
-
-### Optimización 
-
-Otra manera de ver el problema de regresión es como un problema de optimización, tal y como se muestra en @eq-min-l2; cabe resaltar que el problema mostrado en @eq-min-l2 tiene una solución analítica y no es necesario utilizar un sistema de optimización. 
-
-$$
-\min \mid\mid \mathbf y - (X \mathbf w + w_0) \mid\mid_2 
-$$ {#eq-min-l2}
-
-donde $X$ corresponde a las observaciones en el conjunto de entrenamiento y $\mathbf y$ es el valor medido; con esta información y la librería [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy), el problema de la @eq-min-l2 se puede codificar con los siguientes pasos. En primer lugar se crean las variables del problema de optimización, i.e., $\mathbf w$ y $w_0$.
-
-```{python}
-#| echo: true
-w = cp.Variable(T.shape[1])
-w0 = cp.Variable(1)
-```
-
-La función objetivo se genera, con la función `cp.norm` como se muestra a continuación
-
-```{python}
-#| echo: true
-norm = cp.norm(y_t - (T@w + w0), 2)
-```
-
-Las últimas instrucciones corresponden a indicar que se desea minimizar la función objetivo, construir el problema de optimización e introducir el problema al optimizador tal y como se observa en el siguiente código. 
-
-```{python}
-#| echo: true
-obj = cp.Minimize(norm)
-prob = cp.Problem(obj)
-valor = prob.solve()
-```
-
-Habiendo descrito el uso de la norma $L_2$ la cual tiene una solución analítica es cuestión de cambiar el parámetro en la función `cp.norm` para estimar los coeficientes $\mathbf w$ y $w_0$ usando la norma $L_1$, como se muestra en las siguientes instrucciones. 
-
-
-```{python}
-#| echo: true
-norm = cp.norm(y_t - (T@w + w0), 1)
-obj = cp.Minimize(norm)
-prob = cp.Problem(obj)
-valor = prob.solve()
-```
-
-La @fig-rendimiento-ols-l1-l2 muestra el rendimiento del uso de la norma $L_2$ (Completo), la norma $L_1$ y el modelo que se obtiene quitando aquellos elementos que son estadísticamente equivalentes a cero. 
-
-```{python}
-#| echo: true
-#| fig-cap: Rendimiento entre modelo con variables originales, con la norma $L_1$ y selección de variables.
-#| label: fig-rendimiento-ols-l1-l2
-
-mse(G @ w.value + w0.value, name='L1')
-mse.plot(comp_legend='Comparación',
-         winner_legend='Mejor',
-         tie_legend='Equivalente',
-         loser_legend='Diferente',
-         alg_legend='Algoritmo',
-         var_name='Rendimiento')
-```
-
-Tener el problema de regresión como un problema de optimización, permite incluir de manera eficiente restricciones que pueden mejorar el rendimiento del regresor. Por ejemplo se podría restringir la norma de los coeficientes i.e., $\mathbf w$ para que sea menor que un parámetro, tal y como se muestra en la @eq-min-restricciones donde la norma $L_1$ de los coeficientes debe de ser menor al parámetro $\gamma$. 
-
-$$
-\begin{split}
-\min & \mid\mid \mathbf y - (X \mathbf w + w_0) \mid\mid_2 \\
-\text{sujeto a} & \\
-& \mid \mid \mathbf w \mid \mid_1 \leq \gamma \\
-\end{split}
-$$ {#eq-min-restricciones}
-
-El siguiente código muestra las instrucciones para codificar y resolver el problema descrito en la @eq-min-restricciones utilizando [CVXPY](https://www.cvxpy.org/index.html) (@cvxpy). La primera instrucción genera el parámetro $\gamma$ con el valor $1500$ (segunda línea), el resto de las líneas se han visto previamente, la única diferencia es la restricción $\mid\mid \mathbf w \mid\mid_1 \leq \gamma$ que se observa en la penúltima línea. 
-
-```{python}
-#| echo: true
-gamma = cp.Parameter()
-gamma.value = 1500
-norm = cp.norm(y_t - (T@w + w0), 2)
-obj = cp.Minimize(norm)
-prob = cp.Problem(obj, [cp.norm(w, 1) <= gamma])
-value = prob.solve()
-```
-
-Se decidió utilizar la norma $L_1$ en la restricción porque esa norma hace que algunos de los coeficientes estimados sean cero o muy cercanos a cero, por ejemplo con el valor de $\gamma$ seleccionado se tienen `{python} (np.fabs(w.value)<1e-5).sum()` coeficientes menores que $10^{-5}$. En el siguiente código, la primera línea reemplaza los coeficientes cercanos a cero por ese valor y se genera la figura que presenta el rendimiento de los sistemas evaluados.
-
-```{python}
-#| echo: true
-#| fig-cap: Rendimiento entre diferentes modelos.
-#| label: fig-rendimiento-ols-l1-l2-gamma 
-w.value[np.fabs(w.value)<1e-5] = 0
-mse(G @ w.value + w0.value, name=f'gamma').plot(
-    comp_legend='Comparación',
-    winner_legend='Mejor',
-    tie_legend='Equivalente',
-    loser_legend='Diferente',
-    alg_legend='Algoritmo',
-    var_name='Rendimiento')
-```
-
-En la @fig-rendimiento-ols-l1-l2-gamma se observa que el mejor rendimiento se obtiene con el sistema donde los coeficientes son seleccionados con la restricción de la norma $L_1$, aunque cabe mencionar que todos los sistemas son estadísticamente equivalentes entre sí. 

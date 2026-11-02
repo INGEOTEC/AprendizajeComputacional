@@ -31,7 +31,7 @@ quarto preview                                         # live preview while edit
 
 ## Data (release `datos-v1`)
 
-The processed public-policy datasets of the appendix (`capitulos/20ConjuntosDatos.qmd`) are not in the repo: they are assets of the GitHub release `datos-v1`, and the appendix reads them from the release URL (`pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/<file>')`). Rendering that chapter locally therefore needs network; CI does not, since it publishes from `_freeze/`. `scripts/datos/` has the scripts that generate the files (see its README). For a new version of the data create a new release (`datos-v2`) instead of overwriting `datos-v1`.
+The processed public-policy datasets of the appendix (`capitulos/20ConjuntosDatos.qmd`) are not in the repo: they are assets of the GitHub release `datos-v1`, and the appendix and the regression chapter (`capitulos/03Regresion.qmd`) read them from the release URL (`pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/<file>')`). Rendering those two chapters locally therefore needs network; CI does not, since it publishes from `_freeze/`. `scripts/datos/` has the scripts that generate the files (see its README). For a new version of the data create a new release (`datos-v2`) instead of overwriting `datos-v1`.
 
 ## Branching
 
@@ -50,7 +50,7 @@ Every chapter in `capitulos/` follows the same skeleton; new sections or chapter
 7. Todo lo que el lector ve debe poder ejecutarse por sí solo: toda variable usada en un chunk mostrado se define en un chunk mostrado anterior (los imports y constantes como `PALETTE` van en el chunk visible de `## Paquetes usados`). Los chunks `echo: false` son solo para `Markdown(...)`, estilos y cálculos que alimentan texto en línea. `scripts/check_visible.py` lo comprueba: extrae los chunks visibles, los concatena y los ejecuta (no forma parte de `test_command` ni de CI; correrlo a mano al editar un capítulo).
 8. Cross-references use `@sec-...` across chapters (58 distinct anchors exist, so renaming a `{#sec-...}` id requires grepping all of `capitulos/`). Citations are `@bibkey` from `references.bib`; the bibliography renders in `18Referencias.qmd`.
 
-Chapter order and the appendix split live only in `_quarto.yml` (`book.chapters` / `book.appendices`). File numbers are deliberately sparse: 03, 15, 16, 17 and 21 are reserved for planned chapters (regression and regularization, etc.), so a gap in the numbering is intentional and does not affect Quarto, which numbers chapters by their position in `_quarto.yml`. The current edition is oriented to the METPOL course (CIDE), so the Introduction frames the book around public-policy problems. `capitulos/22Codigo.qmd` exists but is **not** listed there, so it is not rendered.
+Chapter order and the appendix split live only in `_quarto.yml` (`book.chapters` / `book.appendices`). File numbers are deliberately sparse: 15, 16, 17 and 21 are reserved for planned chapters (interpretability, causal inference, text, etc.; `03Regresion.qmd` already exists), so a gap in the numbering is intentional and does not affect Quarto, which numbers chapters by their position in `_quarto.yml`. The current edition is oriented to the METPOL course (CIDE), so the Introduction frames the book around public-policy problems. `capitulos/22Codigo.qmd` exists but is **not** listed there, so it is not rendered.
 
 ## Spell checking
 
