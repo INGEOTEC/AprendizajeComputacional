@@ -19,12 +19,12 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import seaborn as sns
+PALETTE = mpl.cm.Paired
 ```
 
 ```{python}
 #| echo: false
 from IPython.display import Markdown
-PALETTE = mpl.cm.Paired
 sns.set_style('whitegrid')
 ```
 
@@ -456,7 +456,7 @@ low_dim = pca.transform(D)
 df = pd.DataFrame(low_dim, columns=['x', 'y'])
 df['Clase'] = y
 fig = sns.relplot(df, kind='scatter', 
-                  legend='full',  # palette=pal,
+                  legend='full',
                    x='x', y='y', hue='Clase')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
@@ -508,7 +508,6 @@ D, y = load_digits(return_X_y=True)
 #| fig-cap: Proyección mediante UMAP del problema de Dígitos con ocho vecinos.
 #| label: fig-conjunto-datos-digits
 #| code-fold: true
-pal = mpl.cm.Paired
 reducer = umap.UMAP(n_neighbors=8)
 D = StandardScaler().fit_transform(D)
 low_dim = reducer.fit_transform(D)
@@ -536,7 +535,6 @@ D, y = load_wine(return_X_y=True)
 #| fig-cap: Proyección mediante PCA del problema del Vino.
 #| label: fig-conjunto-datos-wine
 #| code-fold: true
-pal = mpl.cm.Paired
 D = StandardScaler().fit_transform(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 low_dim = pca.transform(D)
