@@ -13,6 +13,7 @@ from sklearn.feature_selection import f_regression, SelectKBest,\
                                       SequentialFeatureSelector,\
                                       SelectFromModel
 from sklearn.metrics import r2_score as r2
+from CompStats.metrics import r2_score
 import numpy as np
 import pandas as pd
 from matplotlib import pylab as plt
@@ -33,7 +34,7 @@ sns.set_style('whitegrid')
 
 Lasso (@sec-lasso) selecciona variables al mismo tiempo que ajusta el modelo, y el modelo reducido (@sec-regresion-ols-reducido) quitó las variables cuyo estadístico $t$ era pequeño. Este capítulo presenta los procedimientos clásicos de selección, que son los filtros basados en estadísticas, la búsqueda hacia adelante y hacia atrás, y la selección mediante un modelo, y los compara con lo que eligió Lasso.
 
-Todos parten de la idea de que existen variables que no contribuyen a la solución o cuyo aporte ya está dado por otras. Esto trae como consecuencia, en el mejor de los casos, un mayor costo computacional o de recolección y, en uno menos afortunado, un modelo con un rendimiento menor al que se hubiera obtenido seleccionando las variables.
+Todos parten de la idea de que existen variables que no contribuyen a la solución o cuyo aporte ya está dado por otras, y una introducción general a estos procedimientos es @guyon2003introduction. Esto trae como consecuencia, en el mejor de los casos, un mayor costo computacional o de recolección y, en uno menos afortunado, un modelo con un rendimiento menor al que se hubiera obtenido seleccionando las variables.
 
 Los datos son los de Abandono Escolar y la preparación es la misma que en la @sec-regresion-datos, por lo que no se vuelve a explicar. El siguiente código lee los datos, codifica las variables categóricas, separa los conjuntos de entrenamiento y prueba con el mismo `random_state` y estandariza con $\mathcal T$.
 
@@ -217,4 +218,120 @@ ax.plot(perf_sel.numero, perf_sel.r2)
 _ = ax.set(xlabel='Número de variables', ylabel='$R^2$ de validación')
 ```
 
-Los procedimientos de este capítulo comparten una idea que se retoma en la @sec-regresion-focalizacion. Cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política.
+### Ventajas y Limitaciones
+
+Una vez entrenado el modelo, la selección es barata, pues solo ordena las variables por la magnitud de sus coeficientes y no requiere ajustar un modelo por cada subconjunto, como lo hacen la selección hacia adelante y hacia atrás. La desventaja es que el orden depende del modelo y de la escala de las variables, que en este capítulo son comparables porque se estandarizaron con $\mathcal T$. Además, los coeficientes de un modelo lineal no capturan las interacciones entre variables, y cuando dos variables están correlacionadas el modelo reparte el coeficiente entre ellas de una manera que depende de la muestra.
+
+## Comparación de los Procedimientos {#sec-seleccion-comparacion}
+
+Hasta aquí cada procedimiento se evaluó con validación cruzada dentro de $\mathcal T$. Para compararlos entre sí y con Lasso, el conjunto de prueba $\mathcal G$ (@sec-conjunto-entre-prueba), que no se ha usado, mide qué tan bien predice cada subconjunto. El siguiente código reúne los subconjuntos de variables, que son las diez de `SelectKBest`, las diez de la selección hacia adelante, las que elige `SelectFromModel` con el número de variables que maximizó el rendimiento en la @fig-seleccion-por-modelo y las que conserva Lasso con `lambda_opt`. A cada uno se le ajusta una regresión lineal en $\mathcal T$ y se mide el $R^2$ en $\mathcal G$. Como referencia se incluye el modelo con todas las variables.
+
+```{python}
+#| echo: true
+mejor_dim = int(perf_sel.numero[perf_sel.r2.idxmax()])
+modelo_opt = SelectFromModel(lasso_opt, max_features=mejor_dim,
+                             threshold=-np.inf, prefit=True)
+subconjuntos = {'Estadísticas': seleccionadas,
+                'Adelante': adelante,
+                'Modelo': columnas[modelo_opt.get_support()],
+                'Lasso': columnas[lasso_cv.coef_ != 0],
+                'Todas': columnas}
+r2_comp = None
+resumen = []
+for nombre, variables in subconjuntos.items():
+    mascara = columnas.isin(variables)
+    hy_g = LinearRegression().fit(T[:, mascara], y_t).predict(G[:, mascara])
+    resumen.append(dict(procedimiento=nombre, variables=int(mascara.sum()),
+                        r2=r2(y_g, hy_g)))
+    if r2_comp is None:
+        r2_comp = r2_score(y_g, hy_g, name=nombre, use_tqdm=False)
+    else:
+        r2_comp(hy_g, name=nombre)
+resumen = pd.DataFrame(resumen)
+```
+
+```{python}
+#| echo: false
+#| label: tbl-seleccion-comparacion
+#| tbl-cap: Número de variables y $R^2$ en el conjunto de prueba de la regresión lineal ajustada con las variables que selecciona cada procedimiento.
+filas = '\n'.join(f'|{r.procedimiento}|${r.variables}$|${r.r2:0.4f}$|'
+                  for r in resumen.itertuples())
+Markdown('|Procedimiento|Variables|$R^2$|\n|---|---|---|\n' + filas)
+```
+
+```{python}
+#| echo: false
+res = resumen.set_index('procedimiento')
+n_est_f = Markdown(f"${res.loc['Estadísticas', 'variables']}$")
+n_ade_f = Markdown(f"${res.loc['Adelante', 'variables']}$")
+n_mod_f = Markdown(f"${res.loc['Modelo', 'variables']}$")
+n_las_f = Markdown(f"${res.loc['Lasso', 'variables']}$")
+r2_est_f = Markdown(f"${res.loc['Estadísticas', 'r2']:0.4f}$")
+r2_ade_f = Markdown(f"${res.loc['Adelante', 'r2']:0.4f}$")
+r2_mod_f = Markdown(f"${res.loc['Modelo', 'r2']:0.4f}$")
+r2_las_f = Markdown(f"${res.loc['Lasso', 'r2']:0.4f}$")
+r2_tod_f = Markdown(f"${res.loc['Todas', 'r2']:0.4f}$")
+```
+
+La @tbl-seleccion-comparacion presenta el número de variables y el $R^2$ de cada procedimiento. La selección basada en estadísticas usa `{python} n_est_f` variables y alcanza un $R^2$ de `{python} r2_est_f`, la selección hacia adelante usa `{python} n_ade_f` y alcanza `{python} r2_ade_f`, `SelectFromModel` usa `{python} n_mod_f` y alcanza `{python} r2_mod_f` y Lasso usa `{python} n_las_f` y alcanza `{python} r2_las_f`. Con todas las variables el $R^2$ es `{python} r2_tod_f`. La @fig-seleccion-comparacion muestra los mismos valores con su intervalo de confianza obtenido con bootstrap y señala los procedimientos cuya diferencia con el mejor es estadísticamente significativa.
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento ($R^2$) en el conjunto de prueba de la regresión lineal ajustada con las variables que selecciona cada procedimiento.
+#| label: fig-seleccion-comparacion
+r2_comp.plot(comp_legend='Comparación', winner_legend='Mejor',
+             tie_legend='Equivalente', loser_legend='Diferente',
+             alg_legend='Algoritmo', var_name='Rendimiento')
+```
+
+Falta saber si los procedimientos eligen las mismas variables. La @tbl-seleccion-comparte cuenta, para cada par de procedimientos, cuántas variables comparten, de manera que la diagonal es el número de variables que selecciona cada uno.
+
+```{python}
+#| echo: true
+nombres = ['Estadísticas', 'Adelante', 'Modelo', 'Lasso']
+comparten = pd.DataFrame([[len(set(subconjuntos[a]) & set(subconjuntos[b]))
+                           for b in nombres] for a in nombres],
+                         index=nombres, columns=nombres)
+en_todos = set.intersection(*[set(subconjuntos[n]) for n in nombres])
+```
+
+```{python}
+#| echo: false
+#| label: tbl-seleccion-comparte
+#| tbl-cap: Número de variables que comparten los subconjuntos que selecciona cada procedimiento.
+filas = '\n'.join(f'|{n}|' + '|'.join(f'${v}$' for v in comparten.loc[n]) + '|'
+                  for n in nombres)
+Markdown('||' + '|'.join(nombres) + '|\n|---|' + '---|' * len(nombres)
+         + '\n' + filas)
+```
+
+```{python}
+#| echo: false
+n_todos_f = Markdown(f'${len(en_todos)}$')
+todos_f = Markdown(', '.join(f'`{c}`' for c in sorted(en_todos)))
+comp_ade_est_f = Markdown(f'${comparten.loc["Adelante", "Estadísticas"]}$')
+comp_mod_las_f = Markdown(f'${comparten.loc["Modelo", "Lasso"]}$')
+dif_ade_est_f = Markdown(f"${res.loc['Adelante', 'r2'] - res.loc['Estadísticas', 'r2']:0.4f}$")
+perdida_ade_f = Markdown(f"${res.loc['Todas', 'r2'] - res.loc['Adelante', 'r2']:0.4f}$")
+perdida_est_f = Markdown(f"${res.loc['Todas', 'r2'] - res.loc['Estadísticas', 'r2']:0.4f}$")
+```
+
+Los subconjuntos de diez variables pierden rendimiento frente al modelo con todas. La selección basada en estadísticas pierde `{python} perdida_est_f` de $R^2$ y la selección hacia adelante `{python} perdida_ade_f`, y la @fig-seleccion-comparacion marca a ambas como diferentes del mejor. Con el mismo número de variables, la selección hacia adelante supera por `{python} dif_ade_est_f` a la basada en estadísticas porque evalúa el modelo y no cada variable por separado. En cambio, `SelectFromModel` y Lasso, que conservan más variables, igualan el rendimiento del modelo con todas. De las `{python} n_mod_f` variables que elige `SelectFromModel`, `{python} comp_mod_las_f` están entre las `{python} n_las_f` que conserva Lasso, pues ordena los coeficientes del mismo modelo.
+
+La @tbl-seleccion-comparte muestra que los procedimientos eligen subconjuntos distintos. La selección hacia adelante y la basada en estadísticas, ambas de diez variables, comparten solo `{python} comp_ade_est_f`, y las variables que eligen los cuatro procedimientos son `{python} todos_f`, un total de `{python} n_todos_f`. Es la misma lección del efecto Rashomon de @sec-coeficientes-regularizados, pues subconjuntos distintos pueden tener un rendimiento similar. Con muchos datos y pocas variables, como aquí, la ganancia de seleccionar es tener un modelo con menos variables que recabar y no un mejor $R^2$.
+
+Esa es la idea de la @sec-regresion-focalizacion. Cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política, y la @tbl-seleccion-comparacion muestra el precio de reducir el modelo a diez variables. Como el subconjunto seleccionado cambia con la muestra (@fig-lasso-estabilidad), conviene verificar que la conclusión no depende de una sola partición antes de pedir a un programa que recabe un conjunto específico de variables.
+
+## Actividades {.unnumbered}
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Repita la comparación de procedimientos con el conjunto de Territorio (@sec-datos-territorio). El objetivo es `grado_promedio_escolaridad` y se descartan `clave_ageb`, `municipio`, `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`. Conteste las siguientes preguntas. ¿Cuántas variables se necesitan para acercarse al $R^2$ que se obtiene con todas? ¿Los procedimientos coinciden en los sectores de establecimientos que seleccionan?
+:::
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Suponga que un programa de becas tiene que decidir qué información recabar en cada plantel, y que recabar cada variable tiene un costo distinto. Con los resultados de la @tbl-seleccion-comparacion escriba el párrafo de un *policy paper* que justifique qué subconjunto de variables usaría y por qué. Considere el número de variables, el $R^2$ en el conjunto de prueba y la estabilidad de la selección.
+:::
