@@ -274,14 +274,13 @@ $$
 Se toma el valor esperado de cada término usando la linealidad del valor esperado, y la constante $a$ sale del valor esperado,
 
 $$
-\mathbb E[(y - \hat f)^2] = a^2 + \mathbb E[b^2] + \mathbb E[\epsilon^2] + \underbrace{2a\,\mathbb E[b]}_{=0} + \underbrace{2a\,\mathbb E[\epsilon]}_{=0} + \underbrace{2\,\mathbb E[b\,\epsilon]}_{=0}.
+\begin{split}
+\mathbb E[(y - \hat f)^2] &= a^2 + \mathbb E[b^2] + \mathbb E[\epsilon^2] \\
+&\quad + \underbrace{\cancelto{0}{2a\,\mathbb E[b]}}_{\mathbb E[b]=0} + \underbrace{\cancelto{0}{2a\,\mathbb E[\epsilon]}}_{\mathbb E[\epsilon]=0} + \underbrace{\cancelto{0}{2\,\mathbb E[b\,\epsilon]}}_{\mathbb E[b]\,\mathbb E[\epsilon]=0}.
+\end{split}
 $$
 
-Cada término cruzado vale cero por una razón distinta:
-
-- $2a\,\mathbb E[b]$ vale cero porque $\mathbb E[b] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$
-- $2a\,\mathbb E[\epsilon]$ vale cero porque $\mathbb E[\epsilon]=0.$
-- $2\,\mathbb E[b\,\epsilon] = 2\,\mathbb E[b]\,\mathbb E[\epsilon]$ por independencia, y vale cero porque ambos valores esperados son cero.
+Los tres términos cruzados valen cero. El primero, porque $\mathbb E[b] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$ El segundo, porque $\mathbb E[\epsilon]=0$ por el supuesto del modelo. En el tercero, la independencia entre el conjunto de entrenamiento y el ruido de la observación nueva implica que $\mathbb E[b\,\epsilon] = \mathbb E[b]\,\mathbb E[\epsilon]$, y por eso también es cero.
 
 Quedan tres términos. El primero es $a^2 = (\mathbb E[\hat f] - f)^2$, el sesgo al cuadrado. El segundo es $\mathbb E[b^2] = \mathbb E[(\hat f - \mathbb E[\hat f])^2]$, la varianza de $\hat f$, y el signo de $b$ no importa porque se eleva al cuadrado. El tercero es $\mathbb E[\epsilon^2] = \mathbb V[\epsilon] + \mathbb E[\epsilon]^2 = \sigma^2 + 0 = \sigma^2$, por la definición de varianza, y es el ruido. Con esto se obtiene la @eq-sesgo-varianza.
 
