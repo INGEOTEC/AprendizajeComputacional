@@ -352,6 +352,7 @@ window.Quarto = {
   <li><a href="#sec-seleccion-lambda" id="toc-sec-seleccion-lambda" class="nav-link" data-scroll-target="#sec-seleccion-lambda"><span class="header-section-number">3.7</span> Selección de <span class="math inline">\(\lambda\)</span> por Validación Cruzada</a></li>
   <li><a href="#sec-coeficientes-regularizados" id="toc-sec-coeficientes-regularizados" class="nav-link" data-scroll-target="#sec-coeficientes-regularizados"><span class="header-section-number">3.8</span> Los Coeficientes no se Interpretan Causalmente</a></li>
   <li><a href="#sec-regresion-focalizacion" id="toc-sec-regresion-focalizacion" class="nav-link" data-scroll-target="#sec-regresion-focalizacion"><span class="header-section-number">3.9</span> Focalización: un Problema de Política de Predicción</a></li>
+  <li><a href="#sec-resumen-regresion" id="toc-sec-resumen-regresion" class="nav-link" data-scroll-target="#sec-resumen-regresion"><span class="header-section-number">3.10</span> Resumen</a></li>
   <li><a href="#actividades" id="toc-actividades" class="nav-link" data-scroll-target="#actividades">Actividades</a></li>
   </ul>
 </nav>
@@ -381,7 +382,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es evaluar la regresión lineal por su capacidad de predecir observaciones no vistas, comprender el compromiso entre sesgo y varianza, aplicar las regularizaciones Ridge, Lasso y Elastic Net seleccionando su hiperparámetro con validación cruzada y resolver un problema de política de predicción.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="94af358a" class="cell" data-execution_count="1">
+<div id="2a914b4f" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression, Ridge, Lasso,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                 ElasticNet, RidgeCV, LassoCV,<span class="op">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                 ElasticNetCV, LogisticRegression</span>
@@ -410,22 +411,22 @@ window.Quarto = {
 <section id="sec-regresion-datos" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="sec-regresion-datos"><span class="header-section-number">3.2</span> Datos: Abandono Escolar</h2>
 <p>Los datos son los de Educación, descritos en la ficha del apéndice (<a href="20ConjuntosDatos.html#sec-datos-educacion" class="quarto-xref"><span>Sección B.1.4</span></a>), y se leen directamente del release <code>datos-v1</code>.</p>
-<div id="dc23fe25" class="cell" data-execution_count="3">
+<div id="72161acd" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>educacion <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/sep_f911_educacion.csv.gz'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La columna <code>clave_cct</code> identifica al plantel y no es una variable predictora, por lo que se descarta junto con la variable que se quiere predecir. También se descartan las columnas constantes, que no aportan información y que hacen singular a la matriz <span class="math inline">\(X^\intercal X\)</span>. En lugar de listarlas a mano, se detectan con el siguiente código.</p>
-<div id="0f31ab49" class="cell" data-execution_count="4">
+<div id="77576684" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>constantes <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> educacion.columns <span class="cf">if</span> educacion[c].nunique() <span class="op">==</span> <span class="dv">1</span>]</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> educacion.drop(columns<span class="op">=</span>[<span class="st">'tasa_abandono'</span>, <span class="st">'clave_cct'</span>] <span class="op">+</span> constantes)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> educacion[<span class="st">'tasa_abandono'</span>].to_numpy()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Las columnas <code>laboratorios</code>, <code>talleres</code> son constantes. Por otro lado, la regresión necesita números y varias de las variables son texto (la entidad, el sostenimiento, el tipo de servicio, el turno y la organización de los docentes). Cada categoría se convierte en una variable indicadora que vale uno cuando el plantel pertenece a esa categoría y cero en otro caso (<em>one-hot</em>, o variables <em>dummy</em> en econometría). Por cada variable se omite una categoría de referencia, pues de lo contrario la suma de las indicadoras sería idéntica a la constante del modelo y la matriz <span class="math inline">\(X^\intercal X\)</span> no tendría inversa.</p>
-<div id="2bcc6884" class="cell" data-execution_count="6">
+<div id="30eae775" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pd.get_dummies(X, drop_first<span class="op">=</span><span class="va">True</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>columnas <span class="op">=</span> X.columns</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La matriz de diseño tiene <span class="math inline">\(N=\)</span> <span class="math inline">\(26689\)</span> renglones y <span class="math inline">\(d=\)</span> <span class="math inline">\(56\)</span> columnas. El siguiente paso es separar el conjunto de entrenamiento <span class="math inline">\(\mathcal T\)</span> del de prueba <span class="math inline">\(\mathcal G\)</span> (<a href="02Rendimiento.html#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 2.2</span></a>) y estandarizar las columnas para que tengan media cero y desviación estándar uno. La estandarización utiliza estadísticas de los datos, por lo que se ajusta solamente con <span class="math inline">\(\mathcal T\)</span> y después se aplica a <span class="math inline">\(\mathcal G\)</span>. Si se ajustara con todos los datos, información del conjunto de prueba influiría en el entrenamiento. La codificación de las categorías, en cambio, no aprende nada de <span class="math inline">\(y\)</span>, y por eso se puede hacer antes de separar los datos y así garantizar las mismas columnas en ambos conjuntos.</p>
-<div id="669bc1da" class="cell" data-execution_count="8">
+<div id="23d361cc" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X.to_numpy(), y, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>escala <span class="op">=</span> StandardScaler().fit(T)</span>
@@ -470,14 +471,14 @@ X^\intercal X \mathbf w = X^\intercal \mathbf y.
 <section id="sec-regresion-ols-ejemplo" class="level3" data-number="3.3.1">
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="sec-regresion-ols-ejemplo"><span class="header-section-number">3.3.1</span> Ejemplo: Abandono Escolar</h3>
 <p>Con el conjunto de entrenamiento <code>T</code> y <code>y_t</code> se estiman los parámetros de la regresión lineal, tal y como se muestra a continuación.</p>
-<div id="83e6a07d" class="cell" data-execution_count="9">
+<div id="5f0b914e" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> LinearRegression().fit(T, y_t)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> m.coef_</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>w_0 <span class="op">=</span> m.intercept_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Los tres coeficientes con mayor valor absoluto corresponden a las variables <code>tipo_sostenimiento_federal transferido</code> (<span class="math inline">\(2.22\)</span>), <code>turno_vespertino</code> (<span class="math inline">\(1.70\)</span>), <code>tipo_sostenimiento_federal transferido-estatal</code> (<span class="math inline">\(1.49\)</span>), y el término independiente es <span class="math inline">\(w_0=6.86\)</span>. Como todas las columnas están estandarizadas, <span class="math inline">\(w_0\)</span> es la media de <code>y_t</code>, que vale <span class="math inline">\(6.86\)</span>. Es decir, un plantel promedio en todas las variables tiene la tasa de abandono promedio.</p>
 <p>Siguiendo la costumbre de la econometría, la pregunta es si estos coeficientes son estadísticamente distintos de cero. Para contestarla se estima <span class="math inline">\(\sigma\)</span> como la desviación estándar del error y el error estándar de cada coeficiente se calcula con la inversa de la matriz <span class="math inline">\(X^\intercal X\)</span>, para lo cual se utiliza la pseudoinversa (<code>np.linalg.pinv</code>) por estabilidad numérica.</p>
-<div id="77be49c4" class="cell" data-execution_count="11">
+<div id="520f9d8a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> y_t <span class="op">-</span> m.predict(T)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> np.std(error)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> sigma <span class="op">*</span> np.sqrt(np.diag(np.linalg.pinv(T.T <span class="op">@</span> T)))</span>
@@ -485,11 +486,11 @@ X^\intercal X \mathbf w = X^\intercal \mathbf y.
 </div>
 <p>El cociente <code>t</code> es el estadístico <span class="math inline">\(t\)</span> de cada coeficiente. Un total de <span class="math inline">\(22\)</span> de los <span class="math inline">\(56\)</span> coeficientes tienen un valor absoluto menor que <span class="math inline">\(2\)</span>, es decir, no son estadísticamente distintos de cero. En econometría esto llevaría a reespecificar el modelo. Aquí interesa saber si quitar esas variables <strong>mejora la predicción</strong>.</p>
 <p>La predicción del conjunto de prueba y su rendimiento, medido con <span class="math inline">\(R^2\)</span> (<a href="02Rendimiento.html#eq-r2" class="quarto-xref">Ecuación&nbsp;<span>2.7</span></a>), se obtienen con las siguientes instrucciones. La función <code>r2_score</code> de <code>CompStats</code> regresa un objeto con el valor de la medida y su error estándar, calculado con bootstrap, lo cual permite comparar algoritmos más adelante.</p>
-<div id="701b9d92" class="cell" data-execution_count="13">
+<div id="8c5a72ff" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> m.predict(G)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>r2_ols <span class="op">=</span> r2_score(y_g, hy, name<span class="op">=</span><span class="st">'MCO'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El <span class="math inline">\(R^2\)</span> de MCO en el conjunto de prueba es <span class="math inline">\(0.1433\)</span>, con un error estándar de <span class="math inline">\(0.0186\)</span>. Es un valor bajo en términos absolutos, pues las características del plantel que registra el Formato 911 explican una parte pequeña de las diferencias en la tasa de abandono, lo cual es frecuente en problemas sociales. La <a href="#fig-regresion-lineal-scatter" class="quarto-xref">Figura&nbsp;<span>3.1</span></a> presenta las predicciones contra los valores reales, junto con la recta identidad que correspondería a un modelo sin error.</p>
+<p>El <span class="math inline">\(R^2\)</span> de MCO en el conjunto de prueba es <span class="math inline">\(0.1433\)</span>, con un error estándar de <span class="math inline">\(0.0185\)</span>. Es un valor bajo en términos absolutos, pues las características del plantel que registra el Formato 911 explican una parte pequeña de las diferencias en la tasa de abandono, lo cual es frecuente en problemas sociales. La <a href="#fig-regresion-lineal-scatter" class="quarto-xref">Figura&nbsp;<span>3.1</span></a> presenta las predicciones contra los valores reales, junto con la recta identidad que correspondería a un modelo sin error.</p>
 <div id="cell-fig-regresion-lineal-scatter" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Código</summary>
@@ -517,7 +518,7 @@ Figura&nbsp;3.1: Predicción de MCO contra la tasa de abandono observada en el c
 <section id="sec-regresion-ols-reducido" class="level3" data-number="3.3.2">
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="sec-regresion-ols-reducido"><span class="header-section-number">3.3.2</span> Modelo Reducido</h3>
 <p>Siguiendo la idea de la econometría, se estima un segundo modelo con las variables que sí son estadísticamente distintas de cero.</p>
-<div id="61515cd9" class="cell" data-execution_count="16">
+<div id="4517f24b" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> np.fabs(t) <span class="op">&gt;=</span> <span class="dv">2</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>m2 <span class="op">=</span> LinearRegression().fit(T[:, mask], y_t)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>hy2 <span class="op">=</span> m2.predict(G[:, mask])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -575,7 +576,7 @@ y - \hat f &amp;= f + \epsilon - \hat f \\
 <p>Quedan tres términos. El primero es <span class="math inline">\(a^2 = (\mathbb E[\hat f] - f)^2\)</span>, el sesgo al cuadrado. El segundo es <span class="math inline">\(\mathbb E[b^2] = \mathbb E[(\hat f - \mathbb E[\hat f])^2]\)</span>, la varianza de <span class="math inline">\(\hat f\)</span>, y el signo de <span class="math inline">\(b\)</span> no importa porque se eleva al cuadrado. El tercero es <span class="math inline">\(\mathbb E[\epsilon^2] = \mathbb V[\epsilon] + \mathbb E[\epsilon]^2 = \sigma^2 + 0 = \sigma^2\)</span>, por la definición de varianza, y es el ruido. Con esto se obtiene la <a href="#eq-sesgo-varianza" class="quarto-xref">Ecuación&nbsp;<span>3.1</span></a>.</p>
 <p>En palabras, un modelo rígido se equivoca de manera parecida en todas las muestras (sesgo), mientras que un modelo flexible cambia mucho de una muestra a otra (varianza). Es el mismo fenómeno que muestran la <a href="01Introduccion.html#fig-sobre-aprendizaje" class="quarto-xref">Figura&nbsp;<span>1.11</span></a> y la <a href="01Introduccion.html#fig-sub-aprendizaje" class="quarto-xref">Figura&nbsp;<span>1.12</span></a> de la Introducción.</p>
 <p>Solo en una simulación se conoce la función verdadera y se pueden repetir las muestras, por lo que el compromiso se ilustra con el problema sintético de regresión del apéndice, <span class="math inline">\(f(x) = \sin(x) + 0.3 \cos(3x)\)</span> (<a href="20ConjuntosDatos.html#fig-regresion-trascendental" class="quarto-xref">Figura&nbsp;<span>B.12</span></a>). Se generan <span class="math inline">\(100\)</span> muestras de <span class="math inline">\(30\)</span> puntos con ruido gaussiano de desviación estándar <span class="math inline">\(0.3\)</span> y en cada una se ajustan polinomios de grado <span class="math inline">\(1\)</span>, <span class="math inline">\(3\)</span> y <span class="math inline">\(12\)</span>, es decir, una regresión lineal sobre las variables <span class="math inline">\(x, x^2, \ldots, x^g\)</span>.</p>
-<div id="e72cb822" class="cell" data-execution_count="19">
+<div id="17a669b5" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">0</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>x_malla <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">200</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="kw">lambda</span> x: np.sin(x) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(<span class="dv">3</span> <span class="op">*</span> x)</span>
@@ -666,11 +667,11 @@ Tabla&nbsp;3.1: Sesgo al cuadrado y varianza promedio en la malla de <span class
 \min_{\mathbf w, w_0} \mid\mid \mathbf y - X\mathbf w - w_0 \mid\mid_2^2 + \lambda \mid\mid \mathbf w \mid\mid_2^2,
 \tag{3.2}\]</span></span></p>
 <p>donde <span class="math inline">\(\lambda \ge 0\)</span> controla cuánto se encogen los coeficientes hacia cero. Con <span class="math inline">\(\lambda = 0\)</span> se obtiene MCO. Esta función objetivo tiene solución cerrada, <span class="math inline">\(\mathbf w = (X^\intercal X + \lambda I)^{-1} X^\intercal \mathbf y\)</span> (cuando las columnas están centradas, que es el caso aquí, el término independiente es la media de <span class="math inline">\(\mathbf y\)</span>). La penalización depende de la escala de cada variable, pues un coeficiente de una variable medida en unidades pequeñas es grande y se penalizaría más. Por eso las variables se estandarizaron en la <a href="#sec-regresion-datos" class="quarto-xref"><span>Sección 3.2</span></a>. En scikit-learn el hiperparámetro <span class="math inline">\(\lambda\)</span> se llama <code>alpha</code>. En el texto se usa <span class="math inline">\(\lambda\)</span> y en el código <code>alpha</code>.</p>
-<div id="c4a533ad" class="cell" data-execution_count="22">
+<div id="75537908" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ridge <span class="op">=</span> Ridge(alpha<span class="op">=</span><span class="dv">10</span>).fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La norma <span class="math inline">\(L_2\)</span> de los coeficientes de MCO es <span class="math inline">\(4.8202\)</span> y la del modelo Ridge con <span class="math inline">\(\lambda=10\)</span> es <span class="math inline">\(3.4774\)</span>, es decir, los coeficientes se encogieron. La <a href="#fig-ridge-camino" class="quarto-xref">Figura&nbsp;<span>3.4</span></a> muestra cada uno de los coeficientes en función de <span class="math inline">\(\lambda\)</span>. Se omite la leyenda porque son demasiadas variables.</p>
-<div id="644f4ccc" class="cell" data-execution_count="24">
+<div id="86c86e30" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">50</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>caminos <span class="op">=</span> np.array([Ridge(alpha<span class="op">=</span>l).fit(T, y_t).coef_ <span class="cf">for</span> l <span class="kw">in</span> lambdas])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -704,11 +705,11 @@ Figura&nbsp;3.4: Coeficientes de Ridge en función de <span class="math inline">
 \min_{\mathbf w, w_0} \frac{1}{2N} \mid\mid \mathbf y - X\mathbf w - w_0 \mid\mid_2^2 + \lambda \mid\mid \mathbf w \mid\mid_1,
 \tag{3.3}\]</span></span></p>
 <p>donde se utiliza la normalización <span class="math inline">\(\frac{1}{2N}\)</span> porque es la que usa la clase <code>Lasso</code> de scikit-learn. La norma <span class="math inline">\(L_1\)</span> hace que algunos coeficientes sean <strong>exactamente cero</strong>, por lo que Lasso selecciona variables al mismo tiempo que ajusta el modelo. A diferencia de Ridge, no tiene una solución cerrada y se resuelve numéricamente, en scikit-learn por descenso por coordenadas (la idea general de la optimización numérica se presenta en <a href="08Optimizacion.html" class="quarto-xref"><span>Capítulo 9</span></a>).</p>
-<div id="d5f6d0ee" class="cell" data-execution_count="26">
+<div id="ca9ef7ec" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lasso <span class="op">=</span> Lasso(alpha<span class="op">=</span><span class="fl">0.5</span>).fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Con <span class="math inline">\(\lambda=0.5\)</span>, <span class="math inline">\(49\)</span> de los <span class="math inline">\(56\)</span> coeficientes son exactamente cero y las variables que sobreviven son <code>alumnos</code>, <code>pct_primer_grado</code>, <code>entidad_Michoacán</code>, <code>entidad_Oaxaca</code>, <code>tipo_servicio_general</code>, <code>turno_matutino</code>, <code>organizacion_docentes_multigrado</code>. La <a href="#fig-lasso-camino" class="quarto-xref">Figura&nbsp;<span>3.5</span></a> muestra el camino de los coeficientes, y la <a href="#fig-lasso-numero-variables" class="quarto-xref">Figura&nbsp;<span>3.6</span></a> el número de coeficientes distintos de cero en función de <span class="math inline">\(\lambda\)</span>.</p>
-<div id="ae52216a" class="cell" data-execution_count="28">
+<div id="4f32fe63" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">50</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>caminos <span class="op">=</span> np.array([Lasso(alpha<span class="op">=</span>l, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t).coef_</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> l <span class="kw">in</span> lambdas])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -776,7 +777,7 @@ Figura&nbsp;3.6: Número de coeficientes distintos de cero de Lasso en función 
 \end{split}
 \tag{3.4}\]</span></span></p>
 <p>Tener el problema como uno de optimización permite incluir de manera eficiente otras restricciones. El siguiente código codifica y resuelve el problema de la <a href="#eq-min-restricciones" class="quarto-xref">Ecuación&nbsp;<span>3.4</span></a> con la librería <a href="https://www.cvxpy.org/index.html">CVXPY</a> (<span class="citation" data-cites="cvxpy">Diamond y Boyd (<a href="18Referencias.html#ref-cvxpy" role="doc-biblioref">2016</a>)</span>). Para que el solver resuelva el problema en poco tiempo se utiliza una submuestra de <span class="math inline">\(2\,000\)</span> renglones de <span class="math inline">\(\mathcal T\)</span>.</p>
-<div id="3b0b8529" class="cell" data-execution_count="31">
+<div id="5e671533" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sub <span class="op">=</span> rng.choice(T.shape[<span class="dv">0</span>], size<span class="op">=</span><span class="dv">2000</span>, replace<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>T_sub, y_sub <span class="op">=</span> T[sub], y_t[sub]</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>w_cp <span class="op">=</span> cp.Variable(T.shape[<span class="dv">1</span>])</span>
@@ -798,7 +799,7 @@ Figura&nbsp;3.6: Número de coeficientes distintos de cero de Lasso en función 
 \tag{3.5}\]</span></span></p>
 <p>donde <span class="math inline">\(\rho \mid\mid \mathbf w \mid\mid_1\)</span> es la penalización de Lasso (<a href="#eq-lasso" class="quarto-xref">Ecuación&nbsp;<span>3.3</span></a>) y <span class="math inline">\(\frac{1 - \rho}{2} \mid\mid \mathbf w \mid\mid_2^2\)</span> la de Ridge (<a href="#eq-ridge" class="quarto-xref">Ecuación&nbsp;<span>3.2</span></a>). El parámetro <span class="math inline">\(\lambda\)</span> controla la fuerza total de la penalización y el parámetro <span class="math inline">\(\rho\)</span> (<code>l1_ratio</code> en scikit-learn) el reparto entre las dos normas. Con <span class="math inline">\(\rho=1\)</span> se obtiene Lasso y con <span class="math inline">\(\rho\)</span> cercano a cero el modelo se comporta como Ridge.</p>
 <p>Al igual que Lasso tiene una forma con restricción (<a href="#eq-min-restricciones" class="quarto-xref">Ecuación&nbsp;<span>3.4</span></a>), Elastic Net equivale a minimizar el error sujeto a que una combinación de las dos normas, <span class="math inline">\(\rho \mid\mid \mathbf w \mid\mid_1 + \frac{1 - \rho}{2} \mid\mid \mathbf w \mid\mid_2^2\)</span>, no supere un valor <span class="math inline">\(\gamma\)</span>. Es útil cuando hay grupos de variables correlacionadas, porque Lasso tiende a elegir una de ellas, casi al azar, mientras que Elastic Net reparte el coeficiente entre las variables del grupo.</p>
-<div id="0654ca19" class="cell" data-execution_count="33">
+<div id="6d1b3ae2" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>enet <span class="op">=</span> ElasticNet(alpha<span class="op">=</span><span class="fl">0.5</span>, l1_ratio<span class="op">=</span><span class="fl">0.5</span>, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Este modelo, con <span class="math inline">\(\lambda=0.5\)</span> y <span class="math inline">\(\rho=0.5\)</span>, tiene <span class="math inline">\(34\)</span> coeficientes exactamente cero.</p>
@@ -807,7 +808,7 @@ Figura&nbsp;3.6: Número de coeficientes distintos de cero de Lasso en función 
 <section id="sec-seleccion-lambda" class="level2" data-number="3.7">
 <h2 data-number="3.7" class="anchored" data-anchor-id="sec-seleccion-lambda"><span class="header-section-number">3.7</span> Selección de <span class="math inline">\(\lambda\)</span> por Validación Cruzada</h2>
 <p>El parámetro <span class="math inline">\(\lambda\)</span> es un hiperparámetro. No se estima al minimizar el error de entrenamiento (siempre elegiría <span class="math inline">\(\lambda=0\)</span>) y tampoco debe elegirse con el conjunto de prueba <span class="math inline">\(\mathcal G\)</span>, pues este se reserva para medir el rendimiento final (<a href="02Rendimiento.html#sec-validacion-cruzada" class="quarto-xref"><span>Sección 2.5</span></a>). Se elige con <span class="math inline">\(k\)</span> iteraciones de validación cruzada (<a href="02Rendimiento.html#sec-kfold-cross-validation" class="quarto-xref"><span>Sección 2.5.1</span></a>) dentro de <span class="math inline">\(\mathcal T\)</span>. Para cada valor de <span class="math inline">\(\lambda\)</span> se entrena con <span class="math inline">\(k-1\)</span> partes, se predice la parte restante y se calcula el error cuadrático medio, y el valor elegido es el que lo minimiza. El siguiente código muestra el procedimiento a mano para Lasso.</p>
-<div id="63985e44" class="cell" data-execution_count="35">
+<div id="e569f20d" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>kfold <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">30</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>error_cv <span class="op">=</span> []</span>
@@ -843,7 +844,7 @@ Figura&nbsp;3.7: Error cuadrático medio de validación cruzada de Lasso en func
 </div>
 </div>
 <p>Los algoritmos <code>LassoCV</code>, <code>RidgeCV</code> y <code>ElasticNetCV</code> hacen lo mismo que el ciclo anterior, y el valor seleccionado de <span class="math inline">\(\lambda\)</span> queda en el atributo <code>alpha_</code>.</p>
-<div id="5af1ee52" class="cell" data-execution_count="38">
+<div id="e969aaef" class="cell" data-execution_count="38">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>lasso_cv <span class="op">=</span> LassoCV(cv<span class="op">=</span>kfold, alphas<span class="op">=</span>lambdas, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ridge_cv <span class="op">=</span> RidgeCV(alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>), cv<span class="op">=</span>kfold).fit(T, y_t)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>enet_cv <span class="op">=</span> ElasticNetCV(l1_ratio<span class="op">=</span>[<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>], cv<span class="op">=</span>kfold,</span>
@@ -876,7 +877,7 @@ Figura&nbsp;3.8: Rendimiento (<span class="math inline">\(R^2\)</span>) de MCO, 
 <section id="sec-coeficientes-regularizados" class="level2" data-number="3.8">
 <h2 data-number="3.8" class="anchored" data-anchor-id="sec-coeficientes-regularizados"><span class="header-section-number">3.8</span> Los Coeficientes no se Interpretan Causalmente</h2>
 <p>Lasso y Ridge son útiles para predecir, pero sus coeficientes no se leen como los de MCO en un estudio de efectos. La razón es que las variables que Lasso conserva no son estables. Con variables correlacionadas, pequeños cambios en la muestra cambian la variable que entra y la que sale. El siguiente código lo muestra ajustando <code>LassoCV</code> en <span class="math inline">\(10\)</span> submuestras aleatorias del <span class="math inline">\(50\%\)</span> de <span class="math inline">\(\mathcal T\)</span> y registrando qué variables tienen un coeficiente distinto de cero, y el <span class="math inline">\(R^2\)</span> de cada modelo en el conjunto de prueba.</p>
-<div id="4416b37d" class="cell" data-execution_count="41">
+<div id="061b555b" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>seleccion <span class="op">=</span> []</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>r2_sub <span class="op">=</span> []</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
@@ -934,7 +935,7 @@ Figura&nbsp;3.9: Frecuencia con la que Lasso selecciona cada variable en 10 subm
 <h2 data-number="3.9" class="anchored" data-anchor-id="sec-regresion-focalizacion"><span class="header-section-number">3.9</span> Focalización: un Problema de Política de Predicción</h2>
 <p>Un programa social con recursos limitados necesita decidir a qué hogares dirigirse. Verificar el ingreso de cada hogar es costoso, por lo que muchos programas usan una <em>prueba de medios sustituta</em> (<em>proxy means test</em>). Con ella se predice si un hogar es pobre con <strong>pocas</strong> variables observables de la vivienda y el hogar, porque cada variable que se incluye hay que verificarla en campo. Los procedimientos de selección del capítulo siguiente (<a href="03SeleccionVariables.html" class="quarto-xref"><span>Capítulo 4</span></a>) son una alternativa a la penalización <span class="math inline">\(L_1\)</span> para reducir el número de variables. Los datos son los de Pobreza del apéndice (<a href="20ConjuntosDatos.html#sec-datos-pobreza" class="quarto-xref"><span>Sección B.1.1</span></a>).</p>
 <p>Es un problema de clasificación y no de regresión, pues el objetivo <code>pobre_ingresos</code> es binario. Se usa regresión logística con penalización <span class="math inline">\(L_1\)</span> como una caja negra. El modelo se describe en la <a href="07Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección 8.5</span></a> y aquí basta saber que <code>fit</code> y <code>predict</code> funcionan igual y que la penalización <span class="math inline">\(L_1\)</span> vuelve cero algunos coeficientes, como en Lasso. En scikit-learn el hiperparámetro es <code>C</code>, el <strong>inverso</strong> de <span class="math inline">\(\lambda\)</span>, de manera que un valor pequeño de <code>C</code> es una penalización más fuerte. Se codifica y se estandariza igual que antes. No se usa el factor de expansión (<code>factor</code>) porque el objetivo es la decisión por hogar y no una estimación de la población.</p>
-<div id="893e06b2" class="cell" data-execution_count="44">
+<div id="782e4f27" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/enigh_pobreza.csv.gz'</span>)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>Xp <span class="op">=</span> pd.get_dummies(pobreza.drop(columns<span class="op">=</span>[<span class="st">'pobre_ingresos'</span>, <span class="st">'factor'</span>]),</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                    drop_first<span class="op">=</span><span class="va">True</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
@@ -947,7 +948,7 @@ Figura&nbsp;3.9: Frecuencia con la que Lasso selecciona cada variable en 10 subm
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>Gp <span class="op">=</span> escala_p.transform(Gp)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La matriz de diseño tiene <span class="math inline">\(N=\)</span> <span class="math inline">\(89988\)</span> hogares y <span class="math inline">\(d=\)</span> <span class="math inline">\(129\)</span> columnas, y <span class="math inline">\(32.7\%\)</span> de los hogares son pobres por ingresos. El siguiente código ajusta el modelo para seis valores de <code>C</code> y mide, en el conjunto de prueba, cuántas variables conserva el modelo, la cobertura (<em>recall</em>) y la precisión.</p>
-<div id="dcd6b98c" class="cell" data-execution_count="46">
+<div id="4d1ed5f9" class="cell" data-execution_count="46">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>Cs <span class="op">=</span> [<span class="fl">0.001</span>, <span class="fl">0.003</span>, <span class="fl">0.01</span>, <span class="fl">0.03</span>, <span class="fl">0.1</span>, <span class="dv">1</span>]</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>resultados <span class="op">=</span> []</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>modelos_p <span class="op">=</span> []</span>
@@ -982,14 +983,14 @@ Tabla&nbsp;3.2: Número de variables, cobertura y precisión de la regresión lo
 <tr class="odd">
 <td><span class="math inline">\(0.001\)</span></td>
 <td><span class="math inline">\(34\)</span></td>
-<td><span class="math inline">\(0.5372\)</span></td>
+<td><span class="math inline">\(0.5373\)</span></td>
 <td><span class="math inline">\(0.7240\)</span></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(0.003\)</span></td>
 <td><span class="math inline">\(67\)</span></td>
 <td><span class="math inline">\(0.5756\)</span></td>
-<td><span class="math inline">\(0.7281\)</span></td>
+<td><span class="math inline">\(0.7282\)</span></td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(0.01\)</span></td>
@@ -1000,20 +1001,20 @@ Tabla&nbsp;3.2: Número de variables, cobertura y precisión de la regresión lo
 <tr class="even">
 <td><span class="math inline">\(0.03\)</span></td>
 <td><span class="math inline">\(116\)</span></td>
-<td><span class="math inline">\(0.5960\)</span></td>
-<td><span class="math inline">\(0.7229\)</span></td>
+<td><span class="math inline">\(0.5962\)</span></td>
+<td><span class="math inline">\(0.7231\)</span></td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(0.1\)</span></td>
-<td><span class="math inline">\(121\)</span></td>
-<td><span class="math inline">\(0.5972\)</span></td>
-<td><span class="math inline">\(0.7218\)</span></td>
+<td><span class="math inline">\(122\)</span></td>
+<td><span class="math inline">\(0.5970\)</span></td>
+<td><span class="math inline">\(0.7219\)</span></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(1.0\)</span></td>
 <td><span class="math inline">\(128\)</span></td>
-<td><span class="math inline">\(0.5984\)</span></td>
-<td><span class="math inline">\(0.7221\)</span></td>
+<td><span class="math inline">\(0.5982\)</span></td>
+<td><span class="math inline">\(0.7220\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -1046,8 +1047,14 @@ Figura&nbsp;3.10: Cobertura y precisión en el conjunto de prueba contra el núm
 </div>
 </div>
 </div>
-<p>La <a href="#tbl-pmt" class="quarto-xref">Tabla&nbsp;<span>3.2</span></a> y la <a href="#fig-pmt-variables" class="quarto-xref">Figura&nbsp;<span>3.10</span></a> muestran que con <span class="math inline">\(34\)</span> variables se alcanza una cobertura de <span class="math inline">\(0.5372\)</span>, frente a <span class="math inline">\(0.5984\)</span> con <span class="math inline">\(128\)</span> variables. Con <span class="math inline">\(67\)</span> variables la cobertura es <span class="math inline">\(0.5756\)</span>, <span class="math inline">\(96.2\%\)</span> de la que se logra con todas. La precisión casi no cambia. Reducir el número de variables cuesta, entonces, algo de cobertura, y la política debe decidir cuánta está dispuesta a perder a cambio de verificar menos información en campo. Las variables con mayor coeficiente en valor absoluto en el modelo más pequeño son <code>integrantes</code>, <code>menores_12</code>, <code>vehiculos</code>, <code>tipo_hogar_unipersonal</code>, <code>combustible_cocina_leña</code>, <code>personas_por_cuarto</code>, <code>televisores_digitales</code>, <code>computadoras</code>, <code>escolaridad_jefe_profesional completa</code>, <code>tiene_internet</code>.</p>
+<p>La <a href="#tbl-pmt" class="quarto-xref">Tabla&nbsp;<span>3.2</span></a> y la <a href="#fig-pmt-variables" class="quarto-xref">Figura&nbsp;<span>3.10</span></a> muestran que con <span class="math inline">\(34\)</span> variables se alcanza una cobertura de <span class="math inline">\(0.5373\)</span>, frente a <span class="math inline">\(0.5982\)</span> con <span class="math inline">\(128\)</span> variables. Con <span class="math inline">\(67\)</span> variables la cobertura es <span class="math inline">\(0.5756\)</span>, <span class="math inline">\(96.2\%\)</span> de la que se logra con todas. La precisión casi no cambia. Reducir el número de variables cuesta, entonces, algo de cobertura, y la política debe decidir cuánta está dispuesta a perder a cambio de verificar menos información en campo. Las variables con mayor coeficiente en valor absoluto en el modelo más pequeño son <code>integrantes</code>, <code>menores_12</code>, <code>vehiculos</code>, <code>tipo_hogar_unipersonal</code>, <code>combustible_cocina_leña</code>, <code>personas_por_cuarto</code>, <code>televisores_digitales</code>, <code>computadoras</code>, <code>tam_localidad_menos de 2,500</code>, <code>escolaridad_jefe_profesional completa</code>.</p>
 <p>En términos de política, la cobertura es la proporción de hogares pobres que el programa alcanza y <span class="math inline">\(1 -\)</span> precisión es la proporción de beneficiarios que no son pobres. Son, respectivamente, los errores de exclusión y de inclusión. El modelo se evaluó con el umbral que usa <code>predict</code> por omisión. Qué umbral usar cuando ambos errores cuestan distinto se trata en <a href="04Teoria_Decision.html" class="quarto-xref"><span>Capítulo 5</span></a>.</p>
+</section>
+<section id="sec-resumen-regresion" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="sec-resumen-regresion"><span class="header-section-number">3.10</span> Resumen</h2>
+<p>En este capítulo se evaluó la regresión lineal por su capacidad de predecir observaciones no vistas y no por la significancia de sus coeficientes (<a href="#sec-regresion-ols" class="quarto-xref"><span>Sección 3.3</span></a>). El error de predicción se descompone en sesgo y varianza (<a href="#eq-sesgo-varianza" class="quarto-xref">Ecuación&nbsp;<span>3.1</span></a>), y de ahí se entiende que un modelo con muchas variables y pocos datos puede rendir peor fuera de muestra que uno más simple (<a href="#sec-sesgo-varianza" class="quarto-xref"><span>Sección 3.4</span></a>). Ridge (<a href="#sec-ridge" class="quarto-xref"><span>Sección 3.5</span></a>), Lasso (<a href="#sec-lasso" class="quarto-xref"><span>Sección 3.6</span></a>) y Elastic Net (<a href="#sec-elastic-net" class="quarto-xref"><span>Sección 3.6.1</span></a>) aceptan algo de sesgo a cambio de reducir la varianza, y el hiperparámetro <span class="math inline">\(\lambda\)</span> se selecciona con validación cruzada (<a href="#sec-seleccion-lambda" class="quarto-xref"><span>Sección 3.7</span></a>) y no con el conjunto de prueba. Los coeficientes de un modelo regularizado no se interpretan como efectos causales (<a href="#sec-coeficientes-regularizados" class="quarto-xref"><span>Sección 3.8</span></a>), porque las variables que Lasso selecciona cambian con la muestra aunque el rendimiento casi no cambie.</p>
+<p>La utilidad para la política pública se vio en la <a href="#sec-regresion-focalizacion" class="quarto-xref"><span>Sección 3.9</span></a>. Con los datos de Abandono Escolar y de Pobreza, un modelo regularizado permite estimar qué escuelas o qué hogares requieren atención y evaluar ese ejercicio con la cobertura y la precisión, es decir, con los errores de exclusión y de inclusión de un programa. Quien viene de Econometría puede reconocer aquí el mismo modelo de siempre, pero se evalúa con otro criterio, pues importa qué tan bien predice y no qué tan bien se interpreta.</p>
+<p>Lasso selecciona variables como un efecto secundario de la regularización, y queda la pregunta de qué otros procedimientos existen para reducir el número de variables y cuánto cuesta hacerlo. Esa pregunta se responde en <a href="03SeleccionVariables.html" class="quarto-xref"><span>Capítulo 4</span></a>.</p>
 </section>
 <section id="actividades" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="actividades">Actividades</h2>
@@ -2286,50 +2293,58 @@ Zou, Hui, y Trevor Hastie. 2005. <span>«Regularization and Variable Selection v
 <span id="cb32-801"><a href="#cb32-801" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-802"><a href="#cb32-802" aria-hidden="true" tabindex="-1"></a>En términos de política, la cobertura es la proporción de hogares pobres que el programa alcanza y $1 -$ precisión es la proporción de beneficiarios que no son pobres. Son, respectivamente, los errores de exclusión y de inclusión. El modelo se evaluó con el umbral que usa <span class="in">`predict`</span> por omisión. Qué umbral usar cuando ambos errores cuestan distinto se trata en @sec-teoria-decision-bayesianas.</span>
 <span id="cb32-803"><a href="#cb32-803" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-804"><a href="#cb32-804" aria-hidden="true" tabindex="-1"></a><span class="fu">## Actividades {.unnumbered}</span></span>
+<span id="cb32-804"><a href="#cb32-804" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-regresion}</span></span>
 <span id="cb32-805"><a href="#cb32-805" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-806"><a href="#cb32-806" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
-<span id="cb32-807"><a href="#cb32-807" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
-<span id="cb32-808"><a href="#cb32-808" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-809"><a href="#cb32-809" aria-hidden="true" tabindex="-1"></a>Repita el procedimiento del capítulo (MCO, Ridge y Lasso con $\lambda$ seleccionado por validación cruzada, y comparación con <span class="in">`CompStats`</span>) con el conjunto de Territorio (@sec-datos-territorio). El objetivo es <span class="in">`grado_promedio_escolaridad`</span> y se descartan <span class="in">`clave_ageb`</span>, <span class="in">`municipio`</span>, <span class="in">`pct_viv_internet`</span>, <span class="in">`pct_sin_servicio_salud`</span> y <span class="in">`pct_jefatura_femenina`</span>. Con un número pequeño de renglones y de variables la regularización debe notarse más que en Educación. Conteste las siguientes preguntas. ¿Qué sectores de establecimientos selecciona Lasso? ¿Cambian si se repite con otra partición?</span>
-<span id="cb32-810"><a href="#cb32-810" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-813"><a href="#cb32-813" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb32-814"><a href="#cb32-814" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb32-815"><a href="#cb32-815" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento ($R^2$) de MCO, Ridge y Lasso en el problema de Territorio.</span></span>
-<span id="cb32-816"><a href="#cb32-816" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-actividad-territorio</span></span>
-<span id="cb32-817"><a href="#cb32-817" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/censo_denue_territorio.csv'</span>)</span>
-<span id="cb32-818"><a href="#cb32-818" aria-hidden="true" tabindex="-1"></a>X_a <span class="op">=</span> territorio.drop(columns<span class="op">=</span>[<span class="st">'grado_promedio_escolaridad'</span>, <span class="st">'clave_ageb'</span>,</span>
-<span id="cb32-819"><a href="#cb32-819" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'municipio'</span>, <span class="st">'pct_viv_internet'</span>,</span>
-<span id="cb32-820"><a href="#cb32-820" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'pct_sin_servicio_salud'</span>,</span>
-<span id="cb32-821"><a href="#cb32-821" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'pct_jefatura_femenina'</span>])</span>
-<span id="cb32-822"><a href="#cb32-822" aria-hidden="true" tabindex="-1"></a>y_a <span class="op">=</span> territorio[<span class="st">'grado_promedio_escolaridad'</span>].to_numpy()</span>
-<span id="cb32-823"><a href="#cb32-823" aria-hidden="true" tabindex="-1"></a>T_a, G_a, y_ta, y_ga <span class="op">=</span> train_test_split(X_a.to_numpy(), y_a, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb32-824"><a href="#cb32-824" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb32-825"><a href="#cb32-825" aria-hidden="true" tabindex="-1"></a>escala_a <span class="op">=</span> StandardScaler().fit(T_a)</span>
-<span id="cb32-826"><a href="#cb32-826" aria-hidden="true" tabindex="-1"></a>T_a <span class="op">=</span> escala_a.transform(T_a)</span>
-<span id="cb32-827"><a href="#cb32-827" aria-hidden="true" tabindex="-1"></a>G_a <span class="op">=</span> escala_a.transform(G_a)</span>
-<span id="cb32-828"><a href="#cb32-828" aria-hidden="true" tabindex="-1"></a>kfold_a <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb32-829"><a href="#cb32-829" aria-hidden="true" tabindex="-1"></a>ols_a <span class="op">=</span> LinearRegression().fit(T_a, y_ta)</span>
-<span id="cb32-830"><a href="#cb32-830" aria-hidden="true" tabindex="-1"></a>ridge_a <span class="op">=</span> RidgeCV(alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>), cv<span class="op">=</span>kfold_a).fit(T_a, y_ta)</span>
-<span id="cb32-831"><a href="#cb32-831" aria-hidden="true" tabindex="-1"></a>lasso_a <span class="op">=</span> LassoCV(cv<span class="op">=</span>kfold_a, alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">30</span>),</span>
-<span id="cb32-832"><a href="#cb32-832" aria-hidden="true" tabindex="-1"></a>                  max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T_a, y_ta)</span>
-<span id="cb32-833"><a href="#cb32-833" aria-hidden="true" tabindex="-1"></a>r2_a <span class="op">=</span> r2_score(y_ga, ols_a.predict(G_a), name<span class="op">=</span><span class="st">'MCO'</span>, use_tqdm<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb32-834"><a href="#cb32-834" aria-hidden="true" tabindex="-1"></a>r2_a(ridge_a.predict(G_a), name<span class="op">=</span><span class="st">'Ridge'</span>)</span>
-<span id="cb32-835"><a href="#cb32-835" aria-hidden="true" tabindex="-1"></a>r2_a(lasso_a.predict(G_a), name<span class="op">=</span><span class="st">'Lasso'</span>)</span>
-<span id="cb32-836"><a href="#cb32-836" aria-hidden="true" tabindex="-1"></a>r2_a.plot(comp_legend<span class="op">=</span><span class="st">'Comparación'</span>, winner_legend<span class="op">=</span><span class="st">'Mejor'</span>,</span>
-<span id="cb32-837"><a href="#cb32-837" aria-hidden="true" tabindex="-1"></a>          tie_legend<span class="op">=</span><span class="st">'Equivalente'</span>, loser_legend<span class="op">=</span><span class="st">'Diferente'</span>,</span>
-<span id="cb32-838"><a href="#cb32-838" aria-hidden="true" tabindex="-1"></a>          alg_legend<span class="op">=</span><span class="st">'Algoritmo'</span>, var_name<span class="op">=</span><span class="st">'Rendimiento'</span>)</span>
-<span id="cb32-839"><a href="#cb32-839" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-840"><a href="#cb32-840" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-843"><a href="#cb32-843" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb32-844"><a href="#cb32-844" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb32-845"><a href="#cb32-845" aria-hidden="true" tabindex="-1"></a>sectores_f <span class="op">=</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> c <span class="kw">in</span> X_a.columns[lasso_a.coef_ <span class="op">!=</span> <span class="dv">0</span>]))</span>
-<span id="cb32-846"><a href="#cb32-846" aria-hidden="true" tabindex="-1"></a>n_a_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>X_a<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb32-847"><a href="#cb32-847" aria-hidden="true" tabindex="-1"></a>d_a_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>X_a<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb32-848"><a href="#cb32-848" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb32-849"><a href="#cb32-849" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-850"><a href="#cb32-850" aria-hidden="true" tabindex="-1"></a>El resultado esperado se muestra en la @fig-actividad-territorio, con $N=$ <span class="in">`{python} n_a_f`</span> AGEB y $d=$ <span class="in">`{python} d_a_f`</span> variables. Las variables que conserva Lasso son <span class="in">`{python} sectores_f`</span>.</span>
-<span id="cb32-851"><a href="#cb32-851" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb32-806"><a href="#cb32-806" aria-hidden="true" tabindex="-1"></a>En este capítulo se evaluó la regresión lineal por su capacidad de predecir observaciones no vistas y no por la significancia de sus coeficientes (@sec-regresion-ols). El error de predicción se descompone en sesgo y varianza (@eq-sesgo-varianza), y de ahí se entiende que un modelo con muchas variables y pocos datos puede rendir peor fuera de muestra que uno más simple (@sec-sesgo-varianza). Ridge (@sec-ridge), Lasso (@sec-lasso) y Elastic Net (@sec-elastic-net) aceptan algo de sesgo a cambio de reducir la varianza, y el hiperparámetro $\lambda$ se selecciona con validación cruzada (@sec-seleccion-lambda) y no con el conjunto de prueba. Los coeficientes de un modelo regularizado no se interpretan como efectos causales (@sec-coeficientes-regularizados), porque las variables que Lasso selecciona cambian con la muestra aunque el rendimiento casi no cambie.</span>
+<span id="cb32-807"><a href="#cb32-807" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-808"><a href="#cb32-808" aria-hidden="true" tabindex="-1"></a>La utilidad para la política pública se vio en la @sec-regresion-focalizacion. Con los datos de Abandono Escolar y de Pobreza, un modelo regularizado permite estimar qué escuelas o qué hogares requieren atención y evaluar ese ejercicio con la cobertura y la precisión, es decir, con los errores de exclusión y de inclusión de un programa. Quien viene de Econometría puede reconocer aquí el mismo modelo de siempre, pero se evalúa con otro criterio, pues importa qué tan bien predice y no qué tan bien se interpreta.</span>
+<span id="cb32-809"><a href="#cb32-809" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-810"><a href="#cb32-810" aria-hidden="true" tabindex="-1"></a>Lasso selecciona variables como un efecto secundario de la regularización, y queda la pregunta de qué otros procedimientos existen para reducir el número de variables y cuánto cuesta hacerlo. Esa pregunta se responde en @sec-seleccion-variables.</span>
+<span id="cb32-811"><a href="#cb32-811" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-812"><a href="#cb32-812" aria-hidden="true" tabindex="-1"></a><span class="fu">## Actividades {.unnumbered}</span></span>
+<span id="cb32-813"><a href="#cb32-813" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-814"><a href="#cb32-814" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb32-815"><a href="#cb32-815" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb32-816"><a href="#cb32-816" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-817"><a href="#cb32-817" aria-hidden="true" tabindex="-1"></a>Repita el procedimiento del capítulo (MCO, Ridge y Lasso con $\lambda$ seleccionado por validación cruzada, y comparación con <span class="in">`CompStats`</span>) con el conjunto de Territorio (@sec-datos-territorio). El objetivo es <span class="in">`grado_promedio_escolaridad`</span> y se descartan <span class="in">`clave_ageb`</span>, <span class="in">`municipio`</span>, <span class="in">`pct_viv_internet`</span>, <span class="in">`pct_sin_servicio_salud`</span> y <span class="in">`pct_jefatura_femenina`</span>. Con un número pequeño de renglones y de variables la regularización debe notarse más que en Educación. Conteste las siguientes preguntas. ¿Qué sectores de establecimientos selecciona Lasso? ¿Cambian si se repite con otra partición?</span>
+<span id="cb32-818"><a href="#cb32-818" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-821"><a href="#cb32-821" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-822"><a href="#cb32-822" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb32-823"><a href="#cb32-823" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento ($R^2$) de MCO, Ridge y Lasso en el problema de Territorio.</span></span>
+<span id="cb32-824"><a href="#cb32-824" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-actividad-territorio</span></span>
+<span id="cb32-825"><a href="#cb32-825" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/censo_denue_territorio.csv'</span>)</span>
+<span id="cb32-826"><a href="#cb32-826" aria-hidden="true" tabindex="-1"></a>X_a <span class="op">=</span> territorio.drop(columns<span class="op">=</span>[<span class="st">'grado_promedio_escolaridad'</span>, <span class="st">'clave_ageb'</span>,</span>
+<span id="cb32-827"><a href="#cb32-827" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'municipio'</span>, <span class="st">'pct_viv_internet'</span>,</span>
+<span id="cb32-828"><a href="#cb32-828" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'pct_sin_servicio_salud'</span>,</span>
+<span id="cb32-829"><a href="#cb32-829" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'pct_jefatura_femenina'</span>])</span>
+<span id="cb32-830"><a href="#cb32-830" aria-hidden="true" tabindex="-1"></a>y_a <span class="op">=</span> territorio[<span class="st">'grado_promedio_escolaridad'</span>].to_numpy()</span>
+<span id="cb32-831"><a href="#cb32-831" aria-hidden="true" tabindex="-1"></a>T_a, G_a, y_ta, y_ga <span class="op">=</span> train_test_split(X_a.to_numpy(), y_a, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb32-832"><a href="#cb32-832" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb32-833"><a href="#cb32-833" aria-hidden="true" tabindex="-1"></a>escala_a <span class="op">=</span> StandardScaler().fit(T_a)</span>
+<span id="cb32-834"><a href="#cb32-834" aria-hidden="true" tabindex="-1"></a>T_a <span class="op">=</span> escala_a.transform(T_a)</span>
+<span id="cb32-835"><a href="#cb32-835" aria-hidden="true" tabindex="-1"></a>G_a <span class="op">=</span> escala_a.transform(G_a)</span>
+<span id="cb32-836"><a href="#cb32-836" aria-hidden="true" tabindex="-1"></a>kfold_a <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb32-837"><a href="#cb32-837" aria-hidden="true" tabindex="-1"></a>ols_a <span class="op">=</span> LinearRegression().fit(T_a, y_ta)</span>
+<span id="cb32-838"><a href="#cb32-838" aria-hidden="true" tabindex="-1"></a>ridge_a <span class="op">=</span> RidgeCV(alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>), cv<span class="op">=</span>kfold_a).fit(T_a, y_ta)</span>
+<span id="cb32-839"><a href="#cb32-839" aria-hidden="true" tabindex="-1"></a>lasso_a <span class="op">=</span> LassoCV(cv<span class="op">=</span>kfold_a, alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">30</span>),</span>
+<span id="cb32-840"><a href="#cb32-840" aria-hidden="true" tabindex="-1"></a>                  max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T_a, y_ta)</span>
+<span id="cb32-841"><a href="#cb32-841" aria-hidden="true" tabindex="-1"></a>r2_a <span class="op">=</span> r2_score(y_ga, ols_a.predict(G_a), name<span class="op">=</span><span class="st">'MCO'</span>, use_tqdm<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb32-842"><a href="#cb32-842" aria-hidden="true" tabindex="-1"></a>r2_a(ridge_a.predict(G_a), name<span class="op">=</span><span class="st">'Ridge'</span>)</span>
+<span id="cb32-843"><a href="#cb32-843" aria-hidden="true" tabindex="-1"></a>r2_a(lasso_a.predict(G_a), name<span class="op">=</span><span class="st">'Lasso'</span>)</span>
+<span id="cb32-844"><a href="#cb32-844" aria-hidden="true" tabindex="-1"></a>r2_a.plot(comp_legend<span class="op">=</span><span class="st">'Comparación'</span>, winner_legend<span class="op">=</span><span class="st">'Mejor'</span>,</span>
+<span id="cb32-845"><a href="#cb32-845" aria-hidden="true" tabindex="-1"></a>          tie_legend<span class="op">=</span><span class="st">'Equivalente'</span>, loser_legend<span class="op">=</span><span class="st">'Diferente'</span>,</span>
+<span id="cb32-846"><a href="#cb32-846" aria-hidden="true" tabindex="-1"></a>          alg_legend<span class="op">=</span><span class="st">'Algoritmo'</span>, var_name<span class="op">=</span><span class="st">'Rendimiento'</span>)</span>
+<span id="cb32-847"><a href="#cb32-847" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-848"><a href="#cb32-848" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-851"><a href="#cb32-851" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-852"><a href="#cb32-852" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb32-853"><a href="#cb32-853" aria-hidden="true" tabindex="-1"></a>sectores_f <span class="op">=</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> c <span class="kw">in</span> X_a.columns[lasso_a.coef_ <span class="op">!=</span> <span class="dv">0</span>]))</span>
+<span id="cb32-854"><a href="#cb32-854" aria-hidden="true" tabindex="-1"></a>n_a_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>X_a<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb32-855"><a href="#cb32-855" aria-hidden="true" tabindex="-1"></a>d_a_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>X_a<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb32-856"><a href="#cb32-856" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-857"><a href="#cb32-857" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-858"><a href="#cb32-858" aria-hidden="true" tabindex="-1"></a>El resultado esperado se muestra en la @fig-actividad-territorio, con $N=$ <span class="in">`{python} n_a_f`</span> AGEB y $d=$ <span class="in">`{python} d_a_f`</span> variables. Las variables que conserva Lasso son <span class="in">`{python} sectores_f`</span>.</span>
+<span id="cb32-859"><a href="#cb32-859" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

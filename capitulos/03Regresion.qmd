@@ -703,6 +703,14 @@ La @tbl-pmt y la @fig-pmt-variables muestran que con `{python} n_chico_f` variab
 
 En términos de política, la cobertura es la proporción de hogares pobres que el programa alcanza y $1 -$ precisión es la proporción de beneficiarios que no son pobres. Son, respectivamente, los errores de exclusión y de inclusión. El modelo se evaluó con el umbral que usa `predict` por omisión. Qué umbral usar cuando ambos errores cuestan distinto se trata en @sec-teoria-decision-bayesianas.
 
+## Resumen {#sec-resumen-regresion}
+
+En este capítulo se evaluó la regresión lineal por su capacidad de predecir observaciones no vistas y no por la significancia de sus coeficientes (@sec-regresion-ols). El error de predicción se descompone en sesgo y varianza (@eq-sesgo-varianza), y de ahí se entiende que un modelo con muchas variables y pocos datos puede rendir peor fuera de muestra que uno más simple (@sec-sesgo-varianza). Ridge (@sec-ridge), Lasso (@sec-lasso) y Elastic Net (@sec-elastic-net) aceptan algo de sesgo a cambio de reducir la varianza, y el hiperparámetro $\lambda$ se selecciona con validación cruzada (@sec-seleccion-lambda) y no con el conjunto de prueba. Los coeficientes de un modelo regularizado no se interpretan como efectos causales (@sec-coeficientes-regularizados), porque las variables que Lasso selecciona cambian con la muestra aunque el rendimiento casi no cambie.
+
+La utilidad para la política pública se vio en la @sec-regresion-focalizacion. Con los datos de Abandono Escolar y de Pobreza, un modelo regularizado permite estimar qué escuelas o qué hogares requieren atención y evaluar ese ejercicio con la cobertura y la precisión, es decir, con los errores de exclusión y de inclusión de un programa. Quien viene de Econometría puede reconocer aquí el mismo modelo de siempre, pero se evalúa con otro criterio, pues importa qué tan bien predice y no qué tan bien se interpreta.
+
+Lasso selecciona variables como un efecto secundario de la regularización, y queda la pregunta de qué otros procedimientos existen para reducir el número de variables y cuánto cuesta hacerlo. Esa pregunta se responde en @sec-seleccion-variables.
+
 ## Actividades {.unnumbered}
 
 ::: {.callout-tip collapse="true"}
