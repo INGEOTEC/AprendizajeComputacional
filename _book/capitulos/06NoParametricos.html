@@ -380,7 +380,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer las características de diferentes métodos no paramétricos y aplicarlos para resolver problemas de regresión y clasificación.</p>
 <section id="paquetes-usados" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">7.1</span> Paquetes usados</h2>
-<div id="cf6a9476" class="cell" data-execution_count="1">
+<div id="5bc59a02" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> NearestNeighbors,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                              KNeighborsClassifier,<span class="op">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                              KNeighborsRegressor</span>
@@ -424,7 +424,7 @@ B_1 = [0, \frac{1}{m}), B_2=[\frac{1}{m}, \frac{2}{m}), \ldots, B_m=[\frac{m-1}{
 \]</span></p>
 <p>Para ilustrar el uso de la ecuación de minimización del riesgo se utilizará en el ejemplo utilizado en <span class="citation" data-cites="Wasserman2004">Wasserman (<a href="18Referencias.html#ref-Wasserman2004" role="doc-biblioref">2004</a>)</span>. Los datos se pueden descargar de <a href="http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat">http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/a1882_25.dat</a>.</p>
 <p>El primer paso es leer el conjunto de datos, dentro del ejemplo usado en <span class="citation" data-cites="Wasserman2004">Wasserman (<a href="18Referencias.html#ref-Wasserman2004" role="doc-biblioref">2004</a>)</span> se eliminaron todos los datos menores a <span class="math inline">\(0.2\)</span>, esto se refleja en la última línea.</p>
-<div id="9640dc15" class="cell" data-execution_count="4">
+<div id="28bf3fc2" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.r_[[<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">float</span>, x.strip().split())) </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">open</span>(<span class="st">"a1882_25.dat"</span>).readlines()]]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> D[:, <span class="dv">2</span>]</span>
@@ -432,7 +432,7 @@ B_1 = [0, \frac{1}{m}), B_2=[\frac{1}{m}, \frac{2}{m}), \ldots, B_m=[\frac{m-1}{
 </div>
 <p>Haciendo un paréntesis en el ejemplo, para poder calcular <span class="math inline">\(\hat p_j\)</span> es necesario calcular el histograma; dado que los valores están normalizados podemos realizar el histograma utilizando algunas funciones de <code>numpy</code> y librerías tradicionales.</p>
 <p>Para ilustrar el método para generar el histograma se genera un histograma con 100 bins (primera línea). El siguiente paso (segunda línea) es encontrar los límites de los bins, para este proceso se usa la función <code>np.linspace</code>. En la tercera línea se encuentra el bin de cada elemento, con la característica que <code>np.searchsorted</code> regresa <span class="math inline">\(0\)</span> si el valor es menor que el límite inferior y el tamaño del arreglo si es mayor. Entonces las líneas <span class="math inline">\(4\)</span> y <span class="math inline">\(5\)</span> se encargan de arreglar estas dos características. Finalmente se cuenta el número de elementos que pertenecen a cada bin con la ayuda de la clase <code>Counter</code>.</p>
-<div id="ccd41f67" class="cell" data-execution_count="5">
+<div id="76080b54" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">100</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>limits <span class="op">=</span> np.linspace(D.<span class="bu">min</span>(), D.<span class="bu">max</span>(), m <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> np.searchsorted(limits, D, side<span class="op">=</span><span class="st">'right'</span>)</span>
@@ -466,7 +466,7 @@ Figura&nbsp;7.1: Histograma
 </div>
 </div>
 <p>Uniendo estos elementos se puede definir una función de riesgo de la siguiente manera</p>
-<div id="dc8ebe0e" class="cell" data-execution_count="7">
+<div id="53c93a2f" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> riesgo(D, m<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Riesgo de validación cruzada de histograma"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> D.shape[<span class="dv">0</span>]</span>
@@ -605,7 +605,7 @@ Figura&nbsp;7.4: Estimación por Vecinos Cercanos
 <section id="implementación" class="level3" data-number="7.6.1">
 <h3 data-number="7.6.1" class="anchored" data-anchor-id="implementación"><span class="header-section-number">7.6.1</span> Implementación</h3>
 <p>El clasificador de vecinos cercanos tiene una implementación directa, aunque ineficiente, cuando el número de ejemplos en el conjunto de entrenamiento es grande. Esta implementación se ejemplifica con los datos de dígitos que se cargan y se dividen en el conjunto de entrenamiento y prueba de la siguiente manera.</p>
-<div id="fa4b4269" class="cell" data-execution_count="11">
+<div id="8a7d06ec" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -614,47 +614,47 @@ Figura&nbsp;7.4: Estimación por Vecinos Cercanos
 <p>Lo primero que se realiza es la función para calcular los <span class="math inline">\(\textsf{kNN}(x)\)</span> esto se puede hacer generando una función <code>kNN</code> que recibe de parámetros <span class="math inline">\(x\)</span>, el conjunto <span class="math inline">\(\mathcal D\)</span>, la cantidad de vecinos (<span class="math inline">\(k\)</span>) y la distancia.</p>
 <p>El código de la función <code>kNN</code> se muestra a continuación, donde en la primera línea se convierte a <span class="math inline">\(x\)</span> en un arreglo de dos dimensiones. Esto tiene el objetivo de generar un código que pueda buscar los <span class="math inline">\(k\)</span> vecinos cercanos de un conjunto de puntos. Por ejemplo, se podría calcular los vecinos cercanos de todo el conjunto <span class="math inline">\(\mathcal G.\)</span></p>
 <p>La segunda línea calcula los vecinos cercanos usando la función <code>argsort</code> lo único que se tiene que conocer es el eje donde se va a realizar la operación que en este caso es el <span class="math inline">\(0.\)</span> La transpuesta es para regresar el índice de los vecinos en cada renglón.</p>
-<div id="7f6a1893" class="cell" data-execution_count="12">
+<div id="5c7b52e0" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> kNN(x, D, k<span class="op">=</span><span class="dv">1</span>, d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.atleast_2d(x)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (d(D, x).argsort(axis<span class="op">=</span><span class="dv">0</span>))[:k].T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En este momento es importante mencionar que el problema de los <span class="math inline">\(k\)</span> vecinos cercanos tiene muchas aplicaciones además de los algoritmos de aprendizaje supervisado que se verán en esta unidad. Por ejemplo, cuando uno tiene una colección de objetos que podrían ser documentos, videos, fotografías o cualquier objeto, este problema permite encontrar los objetos más cercanos a un objeto dado. Lo que se desea es que el algoritmo regrese el resultado lo antes posible y por ese motivo no se puede utilizar el algoritmo que se acaba de mencionar dado que compara <span class="math inline">\(x\)</span> contra todos los elementos de <span class="math inline">\(\mathcal D.\)</span> El área que estudia este tipo de problemas es el área de Recuperación de Información.</p>
 <p>Por ejemplo, el siguiente código calcula los cinco vecinos más cercanos de los tres primeros elementos de <span class="math inline">\(\mathcal G.\)</span></p>
-<div id="d7896e8f" class="cell" data-execution_count="13">
+<div id="37b1285f" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>kNN(G[:<span class="dv">3</span>], T, k<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>array([[1115,  560, 1042, 1343,  146],
-       [1019,  729,  712,  810,  959],
-       [ 228, 1253, 1089,  805,  900]])</code></pre>
+<pre><code>array([[1369,  457,  201,  644,  435],
+       [ 647,  720,  901, 1293,  667],
+       [ 516,  178,  672,  201, 1013]])</code></pre>
 </div>
 </div>
 <p>La manera más sencilla de crear el clasificador de vecinos cercanos es utilizando un método exhaustivo en el cálculo de distancia. Como se comentó, existen métodos más eficientes y la clase <code>NearestNeighbors</code> implementa dos de ellos adicionales al método exhaustivo. Por ejemplo, el siguiente código realiza el procedimiento equivalente al ejemplo visto previamente.</p>
-<div id="891b25b3" class="cell" data-execution_count="14">
+<div id="3245b024" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> NearestNeighbors(n_neighbors<span class="op">=</span><span class="dv">5</span>).fit(T)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>knn.kneighbors(G[:<span class="dv">3</span>], return_distance<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>array([[1115,  560, 1042, 1343,  146],
-       [1019,  729,  712,  810,  959],
-       [ 228, 1253, 1089,  805,  900]])</code></pre>
+<pre><code>array([[1369,  457,  201,  644,  435],
+       [ 647,  720,  901, 1293,  667],
+       [ 516,  178,  672,  201, 1013]])</code></pre>
 </div>
 </div>
 </section>
 <section id="n_cx" class="level4" data-number="7.6.1.2">
 <h4 data-number="7.6.1.2" class="anchored" data-anchor-id="n_cx"><span class="header-section-number">7.6.1.2</span> <span class="math inline">\(N_c(x)\)</span></h4>
 <p>El clasificador se basa en la función <span class="math inline">\(N_c(x)\)</span>, esta función se implementa conociendo las etiquetas y <span class="math inline">\(\textsf{kNN}(x)\)</span>. Aunque <span class="math inline">\(N_c(x)\)</span> requiere el parámetro de la clase, la función calculará <span class="math inline">\(N_c(x)\)</span> para todas las clases. La función <code>N_c</code> recibe de parámetros todos los parámetros de <code>kNN</code> y además requiere las clases de cada elemento de <span class="math inline">\(\mathcal D\)</span> estas clases se dan como un arreglo adicional. El siguiente código muestra la función, donde en la primera línea se calcula los <span class="math inline">\(k\)</span> vecinos y después se transforman los índices a las clases correspondientes, el resultado es guardado en la variable <code>knn</code>. La segunda línea usa la clase <code>Counter</code> para contar la frecuencia de cada clase en cada ejemplo dado en <code>x</code>.</p>
-<div id="18f27a87" class="cell" data-execution_count="15">
+<div id="14a3eaa0" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> N_c(x, D, clases, k<span class="op">=</span><span class="dv">1</span>,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>        d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    knn <span class="op">=</span> clases[kNN(x, D, k<span class="op">=</span>k, d<span class="op">=</span>d)]</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [Counter(x) <span class="cf">for</span> x <span class="kw">in</span> knn]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Por ejemplo, la siguiente instrucción calcula <span class="math inline">\(N_c(x)\)</span> para todos los datos en <span class="math inline">\(\mathcal G\)</span> usando <span class="math inline">\(k=5.\)</span></p>
-<div id="b0a41595" class="cell" data-execution_count="16">
+<div id="af23c5f7" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nc <span class="op">=</span> N_c(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El elemento en el índice 100, tiene el siguiente resultado Counter({np.int64(5): 4, np.int64(9): 1}), que indica que la clase <span class="math inline">\(5\)</span>, fue vista <span class="math inline">\(4\)</span>. El error de este algoritmo en el conjunto de prueba es <span class="math inline">\(0.0056\)</span>, calculado con las siguientes instrucciones. Se observa que la primera línea genera las predicciones usando la función <code>most_common</code> y a continuación se calcula el error.</p>
-<div id="c3363737" class="cell" data-execution_count="18">
+<p>El elemento en el índice 100, tiene el siguiente resultado Counter({np.int64(4): 4, np.int64(1): 1}), que indica que la clase <span class="math inline">\(4\)</span>, fue vista <span class="math inline">\(4\)</span>. El error de este algoritmo en el conjunto de prueba es <span class="math inline">\(0.0083\)</span>, calculado con las siguientes instrucciones. Se observa que la primera línea genera las predicciones usando la función <code>most_common</code> y a continuación se calcula el error.</p>
+<div id="d77daf8b" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([x.most_common(n<span class="op">=</span><span class="dv">1</span>)[<span class="dv">0</span>][<span class="dv">0</span>] <span class="cf">for</span> x <span class="kw">in</span> nc])</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -669,7 +669,7 @@ Nota
 </div>
 <div class="callout-body-container callout-body">
 <p>La información dada hasta el momento tiene la finalidad de explicar el funcionamiento del algoritmo, una implementación del clasificador de vecinos cercanos usando métodos eficientes para calcular <span class="math inline">\(\textsf{kNN}\)</span> se encuentra en la clase <code>KNeighborsClassifier</code> la cual se puede utilizar de la siguiente manera.</p>
-<div id="c32d9cfe" class="cell" data-execution_count="19">
+<div id="d7d13ba4" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>kcl <span class="op">=</span> KNeighborsClassifier().fit(T, y_t)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> kcl.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -682,22 +682,22 @@ Nota
 <h2 data-number="7.7" class="anchored" data-anchor-id="sec-regresion"><span class="header-section-number">7.7</span> Regresión</h2>
 <p>La idea de utilizar vecinos cercanos no es solamente para problemas de clasificación, en problemas de regresión se puede seguir un razonamiento equivalente, el único cambio es en la función <span class="math inline">\(N_c(x)\)</span> donde en lugar de calcular la frecuencia de las clases de los vecinos cercanos a <span class="math inline">\(x\)</span> se hace un promedio (pesado) de la respuesta de cada uno de los vecinos cercanos.</p>
 <p>Para ilustrar esta adecuación en problemas de regresión se utiliza el conjunto de datos de diabetes, estos datos y los conjuntos se obtienen con las siguientes instrucciones.</p>
-<div id="3ec98d60" class="cell" data-execution_count="20">
+<div id="2e0aaf05" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Se puede observar en la función <code>regresion</code> que la diferencia con clasificación es que se calcula el promedio, en lugar de contar la frecuencia de las clases.</p>
-<div id="ee94b29b" class="cell" data-execution_count="21">
+<div id="6e03f209" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> regresion(x, D, respuesta, k<span class="op">=</span><span class="dv">1</span>,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>              d<span class="op">=</span><span class="kw">lambda</span> x, y: pairwise_distances(x, y)):</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    knn <span class="op">=</span> respuesta[kNN(x, D, k<span class="op">=</span>k, d<span class="op">=</span>d)]</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> knn.mean(axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>La media del error absoluto en el conjunto <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(45.1596\)</span> calculado con las siguientes instrucciones.</p>
+<p>La media del error absoluto en el conjunto <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(45.0899\)</span> calculado con las siguientes instrucciones.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> regresion(G, T, y_t, k<span class="op">=</span><span class="dv">5</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.fabs(y_g <span class="op">-</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>La clase equivalente a <code>KNeighborsClassifier</code> para regresión es <code>KNeighborsRegressor</code> la cual se puede utilizar así.</p>
-<div id="c749c24e" class="cell" data-execution_count="23">
+<div id="a3f1717a" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>krg <span class="op">=</span> KNeighborsRegressor().fit(T, y_t)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> krg.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -705,7 +705,6 @@ Nota
 <section id="sec-resumen-no-parametricos" class="level2" data-number="7.8">
 <h2 data-number="7.8" class="anchored" data-anchor-id="sec-resumen-no-parametricos"><span class="header-section-number">7.8</span> Resumen</h2>
 <p>Los métodos no paramétricos cambian el supuesto sobre la forma de la distribución por el supuesto de que los datos parecidos se comportan de manera parecida. La densidad se puede estimar con histogramas (<a href="#sec-no-parametricos-histogramas" class="quarto-xref"><span>Sección 7.3</span></a>), con kernels (<a href="#fig-no-param-kernel" class="quarto-xref">Figura&nbsp;<span>7.3</span></a>) o con vecinos cercanos (<a href="#fig-no-param-vecinos" class="quarto-xref">Figura&nbsp;<span>7.4</span></a>), y los mismos vecinos sirven para clasificar y para hacer regresión (<a href="#sec-regresion" class="quarto-xref"><span>Sección 7.7</span></a>). A cambio de no suponer una forma, estos métodos conservan los datos de entrenamiento y los consultan en cada predicción. Además, su comportamiento depende de hiperparámetros como el tamaño del bin o el número de vecinos, que deben ajustarse con datos de validación, y de que haya suficientes datos cercanos, algo que es más difícil conforme crece el número de variables.</p>
-<p>Para la política pública la idea de decidir según los casos parecidos es intuitiva y fácil de explicar, y puede servir como comparación para un método más estructurado. Su costo es que requiere bases de datos suficientemente grandes y que la decisión sobre un caso depende de qué casos se tengan registrados.</p>
 <p>Una alternativa a guardar todos los datos es modelar directamente la frontera que separa a las clases. Los discriminantes lineales, que hacen justamente eso, se presentan en <a href="07Lineal.html" class="quarto-xref"><span>Capítulo 8</span></a>.</p>
 
 
@@ -1572,9 +1571,7 @@ Wasserman, Larry. 2004. <em>All of Statistics : A Concise Course in Statistical 
 <span id="cb23-431"><a href="#cb23-431" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-432"><a href="#cb23-432" aria-hidden="true" tabindex="-1"></a>Los métodos no paramétricos cambian el supuesto sobre la forma de la distribución por el supuesto de que los datos parecidos se comportan de manera parecida. La densidad se puede estimar con histogramas (@sec-no-parametricos-histogramas), con kernels (@fig-no-param-kernel) o con vecinos cercanos (@fig-no-param-vecinos), y los mismos vecinos sirven para clasificar y para hacer regresión (@sec-regresion). A cambio de no suponer una forma, estos métodos conservan los datos de entrenamiento y los consultan en cada predicción. Además, su comportamiento depende de hiperparámetros como el tamaño del bin o el número de vecinos, que deben ajustarse con datos de validación, y de que haya suficientes datos cercanos, algo que es más difícil conforme crece el número de variables.</span>
 <span id="cb23-433"><a href="#cb23-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-434"><a href="#cb23-434" aria-hidden="true" tabindex="-1"></a>Para la política pública la idea de decidir según los casos parecidos es intuitiva y fácil de explicar, y puede servir como comparación para un método más estructurado. Su costo es que requiere bases de datos suficientemente grandes y que la decisión sobre un caso depende de qué casos se tengan registrados.</span>
-<span id="cb23-435"><a href="#cb23-435" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-436"><a href="#cb23-436" aria-hidden="true" tabindex="-1"></a>Una alternativa a guardar todos los datos es modelar directamente la frontera que separa a las clases. Los discriminantes lineales, que hacen justamente eso, se presentan en @sec-discriminantes-lineales.</span>
+<span id="cb23-434"><a href="#cb23-434" aria-hidden="true" tabindex="-1"></a>Una alternativa a guardar todos los datos es modelar directamente la frontera que separa a las clases. Los discriminantes lineales, que hacen justamente eso, se presentan en @sec-discriminantes-lineales.</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
