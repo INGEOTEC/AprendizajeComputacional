@@ -348,6 +348,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#ejemplo-diabetes-1" id="toc-ejemplo-diabetes-1" class="nav-link" data-scroll-target="#ejemplo-diabetes-1"><span class="header-section-number">11.6.1</span> Ejemplo: Diabetes</a></li>
   </ul></li>
+  <li><a href="#sec-resumen-ensambles" id="toc-sec-resumen-ensambles" class="nav-link" data-scroll-target="#sec-resumen-ensambles"><span class="header-section-number">11.7</span> Resumen</a></li>
   </ul>
 </nav>
     </div>
@@ -376,7 +377,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar diferentes técnicas para realizar un ensamble de clasificadores o regresores.</p>
 <section id="paquetes-usados" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">11.1</span> Paquetes usados</h2>
-<div id="e7ae4481" class="cell" data-execution_count="1">
+<div id="b618824b" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> binom</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_diabetes, load_digits</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -416,7 +417,7 @@ window.Quarto = {
 <div id="fig-ensambles-acc-bin" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ensambles-acc-bin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="10Ensambles_files/figure-html/fig-ensambles-acc-bin-output-1.png" class="img-fluid figure-img">
+<img src="10Ensambles_files/figure-html/fig-ensambles-acc-bin-output-1.png" width="471" height="471" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ensambles-acc-bin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;11.1: Rendimiento cuando el número de clasificadores se incrementa
@@ -455,7 +456,7 @@ Figura&nbsp;11.1: Rendimiento cuando el número de clasificadores se incrementa
 <section id="ejemplo-dígitos" class="level3" data-number="11.4.1">
 <h3 data-number="11.4.1" class="anchored" data-anchor-id="ejemplo-dígitos"><span class="header-section-number">11.4.1</span> Ejemplo: Dígitos</h3>
 <p>Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento (<span class="math inline">\(\mathcal T\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>) con las siguientes instrucciones.</p>
-<div id="03d159cd" class="cell" data-execution_count="4">
+<div id="09a10b1b" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
@@ -463,25 +464,25 @@ Figura&nbsp;11.1: Rendimiento cuando el número de clasificadores se incrementa
 </div>
 <p>Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (<a href="07Lineal.html#sec-svm" class="quarto-xref"><span>Sección 8.4</span></a>) y Árboles de Decisión (<a href="09Arboles.html" class="quarto-xref"><span>Capítulo 10</span></a>). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging.</p>
 <p>Las siguientes instrucciones entrenan una máquina de soporte vectorial, calculando en la segunda línea el macro-recall (<a href="02Rendimiento.html#sec-macro" class="quarto-xref"><span>Sección 2.3.6</span></a>). El rendimiento se presenta en una tabla para facilitar la comparación.</p>
-<div id="271b1bde" class="cell" data-execution_count="5">
+<div id="d7518b3b" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>svc <span class="op">=</span> LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T, y_t)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>svc_recall <span class="op">=</span> recall_score(y_g, svc.predict(G),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                          average<span class="op">=</span><span class="st">"macro"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Complementando las instrucciones anteriores, en el siguiente código se entrena un Árbol de Decisión.</p>
-<div id="cf9bf29a" class="cell" data-execution_count="6">
+<div id="a81b5617" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tree <span class="op">=</span> DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                              min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T, y_t)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tree_recall <span class="op">=</span> recall_score(y_g, tree.predict(G),</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                           average<span class="op">=</span><span class="st">"macro"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la mediana del apéndice de Estadística (<a href="19Estadistica.html#sec-bootstrap-ejemplo" class="quarto-xref"><span>Sección A.2.1</span></a>). El siguiente código genera las muestras, en particular el ensamble sería de <span class="math inline">\(M=11\)</span> elementos.</p>
-<div id="7d32b2b7" class="cell" data-execution_count="7">
+<div id="06ef3025" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.random.randint(T.shape[<span class="dv">0</span>],</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">11</span>, T.shape[<span class="dv">0</span>]))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entrena las máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.</p>
-<div id="4056199b" class="cell" data-execution_count="8">
+<div id="0c79bdf3" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>svc_ins <span class="op">=</span> [LinearSVC(dual<span class="op">=</span><span class="va">False</span>).fit(T[b], y_t[b])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> b <span class="kw">in</span> B]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> svc_ins])</span>
@@ -490,7 +491,7 @@ Figura&nbsp;11.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>bsvc_recall <span class="op">=</span> recall_score(y_g, hy, average<span class="op">=</span><span class="st">"macro"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El siguiente algoritmo son los Árboles de Decisión; la única diferencia con respecto a las instrucciones anteriores es la primera línea donde se entrenan los árboles.</p>
-<div id="68b58465" class="cell" data-execution_count="9">
+<div id="1cdfbe9a" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tree_ins <span class="op">=</span> [DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                                   min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T[b], y_t[b])</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> b <span class="kw">in</span> B]</span>
@@ -501,7 +502,7 @@ Figura&nbsp;11.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                            average<span class="op">=</span><span class="st">"macro"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Como se mencionó, la predicción final se puede realizar de dos maneras en clasificación una es usando votación, como se vio en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculan las probabilidades de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa esta información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que <span class="math inline">\(1\)</span> y menor que <span class="math inline">\(-1\)</span> y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo.</p>
-<div id="3085308f" class="cell" data-execution_count="10">
+<div id="0181bdc3" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.decision_function(G) <span class="cf">for</span> m <span class="kw">in</span> svc_ins])</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.where(hys <span class="op">&gt;</span> <span class="dv">1</span>, <span class="dv">1</span>, hys)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.where(hys <span class="op">&lt;</span> <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, hys)</span>
@@ -510,7 +511,7 @@ Figura&nbsp;11.1: Rendimiento cuando el número de clasificadores se incrementa
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                           average<span class="op">=</span><span class="st">"macro"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El procedimiento anterior se puede adaptar a los Árboles de Decisión utilizando el siguiente código.</p>
-<div id="0a2bf2a5" class="cell" data-execution_count="11">
+<div id="810f6893" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict_proba(G)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> m <span class="kw">in</span> tree_ins])</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ctree_recall <span class="op">=</span> recall_score(y_g,</span>
@@ -538,18 +539,18 @@ Tabla&nbsp;11.1: Rendimiento (macro-recall) de bagging y estimadores base.
 <tbody>
 <tr class="odd">
 <td>Único</td>
-<td><span class="math inline">\(0.9425\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.8395\)</span></td>
+<td><span class="math inline">\(0.9450\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.8367\)</span></td>
 </tr>
 <tr class="even">
 <td>Votación (<span class="math inline">\(M=11\)</span>)</td>
-<td><span class="math inline">\(0.9407\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.9410\)</span></td>
+<td><span class="math inline">\(0.9441\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.9486\)</span></td>
 </tr>
 <tr class="odd">
 <td>Suma (<span class="math inline">\(M=11\)</span>)</td>
-<td><span class="math inline">\(0.9528\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.9410\)</span></td>
+<td><span class="math inline">\(0.9495\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.9617\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -562,31 +563,31 @@ Tabla&nbsp;11.1: Rendimiento (macro-recall) de bagging y estimadores base.
 <section id="ejemplo-diabetes" class="level3" data-number="11.4.2">
 <h3 data-number="11.4.2" class="anchored" data-anchor-id="ejemplo-diabetes"><span class="header-section-number">11.4.2</span> Ejemplo: Diabetes</h3>
 <p>Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento (<span class="math inline">\(\mathcal T\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>) se muestran a continuación.</p>
-<div id="dd9d643c" class="cell" data-execution_count="13">
+<div id="783f5a9c" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como medida de rendimiento el porcentaje del error absoluto (<a href="02Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>2.6</span></a>); tal y como se muestran en las siguientes instrucciones.</p>
-<div id="0da4468c" class="cell" data-execution_count="14">
+<div id="36fb9b14" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>svr <span class="op">=</span> LinearSVR(dual<span class="op">=</span><span class="st">'auto'</span>).fit(T, y_t)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>svr_mape <span class="op">=</span> mean_absolute_percentage_error(y_g,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                          svr.predict(G))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El árbol de decisión y su rendimiento se implementa con el siguiente código.</p>
-<div id="8b04cae1" class="cell" data-execution_count="15">
+<div id="a35fb12f" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tree <span class="op">=</span> DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                                      y_t)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>tree_mape <span class="op">=</span> mean_absolute_percentage_error(y_g,</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                           tree.predict(G))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Al igual que en el caso de clasificación, la siguiente instrucción genera los índices para generar las muestras. Se hace un ensamble de <span class="math inline">\(M=11\)</span> elementos.</p>
-<div id="e1aac404" class="cell" data-execution_count="16">
+<div id="5f0f9b97" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> np.random.randint(T.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">11</span>, T.shape[<span class="dv">0</span>]))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrenan las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y en la tercera se realiza el promedio y se mide el rendimiento.</p>
-<div id="dd2ccfd0" class="cell" data-execution_count="17">
+<div id="13854eae" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>svr_ins <span class="op">=</span> [LinearSVR(dual<span class="op">=</span><span class="st">'auto'</span>).fit(T[b], y_t[b])</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> b <span class="kw">in</span> B]</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> svr_ins])</span>
@@ -594,7 +595,7 @@ Tabla&nbsp;11.1: Rendimiento (macro-recall) de bagging y estimadores base.
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                           hys.mean(axis<span class="op">=</span><span class="dv">0</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>De manera equivalente se entrenan los Árboles de Decisión, como se muestra a continuación.</p>
-<div id="2b6f6288" class="cell" data-execution_count="18">
+<div id="07650a1d" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tree_ins <span class="op">=</span> [DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>).fit(T[b], y_t[b])</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> b <span class="kw">in</span> B]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>hys <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> tree_ins])</span>
@@ -621,13 +622,13 @@ Tabla&nbsp;11.2: Rendimiento (MAPE) de bagging y estimadores base.
 <tbody>
 <tr class="odd">
 <td>Único</td>
-<td><span class="math inline">\(0.4130\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.5429\)</span></td>
+<td><span class="math inline">\(0.4128\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.5332\)</span></td>
 </tr>
 <tr class="even">
 <td>Promedio (<span class="math inline">\(M=11\)</span>)</td>
-<td><span class="math inline">\(0.4145\)</span></td>
-<td>&nbsp;<span class="math inline">\(0.3889\)</span></td>
+<td><span class="math inline">\(0.4143\)</span></td>
+<td>&nbsp;<span class="math inline">\(0.4035\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -655,7 +656,7 @@ Tabla&nbsp;11.2: Rendimiento (MAPE) de bagging y estimadores base.
 <div id="fig-ensamble-variacion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ensamble-variacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="10Ensambles_files/figure-html/fig-ensamble-variacion-output-1.png" class="img-fluid figure-img">
+<img src="10Ensambles_files/figure-html/fig-ensamble-variacion-output-1.png" width="472" height="470" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ensamble-variacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;11.2: Variación del rendimiento con respecto al tamaño del ensamble (<span class="math inline">\(M\)</span>).
@@ -675,26 +676,26 @@ Nota
 </div>
 <div class="callout-body-container callout-body">
 <p>Las clases <code>BaggingClassifier</code> y <code>BaggingRegressor</code> implementan el ensamble de Bagging. Estas clases tienen parámetros que permiten ejecutar variaciones de la idea original. El uso de la clase <code>BaggingRegressor</code> se ilustra con el siguiente código,</p>
-<div id="8c5614f6" class="cell" data-execution_count="21">
+<div id="a91d5dff" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tree_ins <span class="op">=</span> DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ens <span class="op">=</span> BaggingRegressor(tree_ins).fit(T, y_t)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> ens.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>donde el promedio del error absoluto es <span class="math inline">\(0.3929.\)</span></p>
+<p>donde el promedio del error absoluto es <span class="math inline">\(0.4057.\)</span></p>
 </div>
 </div>
 </section>
 </section>
 <section id="bosques-aleatorios-random-forest" class="level2" data-number="11.5">
 <h2 data-number="11.5" class="anchored" data-anchor-id="bosques-aleatorios-random-forest"><span class="header-section-number">11.5</span> Bosques Aleatorios (Random Forest)</h2>
-<p>En la sección anterior se vio cómo se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general Bagging (<a href="#sec-bagging" class="quarto-xref"><span>Sección 11.4</span></a>) creado con árboles de decisión se les conoce como bosques aleatorios. <span class="citation" data-cites="breiman2001randomforest">Breiman (<a href="18Referencias.html#ref-breiman2001randomforest" role="doc-biblioref">2001</a>)</span> propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación.</p>
+<p>En la sección anterior se vio cómo se puede utilizar Bagging y Árboles de Decisión para generar un ensamble, en general Bagging (<a href="#sec-bagging" class="quarto-xref"><span>Sección 11.4</span></a>) creado con árboles de decisión se les conoce como bosques aleatorios. <span class="citation" data-cites="breiman2001randomforest">Breiman (<a href="18Referencias.html#ref-breiman2001randomforest" role="doc-biblioref">2001a</a>)</span> propone los árboles aleatorios y muestra de manera teórica su comportamiento en la predicción así como de manera experimental su rendimiento en problemas de clasificación.</p>
 <p>El uso de árboles aleatorios es directo mediante las clases <code>RandomForestClassifier</code> y <code>RandomForestRegressor</code> tal y como se muestra en el siguiente código:</p>
-<div id="4a96a881" class="cell" data-execution_count="22">
+<div id="e735a6f5" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ens <span class="op">=</span> RandomForestRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ens.fit(T, y_t)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> ens.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>donde el promedio del error absoluto es <span class="math inline">\(0.3894.\)</span></p>
+<p>donde el promedio del error absoluto es <span class="math inline">\(0.3956.\)</span></p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -713,7 +714,7 @@ Nota
 <div id="fig-actividad-forest-classifier" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-actividad-forest-classifier-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="10Ensambles_files/figure-html/fig-actividad-forest-classifier-output-1.png" class="img-fluid figure-img">
+<img src="10Ensambles_files/figure-html/fig-actividad-forest-classifier-output-1.png" width="472" height="470" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-actividad-forest-classifier-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;11.3: Cambio del rendimiento cuando el parámetro que controla el número de muestras para realizar la partición (i.e., min_samples_split) varía.
@@ -733,38 +734,38 @@ Figura&nbsp;11.3: Cambio del rendimiento cuando el parámetro que controla el n�
 <section id="ejemplo-diabetes-1" class="level3" data-number="11.6.1">
 <h3 data-number="11.6.1" class="anchored" data-anchor-id="ejemplo-diabetes-1"><span class="header-section-number">11.6.1</span> Ejemplo: Diabetes</h3>
 <p>Para ejemplificar el uso de Stack Generalization, se usa el conjunto de datos de Diabetes. Como se acaba de describir es necesario contar con un conjunto independiente para estimar los parámetros del estimador del stack. Entonces el primer paso es dividir el conjunto de entrenamiento en un conjunto de entrenamiento y validación (<span class="math inline">\(\mathcal V,\)</span>) tal y como se muestra en la siguiente instrucción.</p>
-<div id="e6a27087" class="cell" data-execution_count="24">
+<div id="a013a4ee" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>T1, V, y_t1, y_v <span class="op">=</span> train_test_split(T, y_t,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                                    test_size<span class="op">=</span><span class="fl">0.3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Para este ejemplo se usará como regresores bases el algoritmo de Vecinos Cercanos (<a href="06NoParametricos.html#sec-regresion" class="quarto-xref"><span>Sección 7.7</span></a>) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación (<span class="math inline">\(\mathcal V\)</span>) y prueba (<span class="math inline">\(\mathcal G\)</span>), esto se observa en la segunda y tercera línea del siguiente código.</p>
-<div id="be51472b" class="cell" data-execution_count="25">
+<div id="cf51a69a" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [KNeighborsRegressor(n_neighbors<span class="op">=</span>n).fit(T1, y_t1)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">7</span>, <span class="dv">9</span>]]</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>V_stack <span class="op">=</span> np.array([m.predict(V) <span class="cf">for</span> m <span class="kw">in</span> models]).T</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>G_stack <span class="op">=</span> np.array([m.predict(G) <span class="cf">for</span> m <span class="kw">in</span> models]).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El porcentaje del error absoluto (<a href="02Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>2.6</span></a>) de los estimadores bases en el conjunto de prueba se puede calcular con el siguiente código</p>
-<div id="34550fac" class="cell" data-execution_count="26">
+<div id="6e15c8e0" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mape_test <span class="op">=</span> []</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> hy <span class="kw">in</span> G_stack.T:</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  mape <span class="op">=</span> mean_absolute_percentage_error(y_g, hy)</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  mape_test.append(mape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>teniendo los siguientes valores <span class="math inline">\(0.3974\)</span> y <span class="math inline">\(0.3775\)</span>, respectivamente.</p>
+<p>teniendo los siguientes valores <span class="math inline">\(0.3613\)</span> y <span class="math inline">\(0.3630\)</span>, respectivamente.</p>
 <p>Finalmente, es momento de entrenar el regresor que combinará las salidas de los estimadores bases, i.e., Vecinos Cercanos. Se decidió utilizar una Máquina de Soporte Vectorial (<a href="07Lineal.html#sec-svm" class="quarto-xref"><span>Sección 8.4</span></a>) con kernel polinomial de grado <span class="math inline">\(2\)</span>. Los parámetros de la máquina se estiman en la primera línea, y después se predicen los datos del conjunto de prueba.</p>
-<div id="b9cc2904" class="cell" data-execution_count="28">
+<div id="6ce62eb1" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>stacking <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>).fit(V_stack, y_v)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> stacking.predict(np.vstack(G_stack))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error (<a href="02Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>2.6</span></a>) obtenido por este procedimiento es de <span class="math inline">\(0.3643\)</span>; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial.</p>
-<div id="fcf19936" class="cell" data-execution_count="30">
+<p>El error (<a href="02Rendimiento.html#eq-mape" class="quarto-xref">Ecuación&nbsp;<span>2.6</span></a>) obtenido por este procedimiento es de <span class="math inline">\(0.3708\)</span>; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial.</p>
+<div id="2256dc5b" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>st_trees <span class="op">=</span> BaggingRegressor(estimator<span class="op">=</span>DecisionTreeRegressor(min_samples_split<span class="op">=</span><span class="dv">9</span>),</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                            n_estimators<span class="op">=</span><span class="dv">200</span>).fit(V_stack, y_v)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> st_trees.predict(np.vstack(G_stack))</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>mape <span class="op">=</span> mean_absolute_percentage_error(y_g, hy)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El rendimiento de este cambio es <span class="math inline">\(0.3911\)</span>.</p>
+<p>El rendimiento de este cambio es <span class="math inline">\(0.3976\)</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -776,7 +777,7 @@ Nota
 </div>
 <div class="callout-body-container callout-body">
 <p>Las clases <code>StackingClassifier</code> y <code>StackingRegressor</code> implementan la idea de Stack Generalization. El siguiente código muestra su uso en el ejemplo de diabetes, utilizando los algoritmos de vecinos cercanos y máquinas de soporte vectorial.</p>
-<div id="0a2f9071" class="cell" data-execution_count="31">
+<div id="3d93272a" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [(<span class="ss">f'KNN-</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">'</span>, KNeighborsRegressor(n_neighbors<span class="op">=</span>n))</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">7</span>, <span class="dv">9</span>]]</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>final_estimator <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'poly'</span>, degree<span class="op">=</span><span class="dv">2</span>)</span>
@@ -786,19 +787,28 @@ Nota
 <p>El promedio del error absoluto es <span class="math inline">\(0.3751.\)</span></p>
 </div>
 </div>
+</section>
+</section>
+<section id="sec-resumen-ensambles" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="sec-resumen-ensambles"><span class="header-section-number">11.7</span> Resumen</h2>
+<p>Un ensamble combina las predicciones de varios algoritmos para obtener una mejor que la de cada uno por separado. El fundamento es que promediar predicciones reduce la varianza (<a href="#sec-fundamentos" class="quarto-xref"><span>Sección 11.3</span></a>), y de ahí viene Bagging (<a href="#sec-bagging" class="quarto-xref"><span>Sección 11.4</span></a>), que entrena cada algoritmo con una muestra bootstrap de los datos. Los bosques aleatorios agregan aleatoriedad en las variables que cada árbol puede usar, y Stack Generalization aprende cómo combinar las predicciones con otro algoritmo en lugar de promediarlas con el mismo peso. En datos tabulares estos métodos suelen estar entre los de mejor rendimiento (<a href="#tbl-ensambles-perf-cl" class="quarto-xref">Tabla&nbsp;<span>11.1</span></a> y <a href="#tbl-ensambles-perf-reg" class="quarto-xref">Tabla&nbsp;<span>11.2</span></a>).</p>
+<p>El costo de ese rendimiento es la interpretabilidad. Un bosque de cientos de árboles ya no se lee como un criterio de elegibilidad, y es el dilema de Occam entre exactitud y simplicidad que describe <span class="citation" data-cites="breiman2001statistical">Breiman (<a href="18Referencias.html#ref-breiman2001statistical" role="doc-biblioref">2001b</a>)</span>. Quien trabaja en política pública debe decidir cuánto de lo uno está dispuesto a perder por lo otro. Los bosques reaparecen más adelante en el contexto de la inferencia causal, pero ese tema queda fuera de este capítulo.</p>
+<p>Los árboles y los ensambles son una familia flexible que se construye con reglas. Otra familia igualmente flexible se ajusta con descenso por gradiente, y se presenta en <a href="11RedesNeuronales.html" class="quarto-xref"><span>Capítulo 12</span></a>.</p>
 
 
 <!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-breiman2001randomforest" class="csl-entry" role="listitem">
-Breiman, Leo. 2001. <span>«Random Forests»</span>. <em>Machine Learning</em> 45: 5-32. <a href="https://doi.org/10.1214/ss/1009213726">https://doi.org/10.1214/ss/1009213726</a>.
+Breiman, Leo. 2001a. <span>«Random Forests»</span>. <em>Machine Learning</em> 45: 5-32. <a href="https://doi.org/10.1214/ss/1009213726">https://doi.org/10.1214/ss/1009213726</a>.
+</div>
+<div id="ref-breiman2001statistical" class="csl-entry" role="listitem">
+Breiman, Leo. 2001b. <span>«Statistical modeling: The two cultures»</span>. <em>Statistical science</em> 16 (3): 199-231. <a href="https://doi.org/10.1214/ss/1009213726">https://doi.org/10.1214/ss/1009213726</a>.
 </div>
 <div id="ref-WOLPERT1992241" class="csl-entry" role="listitem">
 Wolpert, David H. 1992. <span>«Stacked generalization»</span>. <em>Neural Networks</em> 5 (2): 241-59. https://doi.org/<a href="https://doi.org/10.1016/S0893-6080(05)80023-1">https://doi.org/10.1016/S0893-6080(05)80023-1</a>.
 </div>
 </div>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1712,6 +1722,14 @@ Wolpert, David H. 1992. <span>«Stacked generalization»</span>. <em>Neural Netw
 <span id="cb26-507"><a href="#cb26-507" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-508"><a href="#cb26-508" aria-hidden="true" tabindex="-1"></a>El promedio del error absoluto es <span class="in">`{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`</span></span>
 <span id="cb26-509"><a href="#cb26-509" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-510"><a href="#cb26-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-511"><a href="#cb26-511" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-ensambles}</span></span>
+<span id="cb26-512"><a href="#cb26-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-513"><a href="#cb26-513" aria-hidden="true" tabindex="-1"></a>Un ensamble combina las predicciones de varios algoritmos para obtener una mejor que la de cada uno por separado. El fundamento es que promediar predicciones reduce la varianza (@sec-fundamentos), y de ahí viene Bagging (@sec-bagging), que entrena cada algoritmo con una muestra bootstrap de los datos. Los bosques aleatorios agregan aleatoriedad en las variables que cada árbol puede usar, y Stack Generalization aprende cómo combinar las predicciones con otro algoritmo en lugar de promediarlas con el mismo peso. En datos tabulares estos métodos suelen estar entre los de mejor rendimiento (@tbl-ensambles-perf-cl y @tbl-ensambles-perf-reg).</span>
+<span id="cb26-514"><a href="#cb26-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-515"><a href="#cb26-515" aria-hidden="true" tabindex="-1"></a>El costo de ese rendimiento es la interpretabilidad. Un bosque de cientos de árboles ya no se lee como un criterio de elegibilidad, y es el dilema de Occam entre exactitud y simplicidad que describe @breiman2001statistical. Quien trabaja en política pública debe decidir cuánto de lo uno está dispuesto a perder por lo otro. Los bosques reaparecen más adelante en el contexto de la inferencia causal, pero ese tema queda fuera de este capítulo.</span>
+<span id="cb26-516"><a href="#cb26-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-517"><a href="#cb26-517" aria-hidden="true" tabindex="-1"></a>Los árboles y los ensambles son una familia flexible que se construye con reglas. Otra familia igualmente flexible se ajusta con descenso por gradiente, y se presenta en @sec-redes-neuronales.</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
