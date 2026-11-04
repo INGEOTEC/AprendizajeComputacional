@@ -380,3 +380,9 @@ La clase equivalente a `KNeighborsClassifier` para regresión es `KNeighborsRegr
 krg = KNeighborsRegressor().fit(T, y_t)
 hy = krg.predict(G)
 ```
+
+## Resumen {#sec-resumen-no-parametricos}
+
+Los métodos no paramétricos cambian el supuesto sobre la forma de la distribución por el supuesto de que los datos parecidos se comportan de manera parecida. La densidad se puede estimar con histogramas (@sec-no-parametricos-histogramas), con kernels (@fig-no-param-kernel) o con vecinos cercanos (@fig-no-param-vecinos), y los mismos vecinos sirven para clasificar y para hacer regresión (@sec-regresion). A cambio de no suponer una forma, estos métodos conservan los datos de entrenamiento y los consultan en cada predicción. Además, su comportamiento depende de hiperparámetros como el tamaño del bin o el número de vecinos, que deben ajustarse con datos de validación, y de que haya suficientes datos cercanos, algo que es más difícil conforme crece el número de variables.
+
+Una alternativa a guardar todos los datos es modelar directamente la frontera que separa a las clases. Los discriminantes lineales, que hacen justamente eso, se presentan en @sec-discriminantes-lineales.

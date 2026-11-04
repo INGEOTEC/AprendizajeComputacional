@@ -567,6 +567,49 @@ r2_ols.plot(comp_legend='Comparación', winner_legend='Mejor',
 
 Con $N=$ `{python} n_f` y $d=$ `{python} d_f` ninguno de los modelos regularizados supera a MCO. Ridge, Lasso y Elastic Net son estadísticamente equivalentes a él y el único modelo que la figura marca como diferente es el reducido. Con muchos datos y pocas variables MCO ya tiene poca varianza y la regularización tiene poco que corregir. La ganancia de Lasso, cuando existe, es un modelo con menos variables y el mismo rendimiento, que es lo que interesa cuando el modelo se aplica con información que hay que recabar. Aquí es modesta, pues conserva `{python} n_lasso_f` de las `{python} d_f` variables. El $R^2$ es bajo en todos los casos, pues ningún método puede extraer de las características del plantel más información de la que tienen.
 
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Repita el procedimiento del capítulo (MCO, Ridge y Lasso con $\lambda$ seleccionado por validación cruzada, y comparación con `CompStats`) con el conjunto de Territorio (@sec-datos-territorio). El objetivo es `grado_promedio_escolaridad` y se descartan `clave_ageb`, `municipio`, `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`. Con un número pequeño de renglones y de variables la regularización debe notarse más que en Educación. Conteste las siguientes preguntas. ¿Qué sectores de establecimientos selecciona Lasso? ¿Cambian si se repite con otra partición?
+
+```{python}
+#| echo: false
+#| fig-cap: Rendimiento ($R^2$) de MCO, Ridge y Lasso en el problema de Territorio.
+#| label: fig-actividad-territorio
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+X_a = territorio.drop(columns=['grado_promedio_escolaridad', 'clave_ageb',
+                               'municipio', 'pct_viv_internet',
+                               'pct_sin_servicio_salud',
+                               'pct_jefatura_femenina'])
+y_a = territorio['grado_promedio_escolaridad'].to_numpy()
+T_a, G_a, y_ta, y_ga = train_test_split(X_a.to_numpy(), y_a, test_size=0.2,
+                                        random_state=0)
+escala_a = StandardScaler().fit(T_a)
+T_a = escala_a.transform(T_a)
+G_a = escala_a.transform(G_a)
+kfold_a = KFold(n_splits=5, shuffle=True, random_state=0)
+ols_a = LinearRegression().fit(T_a, y_ta)
+ridge_a = RidgeCV(alphas=np.logspace(-2, 5, 30), cv=kfold_a).fit(T_a, y_ta)
+lasso_a = LassoCV(cv=kfold_a, alphas=np.logspace(-3, 1, 30),
+                  max_iter=5000).fit(T_a, y_ta)
+r2_a = r2_score(y_ga, ols_a.predict(G_a), name='MCO', use_tqdm=False)
+r2_a(ridge_a.predict(G_a), name='Ridge')
+r2_a(lasso_a.predict(G_a), name='Lasso')
+r2_a.plot(comp_legend='Comparación', winner_legend='Mejor',
+          tie_legend='Equivalente', loser_legend='Diferente',
+          alg_legend='Algoritmo', var_name='Rendimiento')
+```
+
+```{python}
+#| echo: false
+sectores_f = Markdown(', '.join(f'`{c}`' for c in X_a.columns[lasso_a.coef_ != 0]))
+n_a_f = Markdown(f'${X_a.shape[0]}$')
+d_a_f = Markdown(f'${X_a.shape[1]}$')
+```
+
+El resultado esperado se muestra en la @fig-actividad-territorio, con $N=$ `{python} n_a_f` AGEB y $d=$ `{python} d_a_f` variables. Las variables que conserva Lasso son `{python} sectores_f`.
+:::
+
 ## Los Coeficientes no se Interpretan Causalmente {#sec-coeficientes-regularizados}
 
 Lasso y Ridge son útiles para predecir, pero sus coeficientes no se leen como los de MCO en un estudio de efectos. La razón es que las variables que Lasso conserva no son estables. Con variables correlacionadas, pequeños cambios en la muestra cambian la variable que entra y la que sale. El siguiente código lo muestra ajustando `LassoCV` en $10$ submuestras aleatorias del $50\%$ de $\mathcal T$ y registrando qué variables tienen un coeficiente distinto de cero, y el $R^2$ de cada modelo en el conjunto de prueba.
@@ -703,47 +746,8 @@ La @tbl-pmt y la @fig-pmt-variables muestran que con `{python} n_chico_f` variab
 
 En términos de política, la cobertura es la proporción de hogares pobres que el programa alcanza y $1 -$ precisión es la proporción de beneficiarios que no son pobres. Son, respectivamente, los errores de exclusión y de inclusión. El modelo se evaluó con el umbral que usa `predict` por omisión. Qué umbral usar cuando ambos errores cuestan distinto se trata en @sec-teoria-decision-bayesianas.
 
-## Actividades {.unnumbered}
+## Resumen {#sec-resumen-regresion}
 
-::: {.callout-tip collapse="true"}
-### Actividad
+En este capítulo se evaluó la regresión lineal por su capacidad de predecir observaciones no vistas y no por la significancia de sus coeficientes (@sec-regresion-ols). El error de predicción se descompone en sesgo y varianza (@eq-sesgo-varianza), y de ahí se entiende que un modelo con muchas variables y pocos datos puede rendir peor fuera de muestra que uno más simple (@sec-sesgo-varianza). Ridge (@sec-ridge), Lasso (@sec-lasso) y Elastic Net (@sec-elastic-net) aceptan algo de sesgo a cambio de reducir la varianza, y el hiperparámetro $\lambda$ se selecciona con validación cruzada (@sec-seleccion-lambda) y no con el conjunto de prueba. Los coeficientes de un modelo regularizado no se interpretan como efectos causales (@sec-coeficientes-regularizados), porque las variables que Lasso selecciona cambian con la muestra aunque el rendimiento casi no cambie.
 
-Repita el procedimiento del capítulo (MCO, Ridge y Lasso con $\lambda$ seleccionado por validación cruzada, y comparación con `CompStats`) con el conjunto de Territorio (@sec-datos-territorio). El objetivo es `grado_promedio_escolaridad` y se descartan `clave_ageb`, `municipio`, `pct_viv_internet`, `pct_sin_servicio_salud` y `pct_jefatura_femenina`. Con un número pequeño de renglones y de variables la regularización debe notarse más que en Educación. Conteste las siguientes preguntas. ¿Qué sectores de establecimientos selecciona Lasso? ¿Cambian si se repite con otra partición?
-
-```{python}
-#| echo: false
-#| fig-cap: Rendimiento ($R^2$) de MCO, Ridge y Lasso en el problema de Territorio.
-#| label: fig-actividad-territorio
-territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
-X_a = territorio.drop(columns=['grado_promedio_escolaridad', 'clave_ageb',
-                               'municipio', 'pct_viv_internet',
-                               'pct_sin_servicio_salud',
-                               'pct_jefatura_femenina'])
-y_a = territorio['grado_promedio_escolaridad'].to_numpy()
-T_a, G_a, y_ta, y_ga = train_test_split(X_a.to_numpy(), y_a, test_size=0.2,
-                                        random_state=0)
-escala_a = StandardScaler().fit(T_a)
-T_a = escala_a.transform(T_a)
-G_a = escala_a.transform(G_a)
-kfold_a = KFold(n_splits=5, shuffle=True, random_state=0)
-ols_a = LinearRegression().fit(T_a, y_ta)
-ridge_a = RidgeCV(alphas=np.logspace(-2, 5, 30), cv=kfold_a).fit(T_a, y_ta)
-lasso_a = LassoCV(cv=kfold_a, alphas=np.logspace(-3, 1, 30),
-                  max_iter=5000).fit(T_a, y_ta)
-r2_a = r2_score(y_ga, ols_a.predict(G_a), name='MCO', use_tqdm=False)
-r2_a(ridge_a.predict(G_a), name='Ridge')
-r2_a(lasso_a.predict(G_a), name='Lasso')
-r2_a.plot(comp_legend='Comparación', winner_legend='Mejor',
-          tie_legend='Equivalente', loser_legend='Diferente',
-          alg_legend='Algoritmo', var_name='Rendimiento')
-```
-
-```{python}
-#| echo: false
-sectores_f = Markdown(', '.join(f'`{c}`' for c in X_a.columns[lasso_a.coef_ != 0]))
-n_a_f = Markdown(f'${X_a.shape[0]}$')
-d_a_f = Markdown(f'${X_a.shape[1]}$')
-```
-
-El resultado esperado se muestra en la @fig-actividad-territorio, con $N=$ `{python} n_a_f` AGEB y $d=$ `{python} d_a_f` variables. Las variables que conserva Lasso son `{python} sectores_f`.
-:::
+Lasso selecciona variables como un efecto secundario de la regularización, y queda la pregunta de qué otros procedimientos existen para reducir el número de variables y cuánto cuesta hacerlo. Esa pregunta se responde en @sec-seleccion-variables.

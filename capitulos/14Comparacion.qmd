@@ -1,4 +1,4 @@
-# Comparación de Algoritmos
+# Comparación de Algoritmos {#sec-comparacion-algoritmos}
 
 El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y analizar el rendimiento de algoritmos. 
 
@@ -396,3 +396,11 @@ El segundo paso es conocer si la diferencia en rendimiento es significativa, en 
 diff = difference(perf)
 plot_difference(diff)
 ```
+
+## Resumen {#sec-resumen-comparacion}
+
+Una medida de rendimiento calculada en un conjunto de prueba es una estimación, y por lo tanto tiene incertidumbre. Los intervalos de confianza (@sec-intervalos) cuantifican esa incertidumbre, ya sea con la distribución normal o con el bootstrap (@sec-bootstrap-error-estandar). Para comparar dos algoritmos no basta con que uno tenga un número mayor, sino que la diferencia debe ser estadísticamente distinta de cero, lo que se puede verificar con la distribución $t$ de Student o con el bootstrap de las diferencias. La librería `CompStats` reúne estos procedimientos y los presenta de manera gráfica (@fig-comparacion-compstats). En este contexto «mejor» significa distinto con evidencia estadística y no solo mayor.
+
+Este es el último capítulo de esta versión del libro, y retoma el hilo de la @tbl-organizacion-libro. Se empezó con la diferencia entre predecir e inferir, se estudiaron modelos de regresión y de clasificación cada vez más flexibles, se vio cómo reducir la dimensión y agrupar, y se terminó con la forma de decidir entre algoritmos. Quedan en preparación los capítulos *Interpretabilidad y Equidad*, *Aprendizaje Computacional e Inferencia Causal* y *Texto como Datos*, que tratan el uso responsable de los modelos, la pregunta de qué pasa cuando se interviene y los datos en forma de texto.
+
+Para el *policy paper* de METPOL, esto se traduce en una práctica concreta. Plantear primero el problema como predicción o como inferencia, medir siempre fuera de muestra con la medida que refleje los costos de cada error, comparar contra un modelo de referencia sencillo con su intervalo de confianza y reportar la elección de manera que otra persona pueda reproducirla.

@@ -446,3 +446,10 @@ hy = stack.predict(G)
 El promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
 :::
 
+## Resumen {#sec-resumen-ensambles}
+
+Un ensamble combina las predicciones de varios algoritmos para obtener una mejor que la de cada uno por separado. El fundamento es que promediar predicciones reduce la varianza (@sec-fundamentos), y de ahí viene Bagging (@sec-bagging), que entrena cada algoritmo con una muestra bootstrap de los datos. Los bosques aleatorios agregan aleatoriedad en las variables que cada árbol puede usar, y Stack Generalization aprende cómo combinar las predicciones con otro algoritmo en lugar de promediarlas con el mismo peso. En datos tabulares estos métodos suelen estar entre los de mejor rendimiento (@tbl-ensambles-perf-cl y @tbl-ensambles-perf-reg).
+
+El costo de ese rendimiento es la interpretabilidad. Un bosque de cientos de árboles ya no se puede leer como un solo árbol, y es el dilema de Occam entre exactitud y simplicidad que describe @breiman2001statistical. Los bosques reaparecen más adelante en el contexto de la inferencia causal, pero ese tema queda fuera de este capítulo.
+
+Los árboles y los ensambles son una familia flexible que se construye con reglas. Otra familia igualmente flexible se ajusta con descenso por gradiente, y se presenta en @sec-redes-neuronales.
