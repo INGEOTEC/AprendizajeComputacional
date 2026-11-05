@@ -11,13 +11,15 @@ import jax.lax as lax
 import jax.numpy as jnp
 import optax
 from CompStats.metrics import r2_score
-from sklearn.datasets import load_iris, load_digits, load_diabetes
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import recall_score
 import numpy as np
 import pandas as pd
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -33,7 +35,7 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-11}
 
-Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que más han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial. Al final del capítulo se presentan un ejemplo de clasificación (Dígitos) y uno de regresión (@sec-redes-neuronales-regresion).
+Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que más han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial. Al final del capítulo se presentan un ejemplo de clasificación (Prioridad de Planteles) y uno de regresión (@sec-redes-neuronales-regresion), ambos con los datos de abandono escolar (@sec-datos-educacion).
 
 ## Regresión Logística Multinomial {#sec-regresion-logistica-multinomial}
 
@@ -55,20 +57,39 @@ jax.nn.softmax(np.array([2, 1, 3]))
 
 Se puede observar que $\textsf{softmax}$ transforma los valores del vector $\mathbf v$ en probabilidades. 
 
-Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno. 
+Para seguir explicando este tipo de regresión logística se utilizará el problema de priorizar planteles para un programa de tutorías (@sec-datos-educacion). La variante `prioridad` (@sec-datos-educacion-prioridad) clasifica cada secundaria en prioridad baja ($0$), media ($1$) o alta ($2$) según su tasa de abandono, de tal forma que el programa atienda primero a los planteles con más abandono. Los datos se leen del release `datos-v1`, se construye la variante y las variables indicadoras (@sec-regresion-datos) y se parten en los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) con una partición estratificada y la semilla fija `random_state=0`. Es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno, con los parámetros calculados solamente en $\mathcal T.$ La tasa de abandono no es una variable predictora porque con ella se define la prioridad. 
 
 ```{python}
 #| echo: true
-D, y = load_iris(return_X_y=True)
-normalize = StandardScaler().fit(D)
-D = normalize.transform(D)
+educacion = pd.read_csv(f'{URL_DATOS}/sep_f911_educacion.csv.gz')
+corte = educacion.tasa_abandono.quantile(0.9)
+prioridad = np.where(educacion.tasa_abandono == 0, 0,
+                     np.where(educacion.tasa_abandono > corte, 2, 1))
+constantes = [c for c in educacion.columns if educacion[c].nunique() == 1]
+X_e = pd.get_dummies(educacion.drop(columns=['tasa_abandono', 'clave_cct'] + constantes),
+                     drop_first=True, dtype=float)
+T, G, y_t, y_g = train_test_split(X_e.to_numpy(), prioridad,
+                                  test_size=0.2, random_state=0,
+                                  stratify=prioridad)
+normalize = StandardScaler().fit(T)
+D = normalize.transform(T)
+G = normalize.transform(G)
 ```
+
+```{python}
+#| echo: false
+n_educacion_f = Markdown(f'${educacion.shape[0]}$')
+d_entrada_f = Markdown(f'${D.shape[1]}$')
+prop_clases_f = [Markdown(f'${100 * (prioridad == k).mean():0.1f}\\%$') for k in range(3)]
+```
+
+El conjunto tiene `{python} n_educacion_f` planteles y, después de convertir las variables de texto en indicadoras, `{python} d_entrada_f` variables de entrada. La prioridad baja tiene `{python} prop_clases_f[0]` de los planteles, la media `{python} prop_clases_f[1]` y la alta `{python} prop_clases_f[2]`.
 
 El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d.$ Los parámetros iniciales se pueden generar con la función `parametros_iniciales` tal y como se muestra a continuación.
 
 ```{python}
 #|  echo: true
-n_labels = np.unique(y).shape[0]
+n_labels = np.unique(y_t).shape[0]
 def parametros_iniciales(key=0):
     key = jax.random.PRNGKey(key)
     d = D.shape[1]
@@ -99,7 +120,7 @@ Una característica importante es que la función de pérdida, en este caso, a l
 
 ```{python}
 #| echo: true
-y_oh = jax.nn.one_hot(y, n_labels)
+y_oh = jax.nn.one_hot(y_t, n_labels)
 ```
 
 Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento. 
@@ -182,7 +203,21 @@ optimizer = optax.adam(learning_rate=1e-2)
 p2, error2 = adam(optimizer, params)
 ```
 
-La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar cómo el método `adam` converge más rápido y llega a un valor menor de Entropía Cruzada. 
+```{python}
+#| echo: false
+fit_50_f = Markdown(f'${float(error1[49]):0.4f}$')
+adam_50_f = Markdown(f'${float(error2[49]):0.4f}$')
+fit_fin_f = Markdown(f'${float(error1[-1]):0.4f}$')
+adam_fin_f = Markdown(f'${float(error2[-1]):0.4f}$')
+if error2[-1] < error1[-1] and error2[49] < error1[49]:
+    adam_conc_f = Markdown('Se puede observar cómo el método `adam` converge más rápido y llega a un valor menor de Entropía Cruzada.')
+elif error2[-1] < error1[-1]:
+    adam_conc_f = Markdown('Se puede observar que el método `adam` llega a un valor menor de Entropía Cruzada.')
+else:
+    adam_conc_f = Markdown('Se puede observar que el método `adam` no llega a un valor menor de Entropía Cruzada que `fit` en este número de épocas.')
+```
+
+La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. En la época $50$ la Entropía Cruzada es `{python} fit_50_f` con `fit` y `{python} adam_50_f` con `adam`, y al final de las $500$ épocas es `{python} fit_fin_f` y `{python} adam_fin_f`, respectivamente. `{python} adam_conc_f` 
 
 ```{python}
 #| code-fold: true
@@ -200,12 +235,12 @@ _ = sns.relplot(data=df, x='epoca', y='entropia', hue='optimizador', kind='line'
 
 ```{python}
 #| echo: false
-_ = (y == modelo(p1, D).argmax(axis=1)).mean()
+_ = (y_t == modelo(p1, D).argmax(axis=1)).mean()
 acc_fit_f = Markdown(f'${_:0.4f}$')
-_ = (y == modelo(p2, D).argmax(axis=1)).mean()
+_ = (y_t == modelo(p2, D).argmax(axis=1)).mean()
 acc_adam_f = Markdown(f'${_:0.4f}$')
 ```
-Finalmente la exactitud (@sec-accuracy) en el conjunto de entrenamiento del modelo estimado con `fit` es `{python} acc_fit_f` (i.e., `(y == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es `{python} acc_adam_f`.
+Finalmente la exactitud (@sec-accuracy) en el conjunto de entrenamiento del modelo estimado con `fit` es `{python} acc_fit_f` (i.e., `(y_t == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es `{python} acc_adam_f`.
 
 ## Perceptrón {#sec-preceptron}
 
@@ -308,30 +343,20 @@ se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., `jax.grad(g_1)(par
 
 El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de manera exponencial, entonces los pesos asociados a las capas alejadas de la capa de salida reciben un gradiente equivalente a cero y no se cuenta con información para actualizar sus pesos. Por este motivo es recomendable utilizar funciones de activación que no presenten esta característica, una muy utilizada es $\textsf{ReLU}(x) = \max(0, x)$.
 
-## Ejemplo: Dígitos
+## Ejemplo: Prioridad de Planteles
 
-Para ejemplificar el uso de una red neuronal en un problema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones. 
-
-```{python}
-#| echo: true
-X, y = load_digits(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
-```
-
-Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estándar uno. En las siguientes líneas se normalizan los datos usando la clase `StandardScaler` se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (`T`) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba `G`. 
+Para ejemplificar el uso de una red neuronal en un problema de clasificación se continúa con el problema de priorizar planteles para un programa de tutorías, que es el mismo que se utilizó para la regresión logística multinomial; esto permite comparar los dos modelos. Se utiliza la misma partición en entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) y las mismas entradas normalizadas, es decir, `T`, `G`, `y_t` y `y_g`. Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estándar uno; los parámetros de la normalización se encontraron en el conjunto de entrenamiento y se aplicaron tanto al conjunto de entrenamiento como al de prueba. La matriz `D` es la versión normalizada de `T` y la siguiente instrucción la asigna a `T`, que es el nombre que se usa en el resto del ejemplo. 
 
 ```{python}
 #| echo: true
-normalize = StandardScaler().fit(T)
-T = normalize.transform(T)
-G = normalize.transform(G)
+T = D
 ```
 
 Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor $1$ representa la clase, esto se realiza con las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
-n_labels = np.unique(y).shape[0]
+n_labels = np.unique(y_t).shape[0]
 yt_oh = jax.nn.one_hot(y_t, n_labels)
 ```
 
@@ -343,23 +368,23 @@ n_labels_f = Markdown(f'${n_labels}$')
 
 Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en este caso corresponde a `{python} t_shape_f` (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso `{python} n_labels_f` (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que las dimensiones sean coherentes con la operación que se va a realizar. 
 
-La red que se va a implementar es la siguiente, como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
+La red que se va a implementar es la siguiente, donde $d$ es la dimensión del vector de entrada y $K$ es el número de clases; como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
 
 $$
 \begin{split}
-\hat{\mathbf{y}}_1^{32} &= \phi(W^{32\times 64} \mathbf x^{64} + \mathbf w_{1_0}^{32})\\
+\hat{\mathbf{y}}_1^{32} &= \phi(W^{32\times d} \mathbf x^{d} + \mathbf w_{1_0}^{32})\\
 \hat{\mathbf{y}}_2^{16} &= \phi(W^{16\times 32} \hat{\mathbf{y}}_1^{32} + \mathbf w_{2_0}^{16})\\
-\hat{\mathbf{y}}^{10} &= W^{10\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{10}
+\hat{\mathbf{y}}^{K} &= W^{K\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{K}
 \end{split}
 $$
 
-Considerando que las entradas se encuentran en una matriz $X^{N\times64},$ entonces se puede definir esta estructura en términos de multiplicación de matrices, lo cual queda como
+Considerando que las entradas se encuentran en una matriz $X^{N\times d},$ entonces se puede definir esta estructura en términos de multiplicación de matrices, lo cual queda como
 
 $$
 \begin{split}
-\hat{Y}_1^{N\times 32} &= \phi(X^{N\times 64} W^{64\times 32} + \mathbf w_{1_0}^{32})\\
+\hat{Y}_1^{N\times 32} &= \phi(X^{N\times d} W^{d\times 32} + \mathbf w_{1_0}^{32})\\
 \hat{Y}_2^{N\times 16} &= \phi(\hat{Y}_1^{N\times 32} W^{32\times 16} + \mathbf w_{2_0}^{16})\\
-\hat{Y}^{N\times 10} &= \hat{Y}_2^{N\times 16} W^{16\times 10} + \mathbf w_{3_0}^{10}\\
+\hat{Y}^{N\times K} &= \hat{Y}_2^{N\times 16} W^{16\times K} + \mathbf w_{3_0}^{K}\\
 \end{split},
 $$
 
@@ -367,7 +392,7 @@ donde la suma con el término $\mathbf w_0$ se realiza en la dimensión que corr
 
 ```{python}
 #| echo: true
-d = [64, 32, 16, 10]
+d = [T.shape[1], 32, 16, n_labels]
 ```
 
 Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar cómo el ciclo está iterando por los elementos de `d` creando pares, para generar las dimensiones adecuadas para las matrices $W.$
@@ -444,20 +469,36 @@ p, error = adam(optimizer, params, epocas=500)
 
 ```{python}
 #| echo: false
-error_f = (ann(p, G).argmax(axis=1) != y_g).mean()
-error_f = Markdown(f'${error_f:0.4f}$')
+hy_ann = np.array(ann(p, G)).argmax(axis=1)
+hy_lm = np.array(modelo(p2, G)).argmax(axis=1)
+err_ann = (hy_ann != y_g).mean()
+err_lm = (hy_lm != y_g).mean()
+err_triv = 1 - (np.bincount(y_g) / y_g.shape[0]).max()
+error_f = Markdown(f'${err_ann:0.4f}$')
+error_lm_f = Markdown(f'${err_lm:0.4f}$')
+error_triv_f = Markdown(f'${err_triv:0.4f}$')
+rec_ann_f = Markdown(f'${recall_score(y_g, hy_ann, average="macro"):0.4f}$')
+rec_lm_f = Markdown(f'${recall_score(y_g, hy_lm, average="macro"):0.4f}$')
+if err_ann < err_lm:
+    comp_ann_f = Markdown('es menor')
+else:
+    comp_ann_f = Markdown('no es menor')
+if min(err_ann, err_lm) < err_triv:
+    triv_f = Markdown('menor')
+else:
+    triv_f = Markdown('no menor')
 ```
 
-El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. 
+El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. La regresión logística multinomial del inicio del capítulo (el modelo `modelo` con los parámetros `p2` encontrados con Adam), que resuelve el mismo problema con el mismo conjunto de prueba, tiene un error de `{python} error_lm_f`; es decir, el error de la red `{python} comp_ann_f` que el de la regresión logística. Como referencia, un clasificador que siempre responde la clase más frecuente tendría un error de `{python} error_triv_f`, por lo que el mejor de los dos modelos tiene un error `{python} triv_f` que ese valor. Dado que la prioridad alta es la clase minoritaria, también se mide la cobertura promedio (macro-recall): `{python} rec_ann_f` para la red y `{python} rec_lm_f` para la regresión logística. 
 
-## Ejemplo: Diabetes {#sec-redes-neuronales-regresion}
+## Ejemplo: Abandono Escolar {#sec-redes-neuronales-regresion}
 
-Para ejemplificar el uso de una red neuronal en un problema de regresión se utilizan los datos de Diabetes (@sec-diabetes), donde se desea predecir una medida cuantitativa de la progresión de la enfermedad a partir de $10$ variables de cada paciente. Los datos se obtienen y se parten en los conjuntos de entrenamiento y prueba con las siguientes instrucciones; se fija la semilla (`random_state=0`) para que la partición sea la misma en cada ejecución.
+Para ejemplificar el uso de una red neuronal en un problema de regresión se utilizan los datos de Educación (@sec-datos-educacion), donde se desea predecir la tasa de abandono escolar de cada secundaria a partir de sus variables observables, con el fin de decidir qué planteles apoyar primero. Se utiliza la misma matriz de diseño `X_e` del ejemplo anterior y se parte en los conjuntos de entrenamiento y prueba con las siguientes instrucciones; se fija la semilla (`random_state=0`) para que la partición sea la misma en cada ejecución.
 
 ```{python}
 #| echo: true
-X, y = load_diabetes(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2, random_state=0)
+y = educacion['tasa_abandono'].to_numpy()
+T, G, y_t, y_g = train_test_split(X_e.to_numpy(), y, test_size=0.2, random_state=0)
 ```
 
 Al igual que en el ejemplo anterior, las entradas se normalizan para que tengan media cero y desviación estándar uno; los parámetros de la normalización se encuentran únicamente en el conjunto de entrenamiento (`T`) y se aplican tanto a `T` como a `G`. 
@@ -477,7 +518,7 @@ mu, sigma = y_t.mean(), y_t.std()
 yt_n = (y_t - mu) / sigma
 ```
 
-La estructura de la red es la misma que en el ejemplo de Dígitos, con dos capas ocultas y función de activación $\textsf{ReLU}$. La diferencia está en la capa de salida: en clasificación tenía una neurona por clase y las salidas pasaban por $\textsf{softmax}$ para interpretarse como probabilidades, en regresión se predice un único número, por lo que la última capa tiene una sola neurona y su salida se utiliza tal cual, es decir, no se le aplica ninguna función. La estructura $\mathbb R^{10} \rightarrow \mathbb R^{32} \rightarrow \mathbb R^{16} \rightarrow \mathbb R$ queda representada en la siguiente lista. 
+La estructura de la red es la misma que en el ejemplo de Prioridad de Planteles, con dos capas ocultas y función de activación $\textsf{ReLU}$. La diferencia está en la capa de salida: en clasificación tenía una neurona por clase y las salidas pasaban por $\textsf{softmax}$ para interpretarse como probabilidades, en regresión se predice un único número, por lo que la última capa tiene una sola neurona y su salida se utiliza tal cual, es decir, no se le aplica ninguna función. La estructura $\mathbb R^{d} \rightarrow \mathbb R^{32} \rightarrow \mathbb R^{16} \rightarrow \mathbb R$, donde $d$ es el número de columnas de la entrada, queda representada en la siguiente lista. 
 
 ```{python}
 #| echo: true
@@ -492,7 +533,7 @@ salida_f = Markdown(f'${d[-1]}$')
 
 Se observa que la única restricción para la primera capa es que tenga la dimensión del vector de entrada, que en este caso es `{python} t_shape_dm_f` (`T.shape[1]`), y que la última capa tiene dimensión `{python} salida_f` porque se predice un único valor. 
 
-Los parámetros iniciales (`parametros_iniciales`) y la red (`ann`) son los mismos que se definieron en el ejemplo de Dígitos; la función `ann` regresa una matriz con una sola columna, por lo que en la función de pérdida se aplica `flatten` para obtener un vector. Como medida de error se utiliza el error cuadrático medio (@eq-mse), que es la función que se minimiza en regresión (@sec-regresion-ols). 
+Los parámetros iniciales (`parametros_iniciales`) y la red (`ann`) son los mismos que se definieron en el ejemplo de Prioridad de Planteles; la función `ann` regresa una matriz con una sola columna, por lo que en la función de pérdida se aplica `flatten` para obtener un vector. Como medida de error se utiliza el error cuadrático medio (@eq-mse), que es la función que se minimiza en regresión (@sec-regresion-ols). 
 
 ```{python}
 #| echo: true
@@ -528,7 +569,7 @@ def adam_regresion(optimizer, params, X, y, epocas=500):
     return params, error
 ```
 
-La red se entrena con las siguientes instrucciones, que primero generan los parámetros iniciales, después inicializan el optimizador y finalmente llaman a `adam_regresion` con los datos de entrenamiento normalizados. Es importante notar que el conjunto de entrenamiento es pequeño comparado con el número de parámetros de la red, por lo que entrenar durante demasiadas épocas hace que la red se ajuste al ruido del conjunto de entrenamiento (sobreajuste); en este ejemplo se utiliza una tasa de aprendizaje pequeña y un número moderado de épocas. El número de épocas es un hiperparámetro que se puede seleccionar con un conjunto de validación (@sec-validacion-cruzada). 
+La red se entrena con las siguientes instrucciones, que primero generan los parámetros iniciales, después inicializan el optimizador y finalmente llaman a `adam_regresion` con los datos de entrenamiento normalizados. Es importante notar que entrenar durante demasiadas épocas puede hacer que la red se ajuste al ruido del conjunto de entrenamiento (sobreajuste); en este ejemplo se utiliza una tasa de aprendizaje pequeña y un número moderado de épocas. El número de épocas es un hiperparámetro que se puede seleccionar con un conjunto de validación (@sec-validacion-cruzada). 
 
 ```{python}
 #| echo: true
@@ -607,7 +648,7 @@ g.ax.plot(lim, lim, linestyle='--', color='gray')
 ::: {.callout-tip collapse="true"}
 ### Actividad 
 
-Comparar el rendimiento ($R^2$) en el conjunto de prueba de redes neuronales con diferente número de neuronas en las capas ocultas, i.e., modificando los valores $32$ y $16$ de la lista `d`, tal y como se muestra en la @fig-actividad-redes-regresion. Utilizar los mismos datos de Diabetes, la misma partición y el mismo procedimiento de entrenamiento descrito en esta sección; el rendimiento se compara con `CompStats`. 
+Comparar el rendimiento ($R^2$) en el conjunto de prueba de redes neuronales con diferente número de neuronas en las capas ocultas, i.e., modificando los valores $32$ y $16$ de la lista `d`, tal y como se muestra en la @fig-actividad-redes-regresion. Utilizar los mismos datos de abandono escolar, la misma partición y el mismo procedimiento de entrenamiento descrito en esta sección; el rendimiento se compara con `CompStats`. 
 
 ```{python}
 #| echo: false

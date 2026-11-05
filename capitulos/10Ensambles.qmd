@@ -7,8 +7,8 @@ El **objetivo** de la unidad es conocer y aplicar diferentes técnicas para real
 ```{python}
 #| echo: true
 from scipy.stats import binom
-from sklearn.datasets import load_diabetes, load_digits
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC, LinearSVR, SVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import BaggingRegressor
@@ -22,6 +22,8 @@ from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -93,17 +95,33 @@ Tanto en el caso de clasificación como en el caso del error cuadrado, es poco p
 
 Siguiendo con la idea de combinar $M$ instancias independientes de un tipo de algoritmo, en esta sección se presenta el algoritmo Bagging (Bootstrap Aggregation) el cual como su nombre lo indica se basa en la técnica de Bootstrap (@sec-bootstrap) para generar $M$ instancias del algoritmo y la combinación es mediante votación o el promedio en caso de regresión o que se cuente con la probabilidad de cada clase.
 
-### Ejemplo: Dígitos
+### Ejemplo: Focalización
 
-Para ejemplificar el uso del algoritmo de Bagging se utilizará el conjunto de datos de Dígitos. Estos datos se pueden obtener y generar el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) con las siguientes instrucciones.
+Para ejemplificar el uso del algoritmo de Bagging se utilizará el problema de focalización de un programa social (@sec-datos-pobreza), que consiste en clasificar si un hogar se encuentra por debajo de la línea de pobreza por ingresos usando solamente características observables de su vivienda y de su composición. Un programa social que usa un clasificador para decidir a quién ofrecer un apoyo gana cuando el clasificador identifica a más hogares pobres sin dejar de reconocer a los que no lo son, y combinar varios modelos es una manera de buscar esa mejora. Los datos se leen del release `datos-v1`, las variables de texto se convierten en indicadoras y se generan el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) con una partición estratificada, como se explicó en @sec-regresion-datos. Las entradas se estandarizan con los parámetros de $\mathcal T$, lo que necesita la Máquina de Soporte Vectorial y no afecta a los Árboles de Decisión.
 
 ```{python}
 #| echo: true
-X, y = load_digits(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y,
+pobreza = pd.read_csv(f'{URL_DATOS}/enigh_pobreza.csv.gz')
+X = pd.get_dummies(pobreza.drop(columns=['pobre_ingresos', 'factor']),
+                   drop_first=True, dtype=float)
+y = pobreza['pobre_ingresos'].to_numpy()
+T, G, y_t, y_g = train_test_split(X.to_numpy(), y,
                                   test_size=0.2,
-                                  random_state=0)
+                                  random_state=0,
+                                  stratify=y)
+escala = StandardScaler().fit(T)
+T = escala.transform(T)
+G = escala.transform(G)
 ```
+
+```{python}
+#| echo: false
+n_f = Markdown(f'${pobreza.shape[0]}$')
+d_f = Markdown(f'${X.shape[1]}$')
+tasa_f = Markdown(f'${100 * y.mean():0.1f}\\%$')
+```
+
+El conjunto tiene `{python} n_f` hogares y `{python} d_f` variables una vez que se convierten las de texto; `{python} tasa_f` de los hogares son pobres.
 
 Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (@sec-svm) y Árboles de Decisión (@sec-arboles-decision). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging. 
 
@@ -120,18 +138,18 @@ Complementando las instrucciones anteriores, en el siguiente código se entrena 
 
 ```{python}
 #| echo: true
-tree = DecisionTreeClassifier(criterion='entropy',
-                              min_samples_split=9).fit(T, y_t)
+tree = DecisionTreeClassifier(criterion='entropy', min_samples_split=9,
+                              random_state=0).fit(T, y_t)
 tree_recall = recall_score(y_g, tree.predict(G),
                            average="macro")
 ```
 
-El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la mediana del apéndice de Estadística (@sec-bootstrap-ejemplo). El siguiente código genera las muestras, en particular el ensamble sería de $M=11$ elementos. 
+El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la mediana del apéndice de Estadística (@sec-bootstrap-ejemplo). El siguiente código genera las muestras, en particular el ensamble sería de $M=11$ elementos; se fija la semilla del generador para que el resultado se pueda reproducir. 
 
 ```{python}
 #| echo: true
-B = np.random.randint(T.shape[0],
-                      size=(11, T.shape[0]))
+rng = np.random.default_rng(0)
+B = rng.integers(T.shape[0], size=(11, T.shape[0]))
 ```
 
 Empezando con Bagging usando como clasificador base la Máquina de Soporte Vectorial Lineal. La primera línea de las siguientes instrucciones, entrena las máquinas de soporte, después se realizan las predicciones. En la tercera línea se calcula la clase que tuvo la mayor cantidad de votos y finalmente se calcula el error en términos de macro-recall.
@@ -150,8 +168,8 @@ El siguiente algoritmo son los Árboles de Decisión; la única diferencia con r
 
 ```{python}
 #| echo: true
-tree_ins = [DecisionTreeClassifier(criterion='entropy',
-                                   min_samples_split=9).fit(T[b], y_t[b])
+tree_ins = [DecisionTreeClassifier(criterion='entropy', min_samples_split=9,
+                                   random_state=0).fit(T[b], y_t[b])
             for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
 hy = np.array([Counter(x).most_common(n=1)[0][0]
@@ -160,7 +178,7 @@ btree_recall = recall_score(y_g, hy,
                             average="macro")
 ```
 
-Como se mencionó, la predicción final se puede realizar de dos maneras en clasificación una es usando votación, como se vio en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculan las probabilidades de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa esta información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que $1$ y menor que $-1$ y finalmente se calcula la suma para después seleccionar la clase que corresponde al argumento máximo. 
+Como se mencionó, la predicción final se puede realizar de dos maneras en clasificación una es usando votación, como se vio en los códigos anteriores y la segunda es utilizando el promedio de las probabilidades. En el caso de las Máquinas de Soporte Vectorial, estas no calculan las probabilidades de cada clase, pero se cuenta con el valor de la función de decisión, en el siguiente código se usa esta información, la segunda y tercera línea normaliza los valores para que ningún valor sea mayor que $1$ y menor que $-1$ y finalmente se calcula la suma. Como el problema es binario, la función de decisión es un solo valor por hogar y la clase positiva (hogar pobre) es aquella donde la suma es mayor que cero. 
 
 ```{python}
 #| echo: true
@@ -168,7 +186,7 @@ hys = np.array([m.decision_function(G) for m in svc_ins])
 hys = np.where(hys > 1, 1, hys)
 hys = np.where(hys < -1, -1, hys)
 hys = hys.sum(axis=0)
-csvc_recall = recall_score(y_g, hys.argmax(axis=1),
+csvc_recall = recall_score(y_g, (hys > 0).astype(int),
                            average="macro")
 ```
 
@@ -183,9 +201,25 @@ ctree_recall = recall_score(y_g,
                             average="macro")
 ```
 
+```{python}
+#| echo: false
+mejora_svc = max(bsvc_recall, csvc_recall) - svc_recall
+mejora_tree = max(btree_recall, ctree_recall) - tree_recall
+def cambio_f(mejora, base):
+    if mejora > 0.02 * base:
+        return Markdown(f'mejora el macro-recall en ${mejora:0.4f}$')
+    return Markdown(f'prácticamente no cambia el macro-recall (la diferencia es de ${abs(mejora):0.4f}$)')
+mejora_svc_f = cambio_f(mejora_svc, svc_recall)
+mejora_tree_f = cambio_f(mejora_tree, tree_recall)
+if mejora_tree > mejora_svc:
+    esperado_f = Markdown('Este comportamiento es esperado dado que para que Bagging funcione adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo.')
+else:
+    esperado_f = Markdown('Este comportamiento no es el que se espera, pues Bagging funciona mejor con algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, como los Árboles, que con algoritmos estables como las M.S.V.')
+```
+
 Finalmente, la @tbl-ensambles-perf-cl muestra el rendimiento de las diferentes combinaciones, se puede observar el valor tanto de las Máquinas de Soporte Vectorial (M.S.V) Lineal y de los Árboles de decisión cuando se utilizaron fuera del ensamble; en el segundo renglón se muestra el rendimiento cuando la predicción del ensamble se hizo mediante votación y el último renglón presenta el rendimiento cuando se hace la suma. 
 
-Comparando los diferentes rendimientos, se puede observar que no existe mucha diferencia en rendimiento en las M.S.V Lineal y que la mayor mejora se presentó en los Árboles de Decisión. Este comportamiento es esperado dado que para que Bagging funcione adecuadamente requiere algoritmos inestables, es decir, algoritmos cuyo comportamiento cambia considerablemente con un cambio pequeño en el conjunto de entrenamiento, este es el caso de los Árboles. Por otro lado las M.S.V son algoritmos estables y un cambio pequeño en su conjunto de entrenamiento no tendrá una repercusión considerable en el comportamiento del algoritmo. 
+Comparando los diferentes rendimientos, con respecto a la máquina sola, la mejor combinación de las M.S.V Lineal `{python} mejora_svc_f`, mientras que la mejor combinación de los Árboles de Decisión `{python} mejora_tree_f`. `{python} esperado_f` 
 
 ```{python}
 #| echo: false
@@ -203,23 +237,40 @@ txt += f'|Suma ($M=11$)|{_}|\n'
 Markdown(txt)
 ```
 
-### Ejemplo: Diabetes
+### Ejemplo: Escolaridad por AGEB
 
-Ahora toca el turno de atacar un problema de regresión mediante Bagging, el problema que se utilizará es el de Diabetes. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestran a continuación. 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging. El problema que se utilizará es aproximar el grado promedio de escolaridad de una AGEB (@sec-datos-territorio) a partir de la composición de los establecimientos del DENUE, información que se actualiza con más frecuencia que el censo. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestran a continuación; las entradas se estandarizan con los parámetros de $\mathcal T$. 
 
 ```{python}
 #| echo: true
-X, y = load_diabetes(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y,
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+X = territorio.drop(columns=['clave_ageb', 'municipio',
+                             'grado_promedio_escolaridad',
+                             'pct_viv_internet',
+                             'pct_sin_servicio_salud',
+                             'pct_jefatura_femenina'])
+y = territorio['grado_promedio_escolaridad'].to_numpy()
+T, G, y_t, y_g = train_test_split(X.to_numpy(), y,
                                   random_state=0,
                                   test_size=0.2)
+escala = StandardScaler().fit(T)
+T = escala.transform(T)
+G = escala.transform(G)
 ```
 
-Tomando el caso de Dígitos como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como medida de rendimiento el porcentaje del error absoluto (@eq-mape); tal y como se muestran en las siguientes instrucciones. 
+```{python}
+#| echo: false
+n_ageb_f = Markdown(f'${territorio.shape[0]}$')
+d_ageb_f = Markdown(f'${X.shape[1]}$')
+```
+
+El conjunto tiene `{python} n_ageb_f` AGEB y `{python} d_ageb_f` variables. Como el grado de escolaridad siempre es positivo, el porcentaje del error absoluto (MAPE) está definido. 
+
+Tomando el caso de focalización como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como medida de rendimiento el porcentaje del error absoluto (@eq-mape); tal y como se muestran en las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
-svr = LinearSVR(dual='auto').fit(T, y_t)
+svr = LinearSVR(dual='auto', max_iter=20_000).fit(T, y_t)
 svr_mape = mean_absolute_percentage_error(y_g,
                                           svr.predict(G))
 ```
@@ -228,8 +279,8 @@ El árbol de decisión y su rendimiento se implementa con el siguiente código.
 
 ```{python}
 #| echo: true
-tree = DecisionTreeRegressor(min_samples_split=9).fit(T,
-                                                      y_t)
+tree = DecisionTreeRegressor(min_samples_split=9,
+                             random_state=0).fit(T, y_t)
 tree_mape = mean_absolute_percentage_error(y_g,
                                            tree.predict(G))
 ```
@@ -238,14 +289,15 @@ Al igual que en el caso de clasificación, la siguiente instrucción genera los 
 
 ```{python}
 #| echo: true
-B = np.random.randint(T.shape[0], size=(11, T.shape[0]))
+rng = np.random.default_rng(0)
+B = rng.integers(T.shape[0], size=(11, T.shape[0]))
 ```
 
 En el caso de regresión, la predicción final corresponde al promedio de las predicciones individuales, la primera línea de las siguientes instrucciones se entrenan las M.S.V Lineal, en la segunda instrucción se hacen las predicciones y en la tercera se realiza el promedio y se mide el rendimiento. 
 
 ```{python}
 #| echo: true
-svr_ins = [LinearSVR(dual='auto').fit(T[b], y_t[b])
+svr_ins = [LinearSVR(dual='auto', max_iter=20_000).fit(T[b], y_t[b])
            for b in B]
 hys = np.array([m.predict(G) for m in svr_ins])
 bsvr_mape = mean_absolute_percentage_error(y_g,
@@ -256,14 +308,29 @@ De manera equivalente se entrenan los Árboles de Decisión, como se muestra a c
 
 ```{python}
 #| echo: true
-tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b])
+tree_ins = [DecisionTreeRegressor(min_samples_split=9,
+                                  random_state=0).fit(T[b], y_t[b])
             for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
 btree_mape = mean_absolute_percentage_error(y_g,
                                             hys.mean(axis=0))
 ```
 
-La @tbl-ensambles-perf-reg muestra el rendimiento de los algoritmos de regresión utilizados, al igual que en el caso de clasificación, la M.S.V. no se ve beneficiada con el uso de Bagging. Por otro lado los Árboles de Decisión tienen un incremento en rendimiento considerable al usar Bagging. 
+```{python}
+#| echo: false
+dif_svr = svr_mape - bsvr_mape
+dif_tree = tree_mape - btree_mape
+if dif_svr > 0.05 * svr_mape:
+    svr_f = Markdown(f'la M.S.V. Lineal reduce su error en ${dif_svr:0.4f}$ al usar Bagging')
+else:
+    svr_f = Markdown(f'la M.S.V. Lineal no se ve beneficiada de manera apreciable con el uso de Bagging (su error cambia en ${dif_svr:0.4f}$)')
+if dif_tree > 0.05 * tree_mape:
+    tree_f = Markdown(f'los Árboles de Decisión reducen su error en ${dif_tree:0.4f}$ al usar Bagging')
+else:
+    tree_f = Markdown('los Árboles de Decisión no se ven beneficiados de manera apreciable con el uso de Bagging')
+```
+
+La @tbl-ensambles-perf-reg muestra el rendimiento de los algoritmos de regresión utilizados; `{python} svr_f`, mientras que `{python} tree_f`. 
 
 ```{python}
 #| echo: false
@@ -279,14 +346,16 @@ txt += f'|Promedio ($M=11$)|{_}|\n'
 Markdown(txt)
 ```
 
-Hasta este momento los ensambles han sido de $M=11$ elementos, queda la duda cómo varía el rendimiento con respecto al tamaño del ensamble. La @fig-ensamble-variacion muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $M=2,\ldots,500.$ Se observa que hay un decremento importante cuando el ensamble es pequeño, después el error se incrementa y vuelve a bajar alrededor de $M=100.$ Finalmente se ve que el rendimiento es estable cuando $M>200.$
+Hasta este momento los ensambles han sido de $M=11$ elementos, queda la duda cómo varía el rendimiento con respecto al tamaño del ensamble. La @fig-ensamble-variacion muestra el rendimiento de Bagging utilizando Árboles de Decisión, cuando el ensamble cambia $M=2,\ldots,500.$
  
 ```{python}
 #| code-fold: true
 #| fig-cap: Variación del rendimiento con respecto al tamaño del ensamble ($M$).
 #| label: fig-ensamble-variacion
-B = np.random.randint(T.shape[0], size=(500, T.shape[0]))
-tree_ins = [DecisionTreeRegressor(min_samples_split=9).fit(T[b], y_t[b]) for b in B]
+B = rng.integers(T.shape[0], size=(500, T.shape[0]))
+tree_ins = [DecisionTreeRegressor(min_samples_split=9,
+                                  random_state=0).fit(T[b], y_t[b])
+            for b in B]
 hys = np.array([m.predict(G) for m in tree_ins])
 
 M = range(2, len(tree_ins) + 1)
@@ -298,6 +367,23 @@ sns.relplot(data=df, x='ensamble', y='error', kind='line')
 
 ``` 
 
+```{python}
+#| echo: false
+p = np.array(p)
+m_min = int(np.argmin(p)) + 2
+err2_f = Markdown(f'${p[0]:0.4f}$')
+errmin_f = Markdown(f'${p.min():0.4f}$')
+mmin_f = Markdown(f'${m_min}$')
+err500_f = Markdown(f'${p[-1]:0.4f}$')
+rango_f = Markdown(f'${p[199:].max() - p[199:].min():0.4f}$')
+if p[199:].max() - p[199:].min() < 0.05 * p.mean():
+    estable_f = Markdown('es decir, a partir de cierto tamaño agregar árboles ya no cambia de manera apreciable el rendimiento')
+else:
+    estable_f = Markdown('es decir, el rendimiento todavía cambia de manera apreciable al agregar árboles')
+```
+
+El error con $M=2$ es `{python} err2_f`; el menor error es `{python} errmin_f` y se obtiene con $M=$ `{python} mmin_f`, y con $M=500$ es `{python} err500_f`. Cuando $M>200$ el error se mueve en un rango de `{python} rango_f`, `{python} estable_f`. 
+
 ::: {.callout-note} 
 
 Las clases `BaggingClassifier` y `BaggingRegressor` implementan el ensamble de Bagging. Estas clases tienen parámetros que permiten ejecutar variaciones de la idea original. El uso de la clase `BaggingRegressor` se ilustra con el siguiente código,
@@ -306,7 +392,7 @@ Las clases `BaggingClassifier` y `BaggingRegressor` implementan el ensamble de B
 #| echo: true
 
 tree_ins = DecisionTreeRegressor(min_samples_split=9)
-ens = BaggingRegressor(tree_ins).fit(T, y_t)
+ens = BaggingRegressor(tree_ins, random_state=0).fit(T, y_t)
 hy = ens.predict(G)
 ```
 
@@ -323,7 +409,7 @@ El uso de árboles aleatorios es directo mediante las clases `RandomForestClassi
 ```{python}
 #| echo: true
 
-ens = RandomForestRegressor(min_samples_split=9)
+ens = RandomForestRegressor(min_samples_split=9, random_state=0)
 ens.fit(T, y_t)
 hy = ens.predict(G)
 ```
@@ -333,22 +419,27 @@ donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_pe
 ::: {.callout-tip collapse="true"}
 ### Actividad 
 
-Visualizar el efecto que tiene el parámetro `min_samples_split` en el algoritmo `RandomForestClassifier` cuando este varía como se muestra en @fig-actividad-forest-classifier. El problema utilizado es el de dígitos (@sec-digitos) con una partición de 80% para entrenamiento y 20% para validación. 
+Visualizar el efecto que tiene el parámetro `min_samples_split` en el algoritmo `RandomForestClassifier` cuando este varía como se muestra en @fig-actividad-forest-classifier. El problema utilizado es el de focalización (@sec-datos-pobreza), con la misma partición estratificada de 80% para entrenamiento y 20% para validación, y se mide el macro-recall. 
 
 ```{python}
 #| echo: false
 #| label: fig-actividad-forest-classifier
 #| fig-cap: Cambio del rendimiento cuando el parámetro que controla el número de muestras para realizar la partición (i.e., min_samples_split) varía.
 
-X_d, y_d = load_digits(return_X_y=True)
-T_d, G_d, yd_t, yd_g = train_test_split(X_d, y_d,
-                                  test_size=0.2,
-                                  random_state=0)
+X_d = pd.get_dummies(pobreza.drop(columns=['pobre_ingresos', 'factor']),
+                     drop_first=True, dtype=float)
+y_d = pobreza['pobre_ingresos'].to_numpy()
+T_d, G_d, yd_t, yd_g = train_test_split(X_d.to_numpy(), y_d,
+                                        test_size=0.2,
+                                        random_state=0,
+                                        stratify=y_d)
 
 perf = []
-min_samples_split = list(range(2, 105, 5))
+min_samples_split = list(range(2, 105, 10))
 for min_split in min_samples_split:
-    ens = RandomForestClassifier(min_samples_split=min_split).fit(T_d, yd_t)
+    ens = RandomForestClassifier(min_samples_split=min_split,
+                                 n_jobs=-1,
+                                 random_state=0).fit(T_d, yd_t)
     hy = ens.predict(G_d)
     perf.append(recall_score(yd_g, hy, average="macro"))
 
@@ -365,14 +456,15 @@ Continuando con la descripción de ensambles, se puede observar que Bagging en e
 
 Esa es la idea detrás de Stack Generalization, @WOLPERT1992241 propone utilizar las predicciones de los estimadores bases como las entradas de otro estimador. Para poder llevar este proceso es necesario contar con un conjunto independiente del conjunto de entrenamiento para encontrar los parámetros del estimador que combina las predicciones. 
 
-### Ejemplo: Diabetes
+### Ejemplo: Escolaridad por AGEB
 
-Para ejemplificar el uso de Stack Generalization, se usa el conjunto de datos de Diabetes. Como se acaba de describir es necesario contar con un conjunto independiente para estimar los parámetros del estimador del stack. Entonces el primer paso es dividir el conjunto de entrenamiento en un conjunto de entrenamiento y validación ($\mathcal V,$) tal y como se muestra en la siguiente instrucción. 
+Para ejemplificar el uso de Stack Generalization, se continúa con el problema de aproximar la escolaridad de una AGEB (@sec-datos-territorio). Como se acaba de describir es necesario contar con un conjunto independiente para estimar los parámetros del estimador del stack. Entonces el primer paso es dividir el conjunto de entrenamiento en un conjunto de entrenamiento y validación ($\mathcal V,$) tal y como se muestra en la siguiente instrucción. 
 
 ```{python}
 #| echo: true
 T1, V, y_t1, y_v = train_test_split(T, y_t,
-                                    test_size=0.3)
+                                    test_size=0.3,
+                                    random_state=0)
 ```
 
 Para este ejemplo se usará como regresores bases el algoritmo de Vecinos Cercanos (@sec-regresion) con diferentes parámetros (primera línea), después se usan los modelos para predecir el conjunto de validación ($\mathcal V$) y prueba ($\mathcal G$), esto se observa en la segunda y tercera línea del siguiente código. 
@@ -415,14 +507,19 @@ hy = stacking.predict(np.vstack(G_stack))
 #| echo: false
 _ = mean_absolute_percentage_error(y_g, hy)
 mape3_f = Markdown(f'${_:0.4f}$')
+if _ < min(mape_test):
+    mejora_stack_f = Markdown('es menor que')
+else:
+    mejora_stack_f = Markdown('no es menor que')
 ```
 
-El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
+El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`, que `{python} mejora_stack_f` el de los estimadores bases; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
 
 ```{python}
 #| echo: true
 st_trees = BaggingRegressor(estimator=DecisionTreeRegressor(min_samples_split=9),
-                            n_estimators=200).fit(V_stack, y_v)
+                            n_estimators=200,
+                            random_state=0).fit(V_stack, y_v)
 hy = st_trees.predict(np.vstack(G_stack))
 mape = mean_absolute_percentage_error(y_g, hy)
 ```
@@ -431,7 +528,7 @@ El rendimiento de este cambio es `{python} Markdown(f"${mape:0.4f}$")`.
 
 ::: {.callout-note}
 
-Las clases `StackingClassifier` y `StackingRegressor` implementan la idea de Stack Generalization. El siguiente código muestra su uso en el ejemplo de diabetes, utilizando los algoritmos de vecinos cercanos y máquinas de soporte vectorial. 
+Las clases `StackingClassifier` y `StackingRegressor` implementan la idea de Stack Generalization. El siguiente código muestra su uso en el ejemplo de escolaridad, utilizando los algoritmos de vecinos cercanos y máquinas de soporte vectorial. 
 
 ```{python}
 #| echo: true
@@ -448,7 +545,7 @@ El promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percenta
 
 ## Resumen {#sec-resumen-ensambles}
 
-Un ensamble combina las predicciones de varios algoritmos para obtener una mejor que la de cada uno por separado. El fundamento es que promediar predicciones reduce la varianza (@sec-fundamentos), y de ahí viene Bagging (@sec-bagging), que entrena cada algoritmo con una muestra bootstrap de los datos. Los bosques aleatorios agregan aleatoriedad en las variables que cada árbol puede usar, y Stack Generalization aprende cómo combinar las predicciones con otro algoritmo en lugar de promediarlas con el mismo peso. En datos tabulares estos métodos suelen estar entre los de mejor rendimiento (@tbl-ensambles-perf-cl y @tbl-ensambles-perf-reg).
+Un ensamble combina las predicciones de varios algoritmos con la expectativa de obtener una mejor que la de cada uno por separado. El fundamento es que promediar predicciones reduce la varianza (@sec-fundamentos), y de ahí viene Bagging (@sec-bagging), que entrena cada algoritmo con una muestra bootstrap de los datos. Los bosques aleatorios agregan aleatoriedad en las variables que cada árbol puede usar, y Stack Generalization aprende cómo combinar las predicciones con otro algoritmo en lugar de promediarlas con el mismo peso. La mejora depende de la inestabilidad del algoritmo base, como se vio al comparar los árboles con la máquina de soporte vectorial lineal en @tbl-ensambles-perf-cl y @tbl-ensambles-perf-reg. En datos tabulares estos métodos suelen estar entre los de mejor rendimiento.
 
 El costo de ese rendimiento es la interpretabilidad. Un bosque de cientos de árboles ya no se puede leer como un solo árbol, y es el dilema de Occam entre exactitud y simplicidad que describe @breiman2001statistical. Los bosques reaparecen más adelante en el contexto de la inferencia causal, pero ese tema queda fuera de este capítulo.
 
