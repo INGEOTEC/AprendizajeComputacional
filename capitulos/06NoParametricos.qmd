@@ -12,13 +12,15 @@ from sklearn.neighbors import NearestNeighbors,\
                               KNeighborsRegressor
 from sklearn.metrics import pairwise_distances
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_digits, load_diabetes
+from sklearn.preprocessing import StandardScaler
 from scipy.stats import norm
 from collections import Counter
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -249,12 +251,25 @@ donde $\sum_u N_u(x)=k$ porque $N_u(x)$ corresponde al número de elementos de $
 
 ### Implementación
 
-El clasificador de vecinos cercanos tiene una implementación directa, aunque ineficiente, cuando el número de ejemplos en el conjunto de entrenamiento es grande. Esta implementación se ejemplifica con los datos de dígitos que se cargan y se dividen en el conjunto de entrenamiento y prueba de la siguiente manera. 
+El clasificador de vecinos cercanos tiene una implementación directa, aunque ineficiente, cuando el número de ejemplos en el conjunto de entrenamiento es grande. Esta implementación se ejemplifica con el problema de tamizaje de diabetes (@sec-datos-salud): dada una persona adulta, clasificar si tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. Los datos de Salud se leen del release `datos-v1`; las variables de texto se convierten en indicadoras como en la @sec-regresion-datos, y los datos se dividen en el conjunto de entrenamiento y prueba de la siguiente manera. 
 
 ```{python} 
 #| echo: true
-X, y = load_digits(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+X = pd.get_dummies(salud.drop(columns=['diabetes', 'factor']),
+                   drop_first=True, dtype=float)
+y = salud['diabetes'].to_numpy()
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2,
+                                  random_state=0, stratify=y)
+```
+
+Los vecinos cercanos se definen mediante una distancia, y las variables que se miden en unidades grandes, por ejemplo el peso en kilogramos o la edad en años, dominarían a las indicadoras, que solamente valen cero o uno. Por esta razón las variables se estandarizan, y como la estandarización utiliza estadísticas de los datos se ajusta solamente con $\mathcal T$ y después se aplica a $\mathcal G$ (@sec-regresion-datos).
+
+```{python} 
+#| echo: true
+scaler = StandardScaler().fit(T)
+T = scaler.transform(T)
+G = scaler.transform(G)
 ```
 
 #### $\textsf{kNN}$
@@ -315,9 +330,11 @@ key_f = Markdown(f'${keys[0]}$')
 value_f = Markdown(f'${nc[100][keys[0]]}$')
 hy = np.array([x.most_common(n=1)[0][0] for x in nc])
 error_f = Markdown(f'${(y_g != hy).mean():0.4f}$')
+triv_f = Markdown(f'${y_g.mean():0.4f}$')
+nc100_f = Markdown(str({int(k): v for k, v in nc[100].items()}))
 ```
 
-El elemento en el índice 100,  tiene el siguiente resultado `{python} nc[100]`, que indica que la clase `{python} key_f`, fue vista `{python} value_f`. El error de este algoritmo en el conjunto de prueba es `{python} error_f`, calculado con las siguientes instrucciones. Se observa que la primera línea genera las predicciones usando la función `most_common` y a continuación se calcula el error.  
+El elemento en el índice 100,  tiene el siguiente resultado `{python} nc100_f`, que indica que la clase `{python} key_f`, fue vista `{python} value_f`. El error de este algoritmo en el conjunto de prueba es `{python} error_f`, calculado con las siguientes instrucciones; como referencia, un clasificador que siempre responde que la persona no tiene diabetes tiene un error de `{python} triv_f`. Se observa que la primera línea genera las predicciones usando la función `most_common` y a continuación se calcula el error.  
 
 ```{python} 
 #| echo: true
@@ -341,12 +358,22 @@ hy = kcl.predict(G)
 
 La idea de utilizar vecinos cercanos no es solamente para problemas de clasificación, en problemas de regresión se puede seguir un razonamiento equivalente, el único cambio es en la función $N_c(x)$ donde en lugar de calcular la frecuencia de las clases de los vecinos cercanos a $x$ se hace un promedio (pesado) de la respuesta de cada uno de los vecinos cercanos. 
 
-Para ilustrar esta adecuación en problemas de regresión se utiliza el conjunto de datos de diabetes, estos datos y los conjuntos se obtienen con las siguientes instrucciones. 
+Para ilustrar esta adecuación en problemas de regresión se utilizan los datos de Territorio (@sec-datos-territorio): aproximar la escolaridad de un barrio, medida como el grado promedio de escolaridad de cada AGEB de Aguascalientes, con la composición de establecimientos del DENUE cuando el censo no es reciente. Estos datos y los conjuntos se obtienen con las siguientes instrucciones; los conteos de establecimientos y la población tienen escalas muy distintas, por lo que se estandarizan con las estadísticas de $\mathcal T$ por la misma razón que en la clasificación.
 
 ```{python} 
 #| echo: true
-X, y = load_diabetes(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+X = territorio.drop(columns=['clave_ageb', 'municipio',
+                             'grado_promedio_escolaridad',
+                             'pct_viv_internet',
+                             'pct_sin_servicio_salud',
+                             'pct_jefatura_femenina'])
+y = territorio['grado_promedio_escolaridad'].to_numpy()
+T, G, y_t, y_g = train_test_split(X, y, test_size=0.2,
+                                  random_state=0)
+scaler = StandardScaler().fit(T)
+T = scaler.transform(T)
+G = scaler.transform(G)
 ```
 
 Se puede observar en la función `regresion` que la diferencia con clasificación es que se calcula el promedio, en lugar de contar la frecuencia de las clases. 
@@ -366,7 +393,7 @@ error = np.fabs(y_g - hy).mean()
 error_f = Markdown(f'${error:0.4f}$')
 ```
 
-La media del error absoluto en el conjunto $\mathcal G$ es `{python} error_f` calculado con las siguientes instrucciones.
+La media del error absoluto en el conjunto $\mathcal G$ es `{python} error_f` años de escolaridad, es decir, ese es el error promedio al aproximar la escolaridad de una AGEB; se calculó con las siguientes instrucciones.
 
 ```python
 hy = regresion(G, T, y_t, k=5)

@@ -9,9 +9,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer,\
-                             load_diabetes
-from sklearn.model_selection import train_test_split, KFold
+from sklearn.model_selection import train_test_split, KFold,\
+                                    StratifiedKFold
 from sklearn import metrics
 from CompStats.metrics import accuracy_score, recall_score,\
                               precision_score, f1_score, log_loss,\
@@ -21,6 +20,8 @@ import numpy as np
 import pandas as pd
 from matplotlib import pylab as plt
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -44,17 +45,29 @@ Para el análisis de políticas públicas esta pregunta es central: un modelo qu
 
 Se parte de un conjunto de datos $\mathcal D = (\mathcal X, \mathcal Y)$ donde cada renglón de $\mathcal X$ es una realización de la variable aleatoria de entrada y cada elemento de $\mathcal Y$ es la realización de la variable que se desea predecir. El objetivo en aprendizaje supervisado es diseñar un algoritmo (función en este caso) que modele la relación entre $\mathcal X$ y $\mathcal Y$, y para conocer qué tan bien lo hace es necesario medir su rendimiento en instancias que no han sido vistas en el entrenamiento. Medirlo con los mismos datos que se usaron para ajustar el algoritmo produce estimaciones optimistas, porque el algoritmo puede memorizar particularidades de esos datos.
 
-En consecuencia, los datos se dividen en dos conjuntos, el conjunto de entrenamiento, $\mathcal T$, que se utiliza para encontrar el algoritmo, y el conjunto de prueba, $\mathcal G$, que se utiliza únicamente para medir el rendimiento. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir los datos de Breast Cancer Wisconsin (descritos en la @sec-breast-cancer-wisconsin) en estos conjuntos. En la @sec-rendimiento-ejemplo-clasificacion se utilizan para medir el rendimiento de un clasificador.
+En consecuencia, los datos se dividen en dos conjuntos, el conjunto de entrenamiento, $\mathcal T$, que se utiliza para encontrar el algoritmo, y el conjunto de prueba, $\mathcal G$, que se utiliza únicamente para medir el rendimiento. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir en estos conjuntos los datos de Salud (descritos en la @sec-datos-salud). La tarea es el tamizaje de diabetes: decidir a qué personas adultas se les ofrece una prueba de glucosa, a partir de la clasificación de si tienen un diagnóstico previo de diabetes. En la @sec-rendimiento-ejemplo-clasificacion se utilizan para medir el rendimiento de un clasificador.
 
 ```{python}
 #| echo: true
-D, y = load_breast_cancer(return_X_y=True)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+X = salud.drop(columns=['diabetes', 'factor']).select_dtypes('number')
+D, y = X.to_numpy(), salud['diabetes'].to_numpy()
 T, G, y_t, y_g = train_test_split(D, y,
                                   test_size=0.2,
-                                  random_state=0)
+                                  random_state=0,
+                                  stratify=y)
 ```
 
-El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathcal G$ en relación con el conjunto $\mathcal D$ y `random_state` fija la semilla para que la división sea reproducible.
+```{python}
+#| echo: false
+n_f = Markdown(f'${D.shape[0]}$')
+d_f = Markdown(f'${D.shape[1]}$')
+vars_f = Markdown(', '.join(f'`{c}`' for c in X.columns))
+pos_f = Markdown(f'${100 * y.mean():0.1f}\\%$')
+pos_g_f = Markdown(f'${100 * y_g.mean():0.1f}\\%$')
+```
+
+El conjunto tiene $N=$ `{python} n_f` personas. Por ahora se usan solamente las $d=$ `{python} d_f` variables numéricas (`{python} vars_f`); las variables de texto requieren convertirse en indicadoras, lo cual se explica en la @sec-regresion-datos. El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathcal G$ en relación con el conjunto $\mathcal D$ y `random_state` fija la semilla para que la división sea reproducible. La clase con diagnóstico de diabetes es la minoritaria, el `{python} pos_f` de las personas, por lo que el parámetro `stratify` indica que la división conserve esa proporción en ambos conjuntos (`{python} pos_g_f` en $\mathcal G$).
 
 ## Clasificación {#sec-clasificacion}
 
@@ -182,14 +195,10 @@ Se observa que modificando el umbral $\rho$ se tienen diferentes tablas de confu
 
 ### Ejemplo {#sec-rendimiento-ejemplo-clasificacion}
 
-El ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) se utiliza para ilustrar el uso de las medidas de rendimiento presentadas hasta el momento. En el siguiente código se observa el procedimiento para cargar los datos, después los datos se dividen en entrenamiento y prueba (@sec-conjunto-entre-prueba), se entrena el algoritmo Analizador Discriminante Cuadrático y se predice el conjunto de prueba. Por ahora este algoritmo se utiliza como una caja negra. Es un clasificador que, para cada clase, estima una distribución normal de las variables de entrada (sus medias y una matriz de covarianza, que indica cómo varían las variables en conjunto) y asigna a cada ejemplo la clase más probable. Se entrena con `fit` y predice con `predict`. Su funcionamiento se describe en la @sec-estimacion-parametros, que se verá más adelante.
+El ejemplo de tamizaje de diabetes con los datos de Salud (@sec-datos-salud) se utiliza para ilustrar el uso de las medidas de rendimiento presentadas hasta el momento. La clase positiva ($p$) es la persona con diagnóstico de diabetes y la clase negativa ($n$) la persona sin diagnóstico. En el siguiente código se utiliza la partición en entrenamiento y prueba de la @sec-conjunto-entre-prueba, se entrena el algoritmo Analizador Discriminante Cuadrático y se predice el conjunto de prueba. Por ahora este algoritmo se utiliza como una caja negra. Es un clasificador que, para cada clase, estima una distribución normal de las variables de entrada (sus medias y una matriz de covarianza, que indica cómo varían las variables en conjunto) y asigna a cada ejemplo la clase más probable. Se entrena con `fit` y predice con `predict`. Su funcionamiento se describe en la @sec-estimacion-parametros, que se verá más adelante.
 
 ```{python}
 #| echo: true
-D, y = load_breast_cancer(return_X_y=True)
-T, G, y_t, y_g = train_test_split(D, y, 
-                                  random_state=0,  
-                                  test_size=0.2)
 gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(T, y_t)
 hy_gaussian = gaussian.predict(G)
 ```
@@ -209,7 +218,7 @@ accuracy = accuracy_score(y_g, hy_gaussian)
 
 La exactitud estimada del algoritmo es `{python} Markdown(f'${accuracy.statistic:0.4f}$')` con un error estándar de `{python} Markdown(f'${accuracy.se:0.4f}.$')`
 
-Las medidas de `recall`, `precision` y `f1` se presentan en la @tbl-performance, en la última columna se presenta el promedio (i.e., *macro*) de cada una de las medidas. 
+Las medidas de `recall`, `precision` y `f1` se presentan en la @tbl-performance, en la última columna se presenta el promedio (i.e., *macro*) de cada una de las medidas. Para el tamizaje, el recall de la clase $\mathcal Y=1$ es la proporción de las personas con diabetes que el clasificador detecta; un falso negativo es una persona con diabetes a quien no se le ofrecería la prueba. La precisión de esa clase es la proporción de las pruebas ofrecidas que corresponden a una persona con diabetes; un falso positivo es una prueba que se ofrece a quien no la necesita. 
 
 ```{python}
 #| echo: true
@@ -239,6 +248,15 @@ tab = '\n'.join(([headers, linea,
 Markdown(tab)
 ```
 
+```{python}
+#| echo: false
+rec1_f = Markdown(f'${recall.statistic[1]:0.4f}$')
+rec0_f = Markdown(f'${recall.statistic[0]:0.4f}$')
+triv_f = Markdown(f'${(y_g == 0).mean():0.4f}$')
+```
+
+La cobertura de la clase $\mathcal Y=0$ es `{python} rec0_f`, mientras que la de la clase $\mathcal Y=1$ es `{python} rec1_f`. Es decir, el algoritmo detecta una fracción pequeña de las personas con diabetes y, sin embargo, su exactitud (`{python} Markdown(f'${accuracy.statistic:0.4f}$')`) es parecida a la de un clasificador trivial que siempre responde que la persona no tiene diabetes (`{python} triv_f`). Este es el caso, descrito en la @sec-accuracy, donde la exactitud no es una medida adecuada para clases desbalanceadas.
+
 :::{.callout-note}
 ### Comparación de cobertura por clase
 
@@ -251,7 +269,7 @@ naive = GaussianNB().fit(T, y_t)
 hy_naive = naive.predict(G)
 ```
 
-La @fig-rendimiento-qda-bayes-cobertura muestra la comparación de la cobertura por clase de los dos algoritmos, la figura también indica el algoritmo que obtuvo el mejor rendimiento y si la diferencia entre los rendimiento es estadísticamente significante. 
+La @fig-rendimiento-qda-bayes-cobertura muestra la comparación de la cobertura por clase de los dos algoritmos, la figura también indica el algoritmo que obtuvo el mejor rendimiento y si la diferencia entre los rendimiento es estadísticamente significante. En el tamizaje, la cobertura de la clase $\mathcal Y=1$ indica a cuántas personas con diabetes se detecta con cada algoritmo, mientras que la cobertura de la clase $\mathcal Y=0$ indica a cuántas personas sin diabetes se evita ofrecerles una prueba innecesaria. 
 
 ```{python}
 #| echo: false
@@ -277,44 +295,34 @@ recall.plot(comp_legend='Comparación',
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
-Medir el rendimiento del algoritmo Bayesiano Ingenuo (el clasificador que supone variables independientes dentro de cada clase, el cual se describirá en la @sec-cl-bayesiano-ingenuo) en el problema del Iris (ver @sec-iris) utilizando la función $F_\beta$ (@sec-f1) variando $\beta$ entre $[0, 1],$ tal y como se muestra en la @fig-actividad-fbeta
+Medir el rendimiento del algoritmo Bayesiano Ingenuo (el clasificador que supone variables independientes dentro de cada clase, el cual se describirá en la @sec-cl-bayesiano-ingenuo) en el problema de tamizaje de diabetes (ver @sec-datos-salud) utilizando la función $F_\beta$ (@sec-f1) de la clase positiva (`diabetes`) variando $\beta$ entre $[0, 1],$ tal y como se muestra en la @fig-actividad-fbeta. ¿Qué significa para el tamizaje dar más peso a la precisión que al recall?
 
 ```{python}
 #| label: fig-actividad-fbeta
-#| fig-cap: "Rendimiento de un Clasificador Bayesiano Ingenuo en el problema del Iris estimado mediante una validación cruzada estratificada."
+#| fig-cap: "Rendimiento de un Clasificador Bayesiano Ingenuo en el problema de tamizaje de diabetes estimado mediante una validación cruzada estratificada."
 #| echo: false
 
 
 def grafica():
-    from sklearn.datasets import load_iris
-    from sklearn.model_selection import StratifiedKFold
-    import seaborn as sns
-    import pandas as pd
-
-    X, y = load_iris(return_X_y=True)
+    X = salud.drop(columns=['diabetes', 'factor']).select_dtypes('number')
+    X, y = X.to_numpy(), salud['diabetes'].to_numpy()
     hy = np.empty_like(y)
-    skf = StratifiedKFold()
+    skf = StratifiedKFold(shuffle=True, random_state=0)
     for tr, vs in skf.split(X, y):
-        gaussian = QuadraticDiscriminantAnalysis(reg_param=1e-3).fit(X[tr], y[tr])
-        hy[vs] = gaussian.predict(X[vs])
+        naive = GaussianNB().fit(X[tr], y[tr])
+        hy[vs] = naive.predict(X[vs])
 
     beta = np.linspace(0, 1, 10)**2
-    pre = metrics.precision_score(y, hy, average=None)
-    recall = metrics.recall_score(y, hy, average=None)
+    pre = metrics.precision_score(y, hy)
+    rec = metrics.recall_score(y, hy)
 
-    num = np.atleast_2d(1 + beta).T * pre * recall
-    den = np.atleast_2d(beta).T * pre + recall
-    f1_beta = num / den
-
-    data = load_iris()
-    df = pd.DataFrame(np.c_[f1_beta, beta],
-                    columns=data.target_names.tolist() + ['Beta^2'])
-    df.set_index('Beta^2', inplace=True)
-    df2 = df.melt(value_name='F-Beta', ignore_index=False,
-                var_name='Clase')
-    _ = sns.relplot(df2.reset_index(), kind='line', x='Beta^2', hue='Clase', y='F-Beta')
-    return _
-grafica()
+    f1_beta = (1 + beta) * pre * rec / (beta * pre + rec)
+    df = pd.DataFrame(dict(beta2=beta, f_beta=f1_beta))
+    fig, ax = plt.subplots()
+    _ = sns.lineplot(df, x='beta2', y='f_beta', ax=ax)
+    _ = ax.set(xlabel='$\\beta^2$', ylabel='$F_\\beta$ (diabetes)')
+    return fig
+_ = grafica()
 ```
 :::
 
@@ -408,14 +416,20 @@ $$ {#eq-r2}
 
 ### Ejemplo
 
-Las medidas anteriores se ejemplifican utilizando el conjunto de datos de diabetes (que también se analiza en la @sec-diabetes), el cual se puede descargar y modelar mediante una regresión lineal, de la siguiente manera. La regresión lineal se utiliza como caja negra. Es un modelo que predice la respuesta como una suma ponderada de las variables de entrada, $\mathbf w \cdot \mathbf x + w_0,$ donde los pesos se ajustan a los datos de entrenamiento minimizando el error cuadrático. Se describirá en la @sec-regresion-ols.
+Las medidas anteriores se ejemplifican con los datos de Territorio (@sec-datos-territorio). El problema es aproximar la escolaridad de un barrio con la composición de establecimientos del DENUE cuando el censo no es reciente: la variable a predecir es el grado promedio de escolaridad (en años) de cada AGEB de Aguascalientes. Los datos se pueden descargar y modelar mediante una regresión lineal, de la siguiente manera. La regresión lineal se utiliza como caja negra. Es un modelo que predice la respuesta como una suma ponderada de las variables de entrada, $\mathbf w \cdot \mathbf x + w_0,$ donde los pesos se ajustan a los datos de entrenamiento minimizando el error cuadrático. Se describirá en la @sec-regresion-ols.
 
 
 ```{python}
 #| echo: true
-X, y = load_diabetes(return_X_y=True)
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+X = territorio.drop(columns=['clave_ageb', 'municipio',
+                             'grado_promedio_escolaridad',
+                             'pct_viv_internet',
+                             'pct_sin_servicio_salud',
+                             'pct_jefatura_femenina'])
+y = territorio['grado_promedio_escolaridad'].to_numpy()
 T, G, y_t, y_g = train_test_split(X, y,
-                                  random_state=0,  
+                                  random_state=0,
                                   test_size=0.2)
 m = LinearRegression().fit(T, y_t) 
 ```
@@ -445,7 +459,7 @@ teniendo un valor de `{python} Markdown(f'${mse.statistic:0.4f}$')` con un error
 mae = mean_absolute_error(y_g, hy)
 ```
 
-teniendo un valor de `{python} Markdown(f'${mae.statistic:0.4f}$')` con un error estándar de `{python} Markdown(f'${mae.se:0.4f}.$')` La varianza explicada por el modelo (@eq-r2) se estima con el siguiente código 
+teniendo un valor de `{python} Markdown(f'${mae.statistic:0.4f}$')` con un error estándar de `{python} Markdown(f'${mae.se:0.4f}.$')` Como la variable a predecir está en años de escolaridad, el error absoluto medio es el número de años que, en promedio, se equivoca el modelo al aproximar la escolaridad de una AGEB. La varianza explicada por el modelo (@eq-r2) se estima con el siguiente código 
 
 ```{python}
 #| echo: true
@@ -465,13 +479,15 @@ Para optimizar los parámetros es necesario medir el rendimiento del algoritmo, 
 
 Entonces para optimizar los parámetros del algoritmo se selecciona del conjunto de entrenamiento, i.e., $\mathcal T$, el **conjunto de validación**, $\mathcal V$. Este conjunto tiene la característica que $\mathcal T \cap \mathcal V \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal V \cup \mathcal G = \mathcal D.$ Una manera de realizar esto es seleccionar primeramente el conjunto de prueba $\mathcal G$ y de los datos restantes generar los conjuntos de entrenamiento $\mathcal T$ y validación $\mathcal V.$
 
-Para ejemplificar esta idea se utiliza el ejemplo de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utiliza un Bayesiano Ingenuo (variables independientes dentro de cada clase) o se estima la matriz de covarianza completa (la que además captura cómo se relacionan las variables entre sí). Ambos son los clasificadores usados como cajas negras en la @sec-rendimiento-ejemplo-clasificacion. 
+Para ejemplificar esta idea se utiliza el ejemplo de tamizaje de diabetes con los datos de Salud (@sec-datos-salud) utilizando un Clasificador Bayesiano donde el hiperparámetro es si se utiliza un Bayesiano Ingenuo (variables independientes dentro de cada clase) o se estima la matriz de covarianza completa (la que además captura cómo se relacionan las variables entre sí). Ambos son los clasificadores usados como cajas negras en la @sec-rendimiento-ejemplo-clasificacion. 
 
 El primer paso es obtener los datos del problema, lo cual se muestra en la siguiente instrucción.
 
 ```{python}
 #| echo: true
-D, y = load_breast_cancer(return_X_y=True)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+X = salud.drop(columns=['diabetes', 'factor']).select_dtypes('number')
+D, y = X.to_numpy(), salud['diabetes'].to_numpy()
 ```
 
 Con los datos $\mathcal D$ se genera el conjunto de prueba $\mathcal G$ y los datos para estimar los parámetros y optimizar los hiperparámetros del algoritmo. En la variable `T` se tiene los datos para encontrar el algoritmo y en `G` se tiene el conjunto de prueba.
@@ -480,7 +496,8 @@ Con los datos $\mathcal D$ se genera el conjunto de prueba $\mathcal G$ y los da
 #| echo: true
 T, G, y_t, y_g = train_test_split(D, y,
                                   random_state=0,
-                                  test_size=0.2)
+                                  test_size=0.2,
+                                  stratify=y)
 ```
 
 Los datos de entrenamiento y validación se generan de manera equivalente tal como se muestra en la siguiente instrucción. El conjunto de validación ($\mathcal V$) se encuentra en la variable `V` y la variable dependiente en `y_v.`
@@ -489,10 +506,11 @@ Los datos de entrenamiento y validación se generan de manera equivalente tal co
 #| echo: true
 T, V, y_t, y_v = train_test_split(T, y_t,
                                   random_state=0,
-                                  test_size=0.3)
+                                  test_size=0.3,
+                                  stratify=y_t)
 ```
 
-En este momento ya se tienen todos los elementos para medir el rendimiento de cada hiperparámetro. Empezando por el clasificador con la matriz de covarianza completa, donde la primera línea entrena el clasificador, en la segunda se predicen las clases en el conjunto de validación y en la tercera se calcula el promedio de cobertura por clase (i.e., *macro-recall*).  
+En este momento ya se tienen todos los elementos para medir el rendimiento de cada hiperparámetro. Empezando por el clasificador con la matriz de covarianza completa, donde la primera línea entrena el clasificador, en la segunda se predicen las clases en el conjunto de validación y en la tercera se calcula el promedio de cobertura por clase (i.e., *macro-recall*), una medida adecuada cuando la clase con diabetes es la minoritaria porque da el mismo peso a la cobertura de cada clase.  
 
 ```{python}
 #| echo: true
@@ -565,8 +583,9 @@ Se utiliza el mismo problema para medir el rendimiento del hiperparámetro del c
 ```{python}
 #| echo: true
 T, G, y_t, y_g = train_test_split(D, y,
-                                  random_state=0,  
-                                  test_size=0.2)
+                                  random_state=0,
+                                  test_size=0.2,
+                                  stratify=y)
 ```
 
 La validación cruzada con k-iteraciones se puede realizar con la clase `KFold` de la siguiente manera. La primera línea crea una variable para guardar el rendimiento. En la segunda línea se inicializa el procedimiento indicando que los datos sean tomados al azar. Después se realiza el ciclo con las $k$ iteraciones, para cada iteración se genera un índice `ts` que indica cuáles son los datos del conjunto de entrenamiento y `vs` que corresponde a los datos de validación. Se estiman los parámetros usando `ts` tal y como se observa en la cuarta línea. Habiendo estimado los parámetros se predicen los datos del conjunto de validación (quinta línea). Se mide la cobertura promedio (i.e. *macro-recall*) en la última línea. 

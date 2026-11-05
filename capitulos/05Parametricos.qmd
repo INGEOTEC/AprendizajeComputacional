@@ -10,7 +10,6 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer
 from scipy.stats import norm, multivariate_normal
 from scipy.special import logsumexp
 from matplotlib import pylab as plt
@@ -18,6 +17,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from CompStats.metrics import accuracy_score
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -516,13 +517,15 @@ naive.var_
 :::
 
 
-## Ejemplo: Breast Cancer Wisconsin {#sec-ejemplo-breast-cancer-wisconsin}
+## Ejemplo: Tamizaje de Diabetes {#sec-ejemplo-salud}
 
-Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos; Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y Bayesiano Ingenuo en el conjunto de datos de *Breast Cancer Wisconsin.* Estos datos se pueden obtener utilizando la función `load_breast_cancer` tal y como se muestra a continuación.
+Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos; Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y Bayesiano Ingenuo en un problema de tamizaje de diabetes: decidir a qué personas adultas se les ofrece una prueba de glucosa, a partir de si la persona tiene un diagnóstico previo de diabetes. Los datos son los de Salud (@sec-datos-salud) y se leen directamente del release `datos-v1`. Por ahora se utilizan solamente las variables numéricas; las variables de texto se convierten en indicadoras como se explica en la @sec-regresion-datos.
 
 ```{python}
 #| echo: true
-X, y = load_breast_cancer(return_X_y=True)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+X = salud.drop(columns=['diabetes', 'factor']).select_dtypes('number')
+X, y = X.to_numpy(), salud['diabetes'].to_numpy()
 ```
 
 El primer paso es contar con los conjuntos de entrenamiento y prueba para poder realizar de manera completa la evaluación del proceso de clasificación. Esto se realiza ejecutando la siguiente instrucción.
@@ -531,8 +534,11 @@ El primer paso es contar con los conjuntos de entrenamiento y prueba para poder 
 #| echo: true
 
 T, G, y_t, y_g = train_test_split(X, y, test_size=0.2,
-                                  random_state=seed)
+                                  random_state=seed,
+                                  stratify=y)
 ```
+
+Como la clase con diagnóstico de diabetes es la minoritaria, la partición se estratifica (`stratify=y`) para que ambos conjuntos conserven la misma proporción de cada clase.
 
 ### Entrenamiento
 
@@ -554,7 +560,7 @@ hy_qda = qda.predict(G)
 hy_naive = naive.predict(G)
 ```
 
-### Rendimiento {#sec-gaussina-perf-breast_cancer}
+### Rendimiento {#sec-gaussiana-perf-salud}
 
 El rendimiento de ambos clasificadores se calcula de la siguiente manera 
 
@@ -564,7 +570,7 @@ error_qda = (y_g != hy_qda).mean()
 error_naive = (y_g != hy_naive).mean()
 ```
 
-El clasificador Bayesiano Gaussiano tiene un error de `{python} Markdown(f'${error_qda:0.4f}$')` y el error de Bayesiano Ingenuo es `{python} Markdown(f'${error_naive:0.4f}.$')` Se ha visto que el error es una variable aleatoria, entonces la pregunta es saber si esta diferencia en rendimiento es significativa o es una diferencia que proviene de la aleatoriedad de los datos. 
+El clasificador Bayesiano Gaussiano tiene un error de `{python} Markdown(f'${error_qda:0.4f}$')` y el error de Bayesiano Ingenuo es `{python} Markdown(f'${error_naive:0.4f}.$')` Para tener una referencia, un clasificador trivial que siempre responde que la persona no tiene diabetes tiene un error de `{python} Markdown(f'${y_g.mean():0.4f}.$')` Se ha visto que el error es una variable aleatoria, entonces la pregunta es saber si esta diferencia en rendimiento es significativa o es una diferencia que proviene de la aleatoriedad de los datos. 
 
 ## Diferencias en Rendimiento 
 
@@ -598,7 +604,16 @@ se = np.std(B, axis=0)
 
 El error estándar de la diferencia de rendimiento es de `{python} Markdown(f'${se:0.4f}$')`, un procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de `{python} Markdown(f'${diff / se:0.4f}$')`. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gaussiana. 
 
-El histograma de los datos que se tienen en la variable `B` se observa en la @fig-diff-cl-bayesianos. Se puede ver que la forma del histograma asemeja una distribución Gaussiana y que el cero está en el cuerpo de la Gaussiana, tal y como lo confirmó el cociente que se calculó.
+```{python}
+#| echo: false
+cociente = diff / se
+if abs(cociente) >= 2:
+    cero_f = Markdown('el cero queda en la cola de la Gaussiana, es decir, fuera de su cuerpo, tal y como lo confirmó el cociente que se calculó')
+else:
+    cero_f = Markdown('el cero está en el cuerpo de la Gaussiana, tal y como lo confirmó el cociente que se calculó')
+```
+
+El histograma de los datos que se tienen en la variable `B` se observa en la @fig-diff-cl-bayesianos. Se puede ver que la forma del histograma asemeja una distribución Gaussiana y que `{python} cero_f`.
 
 ```{python}
 #| label: fig-diff-cl-bayesianos
@@ -620,9 +635,13 @@ p_value = dist.cdf(0)
 #| echo: false
 p_value_f = Markdown(f'${p_value:0.4f}$')
 conf = Markdown(f'${int((1 - p_value) * 100)}$%')
+if p_value < 0.05:
+    concl_f = Markdown('Como el valor $p$ es menor a $0.05$, la diferencia de rendimiento es significativa.')
+else:
+    concl_f = Markdown('Como el valor $p$ no es menor a $0.05$, no hay evidencia suficiente para afirmar que la diferencia de rendimiento sea real; es compatible con la variabilidad de los datos.')
 ```
 
-teniendo el valor de `{python} p_value_f`, lo que significa que se tiene una confianza del `{python} conf` de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento. 
+teniendo el valor de `{python} p_value_f`, lo que significa que se tiene una confianza del `{python} conf` de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento. `{python} concl_f` En términos del tamizaje, esta confianza dice qué tan seguro es que un algoritmo se equivoque menos que el otro al decidir a quién se le ofrece la prueba de glucosa.
 
 
 ::: {.callout-note}
@@ -650,7 +669,7 @@ En la @fig-redimiento-acc se observa el rendimiento, con su intervalo de confian
 ::: {.callout-tip collapse="true"}
 #### Actividad
 
-Incluir en la comparación anterior el algoritmo Analizador Discriminante Lineal, tal y como se muestra en la @fig-redimiento-acc-act. 
+Incluir en la comparación anterior, del tamizaje de diabetes, el algoritmo Analizador Discriminante Lineal, tal y como se muestra en la @fig-redimiento-acc-act. ¿Es el rendimiento de LDA estadísticamente diferente al de QDA y al de Bayesiano Ingenuo?
 
 ```{python}
 #| echo: false
