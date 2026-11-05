@@ -45,7 +45,7 @@ Para el análisis de políticas públicas esta pregunta es central: un modelo qu
 
 Se parte de un conjunto de datos $\mathcal D = (\mathcal X, \mathcal Y)$ donde cada renglón de $\mathcal X$ es una realización de la variable aleatoria de entrada y cada elemento de $\mathcal Y$ es la realización de la variable que se desea predecir. El objetivo en aprendizaje supervisado es diseñar un algoritmo (función en este caso) que modele la relación entre $\mathcal X$ y $\mathcal Y$, y para conocer qué tan bien lo hace es necesario medir su rendimiento en instancias que no han sido vistas en el entrenamiento. Medirlo con los mismos datos que se usaron para ajustar el algoritmo produce estimaciones optimistas, porque el algoritmo puede memorizar particularidades de esos datos.
 
-En consecuencia, los datos se dividen en dos conjuntos, el conjunto de entrenamiento, $\mathcal T$, que se utiliza para encontrar el algoritmo, y el conjunto de prueba, $\mathcal G$, que se utiliza únicamente para medir el rendimiento. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir en estos conjuntos los datos de Salud (descritos en la @sec-datos-salud). La tarea es el tamizaje de diabetes: decidir a qué personas adultas se les ofrece una prueba de glucosa, a partir de la clasificación de si tienen un diagnóstico previo de diabetes. En la @sec-rendimiento-ejemplo-clasificacion se utilizan para medir el rendimiento de un clasificador.
+En consecuencia, los datos se dividen en dos conjuntos, el conjunto de entrenamiento, $\mathcal T$, que se utiliza para encontrar el algoritmo, y el conjunto de prueba, $\mathcal G$, que se utiliza únicamente para medir el rendimiento. $\mathcal G$ se crea a partir de $\mathcal D$ de tal manera que $\mathcal G \cap \mathcal T = \emptyset$ y $\mathcal D =  \mathcal G \cup \mathcal T.$ La siguiente instrucción se puede utilizar para dividir en estos conjuntos los datos de Salud (descritos en la @sec-datos-salud). La tarea es el tamizaje de diabetes, que consiste en decidir a qué personas adultas se les ofrece una prueba de glucosa, a partir de la clasificación de si tienen un diagnóstico previo de diabetes. En la @sec-rendimiento-ejemplo-clasificacion se utilizan para medir el rendimiento de un clasificador.
 
 ```{python}
 #| echo: true
@@ -67,7 +67,7 @@ pos_f = Markdown(f'${100 * y.mean():0.1f}\\%$')
 pos_g_f = Markdown(f'${100 * y_g.mean():0.1f}\\%$')
 ```
 
-El conjunto tiene $N=$ `{python} n_f` personas. Por ahora se usan solamente las $d=$ `{python} d_f` variables numéricas (`{python} vars_f`); las variables de texto requieren convertirse en indicadoras, lo cual se explica en la @sec-regresion-datos. El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathcal G$ en relación con el conjunto $\mathcal D$ y `random_state` fija la semilla para que la división sea reproducible. La clase con diagnóstico de diabetes es la minoritaria, el `{python} pos_f` de las personas, por lo que el parámetro `stratify` indica que la división conserve esa proporción en ambos conjuntos (`{python} pos_g_f` en $\mathcal G$).
+El conjunto tiene $N=$ `{python} n_f` personas. Por ahora se usan solamente las $d=$ `{python} d_f` variables numéricas (`{python} vars_f`). Las variables de texto requieren convertirse en indicadoras, lo cual se explica en la @sec-regresion-datos. El parámetro `test_size` indica la proporción del tamaño de conjunto $\mathcal G$ en relación con el conjunto $\mathcal D$ y `random_state` fija la semilla para que la división sea reproducible. La clase con diagnóstico de diabetes es la minoritaria, el `{python} pos_f` de las personas, por lo que el parámetro `stratify` indica que la división conserve esa proporción en ambos conjuntos (`{python} pos_g_f` en $\mathcal G$).
 
 ## Clasificación {#sec-clasificacion}
 
@@ -218,7 +218,7 @@ accuracy = accuracy_score(y_g, hy_gaussian)
 
 La exactitud estimada del algoritmo es `{python} Markdown(f'${accuracy.statistic:0.4f}$')` con un error estándar de `{python} Markdown(f'${accuracy.se:0.4f}.$')`
 
-Las medidas de `recall`, `precision` y `f1` se presentan en la @tbl-performance, en la última columna se presenta el promedio (i.e., *macro*) de cada una de las medidas. Para el tamizaje, el recall de la clase $\mathcal Y=1$ es la proporción de las personas con diabetes que el clasificador detecta; un falso negativo es una persona con diabetes a quien no se le ofrecería la prueba. La precisión de esa clase es la proporción de las pruebas ofrecidas que corresponden a una persona con diabetes; un falso positivo es una prueba que se ofrece a quien no la necesita. 
+Las medidas de `recall`, `precision` y `f1` se presentan en la @tbl-performance, en la última columna se presenta el promedio (i.e., *macro*) de cada una de las medidas. Para el tamizaje, el recall de la clase $\mathcal Y=1$ es la proporción de las personas con diabetes que el clasificador detecta. Un falso negativo es una persona con diabetes a quien no se le ofrecería la prueba. La precisión de esa clase es la proporción de las pruebas ofrecidas que corresponden a una persona con diabetes. Un falso positivo es una prueba que se ofrece a quien no la necesita. 
 
 ```{python}
 #| echo: true
@@ -416,7 +416,7 @@ $$ {#eq-r2}
 
 ### Ejemplo
 
-Las medidas anteriores se ejemplifican con los datos de Territorio (@sec-datos-territorio). El problema es aproximar la escolaridad de un barrio con la composición de establecimientos del DENUE cuando el censo no es reciente: la variable a predecir es el grado promedio de escolaridad (en años) de cada AGEB de Aguascalientes. Los datos se pueden descargar y modelar mediante una regresión lineal, de la siguiente manera. La regresión lineal se utiliza como caja negra. Es un modelo que predice la respuesta como una suma ponderada de las variables de entrada, $\mathbf w \cdot \mathbf x + w_0,$ donde los pesos se ajustan a los datos de entrenamiento minimizando el error cuadrático. Se describirá en la @sec-regresion-ols.
+Las medidas anteriores se ejemplifican con los datos de Territorio (@sec-datos-territorio). El problema es aproximar la escolaridad de un barrio con la composición de establecimientos del DENUE cuando el censo no es reciente. La variable a predecir es el grado promedio de escolaridad (en años) de cada AGEB de Aguascalientes. Los datos se pueden descargar y modelar mediante una regresión lineal, de la siguiente manera. La regresión lineal se utiliza como caja negra. Es un modelo que predice la respuesta como una suma ponderada de las variables de entrada, $\mathbf w \cdot \mathbf x + w_0,$ donde los pesos se ajustan a los datos de entrenamiento minimizando el error cuadrático. Se describirá en la @sec-regresion-ols.
 
 
 ```{python}

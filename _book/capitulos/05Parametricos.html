@@ -388,7 +388,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer las características de los modelos paramétricos y aplicar máxima verosimilitud para estimar los parámetros del modelo paramétrico en problemas de clasificación.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="038a7203" class="cell" data-execution_count="1">
+<div id="7636c7c1" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.discriminant_analysis <span class="im">import</span> QuadraticDiscriminantAnalysis</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.discriminant_analysis <span class="im">import</span> LinearDiscriminantAnalysis</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB</span>
@@ -456,42 +456,42 @@ window.Quarto = {
 <h3 data-number="6.3.3" class="anchored" data-anchor-id="sec-estimacion-distribucion-gausiana"><span class="header-section-number">6.3.3</span> Ejemplo: Distribución Gaussiana</h3>
 <p>Esta sección sigue un camino práctico, presentando el código para estimar los parámetros de una distribución Gaussiana donde se conocen todos los parámetros. La distribución se usa para generar 1000 muestras y después de esta población se estiman los parámetros; de esta manera se tienen todos los elementos para comparar los parámetros reales <span class="math inline">\(\theta\)</span> de los parámetros estimados <span class="math inline">\(\hat \theta.\)</span></p>
 <p>La distribución que se usará se utilizó para generar un problema sintético (ver <a href="04Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 5.3.1</span></a>) de tres clases. Los parámetros de la distribución son: <span class="math inline">\(\mathbf \mu = [5, 5]^\intercal\)</span> y <span class="math inline">\(\Sigma = \begin{pmatrix} 4 &amp; 0 \\ 0 &amp; 2 \\ \end{pmatrix}.\)</span> La siguiente instrucción se puede utilizar para generar 1000 muestras de esa distribución.</p>
-<div id="f0886754" class="cell" data-execution_count="3">
+<div id="efc556b9" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>], </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                        cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                             [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(size<span class="op">=</span><span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La media estimada de los datos en <code>D</code> se calcula usando la función <code>np.mean</code> de la siguiente manera</p>
-<div id="7f2883b3" class="cell" data-execution_count="4">
+<div id="98b9149c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> np.mean(D, axis<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="28baa96a" class="cell" data-execution_count="5">
+<div id="6f4f1091" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="5">
-<p>donde el eje de operación es el primero que corresponde al índice <span class="math inline">\(0.\)</span> La media estimada es: <span class="math inline">\(\hat \mu = [4.9677, 5.0019]^\intercal\)</span> con un <a href="ver @sec-error-estandar-media">error estándar</a> (<code>se</code>) de <span class="math inline">\([0.0634, 0.0437]^\intercal\)</span> que se calcula con el siguiente código.</p>
+<p>donde el eje de operación es el primero que corresponde al índice <span class="math inline">\(0.\)</span> La media estimada es: <span class="math inline">\(\hat \mu = [5.0257, 4.9308]^\intercal\)</span> con un <a href="ver @sec-error-estandar-media">error estándar</a> (<code>se</code>) de <span class="math inline">\([0.0630, 0.0440]^\intercal\)</span> que se calcula con el siguiente código.</p>
 </div>
 </div>
-<div id="a295c02d" class="cell" data-execution_count="6">
+<div id="74f230d7" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(D, axis<span class="op">=</span><span class="dv">0</span>) <span class="op">/</span> np.sqrt(<span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Hasta el momento se ha estimado <span class="math inline">\(\mu\)</span>, falta por estimar <span class="math inline">\(\Sigma\)</span>, que se puede realizar con la siguiente instrucción</p>
-<div id="dd477324" class="cell" data-execution_count="7">
+<div id="06112080" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cov <span class="op">=</span> np.cov(D, rowvar<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a2e71ba7" class="cell" data-execution_count="8">
+<div id="1219643f" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="8">
-<p>donde el parámetro <code>rowvar</code> indica la forma en que están proporcionados los datos. La estimación da los siguientes valores <span class="math inline">\(\hat \Sigma = \begin{pmatrix} 4.0244&amp;-0.0507 \\ -0.0507&amp;1.9155 \\ \end{pmatrix};\)</span> se puede observar que son similares al parámetro con que se simularon los datos.</p>
+<p>donde el parámetro <code>rowvar</code> indica la forma en que están proporcionados los datos. La estimación da los siguientes valores <span class="math inline">\(\hat \Sigma = \begin{pmatrix} 3.9683&amp;-0.0380 \\ -0.0380&amp;1.9387 \\ \end{pmatrix};\)</span> se puede observar que son similares al parámetro con que se simularon los datos.</p>
 </div>
 </div>
 <p>Siguiendo con la inercia de presentar el error estándar de cada estimación, en las siguientes instrucciones se presenta el error estándar de <span class="math inline">\(\hat \Sigma\)</span>, el cual se calcula utilizando la técnica de bootstrap (ver <a href="19Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) implementada en el siguiente código.</p>
-<div id="1025c7c5" class="cell" data-execution_count="9">
+<div id="505135b6" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(D.shape[<span class="dv">0</span>],</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, D.shape[<span class="dv">0</span>]))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [np.cov(D[s], rowvar<span class="op">=</span><span class="va">False</span>) <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B, axis<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="279799e9" class="cell" data-execution_count="10">
+<div id="eceef34c" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="10">
-<p>Se puede observar que la función <code>np.cov</code> se ejecuta utilizando la muestra indicada en la variable <code>s</code>. El error estándar (<code>se</code>) de <span class="math inline">\(\hat \Sigma\)</span> corresponde a <span class="math inline">\(\begin{pmatrix} 0.1875&amp;0.0814 \\ 0.0814&amp;0.0869 \\ \end{pmatrix}.\)</span> Se observa que los elementos fuera de la diagonal tienen un error estándar tal que el cero se encuentra en el intervalo <span class="math inline">\(\hat \Sigma \pm se;\)</span> lo cual indica que el cero es un valor factible. Lo anterior se puede verificar tomando en cuenta que se conoce <span class="math inline">\(\Sigma\)</span> y que el parámetro real es <span class="math inline">\(0\)</span> para aquellos elementos fuera de la diagonal.</p>
+<p>Se puede observar que la función <code>np.cov</code> se ejecuta utilizando la muestra indicada en la variable <code>s</code>. El error estándar (<code>se</code>) de <span class="math inline">\(\hat \Sigma\)</span> corresponde a <span class="math inline">\(\begin{pmatrix} 0.1898&amp;0.0877 \\ 0.0877&amp;0.0895 \\ \end{pmatrix}.\)</span> Se observa que los elementos fuera de la diagonal tienen un error estándar tal que el cero se encuentra en el intervalo <span class="math inline">\(\hat \Sigma \pm se;\)</span> lo cual indica que el cero es un valor factible. Lo anterior se puede verificar tomando en cuenta que se conoce <span class="math inline">\(\Sigma\)</span> y que el parámetro real es <span class="math inline">\(0\)</span> para aquellos elementos fuera de la diagonal.</p>
 </div>
 </div>
 </section>
@@ -517,7 +517,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div id="9028f638" class="cell" data-execution_count="11">
+<div id="79fd75b6" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Código</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">0</span></span>
@@ -538,13 +538,13 @@ window.Quarto = {
 </div>
 </div>
 <p>Específicamente, las entradas que definían a cada clase están en las variables <code>X_1</code>, <code>X_2</code> y <code>X_3</code>. Entonces las clases se pueden colocar en la variable <code>y</code> tal como se indica a continuación.</p>
-<div id="0cfe8578" class="cell" data-execution_count="12">
+<div id="1c94292f" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Las variables <code>X</code> y <code>y</code> contienen la información del conjunto <span class="math inline">\(\mathcal D = (\mathcal X, \mathcal Y)\)</span> donde cada renglón de <code>X</code> es una realización de la variable aleatoria <span class="math inline">\(\mathcal X\)</span> y equivalentemente cada elemento en <code>y</code> es una realización de <span class="math inline">\(\mathcal Y.\)</span></p>
 <p>El procedimiento para dividir <span class="math inline">\(\mathcal D\)</span> en el conjunto de entrenamiento, <span class="math inline">\(\mathcal T\)</span>, y el de prueba, <span class="math inline">\(\mathcal G\)</span>, se describió en la <a href="02Rendimiento.html#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 2.2</span></a> del capítulo de Rendimiento (<a href="02Rendimiento.html" class="quarto-xref"><span>Capítulo 2</span></a>). En este caso, <span class="math inline">\(\mathcal T\)</span> se utiliza para estimar los parámetros del modelo (por ejemplo, para maximizar la verosimilitud, <a href="#sec-estimacion-distribucion-gausiana" class="quarto-xref"><span>Sección 6.3.3</span></a>) y <span class="math inline">\(\mathcal G\)</span> para medir su rendimiento. La división se realiza con la siguiente instrucción.</p>
-<div id="0f770304" class="cell" data-execution_count="13">
+<div id="44b13cd2" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                  test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span>seed)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -557,14 +557,14 @@ window.Quarto = {
 <h3 data-number="6.5.1" class="anchored" data-anchor-id="sec-estimacion-parametros"><span class="header-section-number">6.5.1</span> Estimación de Parámetros</h3>
 <p>Dado que por definición del problema (ver <a href="04Teoria_Decision.html#sec-tres-normales" class="quarto-xref"><span>Sección 5.3.1</span></a>) se conoce que la verosimilitud para cada clase proviene de una Gaussiana, i.e., <span class="math inline">\(\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),\)</span> en esta sección se estimarán los parámetros utilizando este conocimiento.</p>
 <p>El primer paso en la estimación de parámetros es calcular la probabilidad a priori <span class="math inline">\(\mathbb P(\mathcal Y)\)</span>, el cual corresponde a clasificar el evento sin observar el valor de <span class="math inline">\(\mathcal X.\)</span> Esto se puede modelar mediante una distribución Categórica con parámetros <span class="math inline">\(p_i\)</span> donde <span class="math inline">\(\sum_i^K p_i = 1\)</span>. Estos parámetros se pueden estimar utilizando la función <code>np.unique</code> de la siguiente manera</p>
-<div id="27611f62" class="cell" data-execution_count="14">
+<div id="1f840252" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>labels, counts <span class="op">=</span> np.unique(y_t, return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>prior <span class="op">=</span> counts <span class="op">/</span> counts.<span class="bu">sum</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La variable <code>prior</code> contiene en el primer elemento <span class="math inline">\(\mathbb P(\mathcal Y=1) = 0.3179,\)</span> en el segundo <span class="math inline">\(\mathbb P(\mathcal Y=2) = 0.3387\)</span> y en el tercero <span class="math inline">\(\mathbb P(\mathcal Y=3) = 0.3433\)</span> que es aproximadamente <span class="math inline">\(\frac{1}{3}\)</span> el cual es el valor real de la probabilidad a priori.</p>
 <p>Siguiendo los pasos en estimación de parámetros de una Gaussiana (<a href="#sec-estimacion-distribucion-gausiana" class="quarto-xref"><span>Sección 6.3.3</span></a>) se pueden estimar los parámetros para cada Gaussiana dada la clase. Es decir, se tiene que estimar los parámetros <span class="math inline">\(\mu\)</span> y <span class="math inline">\(\Sigma\)</span> para la clase <span class="math inline">\(1\)</span>, <span class="math inline">\(2\)</span> y <span class="math inline">\(3.\)</span> El algoritmo de clasificación que estima <span class="math inline">\(\mu\)</span> y <span class="math inline">\(\Sigma\)</span> para cada clase se le conoce como <strong>Analizador Discriminante Cuadrático</strong> implementado en la clase <code>QuadraticDiscriminantAnalysis</code>.</p>
 <p>Una implementación directa para la estimación de los parámetros se puede realizar iterando por las etiquetas contenidas en la variable <code>labels</code> y seleccionando los datos en <code>T</code> que corresponden a la clase analizada, ver el uso de la variable <code>mask</code> en la línea 4 y 5. Después se inicializa una instancia de la clase <code>multivariate_normal</code> para ser utilizada en el cómputo de la función de densidad de probabilidad. El paso final es guardar las instancias de las distribuciones en la lista <code>likelihood</code>.</p>
-<div id="a36763b4" class="cell" data-execution_count="15">
+<div id="f5f79c65" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> []</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> labels:</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> y_t <span class="op">==</span> k</span>
@@ -573,7 +573,7 @@ window.Quarto = {
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    likelihood_k <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>mu, cov<span class="op">=</span>cov)</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    likelihood.append(likelihood_k)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="027ab71b" class="cell" data-execution_count="16">
+<div id="6a3b6017" class="cell" data-execution_count="16">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="16">
 <p>Los valores estimados para la media, en cada clase son: <span class="math inline">\(\hat \mu_1 = [5.0267, 4.9626]^\intercal,\)</span> <span class="math inline">\(\hat \mu_2 = [1.5687, -1.4642]^\intercal\)</span> y <span class="math inline">\(\hat \mu_3 = [12.5188, -3.4715]^\intercal\)</span>. Para las matrices de covarianza, los valores estimados corresponden a <span class="math inline">\(\hat \Sigma_1 = \begin{pmatrix} 3.8108 &amp; -0.0363\\-0.0363 &amp; 1.9319 \\ \end{pmatrix},\)</span> <span class="math inline">\(\hat \Sigma_2 = \begin{pmatrix} 1.8221 &amp; 0.8862\\0.8862 &amp; 2.8153 \\ \end{pmatrix}\)</span> y <span class="math inline">\(\hat \Sigma_3 = \begin{pmatrix} 1.9043 &amp; 2.8677\\2.8677 &amp; 6.7392 \\ \end{pmatrix}.\)</span></p>
 </div>
@@ -590,11 +590,11 @@ Nota
 </div>
 <div class="callout-body-container callout-body">
 <p>El código anterior tiene el fin de explicar el procedimiento para estimar los parámetros, la clase <code>QuadraticDiscriminantAnalysis</code> implementa diferentes métodos de estimación y se puede utilizar con el siguiente código.</p>
-<div id="ff2a68dd" class="cell" data-execution_count="17">
+<div id="41c03f92" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>qda <span class="op">=</span> QuadraticDiscriminantAnalysis(store_covariance<span class="op">=</span><span class="va">True</span>).fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Los parámetros <span class="math inline">\(\mu\)</span> se encuentran en el siguiente atributo. Se puede observar que los valores estimados por el método explicado y el implementado en QDA es el mismo.</p>
-<div id="947b2d00" class="cell" data-execution_count="18">
+<div id="7164ca99" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>qda.means_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>array([[ 5.0267,  4.9626],
@@ -603,7 +603,7 @@ Nota
 </div>
 </div>
 <p>Los parámetros estimados para <span class="math inline">\(\Sigma_1\)</span> se pueden obtener en el siguiente atributo</p>
-<div id="9ca709fa" class="cell" data-execution_count="19">
+<div id="feda06fb" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>qda.covariance_[<span class="dv">0</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
 <pre><code>array([[ 3.8058, -0.0363],
@@ -625,11 +625,11 @@ Nota
 </div>
 <div class="callout-body-container callout-body">
 <p>La clase <code>LinearDiscriminantAnalysis</code> se utiliza con la siguiente instrucción, el parámetro <code>store_covariance</code> se asigna para poder mostrar la matriz de covarianza.</p>
-<div id="51980e6f" class="cell" data-execution_count="20">
+<div id="183e9def" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lda <span class="op">=</span> LinearDiscriminantAnalysis(store_covariance<span class="op">=</span><span class="va">True</span>).fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Los parámetros <span class="math inline">\(\mu\)</span> se encuentran en el siguiente atributo. Se puede observar que los valores estimados por el método explicado son los encontrados anteriormente.</p>
-<div id="9b39e503" class="cell" data-execution_count="21">
+<div id="b7aab7c3" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>lda.means_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>array([[ 5.0267,  4.9626],
@@ -638,7 +638,7 @@ Nota
 </div>
 </div>
 <p>Los parámetros estimados para la matriz de covarianza, <span class="math inline">\(\Sigma\)</span>, se pueden obtener en el siguiente atributo</p>
-<div id="78b8f821" class="cell" data-execution_count="22">
+<div id="bdd79696" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>lda.covariance_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <pre><code>array([[2.4794, 1.2717],
@@ -652,7 +652,7 @@ Nota
 <h3 data-number="6.5.2" class="anchored" data-anchor-id="sec-prediccion"><span class="header-section-number">6.5.2</span> Predicción</h3>
 <p>Una vez que se tiene la función que modela los datos, se está en condiciones de utilizarla para predecir (ver <a href="04Teoria_Decision.html#sec-prediccion-normal" class="quarto-xref"><span>Sección 5.3.2</span></a>) nuevos datos.</p>
 <p>En esta ocasión se organiza el procedimiento de predicción en diferentes funciones, la primera función recibe los datos a predecir <code>X</code> y los componentes del modelo, que son la verosimilitud (<code>likelihood</code>) y el <code>prior</code>. La función calcula <span class="math inline">\(\mathbb P(\mathcal Y=y \mid \mathcal X=x)\)</span> que es la probabilidad de cada clase dada la entrada <span class="math inline">\(x\)</span>. Se puede observar en la primera línea que se usa la función de densidad de probabilidad (<code>pdf</code>) para cada clase y esta se multiplica por el <code>prior</code> y en la tercera línea se calcula la evidencia. Finalmente, se regresa el a posteriori.</p>
-<div id="d7b3cdb7" class="cell" data-execution_count="23">
+<div id="a01e4cfa" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_prob(X, likelihood, prior):</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    likelihood <span class="op">=</span> [m.pdf(X) <span class="cf">for</span> m <span class="kw">in</span> likelihood]</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    posterior <span class="op">=</span> np.vstack(likelihood).T <span class="op">*</span> prior</span>
@@ -660,7 +660,7 @@ Nota
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> posterior <span class="op">/</span> np.atleast_2d(evidence).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La función <code>predict_proba</code> se utiliza como base para predecir la clase, para la cual se requiere el mapa entre índices y clases que se encuentra en la variable <code>labels</code>. Se observa que se llama a la función <code>predict_proba</code> y después se calcula el argumento que tiene la máxima probabilidad regresando la etiqueta asociada.</p>
-<div id="fa390a4c" class="cell" data-execution_count="24">
+<div id="b4543651" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(X, likelihood, prior, labels):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> predict_prob(X, likelihood, prior)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> labels[np.argmax(_, axis<span class="op">=</span><span class="dv">1</span>)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -676,15 +676,15 @@ Nota
 </div>
 <div class="callout-body-container callout-body">
 <p>La predicción en la clase <code>QuadraticDiscriminantAnalysis</code> se puede realizar invocando al siguiente método tal y como se muestra en la siguiente línea.</p>
-<div id="b8c89695" class="cell" data-execution_count="25">
+<div id="f559ac71" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>qda_hy <span class="op">=</span> qda.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La probabilidad se puede obtener utilizando el método <code>predict_proba.</code></p>
-<div id="7ab0f340" class="cell" data-execution_count="26">
+<div id="f0730f30" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>qda_prob <span class="op">=</span> qda.predict_proba(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>De manera similar la predicción del algoritmo <code>LinearDiscriminantAnalysis</code> se realiza con la siguiente instrucción.</p>
-<div id="b6d2d28d" class="cell" data-execution_count="27">
+<div id="f9603a89" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>lda_hy <span class="op">=</span> lda.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -693,7 +693,7 @@ Nota
 <section id="sec-rendimiento" class="level3" data-number="6.5.3">
 <h3 data-number="6.5.3" class="anchored" data-anchor-id="sec-rendimiento"><span class="header-section-number">6.5.3</span> Rendimiento</h3>
 <p>El rendimiento del algoritmo se mide en el conjunto de prueba <code>G</code>, utilizando como medida el error de clasificación (<a href="04Teoria_Decision.html#sec-error-clasificacion" class="quarto-xref"><span>Sección 5.4</span></a>). El primer paso es predecir las clases de los elementos en <code>G</code>, utilizando la función <code>predict</code> que fue diseñada anteriormente. Después se mide el error, con la instrucción de la segunda línea.</p>
-<div id="6648d4a6" class="cell" data-execution_count="28">
+<div id="6fd70c5b" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> predict(G, likelihood, prior, labels)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -742,7 +742,7 @@ Figura&nbsp;6.1: Variación del número de elementos que seleccionan la acción 
 </div>
 </div>
 <p>Para calcular el error estándar se utiliza el siguiente código</p>
-<div id="01dbef53" class="cell" data-execution_count="30">
+<div id="a6912b0b" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> y_g.shape[<span class="dv">0</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>dando un valor de <span class="math inline">\(0.0044.\)</span></p>
@@ -764,7 +764,7 @@ Figura&nbsp;6.1: Variación del número de elementos que seleccionan la acción 
 <div id="fig-actividad-distribucion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-actividad-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="05Parametricos_files/figure-html/fig-actividad-distribucion-output-1.png" width="471" height="470" class="figure-img">
+<img src="05Parametricos_files/figure-html/fig-actividad-distribucion-output-1.png" width="472" height="470" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-actividad-distribucion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.2: Distribución del error
@@ -773,7 +773,7 @@ Figura&nbsp;6.2: Distribución del error
 </div>
 </div>
 </div>
-<p>El error estándar calculado con los datos mostrados en la figura anterior es <span class="math inline">\(0.0044\)</span></p>
+<p>El error estándar calculado con los datos mostrados en la figura anterior es <span class="math inline">\(0.0040\)</span></p>
 </div>
 </div>
 </div>
@@ -784,7 +784,7 @@ Figura&nbsp;6.2: Distribución del error
 <p>Uno de los clasificadores más utilizados, sencillo de implementar y competitivo, es el clasificador Bayesiano Ingenuo. En la <a href="#sec-model-clasificacion" class="quarto-xref"><span>Sección 6.5</span></a> se asumió que la variable aleatoria <span class="math inline">\(\mathcal X = (\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)\)</span> dado <span class="math inline">\(\mathcal Y\)</span> (<span class="math inline">\(\mathcal X_{\mid \mathcal Y}\)</span>) es <span class="math inline">\(\mathcal X_{\mid \mathcal Y} \sim \mathcal N(\mu_{\mathcal Y}, \Sigma_{\mathcal Y}),\)</span> donde <span class="math inline">\(\mu_{\mathcal Y} \in \mathbb R^d\)</span>, <span class="math inline">\(\Sigma_{\mathcal Y} \in \mathbb R^{d \times d}\)</span> y <span class="math inline">\(f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d)\)</span> es la función de densidad de probabilidad conjunta.</p>
 <p>En el clasificador Bayesiano Ingenuo se asume que las variables <span class="math inline">\(\mathcal X_i\)</span> y <span class="math inline">\(\mathcal X_j\)</span> para <span class="math inline">\(i \neq j\)</span> son independientes, esto trae como consecuencia que <span class="math inline">\(f(\mathcal X_1, \mathcal X_2, \ldots, \mathcal X_d) = \prod_i^d f(\mathcal X_i).\)</span> Esto quiere decir que cada variable está definida como una Gaussiana donde se tiene que identificar <span class="math inline">\(\mu\)</span> y <span class="math inline">\(\sigma^2.\)</span></p>
 <p>La estimación de los parámetros de estas distribuciones se puede realizar utilizando un código similar siendo la única diferencia que se calcula <span class="math inline">\(\sigma^2\)</span> de cada variable en lugar de la covarianza <span class="math inline">\(\Sigma\)</span>, esto se puede observar en la quinta línea donde se usa la función <code>np.var</code> en el primer eje. El resto del código es equivalente al usado en la <a href="#sec-estimacion-parametros" class="quarto-xref"><span>Sección 6.5.1</span></a>.</p>
-<div id="57f91d92" class="cell" data-execution_count="32">
+<div id="61c08aec" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>likelihood <span class="op">=</span> []</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> labels:</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> y_t <span class="op">==</span> k</span>
@@ -793,13 +793,13 @@ Figura&nbsp;6.2: Distribución del error
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    likelihood_k <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>mu, cov<span class="op">=</span>var)</span>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    likelihood.append(likelihood_k)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="78886fc5" class="cell" data-execution_count="33">
+<div id="4af0f96d" class="cell" data-execution_count="33">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="33">
 <p>Los parámetros estimados en la versión ingenua son equivalentes con respecto a las medias, i.e., <span class="math inline">\(\hat \mu_1 = [5.0267, 4.9626]^\intercal\)</span>, <span class="math inline">\(\hat \mu_2 = [1.5687, -1.4642] ^\intercal\)</span> y <span class="math inline">\(\hat \mu_3 = [12.5188, -3.4715]^\intercal\)</span>. La diferencia se puede observar en las varianzas, que a continuación se muestran como matrices de covarianza para resaltar la diferencia, i.e., <span class="math inline">\(\hat \Sigma_1 = \begin{pmatrix} 3.8108 &amp; 0.0000\\0.0000 &amp; 1.9319 \\ \end{pmatrix}\)</span>, <span class="math inline">\(\hat \Sigma_2 = \begin{pmatrix} 1.8221 &amp; 0.0000\\0.0000 &amp; 2.8153 \\ \end{pmatrix}\)</span> y <span class="math inline">\(\hat \Sigma_3 = \begin{pmatrix} 1.9043 &amp; 0.0000\\0.0000 &amp; 6.7392 \\ \end{pmatrix}\)</span> se observa como los elementos fuera de la diagonal son ceros, lo cual indica la independencia entra las variables de entrada.</p>
 </div>
 </div>
 <p>Finalmente, el código para predecir se utiliza el código descrito en la <a href="#sec-prediccion" class="quarto-xref"><span>Sección 6.5.2</span></a> dado que el modelo está dado en las variables <code>likelihood</code> y <code>prior</code>.</p>
-<div id="987d708a" class="cell" data-execution_count="34">
+<div id="ae5274c4" class="cell" data-execution_count="34">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="34">
 <p>El <code>error</code> del clasificador Bayesiano Ingenuo, en el conjunto de prueba, es de <span class="math inline">\(0.01\)</span> y su error estándar (<code>se_formula</code>) es <span class="math inline">\(0.0041.\)</span></p>
 </div>
@@ -816,11 +816,11 @@ Nota
 <div class="callout-body-container callout-body">
 <p>El código anterior tiene la finalidad de explicar la estimación de parámetros del Clasificador Bayesiano Ingenuo. Este procedimiento se encuentra en la clase <code>GaussianNB</code>, en ese paquete se pueden encontrar implementaciones con otras distribuciones.</p>
 <p>El siguiente código muestra su uso.</p>
-<div id="0c9b045f" class="cell" data-execution_count="35">
+<div id="3990be51" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> GaussianNB().fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Los parámetros <span class="math inline">\(\mu\)</span> se pueden consultar con la siguiente instrucción</p>
-<div id="cb30f8dd" class="cell" data-execution_count="36">
+<div id="091492ef" class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>naive.theta_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="36">
 <pre><code>array([[ 5.0267,  4.9626],
@@ -829,7 +829,7 @@ Nota
 </div>
 </div>
 <p>y <span class="math inline">\(\sigma^2\)</span> en</p>
-<div id="22a0140b" class="cell" data-execution_count="37">
+<div id="b2ffd899" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>naive.var_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="37">
 <pre><code>array([[3.8058, 1.9293],
@@ -842,14 +842,14 @@ Nota
 </section>
 <section id="sec-ejemplo-salud" class="level2" data-number="6.7">
 <h2 data-number="6.7" class="anchored" data-anchor-id="sec-ejemplo-salud"><span class="header-section-number">6.7</span> Ejemplo: Tamizaje de Diabetes</h2>
-<p>Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos; Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y Bayesiano Ingenuo en un problema de tamizaje de diabetes: decidir a qué personas adultas se les ofrece una prueba de glucosa, a partir de si la persona tiene un diagnóstico previo de diabetes. Los datos son los de Salud (<a href="20ConjuntosDatos.html#sec-datos-salud" class="quarto-xref"><span>Sección B.1.3</span></a>) y se leen directamente del release <code>datos-v1</code>. Por ahora se utilizan solamente las variables numéricas; las variables de texto se convierten en indicadoras como se explica en la <a href="03Regresion.html#sec-regresion-datos" class="quarto-xref"><span>Sección 3.2</span></a>.</p>
-<div id="363c54d3" class="cell" data-execution_count="38">
+<p>Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos, el Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y el Bayesiano Ingenuo, en un problema de tamizaje de diabetes, que consiste en decidir a qué personas adultas se les ofrece una prueba de glucosa a partir de si la persona tiene un diagnóstico previo de diabetes. Los datos son los de Salud (<a href="20ConjuntosDatos.html#sec-datos-salud" class="quarto-xref"><span>Sección B.1.3</span></a>) y se leen directamente del release <code>datos-v1</code>. Por ahora se utilizan solamente las variables numéricas. Las variables de texto se convierten en indicadoras como se explica en la <a href="03Regresion.html#sec-regresion-datos" class="quarto-xref"><span>Sección 3.2</span></a>.</p>
+<div id="17b528ce" class="cell" data-execution_count="38">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>salud <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/ensanut_salud.csv.gz'</span>)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> salud.drop(columns<span class="op">=</span>[<span class="st">'diabetes'</span>, <span class="st">'factor'</span>]).select_dtypes(<span class="st">'number'</span>)</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> X.to_numpy(), salud[<span class="st">'diabetes'</span>].to_numpy()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El primer paso es contar con los conjuntos de entrenamiento y prueba para poder realizar de manera completa la evaluación del proceso de clasificación. Esto se realiza ejecutando la siguiente instrucción.</p>
-<div id="7ec07861" class="cell" data-execution_count="39">
+<div id="e1ccae7c" class="cell" data-execution_count="39">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span>seed,</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                                  stratify<span class="op">=</span>y)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -858,7 +858,7 @@ Nota
 <section id="entrenamiento" class="level3" data-number="6.7.1">
 <h3 data-number="6.7.1" class="anchored" data-anchor-id="entrenamiento"><span class="header-section-number">6.7.1</span> Entrenamiento</h3>
 <p>Los dos modelos que se utilizarán serán el clasificador de Análisis Discriminante Cuadrático y Bayesiano Ingenuo, utilizando las clases <code>QuadraticDiscriminantAnalysis</code> y <code>GaussianNB</code>. Las siguientes dos instrucciones inicializan estos dos clasificadores.</p>
-<div id="e89caafa" class="cell" data-execution_count="40">
+<div id="f1f66af7" class="cell" data-execution_count="40">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>qda <span class="op">=</span> QuadraticDiscriminantAnalysis(reg_param<span class="op">=</span><span class="fl">1e-3</span>).fit(T, y_t)</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> GaussianNB().fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -866,7 +866,7 @@ Nota
 <section id="predicción" class="level3" data-number="6.7.2">
 <h3 data-number="6.7.2" class="anchored" data-anchor-id="predicción"><span class="header-section-number">6.7.2</span> Predicción</h3>
 <p>Habiendo definido los dos clasificadores, las predicciones del conjunto de prueba se realizan de la siguiente manera.</p>
-<div id="e557125d" class="cell" data-execution_count="41">
+<div id="33f9da22" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>hy_qda <span class="op">=</span> qda.predict(G)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>hy_naive <span class="op">=</span> naive.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -874,7 +874,7 @@ Nota
 <section id="sec-gaussiana-perf-salud" class="level3" data-number="6.7.3">
 <h3 data-number="6.7.3" class="anchored" data-anchor-id="sec-gaussiana-perf-salud"><span class="header-section-number">6.7.3</span> Rendimiento</h3>
 <p>El rendimiento de ambos clasificadores se calcula de la siguiente manera</p>
-<div id="03ec9d03" class="cell" data-execution_count="42">
+<div id="ea7af358" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>error_qda <span class="op">=</span> (y_g <span class="op">!=</span> hy_qda).mean()</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>error_naive <span class="op">=</span> (y_g <span class="op">!=</span> hy_naive).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -884,7 +884,7 @@ Nota
 <section id="diferencias-en-rendimiento" class="level2" data-number="6.8">
 <h2 data-number="6.8" class="anchored" data-anchor-id="diferencias-en-rendimiento"><span class="header-section-number">6.8</span> Diferencias en Rendimiento</h2>
 <p>Una manera de ver si existe una diferencia en rendimiento es calcular la diferencia entre los dos errores de clasificación, esto es</p>
-<div id="332027c0" class="cell" data-execution_count="43">
+<div id="59c90fc3" class="cell" data-execution_count="43">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> (y_g <span class="op">!=</span> hy_naive).mean()</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>completo <span class="op">=</span> (y_g <span class="op">!=</span> hy_qda).mean()</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> naive <span class="op">&gt;</span> completo:</span>
@@ -893,7 +893,7 @@ Nota
 <span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    diff <span class="op">=</span> completo <span class="op">-</span> naive</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>que tiene un valor de <span class="math inline">\(0.0000\)</span>. De la misma manera que se ha utilizado la técnica de bootstrap (<a href="19Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para calcular el error estándar de la media, se puede usar para estimar el error estándar de la diferencia en rendimiento. El siguiente código muestra el procedimiento para estimar este error estándar.</p>
-<div id="cfea0426" class="cell" data-execution_count="44">
+<div id="dca4861e" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y_g.shape[<span class="dv">0</span>],</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                      size<span class="op">=</span>(<span class="dv">500</span>, y_g.shape[<span class="dv">0</span>]))</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> naive <span class="op">&gt;</span> completo:</span>
@@ -905,7 +905,7 @@ Nota
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [diff_f(s) <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B, axis<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error estándar de la diferencia de rendimiento es de <span class="math inline">\(0.0052\)</span>, un procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de <span class="math inline">\(0.0000\)</span>. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gaussiana.</p>
+<p>El error estándar de la diferencia de rendimiento es de <span class="math inline">\(0.0053\)</span>, un procedimiento simple para saber si la diferencia observada es significativa, es dividir la diferencia entre su error estándar dando un valor de <span class="math inline">\(0.0000\)</span>. En el caso que el valor absoluto fuera igual o superior a 2 se sabría que la diferencia es significativa con una confianza de al menos 95%, esto asumiendo que la diferencia se comporta como una distribución Gaussiana.</p>
 <p>El histograma de los datos que se tienen en la variable <code>B</code> se observa en la <a href="#fig-diff-cl-bayesianos" class="quarto-xref">Figura&nbsp;<span>6.3</span></a>. Se puede ver que la forma del histograma asemeja una distribución Gaussiana y que el cero está en el cuerpo de la Gaussiana, tal y como lo confirmó el cociente que se calculó.</p>
 <div id="cell-fig-diff-cl-bayesianos" class="cell" data-execution_count="46">
 <details class="code-fold">
@@ -917,7 +917,7 @@ Nota
 <div id="fig-diff-cl-bayesianos" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-diff-cl-bayesianos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="05Parametricos_files/figure-html/fig-diff-cl-bayesianos-output-1.png" width="471" height="470" class="figure-img">
+<img src="05Parametricos_files/figure-html/fig-diff-cl-bayesianos-output-1.png" width="472" height="470" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diff-cl-bayesianos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.3: Diferencia entre Clasificadores Bayesianos
@@ -927,11 +927,11 @@ Figura&nbsp;6.3: Diferencia entre Clasificadores Bayesianos
 </div>
 </div>
 <p>Se puede conocer la probabilidad de manera exacta calculando el área bajo la curva a la izquierda del cero, este sería el valor <span class="math inline">\(p\)</span>, si este es menor a 0.05 quiere decir que se tiene una confianza mayor del 95% de que los rendimientos son diferentes. Para este ejemplo, el área se calcula con el siguiente código</p>
-<div id="ae520831" class="cell" data-execution_count="47">
+<div id="7adc0c1b" class="cell" data-execution_count="47">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> norm(loc<span class="op">=</span>diff, scale<span class="op">=</span>se)</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> dist.cdf(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>teniendo el valor de <span class="math inline">\(0.5000\)</span>, lo que significa que se tiene una confianza del <span class="math inline">\(50\)</span>% de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento. Como el valor <span class="math inline">\(p\)</span> no es menor a <span class="math inline">\(0.05\)</span>, no hay evidencia suficiente para afirmar que la diferencia de rendimiento sea real; es compatible con la variabilidad de los datos. En términos del tamizaje, esta confianza dice qué tan seguro es que un algoritmo se equivoque menos que el otro al decidir a quién se le ofrece la prueba de glucosa.</p>
+<p>teniendo el valor de <span class="math inline">\(0.5000\)</span>, lo que significa que se tiene una confianza del <span class="math inline">\(50\)</span>% de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento. Como el valor <span class="math inline">\(p\)</span> no es menor a <span class="math inline">\(0.05\)</span>, no hay evidencia suficiente para afirmar que la diferencia de rendimiento sea real, pues es compatible con la variabilidad de los datos. En términos del tamizaje, esta confianza dice qué tan seguro es que un algoritmo se equivoque menos que el otro al decidir a quién se le ofrece la prueba de glucosa.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1999,7 +1999,7 @@ Nava-Muñoz, Sergio, Mario Graff, y Hugo Jair Escalante. 2024. <span>«Analysis 
 <span id="cb45-593"><a href="#cb45-593" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-594"><a href="#cb45-594" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejemplo: Tamizaje de Diabetes {#sec-ejemplo-salud}</span></span>
 <span id="cb45-595"><a href="#cb45-595" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-596"><a href="#cb45-596" aria-hidden="true" tabindex="-1"></a>Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos; Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y Bayesiano Ingenuo en un problema de tamizaje de diabetes: decidir a qué personas adultas se les ofrece una prueba de glucosa, a partir de si la persona tiene un diagnóstico previo de diabetes. Los datos son los de Salud (@sec-datos-salud) y se leen directamente del release <span class="in">`datos-v1`</span>. Por ahora se utilizan solamente las variables numéricas; las variables de texto se convierten en indicadoras como se explica en la @sec-regresion-datos.</span>
+<span id="cb45-596"><a href="#cb45-596" aria-hidden="true" tabindex="-1"></a>Esta sección ilustra el uso del clasificador Bayesiano al generar dos modelos, el Clasificador Bayesiano (mejor conocido como el algoritmo de Análisis Discriminante Cuadrático) y el Bayesiano Ingenuo, en un problema de tamizaje de diabetes, que consiste en decidir a qué personas adultas se les ofrece una prueba de glucosa a partir de si la persona tiene un diagnóstico previo de diabetes. Los datos son los de Salud (@sec-datos-salud) y se leen directamente del release <span class="in">`datos-v1`</span>. Por ahora se utilizan solamente las variables numéricas. Las variables de texto se convierten en indicadoras como se explica en la @sec-regresion-datos.</span>
 <span id="cb45-597"><a href="#cb45-597" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-600"><a href="#cb45-600" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb45-601"><a href="#cb45-601" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -2118,7 +2118,7 @@ Nava-Muñoz, Sergio, Mario Graff, y Hugo Jair Escalante. 2024. <span>«Analysis 
 <span id="cb45-734"><a href="#cb45-734" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> p_value <span class="op">&lt;</span> <span class="fl">0.05</span>:</span>
 <span id="cb45-735"><a href="#cb45-735" aria-hidden="true" tabindex="-1"></a>    concl_f <span class="op">=</span> Markdown(<span class="st">'Como el valor $p$ es menor a $0.05$, la diferencia de rendimiento es significativa.'</span>)</span>
 <span id="cb45-736"><a href="#cb45-736" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb45-737"><a href="#cb45-737" aria-hidden="true" tabindex="-1"></a>    concl_f <span class="op">=</span> Markdown(<span class="st">'Como el valor $p$ no es menor a $0.05$, no hay evidencia suficiente para afirmar que la diferencia de rendimiento sea real; es compatible con la variabilidad de los datos.'</span>)</span>
+<span id="cb45-737"><a href="#cb45-737" aria-hidden="true" tabindex="-1"></a>    concl_f <span class="op">=</span> Markdown(<span class="st">'Como el valor $p$ no es menor a $0.05$, no hay evidencia suficiente para afirmar que la diferencia de rendimiento sea real, pues es compatible con la variabilidad de los datos.'</span>)</span>
 <span id="cb45-738"><a href="#cb45-738" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb45-739"><a href="#cb45-739" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-740"><a href="#cb45-740" aria-hidden="true" tabindex="-1"></a>teniendo el valor de <span class="in">`{python} p_value_f`</span>, lo que significa que se tiene una confianza del <span class="in">`{python} conf`</span> de que los dos algoritmos son diferentes considerando el error de clasificación como medida de rendimiento. <span class="in">`{python} concl_f`</span> En términos del tamizaje, esta confianza dice qué tan seguro es que un algoritmo se equivoque menos que el otro al decidir a quién se le ofrece la prueba de glucosa.</span>

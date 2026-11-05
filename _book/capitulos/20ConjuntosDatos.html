@@ -377,7 +377,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="f4c988ef" class="cell" data-execution_count="1">
+<div id="b807b5f6" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                             load_diabetes,<span class="op">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                             load_digits, load_iris,<span class="op">\</span></span>
@@ -459,7 +459,7 @@ Tabla&nbsp;B.1: Problemas de política pública
 <td>Secundaria</td>
 <td><span class="math inline">\(26689\)</span></td>
 <td><span class="math inline">\(17\)</span></td>
-<td>Regresión; clasificación (3 clases)</td>
+<td>Regresión y clasificación (3 clases)</td>
 <td>2023-2025</td>
 <td>Formato 911, SEP</td>
 </tr>
@@ -492,7 +492,7 @@ Tabla&nbsp;B.1: Problemas de política pública
 <li><strong>Objetivo y tarea:</strong> <code>pobre_ingresos</code> vale <span class="math inline">\(1\)</span> cuando el ingreso corriente per cápita mensual del hogar (el ingreso corriente trimestral entre tres y entre el número de integrantes) es menor que la línea de pobreza de su ámbito (rural si la localidad tiene menos de <span class="math inline">\(2500\)</span> habitantes). Es una tarea de clasificación binaria; es una aproximación a la medición oficial, no la replica.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="a86ad766" class="cell" data-execution_count="6">
+<div id="624b552e" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En el conjunto, la proporción de hogares bajo la línea de pobreza es <span class="math inline">\(32.7\%\)</span>; si se ponderan los hogares con el factor de expansión es <span class="math inline">\(34.5\%\)</span>. Por ámbito, es <span class="math inline">\(35.6\%\)</span> en los hogares rurales y <span class="math inline">\(30.9\%\)</span> en los urbanos. La <a href="#fig-datos-pobreza" class="quarto-xref">Figura&nbsp;<span>B.1</span></a> muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.</p>
@@ -536,7 +536,7 @@ Figura&nbsp;B.1: Proporción de hogares bajo la línea de pobreza por ingresos s
 <li><strong>Objetivo y tarea:</strong> <code>victima_delito</code> vale <span class="math inline">\(1\)</span> cuando la persona declara haber sido víctima, durante <span class="math inline">\(2025\)</span>, de algún delito personal (robo o asalto, otro tipo de robo, fraude, extorsión, amenazas, lesiones, secuestro, delitos sexuales u otros). Los delitos que afectan al hogar, como el robo de vehículo o a casa habitación, no forman parte del objetivo. Es una tarea de clasificación binaria con clases desbalanceadas.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="98b74941" class="cell" data-execution_count="9">
+<div id="58c5f611" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>seguridad <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/envipe_seguridad.csv.gz'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En el conjunto hay <span class="math inline">\(5034\)</span> víctimas, es decir, <span class="math inline">\(5.5\%\)</span> de las personas (<span class="math inline">\(5.7\%\)</span> al ponderar con el factor de expansión). La <a href="#fig-datos-seguridad" class="quarto-xref">Figura&nbsp;<span>B.2</span></a> muestra la proporción de víctimas por grupo de edad y sexo.</p>
@@ -579,7 +579,7 @@ Figura&nbsp;B.2: Proporción de personas que fueron víctimas de algún delito p
 <li><strong>Objetivo y tarea:</strong> <code>diabetes</code> vale <span class="math inline">\(1\)</span> cuando un médico le dijo a la persona que tiene diabetes (o azúcar alta en la sangre). Se eligió diabetes y no hipertensión porque hay suficientes casos, y es una tarea de clasificación binaria.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="10aff3ac" class="cell" data-execution_count="12">
+<div id="801d41e1" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>salud <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/ensanut_salud.csv.gz'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En el conjunto hay <span class="math inline">\(558\)</span> personas con diagnóstico de diabetes, es decir, <span class="math inline">\(9.1\%\)</span>. La <a href="#fig-datos-salud" class="quarto-xref">Figura&nbsp;<span>B.3</span></a> muestra que la proporción aumenta con la edad y con el índice de masa corporal.</p>
@@ -624,7 +624,7 @@ Figura&nbsp;B.3: Proporción de personas con diagnóstico previo de diabetes por
 <li><strong>Objetivo y tarea:</strong> <code>tasa_abandono</code> es la tasa de abandono escolar del ciclo 2023-2024 con la definición de la SEP, que compara las matrículas de dos ciclos consecutivos y es igual a <span class="math inline">\(100\left(1 - \frac{M_{t+1} - NI_{t+1}}{M_t - E_t}\right)\)</span>, donde <span class="math inline">\(M_t\)</span> es la matrícula al inicio del ciclo <span class="math inline">\(t\)</span> (2023-2024), <span class="math inline">\(M_{t+1}\)</span> la del ciclo siguiente, <span class="math inline">\(NI_{t+1}\)</span> el nuevo ingreso a primer grado del ciclo siguiente y <span class="math inline">\(E_t\)</span> los egresados del ciclo <span class="math inline">\(t\)</span>. Entre planteles hay traslados, por lo que en un plantel individual la tasa puede ser negativa (recibe más alumnos de los que pierde); en esos casos se acota a cero. Es una tarea de regresión.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="4d9d7f91" class="cell" data-execution_count="15">
+<div id="c8469023" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>educacion <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/sep_f911_educacion.csv.gz'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La tasa de abandono tiene media <span class="math inline">\(6.9\%\)</span> y mediana <span class="math inline">\(4.8\%\)</span>; el <span class="math inline">\(10\%\)</span> de los planteles con más abandono tiene al menos <span class="math inline">\(16.2\%\)</span>, y <span class="math inline">\(26.2\%\)</span> de los planteles tienen una tasa de cero (incluye los casos acotados). La <a href="#fig-datos-educacion" class="quarto-xref">Figura&nbsp;<span>B.4</span></a> muestra la distribución de la tasa de abandono.</p>
@@ -652,12 +652,12 @@ Figura&nbsp;B.4: Distribución de la tasa de abandono escolar de las secundarias
 <section id="sec-datos-educacion-prioridad" class="level4" data-number="B.1.4.1">
 <h4 data-number="B.1.4.1" class="anchored" data-anchor-id="sec-datos-educacion-prioridad"><span class="header-section-number">B.1.4.1</span> Variante de clasificación: prioridad de atención</h4>
 <p>Ninguno de los conjuntos del release tiene más de dos clases, y varios algoritmos del libro se describen mejor con más de dos. Para ilustrarlos se define, a partir de la tasa de abandono, la variable <code>prioridad</code> con la que un programa de tutorías atendería a cada plantel. Los planteles que no tienen abandono tienen prioridad baja, el <span class="math inline">\(10\%\)</span> de los planteles con más abandono tiene prioridad alta y todos los demás tienen prioridad media. Es una variable ordinal derivada del objetivo y por eso, cuando se usa como variable a predecir, <code>tasa_abandono</code> deja de ser una variable predictora. El corte es el percentil <span class="math inline">\(90\)</span> del conjunto completo, pues es una regla del programa (atender al <span class="math inline">\(10\%\)</span> de planteles con más abandono) y no una variable predictora, por lo que no filtra información del conjunto de entrenamiento al de prueba. La clase se codifica con <span class="math inline">\(0\)</span> para baja, <span class="math inline">\(1\)</span> para media y <span class="math inline">\(2\)</span> para alta.</p>
-<div id="899a98e9" class="cell" data-execution_count="17">
+<div id="249f9eb7" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>corte <span class="op">=</span> educacion.tasa_abandono.quantile(<span class="fl">0.9</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>prioridad <span class="op">=</span> np.where(educacion.tasa_abandono <span class="op">==</span> <span class="dv">0</span>, <span class="dv">0</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                     np.where(educacion.tasa_abandono <span class="op">&gt;</span> corte, <span class="dv">2</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El corte es una tasa de abandono de <span class="math inline">\(16.2\%\)</span>. La clase baja (<code>prioridad == 0</code>) tiene <span class="math inline">\(26.2\%\)</span> de los planteles, la media (<code>prioridad == 1</code>) <span class="math inline">\(63.8\%\)</span> y la alta (<code>prioridad == 2</code>) <span class="math inline">\(10.0\%\)</span>. Es un problema de clasificación de tres clases, con la clase alta como minoritaria; al partir los datos en entrenamiento y prueba conviene estratificar con <code>stratify=prioridad</code>.</p>
+<p>El corte es una tasa de abandono de <span class="math inline">\(16.2\%\)</span>. La clase baja (<code>prioridad == 0</code>) tiene <span class="math inline">\(26.2\%\)</span> de los planteles, la media (<code>prioridad == 1</code>) <span class="math inline">\(63.8\%\)</span> y la alta (<code>prioridad == 2</code>) <span class="math inline">\(10.0\%\)</span>. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con <code>stratify=prioridad</code>.</p>
 </section>
 </section>
 <section id="sec-datos-territorio" class="level3" data-number="B.1.5">
@@ -675,7 +675,7 @@ Figura&nbsp;B.4: Distribución de la tasa de abandono escolar de las secundarias
 <li><strong>Desfase temporal:</strong> el censo es de 2020 y el DENUE de 2026, por lo que los establecimientos son más recientes que la población que se describe.</li>
 </ul>
 <p>El siguiente código lee el archivo.</p>
-<div id="441fcb09" class="cell" data-execution_count="20">
+<div id="66047e93" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/censo_denue_territorio.csv'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El grado promedio de escolaridad tiene media <span class="math inline">\(10.80\)</span>, con un mínimo de <span class="math inline">\(6.92\)</span> y un máximo de <span class="math inline">\(15.45\)</span> años. La <a href="#fig-datos-territorio" class="quarto-xref">Figura&nbsp;<span>B.5</span></a> muestra el grado promedio de escolaridad contra el número de establecimientos por cada mil habitantes de cada AGEB.</p>
@@ -714,7 +714,7 @@ Figura&nbsp;B.5: Grado promedio de escolaridad y establecimientos del DENUE por 
 <p>En esta sección se presentan los problemas sintéticos que corresponden aquellos problemas en los que se conocen todos los parámetros y se usan para mostrar algunas características de los algoritmos.</p>
 <section id="mezcla-de-clases" class="level4" data-number="B.2.1.1">
 <h4 data-number="B.2.1.1" class="anchored" data-anchor-id="mezcla-de-clases"><span class="header-section-number">B.2.1.1</span> Mezcla de Clases</h4>
-<div id="94454385" class="cell" data-execution_count="22">
+<div id="01562421" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
@@ -753,7 +753,7 @@ Figura&nbsp;B.6: Muestras de 3 distribuciones gaussianas
 </section>
 <section id="clases-separadas" class="level4" data-number="B.2.1.2">
 <h4 data-number="B.2.1.2" class="anchored" data-anchor-id="clases-separadas"><span class="header-section-number">B.2.1.2</span> Clases Separadas</h4>
-<div id="c7db59f6" class="cell" data-execution_count="24">
+<div id="b3c0a636" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                          cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]]).rvs(<span class="dv">1000</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="op">-</span><span class="dv">5</span>, <span class="op">-</span><span class="dv">10</span>],</span>
@@ -855,7 +855,7 @@ Tabla&nbsp;B.2: Problemas de clasificación
 <section id="sec-breast-cancer-wisconsin" class="level4" data-number="B.2.2.1">
 <h4 data-number="B.2.2.1" class="anchored" data-anchor-id="sec-breast-cancer-wisconsin"><span class="header-section-number">B.2.2.1</span> Breast Cancer Wisconsin</h4>
 <p>El conjunto de datos de Breast Cancer Wisconsin (ver <span class="citation" data-cites="breast-cancer-wisconsin">Street et&nbsp;al. (<a href="18Referencias.html#ref-breast-cancer-wisconsin" role="doc-biblioref">1993</a>)</span>) se obtiene con el siguiente código. La <a href="#fig-conjunto-datos-wisconsin" class="quarto-xref">Figura&nbsp;<span>B.8</span></a> muestra una proyección utilizando PCA de este conjunto de datos.</p>
-<div id="4b1e2910" class="cell" data-execution_count="27">
+<div id="e85f8538" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_breast_cancer(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-fig-conjunto-datos-wisconsin" class="cell" data-execution_count="28">
@@ -893,7 +893,7 @@ Figura&nbsp;B.8: Proyección mediante PCA del problema de Breast Cancer Wisconsi
 <section id="sec-iris" class="level4" data-number="B.2.2.2">
 <h4 data-number="B.2.2.2" class="anchored" data-anchor-id="sec-iris"><span class="header-section-number">B.2.2.2</span> Iris</h4>
 <p>Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por <span class="citation" data-cites="iris">Fisher (<a href="18Referencias.html#ref-iris" role="doc-biblioref">1936</a>)</span>; este problema se descarga con la siguiente instrucción. La <a href="#fig-conjunto-datos-iris" class="quarto-xref">Figura&nbsp;<span>B.9</span></a> muestra una visualización de estos datos mediante PCA.</p>
-<div id="12df7ee2" class="cell" data-execution_count="29">
+<div id="503a24dd" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-fig-conjunto-datos-iris" class="cell" data-execution_count="30">
@@ -931,7 +931,7 @@ Figura&nbsp;B.9: Proyección mediante PCA del problema del Iris.
 <section id="sec-digitos" class="level4" data-number="B.2.2.3">
 <h4 data-number="B.2.2.3" class="anchored" data-anchor-id="sec-digitos"><span class="header-section-number">B.2.2.3</span> Dígitos</h4>
 <p>El conjunto de Dígitos (ver <span class="citation" data-cites="digits">Xu et&nbsp;al. (<a href="18Referencias.html#ref-digits" role="doc-biblioref">1992</a>)</span>) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando la siguiente instrucción. La <a href="#fig-conjunto-datos-digits" class="quarto-xref">Figura&nbsp;<span>B.10</span></a> muestra una proyección de estos datos utilizando UMAP con ocho vecinos.</p>
-<div id="9c87eb8a" class="cell" data-execution_count="31">
+<div id="4bbf47f7" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-fig-conjunto-datos-digits" class="cell" data-execution_count="32">
@@ -967,7 +967,7 @@ Figura&nbsp;B.10: Proyección mediante UMAP del problema de Dígitos con ocho ve
 <section id="vino" class="level4" data-number="B.2.2.4">
 <h4 data-number="B.2.2.4" class="anchored" data-anchor-id="vino"><span class="header-section-number">B.2.2.4</span> Vino</h4>
 <p>El conjunto de Vino se obtiene con la siguiente instrucción. La <a href="#fig-conjunto-datos-wine" class="quarto-xref">Figura&nbsp;<span>B.11</span></a> muestra una proyección de estos datos utilizando PCA.</p>
-<div id="b48b09d5" class="cell" data-execution_count="33">
+<div id="4fcf6ddd" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_wine(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-fig-conjunto-datos-wine" class="cell" data-execution_count="34">
@@ -1009,7 +1009,7 @@ Figura&nbsp;B.11: Proyección mediante PCA del problema del Vino.
 <section id="problema-sintético" class="level4" data-number="B.2.3.1">
 <h4 data-number="B.2.3.1" class="anchored" data-anchor-id="problema-sintético"><span class="header-section-number">B.2.3.1</span> Problema Sintético</h4>
 <p>El siguiente ejemplo es un problema de regresión sintético que se forma de la suma de dos funciones trascendentales como se muestra en el siguiente código.</p>
-<div id="85a332a9" class="cell" data-execution_count="35">
+<div id="2a109187" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1038,7 +1038,7 @@ Figura&nbsp;B.12: Problema de Regresión
 <section id="sec-diabetes" class="level4" data-number="B.2.3.2">
 <h4 data-number="B.2.3.2" class="anchored" data-anchor-id="sec-diabetes"><span class="header-section-number">B.2.3.2</span> Diabetes</h4>
 <p>El conjunto de datos Diabetes es un problema que se puede recuperar usando el siguiente código.</p>
-<div id="ff22cb87" class="cell" data-execution_count="37">
+<div id="62eaafe5" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_diabetes(return_X_y<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
@@ -1617,7 +1617,7 @@ Xu, L., A. Krzyzak, y C. Y. Suen. 1992. <span>«Methods of combining multiple cl
 <span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a>     <span class="st">'ENVIPE, INEGI'</span>),</span>
 <span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Salud'</span>, <span class="st">'salud'</span>, <span class="st">'Adulto'</span>, <span class="st">'Clasificación (binaria)'</span>, <span class="st">'2022'</span>,</span>
 <span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a>     <span class="st">'ENSANUT, INSP'</span>),</span>
-<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Educación'</span>, <span class="st">'educacion'</span>, <span class="st">'Secundaria'</span>, <span class="st">'Regresión; clasificación (3 clases)'</span>, <span class="st">'2023-2025'</span>,</span>
+<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Educación'</span>, <span class="st">'educacion'</span>, <span class="st">'Secundaria'</span>, <span class="st">'Regresión y clasificación (3 clases)'</span>, <span class="st">'2023-2025'</span>,</span>
 <span id="cb28-85"><a href="#cb28-85" aria-hidden="true" tabindex="-1"></a>     <span class="st">'Formato 911, SEP'</span>),</span>
 <span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Territorio'</span>, <span class="st">'territorio'</span>, <span class="st">'AGEB urbana'</span>, <span class="st">'Regresión'</span>, <span class="st">'2020 y 2026'</span>,</span>
 <span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a>     <span class="st">'Censo y DENUE, INEGI'</span>)]</span>
@@ -1845,7 +1845,7 @@ Xu, L., A. Krzyzak, y C. Y. Suen. 1992. <span>«Methods of combining multiple cl
 <span id="cb28-337"><a href="#cb28-337" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
 <span id="cb28-338"><a href="#cb28-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-339"><a href="#cb28-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-340"><a href="#cb28-340" aria-hidden="true" tabindex="-1"></a>El corte es una tasa de abandono de <span class="in">`{python} corte_f`</span>. La clase baja (<span class="in">`prioridad == 0`</span>) tiene <span class="in">`{python} prop_prioridad_f[0]`</span> de los planteles, la media (<span class="in">`prioridad == 1`</span>) <span class="in">`{python} prop_prioridad_f[1]`</span> y la alta (<span class="in">`prioridad == 2`</span>) <span class="in">`{python} prop_prioridad_f[2]`</span>. Es un problema de clasificación de tres clases, con la clase alta como minoritaria; al partir los datos en entrenamiento y prueba conviene estratificar con <span class="in">`stratify=prioridad`</span>.</span>
+<span id="cb28-340"><a href="#cb28-340" aria-hidden="true" tabindex="-1"></a>El corte es una tasa de abandono de <span class="in">`{python} corte_f`</span>. La clase baja (<span class="in">`prioridad == 0`</span>) tiene <span class="in">`{python} prop_prioridad_f[0]`</span> de los planteles, la media (<span class="in">`prioridad == 1`</span>) <span class="in">`{python} prop_prioridad_f[1]`</span> y la alta (<span class="in">`prioridad == 2`</span>) <span class="in">`{python} prop_prioridad_f[2]`</span>. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con <span class="in">`stratify=prioridad`</span>.</span>
 <span id="cb28-341"><a href="#cb28-341" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-342"><a href="#cb28-342" aria-hidden="true" tabindex="-1"></a><span class="fu">### Territorio {#sec-datos-territorio}</span></span>
 <span id="cb28-343"><a href="#cb28-343" aria-hidden="true" tabindex="-1"></a></span>

@@ -121,7 +121,7 @@ d_f = Markdown(f'${X.shape[1]}$')
 tasa_f = Markdown(f'${100 * y.mean():0.1f}\\%$')
 ```
 
-El conjunto tiene `{python} n_f` hogares y `{python} d_f` variables una vez que se convierten las de texto; `{python} tasa_f` de los hogares son pobres.
+El conjunto tiene `{python} n_f` hogares y `{python} d_f` variables una vez que se convierten las de texto, y `{python} tasa_f` de los hogares son pobres.
 
 Los algoritmos que se utilizarán de base son Máquinas de Soporte Vectorial Lineal (@sec-svm) y Árboles de Decisión (@sec-arboles-decision). Lo primero que se realizará es entrenar una instancia de estos algoritmos para poder comparar su rendimiento en el conjunto de prueba contra Bagging. 
 
@@ -144,7 +144,7 @@ tree_recall = recall_score(y_g, tree.predict(G),
                            average="macro")
 ```
 
-El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la mediana del apéndice de Estadística (@sec-bootstrap-ejemplo). El siguiente código genera las muestras, en particular el ensamble sería de $M=11$ elementos; se fija la semilla del generador para que el resultado se pueda reproducir. 
+El algoritmo de Bootstrap inicia generando las muestras tal y como se realizó en el ejemplo del error estándar de la mediana del apéndice de Estadística (@sec-bootstrap-ejemplo). El siguiente código genera las muestras, en particular el ensamble sería de $M=11$ elementos. Se fija la semilla del generador para que el resultado se pueda reproducir. 
 
 ```{python}
 #| echo: true
@@ -239,7 +239,7 @@ Markdown(txt)
 
 ### Ejemplo: Escolaridad por AGEB
 
-Ahora toca el turno de atacar un problema de regresión mediante Bagging. El problema que se utilizará es aproximar el grado promedio de escolaridad de una AGEB (@sec-datos-territorio) a partir de la composición de los establecimientos del DENUE, información que se actualiza con más frecuencia que el censo. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestran a continuación; las entradas se estandarizan con los parámetros de $\mathcal T$. 
+Ahora toca el turno de atacar un problema de regresión mediante Bagging. El problema que se utilizará es aproximar el grado promedio de escolaridad de una AGEB (@sec-datos-territorio) a partir de la composición de los establecimientos del DENUE, información que se actualiza con más frecuencia que el censo. Las instrucciones para obtener el problema y generar los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) se muestran a continuación. Las entradas se estandarizan con los parámetros de $\mathcal T$. 
 
 ```{python}
 #| echo: true
@@ -266,7 +266,7 @@ d_ageb_f = Markdown(f'${X.shape[1]}$')
 
 El conjunto tiene `{python} n_ageb_f` AGEB y `{python} d_ageb_f` variables. Como el grado de escolaridad siempre es positivo, el porcentaje del error absoluto (MAPE) está definido. 
 
-Tomando el caso de focalización como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como medida de rendimiento el porcentaje del error absoluto (@eq-mape); tal y como se muestran en las siguientes instrucciones. 
+Tomando el caso de focalización como base, el primer algoritmo a entrenar es la M.S.V. Lineal y se usa como medida de rendimiento el porcentaje del error absoluto (@eq-mape), tal y como se muestra en las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
@@ -330,7 +330,7 @@ else:
     tree_f = Markdown('los Árboles de Decisión no se ven beneficiados de manera apreciable con el uso de Bagging')
 ```
 
-La @tbl-ensambles-perf-reg muestra el rendimiento de los algoritmos de regresión utilizados; `{python} svr_f`, mientras que `{python} tree_f`. 
+La @tbl-ensambles-perf-reg muestra el rendimiento de los algoritmos de regresión utilizados. Se observa que `{python} svr_f`, mientras que `{python} tree_f`. 
 
 ```{python}
 #| echo: false
@@ -382,7 +382,7 @@ else:
     estable_f = Markdown('es decir, el rendimiento todavía cambia de manera apreciable al agregar árboles')
 ```
 
-El error con $M=2$ es `{python} err2_f`; el menor error es `{python} errmin_f` y se obtiene con $M=$ `{python} mmin_f`, y con $M=500$ es `{python} err500_f`. Cuando $M>200$ el error se mueve en un rango de `{python} rango_f`, `{python} estable_f`. 
+El error con $M=2$ es `{python} err2_f`. El menor error es `{python} errmin_f` y se obtiene con $M=$ `{python} mmin_f`, mientras que con $M=500$ el error es `{python} err500_f`. Cuando $M>200$ el error se mueve en un rango de `{python} rango_f`, `{python} estable_f`. 
 
 ::: {.callout-note} 
 
@@ -513,7 +513,7 @@ else:
     mejora_stack_f = Markdown('no es menor que')
 ```
 
-El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`, que `{python} mejora_stack_f` el de los estimadores bases; cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
+El error (@eq-mape) obtenido por este procedimiento es de `{python} mape3_f`, que `{python} mejora_stack_f` el de los estimadores bases. Cabe mencionar que no en todos los casos el procedimiento de stacking consigue un mejor rendimiento que los estimadores bases. En las siguientes instrucciones se entrena un Bagging con Árboles de Decisión para ser utilizado en lugar de la Máquina de Soporte Vectorial. 
 
 ```{python}
 #| echo: true

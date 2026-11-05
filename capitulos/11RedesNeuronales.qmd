@@ -345,7 +345,7 @@ El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de 
 
 ## Ejemplo: Prioridad de Planteles
 
-Para ejemplificar el uso de una red neuronal en un problema de clasificación se continúa con el problema de priorizar planteles para un programa de tutorías, que es el mismo que se utilizó para la regresión logística multinomial; esto permite comparar los dos modelos. Se utiliza la misma partición en entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) y las mismas entradas normalizadas, es decir, `T`, `G`, `y_t` y `y_g`. Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estándar uno; los parámetros de la normalización se encontraron en el conjunto de entrenamiento y se aplicaron tanto al conjunto de entrenamiento como al de prueba. La matriz `D` es la versión normalizada de `T` y la siguiente instrucción la asigna a `T`, que es el nombre que se usa en el resto del ejemplo. 
+Para ejemplificar el uso de una red neuronal en un problema de clasificación se continúa con el problema de priorizar planteles para un programa de tutorías, que es el mismo que se utilizó para la regresión logística multinomial, lo que permite comparar los dos modelos. Se utiliza la misma partición en entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) y las mismas entradas normalizadas, es decir, `T`, `G`, `y_t` y `y_g`. Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estándar uno. Los parámetros de la normalización se encontraron en el conjunto de entrenamiento y se aplicaron tanto al conjunto de entrenamiento como al de prueba. La matriz `D` es la versión normalizada de `T` y la siguiente instrucción la asigna a `T`, que es el nombre que se usa en el resto del ejemplo. 
 
 ```{python}
 #| echo: true
@@ -368,7 +368,7 @@ n_labels_f = Markdown(f'${n_labels}$')
 
 Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en este caso corresponde a `{python} t_shape_f` (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso `{python} n_labels_f` (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que las dimensiones sean coherentes con la operación que se va a realizar. 
 
-La red que se va a implementar es la siguiente, donde $d$ es la dimensión del vector de entrada y $K$ es el número de clases; como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
+La red que se va a implementar es la siguiente, donde $d$ es la dimensión del vector de entrada y $K$ es el número de clases. Como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
 
 $$
 \begin{split}
@@ -489,11 +489,11 @@ else:
     triv_f = Markdown('no menor')
 ```
 
-El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. La regresión logística multinomial del inicio del capítulo (el modelo `modelo` con los parámetros `p2` encontrados con Adam), que resuelve el mismo problema con el mismo conjunto de prueba, tiene un error de `{python} error_lm_f`; es decir, el error de la red `{python} comp_ann_f` que el de la regresión logística. Como referencia, un clasificador que siempre responde la clase más frecuente tendría un error de `{python} error_triv_f`, por lo que el mejor de los dos modelos tiene un error `{python} triv_f` que ese valor. Dado que la prioridad alta es la clase minoritaria, también se mide la cobertura promedio (macro-recall): `{python} rec_ann_f` para la red y `{python} rec_lm_f` para la regresión logística. 
+El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. La regresión logística multinomial del inicio del capítulo (el modelo `modelo` con los parámetros `p2` encontrados con Adam), que resuelve el mismo problema con el mismo conjunto de prueba, tiene un error de `{python} error_lm_f`, es decir, el error de la red `{python} comp_ann_f` que el de la regresión logística. Como referencia, un clasificador que siempre responde la clase más frecuente tendría un error de `{python} error_triv_f`, por lo que el mejor de los dos modelos tiene un error `{python} triv_f` que ese valor. Dado que la prioridad alta es la clase minoritaria, también se mide la cobertura promedio (macro-recall), que es `{python} rec_ann_f` para la red y `{python} rec_lm_f` para la regresión logística. 
 
 ## Ejemplo: Abandono Escolar {#sec-redes-neuronales-regresion}
 
-Para ejemplificar el uso de una red neuronal en un problema de regresión se utilizan los datos de Educación (@sec-datos-educacion), donde se desea predecir la tasa de abandono escolar de cada secundaria a partir de sus variables observables, con el fin de decidir qué planteles apoyar primero. Se utiliza la misma matriz de diseño `X_e` del ejemplo anterior y se parte en los conjuntos de entrenamiento y prueba con las siguientes instrucciones; se fija la semilla (`random_state=0`) para que la partición sea la misma en cada ejecución.
+Para ejemplificar el uso de una red neuronal en un problema de regresión se utilizan los datos de Educación (@sec-datos-educacion), donde se desea predecir la tasa de abandono escolar de cada secundaria a partir de sus variables observables, con el fin de decidir qué planteles apoyar primero. Se utiliza la misma matriz de diseño `X_e` del ejemplo anterior y se parte en los conjuntos de entrenamiento y prueba con las siguientes instrucciones. Se fija la semilla (`random_state=0`) para que la partición sea la misma en cada ejecución.
 
 ```{python}
 #| echo: true
@@ -518,7 +518,7 @@ mu, sigma = y_t.mean(), y_t.std()
 yt_n = (y_t - mu) / sigma
 ```
 
-La estructura de la red es la misma que en el ejemplo de Prioridad de Planteles, con dos capas ocultas y función de activación $\textsf{ReLU}$. La diferencia está en la capa de salida: en clasificación tenía una neurona por clase y las salidas pasaban por $\textsf{softmax}$ para interpretarse como probabilidades, en regresión se predice un único número, por lo que la última capa tiene una sola neurona y su salida se utiliza tal cual, es decir, no se le aplica ninguna función. La estructura $\mathbb R^{d} \rightarrow \mathbb R^{32} \rightarrow \mathbb R^{16} \rightarrow \mathbb R$, donde $d$ es el número de columnas de la entrada, queda representada en la siguiente lista. 
+La estructura de la red es la misma que en el ejemplo de Prioridad de Planteles, con dos capas ocultas y función de activación $\textsf{ReLU}$. La diferencia está en la capa de salida. En clasificación tenía una neurona por clase y las salidas pasaban por $\textsf{softmax}$ para interpretarse como probabilidades, mientras que en regresión se predice un único número, por lo que la última capa tiene una sola neurona y su salida se utiliza tal cual, es decir, no se le aplica ninguna función. La estructura $\mathbb R^{d} \rightarrow \mathbb R^{32} \rightarrow \mathbb R^{16} \rightarrow \mathbb R$, donde $d$ es el número de columnas de la entrada, queda representada en la siguiente lista. 
 
 ```{python}
 #| echo: true
@@ -533,7 +533,7 @@ salida_f = Markdown(f'${d[-1]}$')
 
 Se observa que la única restricción para la primera capa es que tenga la dimensión del vector de entrada, que en este caso es `{python} t_shape_dm_f` (`T.shape[1]`), y que la última capa tiene dimensión `{python} salida_f` porque se predice un único valor. 
 
-Los parámetros iniciales (`parametros_iniciales`) y la red (`ann`) son los mismos que se definieron en el ejemplo de Prioridad de Planteles; la función `ann` regresa una matriz con una sola columna, por lo que en la función de pérdida se aplica `flatten` para obtener un vector. Como medida de error se utiliza el error cuadrático medio (@eq-mse), que es la función que se minimiza en regresión (@sec-regresion-ols). 
+Los parámetros iniciales (`parametros_iniciales`) y la red (`ann`) son los mismos que se definieron en el ejemplo de Prioridad de Planteles. La función `ann` regresa una matriz con una sola columna, por lo que en la función de pérdida se aplica `flatten` para obtener un vector. Como medida de error se utiliza el error cuadrático medio (@eq-mse), que es la función que se minimiza en regresión (@sec-regresion-ols). 
 
 ```{python}
 #| echo: true
@@ -569,7 +569,7 @@ def adam_regresion(optimizer, params, X, y, epocas=500):
     return params, error
 ```
 
-La red se entrena con las siguientes instrucciones, que primero generan los parámetros iniciales, después inicializan el optimizador y finalmente llaman a `adam_regresion` con los datos de entrenamiento normalizados. Es importante notar que entrenar durante demasiadas épocas puede hacer que la red se ajuste al ruido del conjunto de entrenamiento (sobreajuste); en este ejemplo se utiliza una tasa de aprendizaje pequeña y un número moderado de épocas. El número de épocas es un hiperparámetro que se puede seleccionar con un conjunto de validación (@sec-validacion-cruzada). 
+La red se entrena con las siguientes instrucciones, que primero generan los parámetros iniciales, después inicializan el optimizador y finalmente llaman a `adam_regresion` con los datos de entrenamiento normalizados. Es importante notar que entrenar durante demasiadas épocas puede hacer que la red se ajuste al ruido del conjunto de entrenamiento (sobreajuste). Por ello, en este ejemplo se utiliza una tasa de aprendizaje pequeña y un número moderado de épocas. El número de épocas es un hiperparámetro que se puede seleccionar con un conjunto de validación (@sec-validacion-cruzada). 
 
 ```{python}
 #| echo: true
@@ -648,7 +648,7 @@ g.ax.plot(lim, lim, linestyle='--', color='gray')
 ::: {.callout-tip collapse="true"}
 ### Actividad 
 
-Comparar el rendimiento ($R^2$) en el conjunto de prueba de redes neuronales con diferente número de neuronas en las capas ocultas, i.e., modificando los valores $32$ y $16$ de la lista `d`, tal y como se muestra en la @fig-actividad-redes-regresion. Utilizar los mismos datos de abandono escolar, la misma partición y el mismo procedimiento de entrenamiento descrito en esta sección; el rendimiento se compara con `CompStats`. 
+Comparar el rendimiento ($R^2$) en el conjunto de prueba de redes neuronales con diferente número de neuronas en las capas ocultas, i.e., modificando los valores $32$ y $16$ de la lista `d`, tal y como se muestra en la @fig-actividad-redes-regresion. Utilizar los mismos datos de abandono escolar, la misma partición y el mismo procedimiento de entrenamiento descrito en esta sección. El rendimiento se compara con `CompStats`. 
 
 ```{python}
 #| echo: false

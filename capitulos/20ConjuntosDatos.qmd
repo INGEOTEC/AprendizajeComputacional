@@ -73,7 +73,7 @@ FILAS = [
      'ENVIPE, INEGI'),
     ('Salud', 'salud', 'Adulto', 'Clasificación (binaria)', '2022',
      'ENSANUT, INSP'),
-    ('Educación', 'educacion', 'Secundaria', 'Regresión; clasificación (3 clases)', '2023-2025',
+    ('Educación', 'educacion', 'Secundaria', 'Regresión y clasificación (3 clases)', '2023-2025',
      'Formato 911, SEP'),
     ('Territorio', 'territorio', 'AGEB urbana', 'Regresión', '2020 y 2026',
      'Censo y DENUE, INEGI')]
@@ -301,7 +301,7 @@ prop_prioridad_f = [Markdown(f'${100 * (prioridad == k).mean():0.1f}\\%$')
                     for k in range(3)]
 ```
 
-El corte es una tasa de abandono de `{python} corte_f`. La clase baja (`prioridad == 0`) tiene `{python} prop_prioridad_f[0]` de los planteles, la media (`prioridad == 1`) `{python} prop_prioridad_f[1]` y la alta (`prioridad == 2`) `{python} prop_prioridad_f[2]`. Es un problema de clasificación de tres clases, con la clase alta como minoritaria; al partir los datos en entrenamiento y prueba conviene estratificar con `stratify=prioridad`.
+El corte es una tasa de abandono de `{python} corte_f`. La clase baja (`prioridad == 0`) tiene `{python} prop_prioridad_f[0]` de los planteles, la media (`prioridad == 1`) `{python} prop_prioridad_f[1]` y la alta (`prioridad == 2`) `{python} prop_prioridad_f[2]`. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con `stratify=prioridad`.
 
 ### Territorio {#sec-datos-territorio}
 

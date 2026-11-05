@@ -377,7 +377,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es conocer y aplicar árboles de decisión a problemas de clasificación y regresión.</p>
 <section id="paquetes-usados" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="paquetes-usados"><span class="header-section-number">10.1</span> Paquetes usados</h2>
-<div id="8e985348" class="cell" data-execution_count="1">
+<div id="2cfa2636" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> tree</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> DecisionBoundaryDisplay</span>
@@ -497,14 +497,14 @@ Figura&nbsp;10.3: Árbol de decisión y función
 L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mathcal D_h),
 \]</span></p>
 <p>donde <span class="math inline">\(H(\mathcal D_h)\)</span> es la entropía de las etiquetas del conjunto <span class="math inline">\(\mathcal D_h\)</span>, la entropía se puede calcular con la siguiente función. La función recibe un arreglo con las clases, está protegida para calcular <span class="math inline">\(0 \log 0 = 0\)</span> y finalmente regresa la entropía de <code>arr</code>.</p>
-<div id="db697e7c" class="cell" data-execution_count="9">
+<div id="fef26026" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> H(arr):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    a, b <span class="op">=</span> np.unique(arr, return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">/</span> b.<span class="bu">sum</span>()</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span> (b <span class="op">*</span> np.log2(b, where<span class="op">=</span>b <span class="op">!=</span> <span class="dv">0</span>)).<span class="bu">sum</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La función que optimiza <span class="math inline">\(L(x_i, a),\)</span> para encontrar <span class="math inline">\(a\)</span> se implementa en el procedimiento <code>corte_var</code>. Este procedimiento asume que las etiquetas (<code>labels</code>) están ordenadas por la variable <span class="math inline">\(x_i\)</span>, es decir la primera etiqueta corresponde al valor mínimo de <span class="math inline">\(x_i\)</span> y la última al valor máximo. Considerando esto, el valor de <span class="math inline">\(a\)</span> es el índice con el menor costo. En la primera línea se inicializa la variable <code>mejor</code> para guardar el valor de <span class="math inline">\(a\)</span> con mejor costo. La segunda línea corresponde a <span class="math inline">\(\mid \mathcal D_m \mid\)</span>, en la tercera línea se identifican los diferentes valores de <span class="math inline">\(a\)</span> que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función <code>np.diff</code>; dado que esta quita el primer elemento entonces es necesario incrementar <span class="math inline">\(1.\)</span> El ciclo es por todos los puntos de corte, se calcula el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró.</p>
-<div id="f1162f70" class="cell" data-execution_count="10">
+<div id="36e3a6b6" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(labels):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> labels.shape[<span class="dv">0</span>]</span>
@@ -520,11 +520,11 @@ L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mat
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En el siguiente ejemplo se usa la función <code>corte_var</code>; la función regresa un costo de <span class="math inline">\(0.4591\)</span> y el punto de corte es el elemento <span class="math inline">\(3\)</span>, se puede observar que es el mejor punto de corte en el arreglo dado.</p>
-<div id="148f34b5" class="cell" data-execution_count="12">
+<div id="159f2598" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>costo, indice <span class="op">=</span> corte_var(np.array([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Con la función <code>corte_var</code> se optimiza el valor <span class="math inline">\(a\)</span> de <span class="math inline">\(L(x_i, a)\)</span>, ahora es el turno de optimizar <span class="math inline">\(x_i\)</span> con respecto a la función de costo. El procedimiento <code>corte</code> encuentra el mínimo con respecto de <span class="math inline">\(x_i\)</span>, esta función recibe los índices (<code>idx</code>) donde se buscará estos valores, en un inicio <code>idx</code> es un arreglo de <span class="math inline">\(0\)</span> al número de elementos del conjunto <span class="math inline">\(\mathcal D\)</span> menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables <span class="math inline">\(x_i\)</span>. Dentro del ciclo se llama a la función <code>corte_var</code> donde se observa cómo las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en <code>mejor</code>. Finalmente, se regresa <code>mejor</code> y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.</p>
-<div id="7cb64c34" class="cell" data-execution_count="13">
+<div id="f7a06896" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte(idx):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>, <span class="va">None</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> np.argsort(X[idx], axis<span class="op">=</span><span class="dv">0</span>)</span>
@@ -536,7 +536,7 @@ L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mat
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor, idx[orden[:, mejor[<span class="dv">1</span>]]]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Con la función <code>corte</code> se puede encontrar los parámetros de la función de corte <span class="math inline">\(f_m(\mathbf x) = x_i \leq a\)</span> para cada nodo del árbol completo del ejemplo anterior. Por ejemplo, los parámetros de la función de decisión para la raíz (#0) que se observa en la <a href="#fig-arboles-arbol-decision-funcion" class="quarto-xref">Figura&nbsp;<span>10.3</span></a> se puede obtener con el siguiente código.</p>
-<div id="ce0b3c72" class="cell" data-execution_count="14">
+<div id="802f0080" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(np.arange(X.shape[<span class="dv">0</span>]))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -545,12 +545,12 @@ L(x_i, a) = \sum_h \frac{\mid \mathcal D_h \mid}{\mid \mathcal D_m \mid}  H(\mat
 </div>
 </div>
 <p>La variable <code>orden</code> tiene la información para dividir el conjunto dado, lo cual se realiza en las siguientes instrucciones, donde <code>idx_i</code> corresponde a los elementos a la izquierda y <code>idx_d</code> son los de la derecha.</p>
-<div id="5f8c5193" class="cell" data-execution_count="15">
+<div id="56eb995d" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>idx_i <span class="op">=</span> orden[:j]</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>idx_d <span class="op">=</span> orden[j:]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Teniendo los elementos a la izquierda y derecha, se puede calcular los parámetros de la función de corte del nodo #1 los cuales se pueden calcular con las siguientes instrucciones.</p>
-<div id="8ae23a9b" class="cell" data-execution_count="16">
+<div id="4ebebc5b" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>best, orden <span class="op">=</span> corte(idx_i)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>perf, i, j <span class="op">=</span> best</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>(X[orden[j], i] <span class="op">+</span> X[orden[j<span class="op">-</span><span class="dv">1</span>], i]) <span class="op">/</span> <span class="dv">2</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -574,8 +574,8 @@ Nota
 </section>
 <section id="ejemplo-tamizaje-de-diabetes" class="level3" data-number="10.3.3">
 <h3 data-number="10.3.3" class="anchored" data-anchor-id="ejemplo-tamizaje-de-diabetes"><span class="header-section-number">10.3.3</span> Ejemplo: Tamizaje de Diabetes</h3>
-<p>Se utiliza el problema de tamizaje de diabetes con los datos de Salud (<a href="20ConjuntosDatos.html#sec-datos-salud" class="quarto-xref"><span>Sección B.1.3</span></a>) para ejemplificar el algoritmo de Árboles de Decisión: clasificar si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. Con las siguientes instrucciones se descargan los datos, las variables de texto se convierten en indicadoras (<a href="03Regresion.html#sec-regresion-datos" class="quarto-xref"><span>Sección 3.2</span></a>) y se dividen en los conjuntos de entrenamiento y prueba. A diferencia de los algoritmos basados en distancias, los árboles no necesitan estandarizar las variables, pues cada corte compara una sola variable contra un umbral y no cambia con la escala de la variable.</p>
-<div id="2883acaa" class="cell" data-execution_count="17">
+<p>Se utiliza el problema de tamizaje de diabetes con los datos de Salud (<a href="20ConjuntosDatos.html#sec-datos-salud" class="quarto-xref"><span>Sección B.1.3</span></a>) para ejemplificar el algoritmo de Árboles de Decisión. La tarea es clasificar si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. Con las siguientes instrucciones se descargan los datos, las variables de texto se convierten en indicadoras (<a href="03Regresion.html#sec-regresion-datos" class="quarto-xref"><span>Sección 3.2</span></a>) y se dividen en los conjuntos de entrenamiento y prueba. A diferencia de los algoritmos basados en distancias, los árboles no necesitan estandarizar las variables, pues cada corte compara una sola variable contra un umbral y no cambia con la escala de la variable.</p>
+<div id="85f77847" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>salud <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/ensanut_salud.csv.gz'</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pd.get_dummies(salud.drop(columns<span class="op">=</span>[<span class="st">'diabetes'</span>, <span class="st">'factor'</span>]),</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                   drop_first<span class="op">=</span><span class="va">True</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
@@ -584,20 +584,20 @@ Nota
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>, stratify<span class="op">=</span>y)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada <a href="02Rendimiento.html#sec-entropia-cruzada" class="quarto-xref"><span>Sección 2.3.7</span></a> (<em>Log-loss</em>).</p>
-<div id="0b2d23ee" class="cell" data-execution_count="18">
+<div id="40d7f129" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeClassifier(criterion<span class="op">=</span><span class="st">'entropy'</span>,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                                    random_state<span class="op">=</span><span class="dv">0</span>).fit(T, y_t)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Como es de esperarse la predicción se realiza con el método <code>predict</code> como se ve a continuación.</p>
-<div id="8e188ede" class="cell" data-execution_count="19">
+<div id="9c811da1" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> arbol.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El error en el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> es <span class="math inline">\(0.1530\)</span>, mientras que un clasificador que siempre responde que la persona no tiene diabetes tiene un error de <span class="math inline">\(0.0911\)</span>. Se puede comparar este error con otros algoritmos utilizados en este problema como clasificadores paramétricos basados en distribuciones Gaussianas (<a href="05Parametricos.html#sec-gaussiana-perf-salud" class="quarto-xref"><span>Sección 6.7.3</span></a>). La siguiente instrucción muestra el cálculo del error.</p>
-<div id="ddfd5fc4" class="cell" data-execution_count="21">
+<div id="93dc78be" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y_g <span class="op">!=</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Un dato interesante, considerando los parámetros con los que se inicializó el árbol, entonces este hizo que todas las hojas fueran puras, es decir, con entropía cero. Por lo tanto el error de clasificación en el conjunto de entrenamiento <span class="math inline">\(\mathcal T\)</span> es cero, como se puede verificar con el siguiente código.</p>
-<div id="a1d27c58" class="cell" data-execution_count="22">
+<div id="0cb7692f" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(y_t <span class="op">!=</span> arbol.predict(T)).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <pre><code>np.float64(0.0)</code></pre>
@@ -608,12 +608,12 @@ Nota
 <section id="regresión" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="regresión"><span class="header-section-number">10.4</span> Regresión</h2>
 <p>Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético; el cual corresponde a la suma de un seno y un coseno como se muestra a continuación.</p>
-<div id="65cf93d2" class="cell" data-execution_count="23">
+<div id="8c9b3d9c" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X) <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> np.cos(X <span class="op">*</span> <span class="fl">3.</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Con este problema se genera un árbol de decisión utilizando la siguiente instrucción. El método <code>fit</code> espera recibir un arreglo en dos dimensiones por eso se usa la función <code>np.atleast_2d</code> y se calcula la transpuesta siguiendo el formato esperado. Se observa el uso del parámetro <code>max_depth</code> para limitar la profundidad del árbol de decisión.</p>
-<div id="6cff6a30" class="cell" data-execution_count="24">
+<div id="53153b26" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">3</span>).fit(np.atleast_2d(X).T, y)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El árbol de decisión obtenido se muestra en la <a href="#fig-arboles-regresion" class="quarto-xref">Figura&nbsp;<span>10.4</span></a>. La información que se muestra en cada nodo interno es equivalente a la mostrada en los árboles de clasificación. La diferencia es que en los árboles de regresión se muestra el promedio (<code>value</code>) de las salidas que llegan a ese nodo y en regresión es la frecuencia de clases. Se observa que si la entrada es <span class="math inline">\(x=-4.5\)</span> entonces la respuesta la da el nodo #4 con un valor de <span class="math inline">\(1.088.\)</span></p>
@@ -663,8 +663,8 @@ Figura&nbsp;10.5: Problema de regresión
 </section>
 <section id="entrenamiento" class="level3" data-number="10.4.2">
 <h3 data-number="10.4.2" class="anchored" data-anchor-id="entrenamiento"><span class="header-section-number">10.4.2</span> Entrenamiento</h3>
-<p>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Territorio (<a href="20ConjuntosDatos.html#sec-datos-territorio" class="quarto-xref"><span>Sección B.1.5</span></a>): aproximar el grado promedio de escolaridad de una AGEB de Aguascalientes con la composición de establecimientos del DENUE, tal y como se muestra en las siguientes instrucciones.</p>
-<div id="0e32b04f" class="cell" data-execution_count="27">
+<p>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Territorio (<a href="20ConjuntosDatos.html#sec-datos-territorio" class="quarto-xref"><span>Sección B.1.5</span></a>) para aproximar el grado promedio de escolaridad de una AGEB de Aguascalientes con la composición de establecimientos del DENUE, tal y como se muestra en las siguientes instrucciones.</p>
+<div id="ed243907" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/censo_denue_territorio.csv'</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> territorio.drop(columns<span class="op">=</span>[<span class="st">'clave_ageb'</span>, <span class="st">'municipio'</span>,</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                             <span class="st">'grado_promedio_escolaridad'</span>,</span>
@@ -677,7 +677,7 @@ Figura&nbsp;10.5: Problema de regresión
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestra la información de la raíz y sus dos hijos.</p>
-<div id="e4a15cb4" class="cell" data-execution_count="28">
+<div id="6fa0fa96" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>arbol <span class="op">=</span> tree.DecisionTreeRegressor(random_state<span class="op">=</span><span class="dv">0</span>).fit(T, y_t)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> tree.plot_tree(arbol, max_depth<span class="op">=</span><span class="dv">1</span>, feature_names<span class="op">=</span>columnas)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
@@ -688,9 +688,9 @@ Figura&nbsp;10.5: Problema de regresión
 </div>
 </div>
 </div>
-<p>En la raíz se observa los parámetros de la función de corte: se selecciona la variable <code>est_servicios_profesionales</code> y se envían <span class="math inline">\(243\)</span> elementos al hijo izquierdo y los otros <span class="math inline">\(50\)</span> al hijo derecho.</p>
+<p>En la raíz se observa los parámetros de la función de corte. Se selecciona la variable <code>est_servicios_profesionales</code> y se envían <span class="math inline">\(243\)</span> elementos al hijo izquierdo y los otros <span class="math inline">\(50\)</span> al hijo derecho.</p>
 <p>El siguiente método implementa la función de corte para regresión se puede observar que la única diferencia con la función <code>corte_var</code> definida en clasificación (<a href="#sec-arboles-clasificacion" class="quarto-xref"><span>Sección 10.3</span></a>) es que la entropía <code>H</code> se cambia por la varianza <code>np.var</code>.</p>
-<div id="d6cea636" class="cell" data-execution_count="30">
+<div id="3495edda" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corte_var(response):</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    mejor <span class="op">=</span> (np.inf, <span class="va">None</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    D_m <span class="op">=</span> response.shape[<span class="dv">0</span>]</span>
@@ -706,7 +706,7 @@ Figura&nbsp;10.5: Problema de regresión
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mejor    </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La función <code>corte_var</code> de regresión se utiliza para encontrar el punto de corte en los datos del conjunto de entrenamiento de la siguiente manera. En la primera línea se ordenan las variables independientes y en la segunda línea se itera por todas las variables independientes para calcular el corte con costo mínimo.</p>
-<div id="bb247e63" class="cell" data-execution_count="31">
+<div id="0a744e62" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> T.argsort(axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> [corte_var(y_t[orden[:, x]]) <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(T.shape[<span class="dv">1</span>])]</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>res</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -743,7 +743,7 @@ Figura&nbsp;10.5: Problema de regresión
  (np.float64(4.008286036627667), np.int64(339))]</code></pre>
 </div>
 </div>
-<p>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice 21, es decir, <code>est_servicios_profesionales</code>, tal y como se muestra en la raíz de la figura anterior.</p>
+<p>El resultado de ejecutar el código anterior se muestra a continuación, donde se observa que el costo mínimo corresponde a la variable con índice 21, es decir, <code>est_servicios_profesionales</code>, tal y como se muestra en la raíz de la figura anterior.</p>
 </section>
 </section>
 <section id="sec-resumen-arboles" class="level2" data-number="10.5">
@@ -1463,7 +1463,7 @@ Quinlan, J. R. 1986. <span>«Induction of decision trees»</span>. <em>Machine L
 <span id="cb29-268"><a href="#cb29-268" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-269"><a href="#cb29-269" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo: Tamizaje de Diabetes</span></span>
 <span id="cb29-270"><a href="#cb29-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a>Se utiliza el problema de tamizaje de diabetes con los datos de Salud (@sec-datos-salud) para ejemplificar el algoritmo de Árboles de Decisión: clasificar si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. Con las siguientes instrucciones se descargan los datos, las variables de texto se convierten en indicadoras (@sec-regresion-datos) y se dividen en los conjuntos de entrenamiento y prueba. A diferencia de los algoritmos basados en distancias, los árboles no necesitan estandarizar las variables, pues cada corte compara una sola variable contra un umbral y no cambia con la escala de la variable.</span>
+<span id="cb29-271"><a href="#cb29-271" aria-hidden="true" tabindex="-1"></a>Se utiliza el problema de tamizaje de diabetes con los datos de Salud (@sec-datos-salud) para ejemplificar el algoritmo de Árboles de Decisión. La tarea es clasificar si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. Con las siguientes instrucciones se descargan los datos, las variables de texto se convierten en indicadoras (@sec-regresion-datos) y se dividen en los conjuntos de entrenamiento y prueba. A diferencia de los algoritmos basados en distancias, los árboles no necesitan estandarizar las variables, pues cada corte compara una sola variable contra un umbral y no cambia con la escala de la variable.</span>
 <span id="cb29-272"><a href="#cb29-272" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-275"><a href="#cb29-275" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb29-276"><a href="#cb29-276" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1554,7 +1554,7 @@ Quinlan, J. R. 1986. <span>«Induction of decision trees»</span>. <em>Machine L
 <span id="cb29-379"><a href="#cb29-379" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-380"><a href="#cb29-380" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entrenamiento</span></span>
 <span id="cb29-381"><a href="#cb29-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-382"><a href="#cb29-382" aria-hidden="true" tabindex="-1"></a>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Territorio (@sec-datos-territorio): aproximar el grado promedio de escolaridad de una AGEB de Aguascalientes con la composición de establecimientos del DENUE, tal y como se muestra en las siguientes instrucciones. </span>
+<span id="cb29-382"><a href="#cb29-382" aria-hidden="true" tabindex="-1"></a>Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Territorio (@sec-datos-territorio) para aproximar el grado promedio de escolaridad de una AGEB de Aguascalientes con la composición de establecimientos del DENUE, tal y como se muestra en las siguientes instrucciones. </span>
 <span id="cb29-383"><a href="#cb29-383" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-386"><a href="#cb29-386" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb29-387"><a href="#cb29-387" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
@@ -1585,7 +1585,7 @@ Quinlan, J. R. 1986. <span>«Induction of decision trees»</span>. <em>Machine L
 <span id="cb29-416"><a href="#cb29-416" aria-hidden="true" tabindex="-1"></a>n_der_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>arbol<span class="sc">.</span>tree_<span class="sc">.</span>n_node_samples[<span class="dv">2</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
 <span id="cb29-417"><a href="#cb29-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-418"><a href="#cb29-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-419"><a href="#cb29-419" aria-hidden="true" tabindex="-1"></a>En la raíz se observa los parámetros de la función de corte: se selecciona la variable <span class="in">`{python} var_raiz_f`</span> y se envían <span class="in">`{python} n_izq_f`</span> elementos al hijo izquierdo y los otros <span class="in">`{python} n_der_f`</span> al hijo derecho. </span>
+<span id="cb29-419"><a href="#cb29-419" aria-hidden="true" tabindex="-1"></a>En la raíz se observa los parámetros de la función de corte. Se selecciona la variable <span class="in">`{python} var_raiz_f`</span> y se envían <span class="in">`{python} n_izq_f`</span> elementos al hijo izquierdo y los otros <span class="in">`{python} n_der_f`</span> al hijo derecho. </span>
 <span id="cb29-420"><a href="#cb29-420" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-421"><a href="#cb29-421" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-422"><a href="#cb29-422" aria-hidden="true" tabindex="-1"></a>El siguiente método implementa la función de corte para regresión se puede observar que la única diferencia con la función <span class="in">`corte_var`</span> definida en clasificación (@sec-arboles-clasificacion) es que la entropía <span class="in">`H`</span> se cambia por la varianza <span class="in">`np.var`</span>. </span>
@@ -1621,7 +1621,7 @@ Quinlan, J. R. 1986. <span>«Induction of decision trees»</span>. <em>Machine L
 <span id="cb29-458"><a href="#cb29-458" aria-hidden="true" tabindex="-1"></a>var_min_f <span class="op">=</span> Markdown(<span class="ss">f'`</span><span class="sc">{</span>columnas[np.argmin(res, axis<span class="op">=</span><span class="dv">0</span>)[<span class="dv">0</span>]]<span class="sc">}</span><span class="ss">`'</span>)</span>
 <span id="cb29-459"><a href="#cb29-459" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb29-460"><a href="#cb29-460" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-461"><a href="#cb29-461" aria-hidden="true" tabindex="-1"></a>El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice <span class="in">`{python} int(np.argmin(res, axis=0)[0])`</span>, es decir, <span class="in">`{python} var_min_f`</span>, tal y como se muestra en la raíz de la figura anterior. </span>
+<span id="cb29-461"><a href="#cb29-461" aria-hidden="true" tabindex="-1"></a>El resultado de ejecutar el código anterior se muestra a continuación, donde se observa que el costo mínimo corresponde a la variable con índice <span class="in">`{python} int(np.argmin(res, axis=0)[0])`</span>, es decir, <span class="in">`{python} var_min_f`</span>, tal y como se muestra en la raíz de la figura anterior. </span>
 <span id="cb29-462"><a href="#cb29-462" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-463"><a href="#cb29-463" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-arboles}</span></span>
 <span id="cb29-464"><a href="#cb29-464" aria-hidden="true" tabindex="-1"></a></span>
