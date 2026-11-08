@@ -320,13 +320,13 @@ $$
 
 es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la **optimalidad del clasificador Bayesiano**. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo $0/1$ es equivalente a minimizar el error aquí definido.
 
-## Riesgo
+## Riesgo {#sec-riesgo}
 
 Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autenticación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho más grave que no dejar entrar a una persona con los privilegios adecuados.
 
 Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir $\alpha_i$ como la acción que se toma al seleccionar la clase $\mathcal Y=i$. Entonces el riesgo esperado por tomar la acción $\alpha_i$ está definido por:
 
-$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$
+$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$ {#eq-riesgo}
 
 donde $\lambda_{ik}$ es el costo de tomar la acción $i$ en la clase $k$.
 
@@ -334,7 +334,7 @@ Suponiendo una función de costo $0/1$, donde el escoger la clase correcta tiene
 
 $$
 \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ de lo contrario} \end{cases}.
-$$
+$$ {#eq-costo-01}
 
 Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: 
 
@@ -344,11 +344,11 @@ R(\alpha_i \mid x) &= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X
 &= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
 &= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).
 \end{split}
-$$ 
+$$ {#eq-riesgo-01}
 
 Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que el mínimo riesgo corresponde a la clase más probable.
 
-### Acción nula
+### Acción nula {#sec-accion-nula}
 
 En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.
 
@@ -358,7 +358,7 @@ La extensión del costo $0/1$ para este caso estaría definida como:
 
 $$
 \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases},
-$$
+$$ {#eq-costo-accion-nula}
 
 donde $0 < \lambda < 1$.
 
@@ -369,7 +369,7 @@ $$
 R(\alpha_{K+1} \mid x) &= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\ &= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\ 
 &= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.
 \end{split}
-$$
+$$ {#eq-riesgo-accion-nula}
 
 ## Seleccionando la acción {#sec-seleccion-accion-nula}
 
@@ -571,7 +571,16 @@ El conjunto de prueba tiene `{python} n_g_f` hogares, de los cuales `{python} po
 
 ### Costos de inclusión y exclusión {#sec-costos-inclusion-exclusion}
 
-Para cada hogar hay dos acciones, $\alpha_1$, incluirlo en el programa, y $\alpha_0$, excluirlo, y dos clases, pobre ($\mathcal Y=1$) y no pobre ($\mathcal Y=0$). Acertar no tiene costo. Incluir a un hogar no pobre es un **error de inclusión** (una filtración) con costo $\lambda_{\text{incl}}$, y excluir a un hogar pobre es un **error de exclusión** con costo $\lambda_{\text{excl}}$. La matriz de costos es
+En @sec-riesgo el costo de equivocarse se modela con la matriz $\lambda_{ik}$, que es el costo de tomar la acción $i$ cuando la clase verdadera es $k$, y la acción que se toma es la de menor riesgo según la @eq-riesgo. En la focalización el problema tiene $K = 2$ clases y dos acciones, por lo que la matriz general se reduce a cuatro entradas.
+
+Las acciones son $\alpha_1$, incluir al hogar en el programa, y $\alpha_0$, excluirlo. Las clases son pobre ($\mathcal Y=1$) y no pobre ($\mathcal Y=0$). Las cuatro entradas de la matriz son las siguientes.
+
+- $\lambda_{11} = 0$, porque incluir a un hogar pobre es acertar.
+- $\lambda_{00} = 0$, porque excluir a un hogar no pobre también es acertar.
+- $\lambda_{10} = \lambda_{\text{incl}}$ es el costo de incluir a un hogar no pobre, el **error de inclusión** o filtración.
+- $\lambda_{01} = \lambda_{\text{excl}}$ es el costo de excluir a un hogar pobre, el **error de exclusión**.
+
+$\lambda_{\text{incl}}$ y $\lambda_{\text{excl}}$ son sólo nombres para esas dos entradas, elegidos para que la prosa no dependa del orden de los subíndices. A diferencia del costo $0/1$ de la @eq-costo-01, aquí los dos errores pueden costar distinto. La matriz de costos es
 
 $$
 \lambda = \begin{pmatrix}
@@ -581,24 +590,24 @@ $$
 0 & \lambda_{\text{excl}} \\
 \lambda_{\text{incl}} & 0
 \end{pmatrix},
-$$
+$$ {#eq-matriz-costos-focalizacion}
 
-donde el renglón es la acción y la columna la clase. Sea $p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)$. Con la definición de riesgo de la sección Riesgo,
+donde el renglón es la acción y la columna la clase. Sea $p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)$, de manera que $1 - p = \mathbb P(\mathcal Y=0 \mid \mathcal X=x)$. Desarrollando la suma de la @eq-riesgo para cada acción con las entradas de la @eq-matriz-costos-focalizacion se obtiene
 
 $$
 \begin{split}
-R(\alpha_1 \mid x) &= \lambda_{\text{incl}}\,(1 - p), \\
-R(\alpha_0 \mid x) &= \lambda_{\text{excl}}\,p,
+R(\alpha_1 \mid x) &= \lambda_{10}\,(1 - p) + \lambda_{11}\,p = \lambda_{\text{incl}}\,(1 - p) + 0 \cdot p = \lambda_{\text{incl}}\,(1 - p), \\
+R(\alpha_0 \mid x) &= \lambda_{00}\,(1 - p) + \lambda_{01}\,p = 0 \cdot (1 - p) + \lambda_{\text{excl}}\,p = \lambda_{\text{excl}}\,p.
 \end{split}
-$$
+$$ {#eq-riesgos-focalizacion}
 
-y la acción de menor riesgo es incluir al hogar si y sólo si $\lambda_{\text{incl}}\,(1 - p) < \lambda_{\text{excl}}\,p$, es decir,
+El riesgo de incluir es el costo de una filtración por la probabilidad de que el hogar no sea pobre, y el riesgo de excluir es el costo de una exclusión por la probabilidad de que sí lo sea. Según la @eq-riesgos-focalizacion, la acción de menor riesgo es incluir al hogar si y sólo si $\lambda_{\text{incl}}\,(1 - p) < \lambda_{\text{excl}}\,p$, es decir,
 
 $$
 p > \frac{\lambda_{\text{incl}}}{\lambda_{\text{incl}} + \lambda_{\text{excl}}}.
 $$ {#eq-umbral-costos}
 
-Con el costo $0/1$, $\lambda_{\text{incl}} = \lambda_{\text{excl}} = 1$, el umbral es $1/2$, que es el que usa `predict` y el que se usó en @sec-regresion-focalizacion. Si excluir a un hogar pobre es más grave que incluir a uno que no lo es, el umbral baja y el programa incluye a más hogares. El siguiente código usa los costos ilustrativos $\lambda_{\text{incl}} = 1$ y $\lambda_{\text{excl}} = 3$ (son unidades relativas, no pesos), calcula el umbral de la @eq-umbral-costos y compara la regla con umbral $0.5$ contra la regla con el umbral óptimo. Para cada regla se mide la cobertura, la precisión, el número de errores de inclusión y de exclusión y el **costo esperado** por hogar en el conjunto de prueba, que es el promedio de $\lambda_{\text{incl}}$ por cada inclusión indebida y $\lambda_{\text{excl}}$ por cada exclusión indebida.
+Con el costo $0/1$, $\lambda_{\text{incl}} = \lambda_{\text{excl}} = 1$, el umbral es $1/2$, que corresponde a elegir la clase más probable como en la @eq-riesgo-01 y es el que usa `predict` y el que se usó en @sec-regresion-focalizacion. Si excluir a un hogar pobre es más grave que incluir a uno que no lo es, el umbral baja y el programa incluye a más hogares. El siguiente código usa los costos ilustrativos $\lambda_{\text{incl}} = 1$ y $\lambda_{\text{excl}} = 3$ (son unidades relativas, no pesos), calcula el umbral de la @eq-umbral-costos y compara la regla con umbral $0.5$ contra la regla con el umbral óptimo. Para cada regla se mide la cobertura, la precisión, el número de errores de inclusión y de exclusión y el **costo esperado** por hogar en el conjunto de prueba, que es el promedio de $\lambda_{\text{incl}}$ por cada inclusión indebida y $\lambda_{\text{excl}}$ por cada exclusión indebida.
 
 ```{python}
 #| echo: true
@@ -722,13 +731,13 @@ La acción nula de @sec-seleccion-accion-nula tiene una lectura directa en la fo
 
 $$
 R(\alpha_2 \mid x) = \lambda_{\text{ver}},
-$$
+$$ {#eq-riesgo-verificacion}
 
-exactamente como el riesgo $\lambda$ de la acción nula. El hogar se verifica cuando $\lambda_{\text{ver}} < \min\{\lambda_{\text{incl}}\,(1-p),\ \lambda_{\text{excl}}\,p\}$, es decir, cuando
+exactamente como el riesgo de la acción nula en la @eq-riesgo-accion-nula, que con el costo de la @eq-costo-accion-nula es igual a $\lambda$. El hogar se verifica cuando $\lambda_{\text{ver}} < \min\{\lambda_{\text{incl}}\,(1-p),\ \lambda_{\text{excl}}\,p\}$, es decir, cuando
 
 $$
 \frac{\lambda_{\text{ver}}}{\lambda_{\text{excl}}} < p < 1 - \frac{\lambda_{\text{ver}}}{\lambda_{\text{incl}}};
-$$
+$$ {#eq-banda-verificacion}
 
 por arriba de la banda se incluye y por debajo se excluye sin visita. El siguiente código usa $\lambda_{\text{ver}} = 0.5$, la mitad del costo de una inclusión indebida, calcula la banda, la fracción de hogares que se envía a verificación y el costo esperado total, que suma el costo de las visitas al de los errores de los hogares decididos de manera automática.
 

@@ -348,9 +348,9 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-error-clasificacion" id="toc-sec-error-clasificacion" class="nav-link" data-scroll-target="#sec-error-clasificacion"><span class="header-section-number">5.4</span> Error de Clasificación</a></li>
   <li><a href="#sec-error-bayesiano" id="toc-sec-error-bayesiano" class="nav-link" data-scroll-target="#sec-error-bayesiano"><span class="header-section-number">5.5</span> Error Bayesiano</a></li>
-  <li><a href="#riesgo" id="toc-riesgo" class="nav-link" data-scroll-target="#riesgo"><span class="header-section-number">5.6</span> Riesgo</a>
+  <li><a href="#sec-riesgo" id="toc-sec-riesgo" class="nav-link" data-scroll-target="#sec-riesgo"><span class="header-section-number">5.6</span> Riesgo</a>
   <ul class="collapse">
-  <li><a href="#acción-nula" id="toc-acción-nula" class="nav-link" data-scroll-target="#acción-nula"><span class="header-section-number">5.6.1</span> Acción nula</a></li>
+  <li><a href="#sec-accion-nula" id="toc-sec-accion-nula" class="nav-link" data-scroll-target="#sec-accion-nula"><span class="header-section-number">5.6.1</span> Acción nula</a></li>
   </ul></li>
   <li><a href="#sec-seleccion-accion-nula" id="toc-sec-seleccion-accion-nula" class="nav-link" data-scroll-target="#sec-seleccion-accion-nula"><span class="header-section-number">5.7</span> Seleccionando la acción</a>
   <ul class="collapse">
@@ -393,7 +393,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es analizar el uso de la teoría de la probabilidad para la toma de decisiones. En particular el uso del teorema de Bayes para resolver problemas de clasificación y su uso para tomar la decisión que reduzca el riesgo. La unidad termina aplicando la teoría a una decisión de política pública, la focalización de un programa social, donde incluir a un hogar que no lo necesita y excluir a uno que sí lo necesita tienen costos distintos.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="721db39e" class="cell" data-execution_count="1">
+<div id="bf8d6f18" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> multivariate_normal</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -441,7 +441,7 @@ window.Quarto = {
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="sec-tres-normales"><span class="header-section-number">5.3.1</span> Problema Sintético</h3>
 <p>Con el objetivo de entender el funcionamiento del Teorema de Bayes, esta sección presenta un problema sintético. El procedimiento es el siguiente, primero se generarán los datos, los cuales van a ser tres nubes de puntos generadas mediante tres distribuciones gaussianas multivariadas. Con estas tres nubes de puntos, se utilizará el Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>5.1</span></a>) para clasificar todos los puntos generados.</p>
 <p>El primer paso es definir las tres distribuciones gaussianas multivariadas, para este objetivo se usa la clase <code>multivariate_normal</code> como se muestra a continuación.</p>
-<div id="7d5693dc" class="cell" data-execution_count="3">
+<div id="57e92735" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                         cov<span class="op">=</span>[[<span class="dv">4</span>, <span class="dv">0</span>], [<span class="dv">0</span>, <span class="dv">2</span>]])</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="fl">1.5</span>, <span class="op">-</span><span class="fl">1.5</span>],</span>
@@ -457,7 +457,7 @@ window.Quarto = {
          \end{pmatrix}.
 \]</span></p>
 <p>Una vez definidas las distribuciones podemos generar números aleatorios de las mismas, en el siguiente código se generan 1000 vectores aleatorios de las tres distribuciones.</p>
-<div id="fa1274bc" class="cell" data-execution_count="4">
+<div id="d71074b5" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X_1 <span class="op">=</span> p1.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X_2 <span class="op">=</span> p2.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>X_3 <span class="op">=</span> p3.rvs(size<span class="op">=</span><span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -521,28 +521,28 @@ Figura&nbsp;5.2: Distribución Gaussiana
 <p>Quitando la evidencia del Teorema de Bayes (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>5.1</span></a>) se observa que <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span>. En el ejemplo creado se observa que <span class="math inline">\(\mathbb P(\mathcal Y=1) = \frac{1000}{3000},\)</span> las otras probabilidades a priori tienen el mismo valor, es decir, <span class="math inline">\(\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.\)</span></p>
 <p>La verosimilitud está definida en las variables <code>p1</code>, <code>p2</code> y <code>p3</code>; en particular en la función <code>pdf</code>, es decir, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> es <code>p1.pdf</code>, <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=2)\)</span> corresponde a <code>p2.pdf</code> y equivalentemente <code>p3.pdf</code> es la verosimilitud cuando <span class="math inline">\(\mathcal Y=3.\)</span></p>
 <p>Utilizando esta información <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> se calcula de la siguiente manera.</p>
-<div id="57fe1aa1" class="cell" data-execution_count="7">
+<div id="dc086eca" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate((X_1, X_2, X_3))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> (np.vstack([p1.pdf(X),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        p2.pdf(X), </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        p3.pdf(X)]) <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La evidencia (<a href="#eq-evidencia" class="quarto-xref">Ecuación&nbsp;<span>5.2</span></a>) es un factor normalizador que hace que las probabilidades sumen a uno, el siguiente código calcula la evidencia, <span class="math inline">\(\mathbb P(\mathcal X)\)</span></p>
-<div id="106d280b" class="cell" data-execution_count="8">
+<div id="f254dbaa" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Finalmente, <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> se obtiene normalizando <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> que se puede realizar de la siguiente manera.</p>
-<div id="00c1951f" class="cell" data-execution_count="9">
+<div id="861046ca" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.atleast_2d(evidencia).T</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X),\)</span> <span class="math inline">\(\mathbb P(\mathcal Y=2 \mid \mathcal X)\)</span> y <span class="math inline">\(\mathbb P(\mathcal Y=3 \mid \mathcal X)\)</span>; y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase.</p>
-<div id="b344f171" class="cell" data-execution_count="10">
+<div id="bf27376b" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>clase <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>prediccion <span class="op">=</span> clase[indice]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En la variable <code>prediccion</code> se tienen las predicciones de las clases, ahora se analizará si estas predicciones corresponden con la clase original que fue generada. Por la forma en que se generó <code>X</code> se sabe que los primeros 1000 elementos pertenecen a la clase <span class="math inline">\(1\)</span>, los siguientes 1000 a la clase <span class="math inline">\(2\)</span> y los restantes a la clase <span class="math inline">\(3\)</span>. A continuación se muestra el arreglo <code>y</code> que tiene esta estructura.</p>
-<div id="9e5b9284" class="cell" data-execution_count="11">
+<div id="15335329" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">1</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">2</span>] <span class="op">*</span> <span class="dv">1000</span> <span class="op">+</span> [<span class="dv">3</span>] <span class="op">*</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Teniendo las predicciones y los valores reales de las clases, lo que se busca es visualizar los ejemplos que no fueron clasificados de manera correcta, el siguiente código muestra este procedimiento.</p>
@@ -571,22 +571,22 @@ Figura&nbsp;5.3: Error en problema de clasificación
 <section id="sec-error-clasificacion" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="sec-error-clasificacion"><span class="header-section-number">5.4</span> Error de Clasificación</h2>
 <p>Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, este produce errores al momento de usarlo para clasificar. Se podía asumir que este error en clasificación iba a ocurrir desde el momento que las nubes de puntos de la clase 1 y 2 se traslapan como se observa en la <a href="#fig-gaussian-3classes" class="quarto-xref">Figura&nbsp;<span>5.1</span></a>.</p>
-<p>El ejemplo sirve también para ilustrar el quinto paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.4</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0123\)</span>.</p>
-<div id="92cb4722" class="cell" data-execution_count="14">
+<p>El ejemplo sirve también para ilustrar el quinto paso de la metodología general (ver <a href="01Introduccion.html#sec-metodologia-general" class="quarto-xref"><span>Sección 1.4</span></a>) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el <code>error</code> es <span class="math inline">\(0.0090\)</span>.</p>
+<div id="8b3be6ed" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> prediccion).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La siguiente pregunta es conocer cuánto varía este error si se vuelve a realizar el muestreo de las distribuciones <code>p1</code>, <code>p2</code> y <code>p3</code>. Una manera de conocer esta variabilidad de la medición del error es calculando su <strong>error estándar</strong>.</p>
-<p>El error estándar (ver <a href="19Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estándar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="19Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0020\)</span>.</p>
-<div id="049a485e" class="cell" data-execution_count="16">
+<p>El error estándar (ver <a href="19Estadistica.html#sec-error-estandar" class="quarto-xref"><span>Sección A.1</span></a>) está definido como <span class="math inline">\(\sqrt{\mathbb V(\hat \theta)}\)</span> donde <span class="math inline">\(\hat \theta\)</span> es el valor estimado, en este caso el <code>error</code>. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores <span class="math inline">\(1\)</span> que indica que en ese ejemplo el clasificador se equivocó y <span class="math inline">\(0\)</span> cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, <span class="math inline">\(p\)</span>, se estima como la media entonces el error estándar de <span class="math inline">\(p\)</span> corresponde al error estándar de la media (ver <a href="19Estadistica.html#sec-error-estandar-media" class="quarto-xref"><span>Sección A.1.1</span></a>), i.e., <span class="math inline">\(\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},\)</span> dado que la varianza <span class="math inline">\(\sigma^2\)</span> de una distribución Bernoulli con parámetro <span class="math inline">\(p\)</span> es <span class="math inline">\(p (1 - p)\)</span>. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de <span class="math inline">\(0.0017\)</span>.</p>
+<div id="42f3a770" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se_formula <span class="op">=</span> np.sqrt(error <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> error) <span class="op">/</span> <span class="dv">3000</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Aunque el error estándar del parámetro <span class="math inline">\(p\)</span> de la distribución Bernoulli sí se puede calcular analíticamente, se usará la técnica de Bootstrap (ver <a href="19Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) para ejemplificar aquellas estadísticas donde no se puede. Esta técnica requiere generar <span class="math inline">\(B\)</span> muestras de <span class="math inline">\(N\)</span> elementos con remplazo de los datos. En este caso los datos son los errores entre <code>y</code> y <code>prediccion</code>. Siguiendo el método descrito en el apéndice (<a href="19Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) se generan los índices para generar la muestra como se observa en la primera línea del siguiente código. En la segunda línea se hacen las <span class="math inline">\(B\)</span> repeticiones las cuales consisten en calcular <span class="math inline">\(\hat p\)</span>. Se puede observar cómo se usa directamente <code>y</code> y <code>prediccion</code> junto con el arreglo de índices <code>s</code> para calcular la media del error. Finalmente se calcula la desviación estándar de <code>B</code> (tercera línea) y ese valor corresponde al error estándar.</p>
-<div id="d9b609fb" class="cell" data-execution_count="17">
+<div id="595cd9a8" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.randint(y.shape[<span class="dv">0</span>], size<span class="op">=</span>(<span class="dv">500</span>, y.shape[<span class="dv">0</span>]))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [(y[s] <span class="op">!=</span> prediccion[s]).mean() <span class="cf">for</span> s <span class="kw">in</span> S]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>se <span class="op">=</span> np.std(B)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0021\)</span>.</p>
+<p>El error estándar, <code>se</code>, calculado es <span class="math inline">\(0.0017\)</span>.</p>
 <p>El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés; mediante la técnica de muestreo bootstrap se simuló esta distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista <code>B</code>.</p>
 <div id="cell-fig-gaussian-3classes-distribucion" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.displot(B, kde<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -621,7 +621,7 @@ f^*(x) = \underset{k}{\text{arg max }} \mathbb P(\mathcal Y=k \mid \mathcal X=x)
 <p><span id="eq-error-bayesiano"><span class="math display">\[
 \mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \underset{k}{\max}\ \mathbb P(\mathcal Y=k \mid \mathcal X=x).
 \tag{5.5}\]</span></span></p>
-<p>El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases; en el ejemplo de <a href="#sec-tres-normales" class="quarto-xref"><span>Sección 5.3.1</span></a> el valor <span class="math inline">\(0.0123\)</span> estimado no es producto de un método imperfecto – <code>p1</code>, <code>p2</code> y <code>p3</code> son las distribuciones exactas – sino que corresponde, salvo el error de estimación medido con <code>se_f</code>, al error bayesiano del problema, es decir, es un error irreducible.</p>
+<p>El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases; en el ejemplo de <a href="#sec-tres-normales" class="quarto-xref"><span>Sección 5.3.1</span></a> el valor <span class="math inline">\(0.0090\)</span> estimado no es producto de un método imperfecto – <code>p1</code>, <code>p2</code> y <code>p3</code> son las distribuciones exactas – sino que corresponde, salvo el error de estimación medido con <code>se_f</code>, al error bayesiano del problema, es decir, es un error irreducible.</p>
 <p>Falta mostrar que <span class="math inline">\(f^*\)</span> es, de entre todos los clasificadores posibles, el que tiene el menor error esperado. Sea <span class="math inline">\(f\)</span> cualquier otro clasificador y, para simplificar la notación, sea <span class="math inline">\(p_k(x) = \mathbb P(\mathcal Y=k \mid \mathcal X=x)\)</span>. Por definición de máximo, para toda entrada <span class="math inline">\(x\)</span> se cumple que</p>
 <p><span id="eq-paso-max"><span class="math display">\[
 p_{f(x)}(x) \leq \underset{k}{\max}\ p_k(x),
@@ -645,41 +645,41 @@ p_{f(x)}(x) &amp;\leq \underset{k}{\max}\ p_k(x) \\
 \]</span></p>
 <p>es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la <strong>optimalidad del clasificador Bayesiano</strong>. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo <span class="math inline">\(0/1\)</span> es equivalente a minimizar el error aquí definido.</p>
 </section>
-<section id="riesgo" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="riesgo"><span class="header-section-number">5.6</span> Riesgo</h2>
+<section id="sec-riesgo" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sec-riesgo"><span class="header-section-number">5.6</span> Riesgo</h2>
 <p>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autenticación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho más grave que no dejar entrar a una persona con los privilegios adecuados.</p>
 <p>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir <span class="math inline">\(\alpha_i\)</span> como la acción que se toma al seleccionar la clase <span class="math inline">\(\mathcal Y=i\)</span>. Entonces el riesgo esperado por tomar la acción <span class="math inline">\(\alpha_i\)</span> está definido por:</p>
-<p><span class="math display">\[R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),\]</span></p>
+<p><span id="eq-riesgo"><span class="math display">\[R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x), \tag{5.7}\]</span></span></p>
 <p>donde <span class="math inline">\(\lambda_{ik}\)</span> es el costo de tomar la acción <span class="math inline">\(i\)</span> en la clase <span class="math inline">\(k\)</span>.</p>
 <p>Suponiendo una función de costo <span class="math inline">\(0/1\)</span>, donde el escoger la clase correcta tiene un costo <span class="math inline">\(0\)</span> y el equivocarse en cualquier caso tiene un costo <span class="math inline">\(1\)</span> se define como:</p>
-<p><span class="math display">\[
+<p><span id="eq-costo-01"><span class="math display">\[
 \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ 1 \text{ de lo contrario} \end{cases}.
-\]</span></p>
+\tag{5.8}\]</span></span></p>
 <p>Usando la función de costo <span class="math inline">\(0/1\)</span> el riesgo se define de la siguiente manera:</p>
-<p><span class="math display">\[
+<p><span id="eq-riesgo-01"><span class="math display">\[
 \begin{split}
 R(\alpha_i \mid x) &amp;= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
 &amp;= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) \\
 &amp;= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).
 \end{split}
-\]</span></p>
+\tag{5.9}\]</span></span></p>
 <p>Recordando que <span class="math inline">\(\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1\)</span>. Por lo tanto en el caso de costo <span class="math inline">\(0/1\)</span> se puede observar que el mínimo riesgo corresponde a la clase más probable.</p>
-<section id="acción-nula" class="level3" data-number="5.6.1">
-<h3 data-number="5.6.1" class="anchored" data-anchor-id="acción-nula"><span class="header-section-number">5.6.1</span> Acción nula</h3>
+<section id="sec-accion-nula" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="sec-accion-nula"><span class="header-section-number">5.6.1</span> Acción nula</h3>
 <p>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</p>
 <p>La primera idea podría ser incrementar el número de clases y asociar una clase a la intervención manual, sin embargo en este procedimiento estaríamos incrementando la complejidad del problema. Un procedimiento más adecuado sería incrementar el número de acciones, <span class="math inline">\(\alpha\)</span> de tal manera que la acción <span class="math inline">\(\alpha_{K+1}\)</span> corresponda a la intervención esperada, esto para cualquier problema de <span class="math inline">\(K\)</span> clases.</p>
 <p>La extensión del costo <span class="math inline">\(0/1\)</span> para este caso estaría definida como:</p>
-<p><span class="math display">\[
+<p><span id="eq-costo-accion-nula"><span class="math display">\[
 \lambda_{ik} = \begin{cases} 0 \text{ si } i = k\\ \lambda \text{ si } i = K + 1 \\ 1 \text{ de lo contrario} \end{cases},
-\]</span></p>
+\tag{5.10}\]</span></span></p>
 <p>donde <span class="math inline">\(0 &lt; \lambda &lt; 1\)</span>.</p>
 <p>Usando la definición de riesgo, el riesgo de tomar la acción <span class="math inline">\(\alpha_{K+1}\)</span> es</p>
-<p><span class="math display">\[
+<p><span id="eq-riesgo-accion-nula"><span class="math display">\[
 \begin{split}
 R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\ &amp;= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)\\
 &amp;= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.
 \end{split}
-\]</span></p>
+\tag{5.11}\]</span></span></p>
 </section>
 </section>
 <section id="sec-seleccion-accion-nula" class="level2" data-number="5.7">
@@ -689,7 +689,7 @@ R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \m
 <section id="ejemplo" class="level3" data-number="5.7.1">
 <h3 data-number="5.7.1" class="anchored" data-anchor-id="ejemplo"><span class="header-section-number">5.7.1</span> Ejemplo</h3>
 <p>El siguiente ejemplo ilustra el comportamiento de seleccionar la clase considerando que se tiene un riesgo en la acción nula. Lo primero es generar dos conjuntos de datos uno para la clase positiva y otro para la negativa, tal y como lo indica el siguiente código. <code>p1</code> y <code>p1</code> son distribuciones Gaussianas, los elementos generados por <code>p1</code> serán asociados a la clase positiva y los generados por <code>p2</code> a la clase negativa.</p>
-<div id="71d8ddd3" class="cell" data-execution_count="20">
+<div id="5661cfed" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="op">=</span> multivariate_normal(mean<span class="op">=</span>[<span class="dv">5</span>, <span class="dv">5</span>],</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                              cov<span class="op">=</span>[[<span class="dv">20</span>, <span class="op">-</span><span class="dv">5</span>],</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                   [<span class="op">-</span><span class="dv">5</span>, <span class="dv">2</span>]])</span>
@@ -726,28 +726,28 @@ Figura&nbsp;5.5: Dos distribuciones Gaussianas asociadas a dos clases
 </div>
 </div>
 <p>Para no introducir ningún error adicional con la estimación de parámetros, se utilizan los parámetros con los que se generaron los datos para calcular <span class="math inline">\(\mathbb P(\mathcal Y \mid \mathcal X)\)</span> tal y como lo muestra el siguiente código.</p>
-<div id="6891c6f0" class="cell" data-execution_count="22">
+<div id="94655ece" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> np.c_[p1.pdf(X), p2.pdf(X)] <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> posterior.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> posterior <span class="op">/</span> np.c_[evidencia]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Habiendo calculado la probabilidad de cada clase en todos los elementos de <code>X</code>, es momento de predecir la clase y calcular el error del proceso de clasificación.</p>
-<div id="8f22707d" class="cell" data-execution_count="23">
+<div id="cb19a691" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'P'</span>, <span class="dv">1</span>: <span class="st">'N'</span>}</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([m[i]</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> i <span class="kw">in</span> posterior.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y <span class="op">!=</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error que se tiene corresponde a 0.0080. El siguiente paso es definir un riesgo para la clase nula, e.g.&nbsp;<span class="math inline">\(\lambda = 0.2\)</span> y utilizarlo para saber cuáles son los elementos que cumplen con la condición <span class="math inline">\(\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.\)</span> Estos elementos se guardan en la variable <code>valid</code> como muestra el siguiente código.</p>
-<div id="68c0f55b" class="cell" data-execution_count="24">
+<p>El error que se tiene corresponde a 0.0135. El siguiente paso es definir un riesgo para la clase nula, e.g.&nbsp;<span class="math inline">\(\lambda = 0.2\)</span> y utilizarlo para saber cuáles son los elementos que cumplen con la condición <span class="math inline">\(\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) &gt; 1 - \lambda.\)</span> Estos elementos se guardan en la variable <code>valid</code> como muestra el siguiente código.</p>
+<div id="21096f33" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="fl">0.20</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>valid <span class="op">=</span> posterior.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">-</span> riesgo</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Utilizando <code>valid</code> se puede calcular el error de aquellos elementos los cuales tienen una clase positiva o negativa. El siguiente código calcula el error.</p>
-<div id="aa5ebe7a" class="cell" data-execution_count="25">
+<div id="1432a2cd" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> (y[valid] <span class="op">!=</span> hy[valid]).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El error obtenido con los elementos válidos es <span class="math inline">\(0.0030\)</span>, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es np.int64(1972).</p>
+<p>El error obtenido con los elementos válidos es <span class="math inline">\(0.0076\)</span>, se puede observar que este error es menor que el error estimado con todos los elementos. El número de elementos válidos es np.int64(1974).</p>
 <p>Para completar el ejemplo, la <a href="#fig-2-guasiana-original-reducido" class="quarto-xref">Figura&nbsp;<span>5.6</span></a> muestra el conjunto de datos original, con las respectivas clases y se añade una etiqueta adicional para observar aquellos elementos que fueron incorrectamente clasificados. En la figura de la derecha se presentan solamente aquellos elementos para los cuales no se seleccionó la acción nula. Se puede observar que todavía existen errores en la predicción y que la frontera entre la clase positiva y negativa es más explícita quitando los elementos asociados a la clase nula.</p>
 <div id="cell-fig-2-guasiana-original-reducido" class="cell" data-execution_count="26">
 <details class="code-fold">
@@ -799,7 +799,7 @@ Figura&nbsp;5.6: Predicción del conjunto original y el conjunto que elimina aqu
 <div id="fig-2-guasiana-alargada-actividad" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-2-guasiana-alargada-actividad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="04Teoria_Decision_files/figure-html/fig-2-guasiana-alargada-actividad-output-1.png" width="1012" height="470" class="figure-img">
+<img src="04Teoria_Decision_files/figure-html/fig-2-guasiana-alargada-actividad-output-1.png" width="1013" height="470" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-guasiana-alargada-actividad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;5.7: Predicción del conjunto original y el conjunto que elimina aquellos elementos que se asocian a la clase nula
@@ -819,7 +819,7 @@ Figura&nbsp;5.7: Predicción del conjunto original y el conjunto que elimina aqu
 <section id="sec-decision-focalizacion-datos" class="level3" data-number="5.8.1">
 <h3 data-number="5.8.1" class="anchored" data-anchor-id="sec-decision-focalizacion-datos"><span class="header-section-number">5.8.1</span> Datos y probabilidades</h3>
 <p>La preparación de los datos y el modelo son los mismos que en <a href="03Regresion.html#sec-regresion-focalizacion" class="quarto-xref"><span>Sección 3.9</span></a>. Las variables categóricas se codifican, se separa el <span class="math inline">\(20\%\)</span> de los hogares como conjunto de prueba de manera estratificada, se estandariza con la media y la desviación estándar del conjunto de entrenamiento y se ajusta una regresión logística con penalización <span class="math inline">\(L_1\)</span> y <code>C=1</code>, es decir, con todas las variables. El modelo se describe en <a href="07Lineal.html#sec-regresion-logistica" class="quarto-xref"><span>Sección 8.5</span></a>; aquí es una caja negra cuyo método <code>predict_proba</code> regresa, en la segunda columna, la probabilidad <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X=x)\)</span> de que el hogar sea pobre. No se usa el factor de expansión porque la decisión es por hogar.</p>
-<div id="455a073b" class="cell" data-execution_count="28">
+<div id="7253044b" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/enigh_pobreza.csv.gz'</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>Xp <span class="op">=</span> pd.get_dummies(pobreza.drop(columns<span class="op">=</span>[<span class="st">'pobre_ingresos'</span>, <span class="st">'factor'</span>]),</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                    drop_first<span class="op">=</span><span class="va">True</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
@@ -837,8 +837,16 @@ Figura&nbsp;5.7: Predicción del conjunto original y el conjunto que elimina aqu
 </section>
 <section id="sec-costos-inclusion-exclusion" class="level3" data-number="5.8.2">
 <h3 data-number="5.8.2" class="anchored" data-anchor-id="sec-costos-inclusion-exclusion"><span class="header-section-number">5.8.2</span> Costos de inclusión y exclusión</h3>
-<p>Para cada hogar hay dos acciones, <span class="math inline">\(\alpha_1\)</span>, incluirlo en el programa, y <span class="math inline">\(\alpha_0\)</span>, excluirlo, y dos clases, pobre (<span class="math inline">\(\mathcal Y=1\)</span>) y no pobre (<span class="math inline">\(\mathcal Y=0\)</span>). Acertar no tiene costo. Incluir a un hogar no pobre es un <strong>error de inclusión</strong> (una filtración) con costo <span class="math inline">\(\lambda_{\text{incl}}\)</span>, y excluir a un hogar pobre es un <strong>error de exclusión</strong> con costo <span class="math inline">\(\lambda_{\text{excl}}\)</span>. La matriz de costos es</p>
-<p><span class="math display">\[
+<p>En <a href="#sec-riesgo" class="quarto-xref"><span>Sección 5.6</span></a> el costo de equivocarse se modela con la matriz <span class="math inline">\(\lambda_{ik}\)</span>, que es el costo de tomar la acción <span class="math inline">\(i\)</span> cuando la clase verdadera es <span class="math inline">\(k\)</span>, y la acción que se toma es la de menor riesgo según la <a href="#eq-riesgo" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a>. En la focalización el problema tiene <span class="math inline">\(K = 2\)</span> clases y dos acciones, por lo que la matriz general se reduce a cuatro entradas.</p>
+<p>Las acciones son <span class="math inline">\(\alpha_1\)</span>, incluir al hogar en el programa, y <span class="math inline">\(\alpha_0\)</span>, excluirlo. Las clases son pobre (<span class="math inline">\(\mathcal Y=1\)</span>) y no pobre (<span class="math inline">\(\mathcal Y=0\)</span>). Las cuatro entradas de la matriz son las siguientes.</p>
+<ul>
+<li><span class="math inline">\(\lambda_{11} = 0\)</span>, porque incluir a un hogar pobre es acertar.</li>
+<li><span class="math inline">\(\lambda_{00} = 0\)</span>, porque excluir a un hogar no pobre también es acertar.</li>
+<li><span class="math inline">\(\lambda_{10} = \lambda_{\text{incl}}\)</span> es el costo de incluir a un hogar no pobre, el <strong>error de inclusión</strong> o filtración.</li>
+<li><span class="math inline">\(\lambda_{01} = \lambda_{\text{excl}}\)</span> es el costo de excluir a un hogar pobre, el <strong>error de exclusión</strong>.</li>
+</ul>
+<p><span class="math inline">\(\lambda_{\text{incl}}\)</span> y <span class="math inline">\(\lambda_{\text{excl}}\)</span> son sólo nombres para esas dos entradas, elegidos para que la prosa no dependa del orden de los subíndices. A diferencia del costo <span class="math inline">\(0/1\)</span> de la <a href="#eq-costo-01" class="quarto-xref">Ecuación&nbsp;<span>5.8</span></a>, aquí los dos errores pueden costar distinto. La matriz de costos es</p>
+<p><span id="eq-matriz-costos-focalizacion"><span class="math display">\[
 \lambda = \begin{pmatrix}
 \lambda_{00} &amp; \lambda_{01} \\
 \lambda_{10} &amp; \lambda_{11}
@@ -846,20 +854,20 @@ Figura&nbsp;5.7: Predicción del conjunto original y el conjunto que elimina aqu
 0 &amp; \lambda_{\text{excl}} \\
 \lambda_{\text{incl}} &amp; 0
 \end{pmatrix},
-\]</span></p>
-<p>donde el renglón es la acción y la columna la clase. Sea <span class="math inline">\(p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)\)</span>. Con la definición de riesgo de la sección Riesgo,</p>
-<p><span class="math display">\[
+\tag{5.12}\]</span></span></p>
+<p>donde el renglón es la acción y la columna la clase. Sea <span class="math inline">\(p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)\)</span>, de manera que <span class="math inline">\(1 - p = \mathbb P(\mathcal Y=0 \mid \mathcal X=x)\)</span>. Desarrollando la suma de la <a href="#eq-riesgo" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a> para cada acción con las entradas de la <a href="#eq-matriz-costos-focalizacion" class="quarto-xref">Ecuación&nbsp;<span>5.12</span></a> se obtiene</p>
+<p><span id="eq-riesgos-focalizacion"><span class="math display">\[
 \begin{split}
-R(\alpha_1 \mid x) &amp;= \lambda_{\text{incl}}\,(1 - p), \\
-R(\alpha_0 \mid x) &amp;= \lambda_{\text{excl}}\,p,
+R(\alpha_1 \mid x) &amp;= \lambda_{10}\,(1 - p) + \lambda_{11}\,p = \lambda_{\text{incl}}\,(1 - p) + 0 \cdot p = \lambda_{\text{incl}}\,(1 - p), \\
+R(\alpha_0 \mid x) &amp;= \lambda_{00}\,(1 - p) + \lambda_{01}\,p = 0 \cdot (1 - p) + \lambda_{\text{excl}}\,p = \lambda_{\text{excl}}\,p.
 \end{split}
-\]</span></p>
-<p>y la acción de menor riesgo es incluir al hogar si y sólo si <span class="math inline">\(\lambda_{\text{incl}}\,(1 - p) &lt; \lambda_{\text{excl}}\,p\)</span>, es decir,</p>
+\tag{5.13}\]</span></span></p>
+<p>El riesgo de incluir es el costo de una filtración por la probabilidad de que el hogar no sea pobre, y el riesgo de excluir es el costo de una exclusión por la probabilidad de que sí lo sea. Según la <a href="#eq-riesgos-focalizacion" class="quarto-xref">Ecuación&nbsp;<span>5.13</span></a>, la acción de menor riesgo es incluir al hogar si y sólo si <span class="math inline">\(\lambda_{\text{incl}}\,(1 - p) &lt; \lambda_{\text{excl}}\,p\)</span>, es decir,</p>
 <p><span id="eq-umbral-costos"><span class="math display">\[
 p &gt; \frac{\lambda_{\text{incl}}}{\lambda_{\text{incl}} + \lambda_{\text{excl}}}.
-\tag{5.7}\]</span></span></p>
-<p>Con el costo <span class="math inline">\(0/1\)</span>, <span class="math inline">\(\lambda_{\text{incl}} = \lambda_{\text{excl}} = 1\)</span>, el umbral es <span class="math inline">\(1/2\)</span>, que es el que usa <code>predict</code> y el que se usó en <a href="03Regresion.html#sec-regresion-focalizacion" class="quarto-xref"><span>Sección 3.9</span></a>. Si excluir a un hogar pobre es más grave que incluir a uno que no lo es, el umbral baja y el programa incluye a más hogares. El siguiente código usa los costos ilustrativos <span class="math inline">\(\lambda_{\text{incl}} = 1\)</span> y <span class="math inline">\(\lambda_{\text{excl}} = 3\)</span> (son unidades relativas, no pesos), calcula el umbral de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a> y compara la regla con umbral <span class="math inline">\(0.5\)</span> contra la regla con el umbral óptimo. Para cada regla se mide la cobertura, la precisión, el número de errores de inclusión y de exclusión y el <strong>costo esperado</strong> por hogar en el conjunto de prueba, que es el promedio de <span class="math inline">\(\lambda_{\text{incl}}\)</span> por cada inclusión indebida y <span class="math inline">\(\lambda_{\text{excl}}\)</span> por cada exclusión indebida.</p>
-<div id="7988999a" class="cell" data-execution_count="30">
+\tag{5.14}\]</span></span></p>
+<p>Con el costo <span class="math inline">\(0/1\)</span>, <span class="math inline">\(\lambda_{\text{incl}} = \lambda_{\text{excl}} = 1\)</span>, el umbral es <span class="math inline">\(1/2\)</span>, que corresponde a elegir la clase más probable como en la <a href="#eq-riesgo-01" class="quarto-xref">Ecuación&nbsp;<span>5.9</span></a> y es el que usa <code>predict</code> y el que se usó en <a href="03Regresion.html#sec-regresion-focalizacion" class="quarto-xref"><span>Sección 3.9</span></a>. Si excluir a un hogar pobre es más grave que incluir a uno que no lo es, el umbral baja y el programa incluye a más hogares. El siguiente código usa los costos ilustrativos <span class="math inline">\(\lambda_{\text{incl}} = 1\)</span> y <span class="math inline">\(\lambda_{\text{excl}} = 3\)</span> (son unidades relativas, no pesos), calcula el umbral de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.14</span></a> y compara la regla con umbral <span class="math inline">\(0.5\)</span> contra la regla con el umbral óptimo. Para cada regla se mide la cobertura, la precisión, el número de errores de inclusión y de exclusión y el <strong>costo esperado</strong> por hogar en el conjunto de prueba, que es el promedio de <span class="math inline">\(\lambda_{\text{incl}}\)</span> por cada inclusión indebida y <span class="math inline">\(\lambda_{\text{excl}}\)</span> por cada exclusión indebida.</p>
+<div id="30879d98" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>L_INCL, L_EXCL <span class="op">=</span> <span class="dv">1</span>, <span class="dv">3</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>umbral <span class="op">=</span> L_INCL <span class="op">/</span> (L_INCL <span class="op">+</span> L_EXCL)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -908,8 +916,8 @@ Tabla&nbsp;5.1: Cobertura, precisión, errores de inclusión y de exclusión y c
 <tr class="even">
 <td>Umbral óptimo</td>
 <td><span class="math inline">\(0.8491\)</span></td>
-<td><span class="math inline">\(0.5646\)</span></td>
-<td><span class="math inline">\(3850\)</span></td>
+<td><span class="math inline">\(0.5645\)</span></td>
+<td><span class="math inline">\(3851\)</span></td>
 <td><span class="math inline">\(887\)</span></td>
 <td><span class="math inline">\(0.3618\)</span></td>
 </tr>
@@ -920,8 +928,8 @@ Tabla&nbsp;5.1: Cobertura, precisión, errores de inclusión y de exclusión y c
 </figure>
 </div>
 </div>
-<p>El umbral óptimo es <span class="math inline">\(0.2500\)</span>. La <a href="#tbl-costos-umbral" class="quarto-xref">Tabla&nbsp;<span>5.1</span></a> muestra el resultado. Con el umbral <span class="math inline">\(0.5\)</span> la cobertura es <span class="math inline">\(0.5982\)</span>, la precisión <span class="math inline">\(0.7220\)</span>, hay <span class="math inline">\(1354\)</span> errores de inclusión y <span class="math inline">\(2362\)</span> de exclusión, y el costo esperado es <span class="math inline">\(0.4689\)</span>. Con el umbral óptimo la cobertura sube a <span class="math inline">\(0.8491\)</span> y la precisión baja a <span class="math inline">\(0.5646\)</span>; los errores de exclusión bajan a <span class="math inline">\(887\)</span> a cambio de subir los de inclusión a <span class="math inline">\(3850\)</span>, y el costo esperado baja a <span class="math inline">\(0.3618\)</span>. El modelo es el mismo en ambos casos; lo único que cambió es la decisión que se toma con sus probabilidades.</p>
-<p>La <a href="#fig-costo-umbral" class="quarto-xref">Figura&nbsp;<span>5.8</span></a> muestra el costo esperado en el conjunto de prueba para una malla de umbrales. El umbral con menor costo en la malla es <span class="math inline">\(0.28\)</span>, con un costo de <span class="math inline">\(0.3595\)</span>, y el umbral teórico es <span class="math inline">\(0.2500\)</span>. Ambos coinciden aproximadamente porque las probabilidades que estima el modelo son razonables; si no lo fueran, el umbral de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a> aplicado a <code>prob</code> no sería el de menor costo. Además, la curva es plana cerca del mínimo, de manera que una diferencia pequeña en el umbral cambia poco el costo.</p>
+<p>El umbral óptimo es <span class="math inline">\(0.2500\)</span>. La <a href="#tbl-costos-umbral" class="quarto-xref">Tabla&nbsp;<span>5.1</span></a> muestra el resultado. Con el umbral <span class="math inline">\(0.5\)</span> la cobertura es <span class="math inline">\(0.5982\)</span>, la precisión <span class="math inline">\(0.7220\)</span>, hay <span class="math inline">\(1354\)</span> errores de inclusión y <span class="math inline">\(2362\)</span> de exclusión, y el costo esperado es <span class="math inline">\(0.4689\)</span>. Con el umbral óptimo la cobertura sube a <span class="math inline">\(0.8491\)</span> y la precisión baja a <span class="math inline">\(0.5645\)</span>; los errores de exclusión bajan a <span class="math inline">\(887\)</span> a cambio de subir los de inclusión a <span class="math inline">\(3851\)</span>, y el costo esperado baja a <span class="math inline">\(0.3618\)</span>. El modelo es el mismo en ambos casos; lo único que cambió es la decisión que se toma con sus probabilidades.</p>
+<p>La <a href="#fig-costo-umbral" class="quarto-xref">Figura&nbsp;<span>5.8</span></a> muestra el costo esperado en el conjunto de prueba para una malla de umbrales. El umbral con menor costo en la malla es <span class="math inline">\(0.28\)</span>, con un costo de <span class="math inline">\(0.3595\)</span>, y el umbral teórico es <span class="math inline">\(0.2500\)</span>. Ambos coinciden aproximadamente porque las probabilidades que estima el modelo son razonables; si no lo fueran, el umbral de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.14</span></a> aplicado a <code>prob</code> no sería el de menor costo. Además, la curva es plana cerca del mínimo, de manera que una diferencia pequeña en el umbral cambia poco el costo.</p>
 <div id="cell-fig-costo-umbral" class="cell" data-execution_count="33">
 <details class="code-fold">
 <summary>Código</summary>
@@ -979,7 +987,7 @@ Figura&nbsp;5.9: Cobertura contra filtraciones (<span class="math inline">\(1-\)
 <section id="sec-restriccion-presupuestal" class="level3" data-number="5.8.4">
 <h3 data-number="5.8.4" class="anchored" data-anchor-id="sec-restriccion-presupuestal"><span class="header-section-number">5.8.4</span> Restricción presupuestal</h3>
 <p>La regla de costos supone que el programa puede atender a todos los hogares que la cumplan. Con frecuencia el presupuesto fija el número de beneficiarios y entonces el umbral lo determina el cupo. Suponiendo que el programa puede atender al <span class="math inline">\(30\%\)</span> de los hogares del conjunto de prueba, el siguiente código los ordena de mayor a menor probabilidad de ser pobres, incluye a los primeros <code>k</code> y calcula el umbral implícito, que es la probabilidad del último hogar incluido.</p>
-<div id="18a41269" class="cell" data-execution_count="35">
+<div id="80fcc433" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>CUPO <span class="op">=</span> <span class="fl">0.30</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="bu">int</span>(CUPO <span class="op">*</span> <span class="bu">len</span>(prob))</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> np.argsort(<span class="op">-</span>prob)</span>
@@ -988,20 +996,20 @@ Figura&nbsp;5.9: Cobertura contra filtraciones (<span class="math inline">\(1-\)
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>umbral_cupo <span class="op">=</span> prob[orden[k <span class="op">-</span> <span class="dv">1</span>]]</span>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>cupo <span class="op">=</span> evalua(incluir_cupo)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>El cupo es de <span class="math inline">\(5399\)</span> hogares y el umbral implícito es <span class="math inline">\(0.4610\)</span>; la cobertura es <span class="math inline">\(0.6419\)</span> y las filtraciones <span class="math inline">\(0.3010\)</span>. La regla de costos de <a href="#sec-costos-inclusion-exclusion" class="quarto-xref"><span>Sección 5.8.2</span></a> incluiría a <span class="math inline">\(8842\)</span> hogares, más de los que caben. Con un cupo fijo lo que importa es el <strong>orden</strong> de las probabilidades y no su valor, pues cualquier transformación creciente de <code>prob</code> selecciona a los mismos hogares. Cuando la regla de costos incluye a más hogares de los que caben, el presupuesto manda, y el costo de exclusión que se acepta de manera implícita se lee del umbral implícito despejando <span class="math inline">\(\lambda_{\text{excl}}\)</span> de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a>, <span class="math inline">\(\lambda_{\text{excl}} = \lambda_{\text{incl}}\,(1 - u)/u\)</span>, donde <span class="math inline">\(u\)</span> es el umbral. Con <span class="math inline">\(\lambda_{\text{incl}} = 1\)</span> el resultado es <span class="math inline">\(1.1694\)</span>; es decir, el presupuesto actúa como si excluir a un hogar pobre costara eso y no <span class="math inline">\(3\)</span>. Hacer explícita esa cifra es una manera de discutir si el presupuesto es suficiente.</p>
+<p>El cupo es de <span class="math inline">\(5399\)</span> hogares y el umbral implícito es <span class="math inline">\(0.4610\)</span>; la cobertura es <span class="math inline">\(0.6419\)</span> y las filtraciones <span class="math inline">\(0.3010\)</span>. La regla de costos de <a href="#sec-costos-inclusion-exclusion" class="quarto-xref"><span>Sección 5.8.2</span></a> incluiría a <span class="math inline">\(8843\)</span> hogares, más de los que caben. Con un cupo fijo lo que importa es el <strong>orden</strong> de las probabilidades y no su valor, pues cualquier transformación creciente de <code>prob</code> selecciona a los mismos hogares. Cuando la regla de costos incluye a más hogares de los que caben, el presupuesto manda, y el costo de exclusión que se acepta de manera implícita se lee del umbral implícito despejando <span class="math inline">\(\lambda_{\text{excl}}\)</span> de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.14</span></a>, <span class="math inline">\(\lambda_{\text{excl}} = \lambda_{\text{incl}}\,(1 - u)/u\)</span>, donde <span class="math inline">\(u\)</span> es el umbral. Con <span class="math inline">\(\lambda_{\text{incl}} = 1\)</span> el resultado es <span class="math inline">\(1.1694\)</span>; es decir, el presupuesto actúa como si excluir a un hogar pobre costara eso y no <span class="math inline">\(3\)</span>. Hacer explícita esa cifra es una manera de discutir si el presupuesto es suficiente.</p>
 </section>
 <section id="sec-verificacion-campo" class="level3" data-number="5.8.5">
 <h3 data-number="5.8.5" class="anchored" data-anchor-id="sec-verificacion-campo"><span class="header-section-number">5.8.5</span> Verificación en campo</h3>
 <p>La acción nula de <a href="#sec-seleccion-accion-nula" class="quarto-xref"><span>Sección 5.7</span></a> tiene una lectura directa en la focalización. En lugar de decidir con el modelo, el hogar se envía a una <strong>visita domiciliaria</strong> que determina si es pobre. Suponiendo que la visita no se equivoca y que cuesta <span class="math inline">\(\lambda_{\text{ver}}\)</span> por hogar, la tercera acción, <span class="math inline">\(\alpha_2\)</span>, tiene riesgo constante,</p>
-<p><span class="math display">\[
+<p><span id="eq-riesgo-verificacion"><span class="math display">\[
 R(\alpha_2 \mid x) = \lambda_{\text{ver}},
-\]</span></p>
-<p>exactamente como el riesgo <span class="math inline">\(\lambda\)</span> de la acción nula. El hogar se verifica cuando <span class="math inline">\(\lambda_{\text{ver}} &lt; \min\{\lambda_{\text{incl}}\,(1-p),\ \lambda_{\text{excl}}\,p\}\)</span>, es decir, cuando</p>
-<p><span class="math display">\[
+\tag{5.15}\]</span></span></p>
+<p>exactamente como el riesgo de la acción nula en la <a href="#eq-riesgo-accion-nula" class="quarto-xref">Ecuación&nbsp;<span>5.11</span></a>, que con el costo de la <a href="#eq-costo-accion-nula" class="quarto-xref">Ecuación&nbsp;<span>5.10</span></a> es igual a <span class="math inline">\(\lambda\)</span>. El hogar se verifica cuando <span class="math inline">\(\lambda_{\text{ver}} &lt; \min\{\lambda_{\text{incl}}\,(1-p),\ \lambda_{\text{excl}}\,p\}\)</span>, es decir, cuando</p>
+<p><span id="eq-banda-verificacion"><span class="math display">\[
 \frac{\lambda_{\text{ver}}}{\lambda_{\text{excl}}} &lt; p &lt; 1 - \frac{\lambda_{\text{ver}}}{\lambda_{\text{incl}}};
-\]</span></p>
+\tag{5.16}\]</span></span></p>
 <p>por arriba de la banda se incluye y por debajo se excluye sin visita. El siguiente código usa <span class="math inline">\(\lambda_{\text{ver}} = 0.5\)</span>, la mitad del costo de una inclusión indebida, calcula la banda, la fracción de hogares que se envía a verificación y el costo esperado total, que suma el costo de las visitas al de los errores de los hogares decididos de manera automática.</p>
-<div id="069daaa1" class="cell" data-execution_count="37">
+<div id="bc490296" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>L_VER <span class="op">=</span> <span class="fl">0.5</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>banda <span class="op">=</span> (L_VER <span class="op">/</span> L_EXCL, <span class="dv">1</span> <span class="op">-</span> L_VER <span class="op">/</span> L_INCL)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>verificar <span class="op">=</span> (prob <span class="op">&gt;</span> banda[<span class="dv">0</span>]) <span class="op">&amp;</span> (prob <span class="op">&lt;</span> banda[<span class="dv">1</span>])</span>
@@ -1053,8 +1061,8 @@ Figura&nbsp;5.10: Riesgo de incluir, excluir y verificar como función de <span 
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li>Para el problema de tu <em>policy paper</em>, identifica las dos decisiones (por ejemplo, intervenir o no intervenir), escribe la matriz de costos con una línea de justificación por cada costo y calcula el umbral que implica la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a>.</li>
-<li>Con el conjunto Pobreza y el modelo de <a href="#sec-decision-focalizacion-datos" class="quarto-xref"><span>Sección 5.8.1</span></a>, varía el cociente <span class="math inline">\(\lambda_{\text{excl}}/\lambda_{\text{incl}}\)</span> en <span class="math inline">\(\{1, 2, 3, 5, 10\}\)</span>, calcula en el conjunto de prueba la cobertura y las filtraciones con el umbral de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.7</span></a> y grafícalas contra el cociente, como en la <a href="#fig-actividad-cociente-costos" class="quarto-xref">Figura&nbsp;<span>5.11</span></a>.</li>
+<li>Para el problema de tu <em>policy paper</em>, identifica las dos decisiones (por ejemplo, intervenir o no intervenir), escribe la matriz de costos con una línea de justificación por cada costo y calcula el umbral que implica la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.14</span></a>.</li>
+<li>Con el conjunto Pobreza y el modelo de <a href="#sec-decision-focalizacion-datos" class="quarto-xref"><span>Sección 5.8.1</span></a>, varía el cociente <span class="math inline">\(\lambda_{\text{excl}}/\lambda_{\text{incl}}\)</span> en <span class="math inline">\(\{1, 2, 3, 5, 10\}\)</span>, calcula en el conjunto de prueba la cobertura y las filtraciones con el umbral de la <a href="#eq-umbral-costos" class="quarto-xref">Ecuación&nbsp;<span>5.14</span></a> y grafícalas contra el cociente, como en la <a href="#fig-actividad-cociente-costos" class="quarto-xref">Figura&nbsp;<span>5.11</span></a>.</li>
 </ol>
 <div id="cell-fig-actividad-cociente-costos" class="cell" data-execution_count="40">
 <div class="cell-output cell-output-display">
@@ -1880,13 +1888,13 @@ Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span
 <span id="cb29-358"><a href="#cb29-358" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-359"><a href="#cb29-359" aria-hidden="true" tabindex="-1"></a>es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la **optimalidad del clasificador Bayesiano**. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo $0/1$ es equivalente a minimizar el error aquí definido.</span>
 <span id="cb29-360"><a href="#cb29-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a><span class="fu">## Riesgo</span></span>
+<span id="cb29-361"><a href="#cb29-361" aria-hidden="true" tabindex="-1"></a><span class="fu">## Riesgo {#sec-riesgo}</span></span>
 <span id="cb29-362"><a href="#cb29-362" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-363"><a href="#cb29-363" aria-hidden="true" tabindex="-1"></a>Como es de esperarse, existen aplicaciones donde el dar un resultado equivocado tiene un mayor impacto dependiendo de la clase. Por ejemplo, en un sistema de autenticación, equivocarse dándole acceso a una persona que no tiene permisos, es mucho más grave que no dejar entrar a una persona con los privilegios adecuados.</span>
 <span id="cb29-364"><a href="#cb29-364" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-365"><a href="#cb29-365" aria-hidden="true" tabindex="-1"></a>Una manera de incorporar el costo de equivocarse en el proceso de selección de la clase es modelarlo como una función de riesgo, es decir, seleccionar la clase que tenga el menor riesgo. Para realizar este procedimiento es necesario definir $\alpha_i$ como la acción que se toma al seleccionar la clase $\mathcal Y=i$. Entonces el riesgo esperado por tomar la acción $\alpha_i$ está definido por:</span>
 <span id="cb29-366"><a href="#cb29-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a>$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$</span>
+<span id="cb29-367"><a href="#cb29-367" aria-hidden="true" tabindex="-1"></a>$$R(\alpha_i \mid x) = \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X=x),$$ {#eq-riesgo}</span>
 <span id="cb29-368"><a href="#cb29-368" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-369"><a href="#cb29-369" aria-hidden="true" tabindex="-1"></a>donde $\lambda_{ik}$ es el costo de tomar la acción $i$ en la clase $k$.</span>
 <span id="cb29-370"><a href="#cb29-370" aria-hidden="true" tabindex="-1"></a></span>
@@ -1894,7 +1902,7 @@ Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span
 <span id="cb29-372"><a href="#cb29-372" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-373"><a href="#cb29-373" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb29-374"><a href="#cb29-374" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases}.</span>
-<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-375"><a href="#cb29-375" aria-hidden="true" tabindex="-1"></a>$$ {#eq-costo-01}</span>
 <span id="cb29-376"><a href="#cb29-376" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-377"><a href="#cb29-377" aria-hidden="true" tabindex="-1"></a>Usando la función de costo $0/1$ el riesgo se define de la siguiente manera: </span>
 <span id="cb29-378"><a href="#cb29-378" aria-hidden="true" tabindex="-1"></a></span>
@@ -1904,11 +1912,11 @@ Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span
 <span id="cb29-382"><a href="#cb29-382" aria-hidden="true" tabindex="-1"></a>&amp;= \sum_{k\neq i} \mathbb P(\mathcal Y=k \mid \mathcal X=x) <span class="sc">\\</span></span>
 <span id="cb29-383"><a href="#cb29-383" aria-hidden="true" tabindex="-1"></a>&amp;= 1 - \mathbb P(\mathcal Y_i \mid \mathcal X=x).</span>
 <span id="cb29-384"><a href="#cb29-384" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb29-385"><a href="#cb29-385" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb29-385"><a href="#cb29-385" aria-hidden="true" tabindex="-1"></a>$$ {#eq-riesgo-01}</span>
 <span id="cb29-386"><a href="#cb29-386" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-387"><a href="#cb29-387" aria-hidden="true" tabindex="-1"></a>Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que el mínimo riesgo corresponde a la clase más probable.</span>
 <span id="cb29-388"><a href="#cb29-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-389"><a href="#cb29-389" aria-hidden="true" tabindex="-1"></a><span class="fu">### Acción nula</span></span>
+<span id="cb29-389"><a href="#cb29-389" aria-hidden="true" tabindex="-1"></a><span class="fu">### Acción nula {#sec-accion-nula}</span></span>
 <span id="cb29-390"><a href="#cb29-390" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-391"><a href="#cb29-391" aria-hidden="true" tabindex="-1"></a>En algunas ocasiones es importante diseñar un procedimiento donde la acción a tomar sea el avisar que no se puede tomar una acción de manera automática y que se requiere una intervención manual.</span>
 <span id="cb29-392"><a href="#cb29-392" aria-hidden="true" tabindex="-1"></a></span>
@@ -1918,7 +1926,7 @@ Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span
 <span id="cb29-396"><a href="#cb29-396" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-397"><a href="#cb29-397" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb29-398"><a href="#cb29-398" aria-hidden="true" tabindex="-1"></a>\lambda_{ik} = \begin{cases} 0 \text{ si } i = k<span class="sc">\\</span> \lambda \text{ si } i = K + 1 <span class="sc">\\</span> 1 \text{ de lo contrario} \end{cases},</span>
-<span id="cb29-399"><a href="#cb29-399" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-399"><a href="#cb29-399" aria-hidden="true" tabindex="-1"></a>$$ {#eq-costo-accion-nula}</span>
 <span id="cb29-400"><a href="#cb29-400" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-401"><a href="#cb29-401" aria-hidden="true" tabindex="-1"></a>donde $0 &lt; \lambda &lt; 1$.</span>
 <span id="cb29-402"><a href="#cb29-402" aria-hidden="true" tabindex="-1"></a></span>
@@ -1929,7 +1937,7 @@ Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span
 <span id="cb29-407"><a href="#cb29-407" aria-hidden="true" tabindex="-1"></a>R(\alpha_{K+1} \mid x) &amp;= \sum_k^K\lambda_{(K+1)k} \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> &amp;= \sum_k^K \lambda \mathbb P(\mathcal Y=k \mid \mathcal X=x)<span class="sc">\\</span> </span>
 <span id="cb29-408"><a href="#cb29-408" aria-hidden="true" tabindex="-1"></a>&amp;= \lambda \sum_k^K \mathbb P(\mathcal Y=k \mid \mathcal X=x) = \lambda.</span>
 <span id="cb29-409"><a href="#cb29-409" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb29-410"><a href="#cb29-410" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-410"><a href="#cb29-410" aria-hidden="true" tabindex="-1"></a>$$ {#eq-riesgo-accion-nula}</span>
 <span id="cb29-411"><a href="#cb29-411" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-412"><a href="#cb29-412" aria-hidden="true" tabindex="-1"></a><span class="fu">## Seleccionando la acción {#sec-seleccion-accion-nula}</span></span>
 <span id="cb29-413"><a href="#cb29-413" aria-hidden="true" tabindex="-1"></a></span>
@@ -2131,249 +2139,258 @@ Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span
 <span id="cb29-629"><a href="#cb29-629" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-630"><a href="#cb29-630" aria-hidden="true" tabindex="-1"></a><span class="fu">### Costos de inclusión y exclusión {#sec-costos-inclusion-exclusion}</span></span>
 <span id="cb29-631"><a href="#cb29-631" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-632"><a href="#cb29-632" aria-hidden="true" tabindex="-1"></a>Para cada hogar hay dos acciones, $\alpha_1$, incluirlo en el programa, y $\alpha_0$, excluirlo, y dos clases, pobre ($\mathcal Y=1$) y no pobre ($\mathcal Y=0$). Acertar no tiene costo. Incluir a un hogar no pobre es un **error de inclusión** (una filtración) con costo $\lambda_{\text{incl}}$, y excluir a un hogar pobre es un **error de exclusión** con costo $\lambda_{\text{excl}}$. La matriz de costos es</span>
+<span id="cb29-632"><a href="#cb29-632" aria-hidden="true" tabindex="-1"></a>En @sec-riesgo el costo de equivocarse se modela con la matriz $\lambda_{ik}$, que es el costo de tomar la acción $i$ cuando la clase verdadera es $k$, y la acción que se toma es la de menor riesgo según la @eq-riesgo. En la focalización el problema tiene $K = 2$ clases y dos acciones, por lo que la matriz general se reduce a cuatro entradas.</span>
 <span id="cb29-633"><a href="#cb29-633" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-634"><a href="#cb29-634" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-635"><a href="#cb29-635" aria-hidden="true" tabindex="-1"></a>\lambda = \begin{pmatrix}</span>
-<span id="cb29-636"><a href="#cb29-636" aria-hidden="true" tabindex="-1"></a>\lambda_{00} &amp; \lambda_{01} <span class="sc">\\</span></span>
-<span id="cb29-637"><a href="#cb29-637" aria-hidden="true" tabindex="-1"></a>\lambda_{10} &amp; \lambda_{11}</span>
-<span id="cb29-638"><a href="#cb29-638" aria-hidden="true" tabindex="-1"></a>\end{pmatrix} = \begin{pmatrix}</span>
-<span id="cb29-639"><a href="#cb29-639" aria-hidden="true" tabindex="-1"></a>0 &amp; \lambda_{\text{excl}} <span class="sc">\\</span></span>
-<span id="cb29-640"><a href="#cb29-640" aria-hidden="true" tabindex="-1"></a>\lambda_{\text{incl}} &amp; 0</span>
-<span id="cb29-641"><a href="#cb29-641" aria-hidden="true" tabindex="-1"></a>\end{pmatrix},</span>
-<span id="cb29-642"><a href="#cb29-642" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-643"><a href="#cb29-643" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-644"><a href="#cb29-644" aria-hidden="true" tabindex="-1"></a>donde el renglón es la acción y la columna la clase. Sea $p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)$. Con la definición de riesgo de la sección Riesgo,</span>
-<span id="cb29-645"><a href="#cb29-645" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-646"><a href="#cb29-646" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-647"><a href="#cb29-647" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb29-648"><a href="#cb29-648" aria-hidden="true" tabindex="-1"></a>R(\alpha_1 \mid x) &amp;= \lambda_{\text{incl}}\,(1 - p), <span class="sc">\\</span></span>
-<span id="cb29-649"><a href="#cb29-649" aria-hidden="true" tabindex="-1"></a>R(\alpha_0 \mid x) &amp;= \lambda_{\text{excl}}\,p,</span>
-<span id="cb29-650"><a href="#cb29-650" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb29-651"><a href="#cb29-651" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-634"><a href="#cb29-634" aria-hidden="true" tabindex="-1"></a>Las acciones son $\alpha_1$, incluir al hogar en el programa, y $\alpha_0$, excluirlo. Las clases son pobre ($\mathcal Y=1$) y no pobre ($\mathcal Y=0$). Las cuatro entradas de la matriz son las siguientes.</span>
+<span id="cb29-635"><a href="#cb29-635" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-636"><a href="#cb29-636" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\lambda_{11} = 0$, porque incluir a un hogar pobre es acertar.</span>
+<span id="cb29-637"><a href="#cb29-637" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\lambda_{00} = 0$, porque excluir a un hogar no pobre también es acertar.</span>
+<span id="cb29-638"><a href="#cb29-638" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\lambda_{10} = \lambda_{\text{incl}}$ es el costo de incluir a un hogar no pobre, el **error de inclusión** o filtración.</span>
+<span id="cb29-639"><a href="#cb29-639" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\lambda_{01} = \lambda_{\text{excl}}$ es el costo de excluir a un hogar pobre, el **error de exclusión**.</span>
+<span id="cb29-640"><a href="#cb29-640" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-641"><a href="#cb29-641" aria-hidden="true" tabindex="-1"></a>$\lambda_{\text{incl}}$ y $\lambda_{\text{excl}}$ son sólo nombres para esas dos entradas, elegidos para que la prosa no dependa del orden de los subíndices. A diferencia del costo $0/1$ de la @eq-costo-01, aquí los dos errores pueden costar distinto. La matriz de costos es</span>
+<span id="cb29-642"><a href="#cb29-642" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-643"><a href="#cb29-643" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-644"><a href="#cb29-644" aria-hidden="true" tabindex="-1"></a>\lambda = \begin{pmatrix}</span>
+<span id="cb29-645"><a href="#cb29-645" aria-hidden="true" tabindex="-1"></a>\lambda_{00} &amp; \lambda_{01} <span class="sc">\\</span></span>
+<span id="cb29-646"><a href="#cb29-646" aria-hidden="true" tabindex="-1"></a>\lambda_{10} &amp; \lambda_{11}</span>
+<span id="cb29-647"><a href="#cb29-647" aria-hidden="true" tabindex="-1"></a>\end{pmatrix} = \begin{pmatrix}</span>
+<span id="cb29-648"><a href="#cb29-648" aria-hidden="true" tabindex="-1"></a>0 &amp; \lambda_{\text{excl}} <span class="sc">\\</span></span>
+<span id="cb29-649"><a href="#cb29-649" aria-hidden="true" tabindex="-1"></a>\lambda_{\text{incl}} &amp; 0</span>
+<span id="cb29-650"><a href="#cb29-650" aria-hidden="true" tabindex="-1"></a>\end{pmatrix},</span>
+<span id="cb29-651"><a href="#cb29-651" aria-hidden="true" tabindex="-1"></a>$$ {#eq-matriz-costos-focalizacion}</span>
 <span id="cb29-652"><a href="#cb29-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-653"><a href="#cb29-653" aria-hidden="true" tabindex="-1"></a>y la acción de menor riesgo es incluir al hogar si y sólo si $\lambda_{\text{incl}}\,(1 - p) &lt; \lambda_{\text{excl}}\,p$, es decir,</span>
+<span id="cb29-653"><a href="#cb29-653" aria-hidden="true" tabindex="-1"></a>donde el renglón es la acción y la columna la clase. Sea $p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)$, de manera que $1 - p = \mathbb P(\mathcal Y=0 \mid \mathcal X=x)$. Desarrollando la suma de la @eq-riesgo para cada acción con las entradas de la @eq-matriz-costos-focalizacion se obtiene</span>
 <span id="cb29-654"><a href="#cb29-654" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-655"><a href="#cb29-655" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-656"><a href="#cb29-656" aria-hidden="true" tabindex="-1"></a>p &gt; \frac{\lambda_{\text{incl}}}{\lambda_{\text{incl}} + \lambda_{\text{excl}}}.</span>
-<span id="cb29-657"><a href="#cb29-657" aria-hidden="true" tabindex="-1"></a>$$ {#eq-umbral-costos}</span>
-<span id="cb29-658"><a href="#cb29-658" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-659"><a href="#cb29-659" aria-hidden="true" tabindex="-1"></a>Con el costo $0/1$, $\lambda_{\text{incl}} = \lambda_{\text{excl}} = 1$, el umbral es $1/2$, que es el que usa <span class="in">`predict`</span> y el que se usó en @sec-regresion-focalizacion. Si excluir a un hogar pobre es más grave que incluir a uno que no lo es, el umbral baja y el programa incluye a más hogares. El siguiente código usa los costos ilustrativos $\lambda_{\text{incl}} = 1$ y $\lambda_{\text{excl}} = 3$ (son unidades relativas, no pesos), calcula el umbral de la @eq-umbral-costos y compara la regla con umbral $0.5$ contra la regla con el umbral óptimo. Para cada regla se mide la cobertura, la precisión, el número de errores de inclusión y de exclusión y el **costo esperado** por hogar en el conjunto de prueba, que es el promedio de $\lambda_{\text{incl}}$ por cada inclusión indebida y $\lambda_{\text{excl}}$ por cada exclusión indebida.</span>
-<span id="cb29-660"><a href="#cb29-660" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-663"><a href="#cb29-663" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-664"><a href="#cb29-664" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb29-665"><a href="#cb29-665" aria-hidden="true" tabindex="-1"></a>L_INCL, L_EXCL <span class="op">=</span> <span class="dv">1</span>, <span class="dv">3</span></span>
-<span id="cb29-666"><a href="#cb29-666" aria-hidden="true" tabindex="-1"></a>umbral <span class="op">=</span> L_INCL <span class="op">/</span> (L_INCL <span class="op">+</span> L_EXCL)</span>
+<span id="cb29-656"><a href="#cb29-656" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb29-657"><a href="#cb29-657" aria-hidden="true" tabindex="-1"></a>R(\alpha_1 \mid x) &amp;= \lambda_{10}\,(1 - p) + \lambda_{11}\,p = \lambda_{\text{incl}}\,(1 - p) + 0 \cdot p = \lambda_{\text{incl}}\,(1 - p), <span class="sc">\\</span></span>
+<span id="cb29-658"><a href="#cb29-658" aria-hidden="true" tabindex="-1"></a>R(\alpha_0 \mid x) &amp;= \lambda_{00}\,(1 - p) + \lambda_{01}\,p = 0 \cdot (1 - p) + \lambda_{\text{excl}}\,p = \lambda_{\text{excl}}\,p.</span>
+<span id="cb29-659"><a href="#cb29-659" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb29-660"><a href="#cb29-660" aria-hidden="true" tabindex="-1"></a>$$ {#eq-riesgos-focalizacion}</span>
+<span id="cb29-661"><a href="#cb29-661" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-662"><a href="#cb29-662" aria-hidden="true" tabindex="-1"></a>El riesgo de incluir es el costo de una filtración por la probabilidad de que el hogar no sea pobre, y el riesgo de excluir es el costo de una exclusión por la probabilidad de que sí lo sea. Según la @eq-riesgos-focalizacion, la acción de menor riesgo es incluir al hogar si y sólo si $\lambda_{\text{incl}}\,(1 - p) &lt; \lambda_{\text{excl}}\,p$, es decir,</span>
+<span id="cb29-663"><a href="#cb29-663" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-664"><a href="#cb29-664" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-665"><a href="#cb29-665" aria-hidden="true" tabindex="-1"></a>p &gt; \frac{\lambda_{\text{incl}}}{\lambda_{\text{incl}} + \lambda_{\text{excl}}}.</span>
+<span id="cb29-666"><a href="#cb29-666" aria-hidden="true" tabindex="-1"></a>$$ {#eq-umbral-costos}</span>
 <span id="cb29-667"><a href="#cb29-667" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-668"><a href="#cb29-668" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-669"><a href="#cb29-669" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evalua(incluir):</span>
-<span id="cb29-670"><a href="#cb29-670" aria-hidden="true" tabindex="-1"></a>    aciertos <span class="op">=</span> (incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>()</span>
-<span id="cb29-671"><a href="#cb29-671" aria-hidden="true" tabindex="-1"></a>    inclusion <span class="op">=</span> <span class="bu">int</span>((incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">0</span>)).<span class="bu">sum</span>())</span>
-<span id="cb29-672"><a href="#cb29-672" aria-hidden="true" tabindex="-1"></a>    exclusion <span class="op">=</span> <span class="bu">int</span>((<span class="op">~</span>incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>())</span>
-<span id="cb29-673"><a href="#cb29-673" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">dict</span>(cobertura<span class="op">=</span>aciertos <span class="op">/</span> (yp_g <span class="op">==</span> <span class="dv">1</span>).<span class="bu">sum</span>(),</span>
-<span id="cb29-674"><a href="#cb29-674" aria-hidden="true" tabindex="-1"></a>                precision<span class="op">=</span>aciertos <span class="op">/</span> incluir.<span class="bu">sum</span>(),</span>
-<span id="cb29-675"><a href="#cb29-675" aria-hidden="true" tabindex="-1"></a>                inclusion<span class="op">=</span>inclusion, exclusion<span class="op">=</span>exclusion,</span>
-<span id="cb29-676"><a href="#cb29-676" aria-hidden="true" tabindex="-1"></a>                costo<span class="op">=</span>(L_INCL <span class="op">*</span> inclusion <span class="op">+</span> L_EXCL <span class="op">*</span> exclusion) <span class="op">/</span> <span class="bu">len</span>(incluir))</span>
+<span id="cb29-668"><a href="#cb29-668" aria-hidden="true" tabindex="-1"></a>Con el costo $0/1$, $\lambda_{\text{incl}} = \lambda_{\text{excl}} = 1$, el umbral es $1/2$, que corresponde a elegir la clase más probable como en la @eq-riesgo-01 y es el que usa <span class="in">`predict`</span> y el que se usó en @sec-regresion-focalizacion. Si excluir a un hogar pobre es más grave que incluir a uno que no lo es, el umbral baja y el programa incluye a más hogares. El siguiente código usa los costos ilustrativos $\lambda_{\text{incl}} = 1$ y $\lambda_{\text{excl}} = 3$ (son unidades relativas, no pesos), calcula el umbral de la @eq-umbral-costos y compara la regla con umbral $0.5$ contra la regla con el umbral óptimo. Para cada regla se mide la cobertura, la precisión, el número de errores de inclusión y de exclusión y el **costo esperado** por hogar en el conjunto de prueba, que es el promedio de $\lambda_{\text{incl}}$ por cada inclusión indebida y $\lambda_{\text{excl}}$ por cada exclusión indebida.</span>
+<span id="cb29-669"><a href="#cb29-669" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-672"><a href="#cb29-672" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-673"><a href="#cb29-673" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-674"><a href="#cb29-674" aria-hidden="true" tabindex="-1"></a>L_INCL, L_EXCL <span class="op">=</span> <span class="dv">1</span>, <span class="dv">3</span></span>
+<span id="cb29-675"><a href="#cb29-675" aria-hidden="true" tabindex="-1"></a>umbral <span class="op">=</span> L_INCL <span class="op">/</span> (L_INCL <span class="op">+</span> L_EXCL)</span>
+<span id="cb29-676"><a href="#cb29-676" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-677"><a href="#cb29-677" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-678"><a href="#cb29-678" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-679"><a href="#cb29-679" aria-hidden="true" tabindex="-1"></a>reglas <span class="op">=</span> pd.DataFrame([evalua(prob <span class="op">&gt;</span> <span class="fl">0.5</span>), evalua(prob <span class="op">&gt;</span> umbral)],</span>
-<span id="cb29-680"><a href="#cb29-680" aria-hidden="true" tabindex="-1"></a>                      index<span class="op">=</span>[<span class="st">'Umbral 0.5'</span>, <span class="st">'Umbral óptimo'</span>])</span>
-<span id="cb29-681"><a href="#cb29-681" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-682"><a href="#cb29-682" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-685"><a href="#cb29-685" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-686"><a href="#cb29-686" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb29-687"><a href="#cb29-687" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-costos-umbral</span></span>
-<span id="cb29-688"><a href="#cb29-688" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Cobertura, precisión, errores de inclusión y de exclusión y costo esperado por hogar en el conjunto de prueba con el umbral $0.5$ y con el umbral óptimo para $\lambda_{\text{incl}}=1$ y $\lambda_{\text{excl}}=3$.</span></span>
-<span id="cb29-689"><a href="#cb29-689" aria-hidden="true" tabindex="-1"></a>umbral_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>umbral<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-690"><a href="#cb29-690" aria-hidden="true" tabindex="-1"></a>r05, ropt <span class="op">=</span> reglas.iloc[<span class="dv">0</span>], reglas.iloc[<span class="dv">1</span>]</span>
-<span id="cb29-691"><a href="#cb29-691" aria-hidden="true" tabindex="-1"></a>cob05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>r05<span class="sc">.</span>cobertura<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-692"><a href="#cb29-692" aria-hidden="true" tabindex="-1"></a>cobopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ropt<span class="sc">.</span>cobertura<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-693"><a href="#cb29-693" aria-hidden="true" tabindex="-1"></a>prec05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>r05<span class="sc">.</span>precision<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-694"><a href="#cb29-694" aria-hidden="true" tabindex="-1"></a>precopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ropt<span class="sc">.</span>precision<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-695"><a href="#cb29-695" aria-hidden="true" tabindex="-1"></a>inc05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(r05.inclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-696"><a href="#cb29-696" aria-hidden="true" tabindex="-1"></a>incopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(ropt.inclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-697"><a href="#cb29-697" aria-hidden="true" tabindex="-1"></a>exc05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(r05.exclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-698"><a href="#cb29-698" aria-hidden="true" tabindex="-1"></a>excopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(ropt.exclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-699"><a href="#cb29-699" aria-hidden="true" tabindex="-1"></a>costo05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>r05<span class="sc">.</span>costo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-700"><a href="#cb29-700" aria-hidden="true" tabindex="-1"></a>costoopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ropt<span class="sc">.</span>costo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-701"><a href="#cb29-701" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(<span class="ss">f'|</span><span class="sc">{</span>nombre<span class="sc">}</span><span class="ss">|$</span><span class="sc">{</span>r<span class="sc">.</span>cobertura<span class="sc">:0.4f}</span><span class="ss">$|$</span><span class="sc">{</span>r<span class="sc">.</span>precision<span class="sc">:0.4f}</span><span class="ss">$|'</span></span>
-<span id="cb29-702"><a href="#cb29-702" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(r.inclusion)<span class="sc">}</span><span class="ss">$|$</span><span class="sc">{</span><span class="bu">int</span>(r.exclusion)<span class="sc">}</span><span class="ss">$|$</span><span class="sc">{</span>r<span class="sc">.</span>costo<span class="sc">:0.4f}</span><span class="ss">$|'</span></span>
-<span id="cb29-703"><a href="#cb29-703" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">for</span> nombre, r <span class="kw">in</span> reglas.iterrows())</span>
-<span id="cb29-704"><a href="#cb29-704" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="st">'|Regla|Cobertura|Precisión|Inclusión|Exclusión|Costo esperado|</span><span class="ch">\n</span><span class="st">'</span></span>
-<span id="cb29-705"><a href="#cb29-705" aria-hidden="true" tabindex="-1"></a>         <span class="st">'|---|---|---|---|---|---|</span><span class="ch">\n</span><span class="st">'</span> <span class="op">+</span> filas)</span>
-<span id="cb29-706"><a href="#cb29-706" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-707"><a href="#cb29-707" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-708"><a href="#cb29-708" aria-hidden="true" tabindex="-1"></a>El umbral óptimo es <span class="in">`{python} umbral_f`</span>. La @tbl-costos-umbral muestra el resultado. Con el umbral $0.5$ la cobertura es <span class="in">`{python} cob05_f`</span>, la precisión <span class="in">`{python} prec05_f`</span>, hay <span class="in">`{python} inc05_f`</span> errores de inclusión y <span class="in">`{python} exc05_f`</span> de exclusión, y el costo esperado es <span class="in">`{python} costo05_f`</span>. Con el umbral óptimo la cobertura sube a <span class="in">`{python} cobopt_f`</span> y la precisión baja a <span class="in">`{python} precopt_f`</span>; los errores de exclusión bajan a <span class="in">`{python} excopt_f`</span> a cambio de subir los de inclusión a <span class="in">`{python} incopt_f`</span>, y el costo esperado baja a <span class="in">`{python} costoopt_f`</span>. El modelo es el mismo en ambos casos; lo único que cambió es la decisión que se toma con sus probabilidades.</span>
-<span id="cb29-709"><a href="#cb29-709" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-712"><a href="#cb29-712" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-713"><a href="#cb29-713" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb29-714"><a href="#cb29-714" aria-hidden="true" tabindex="-1"></a>umbrales <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="dv">99</span>)</span>
-<span id="cb29-715"><a href="#cb29-715" aria-hidden="true" tabindex="-1"></a>costos <span class="op">=</span> [evalua(prob <span class="op">&gt;</span> u)[<span class="st">'costo'</span>] <span class="cf">for</span> u <span class="kw">in</span> umbrales]</span>
-<span id="cb29-716"><a href="#cb29-716" aria-hidden="true" tabindex="-1"></a>umbral_emp_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>umbrales[np.argmin(costos)]<span class="sc">:0.2f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-717"><a href="#cb29-717" aria-hidden="true" tabindex="-1"></a>costo_emp_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">min</span>(costos)<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-718"><a href="#cb29-718" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-719"><a href="#cb29-719" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-720"><a href="#cb29-720" aria-hidden="true" tabindex="-1"></a>La @fig-costo-umbral muestra el costo esperado en el conjunto de prueba para una malla de umbrales. El umbral con menor costo en la malla es <span class="in">`{python} umbral_emp_f`</span>, con un costo de <span class="in">`{python} costo_emp_f`</span>, y el umbral teórico es <span class="in">`{python} umbral_f`</span>. Ambos coinciden aproximadamente porque las probabilidades que estima el modelo son razonables; si no lo fueran, el umbral de la @eq-umbral-costos aplicado a <span class="in">`prob`</span> no sería el de menor costo. Además, la curva es plana cerca del mínimo, de manera que una diferencia pequeña en el umbral cambia poco el costo.</span>
-<span id="cb29-721"><a href="#cb29-721" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-724"><a href="#cb29-724" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-725"><a href="#cb29-725" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-costo-umbral</span></span>
-<span id="cb29-726"><a href="#cb29-726" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Costo esperado por hogar en el conjunto de prueba contra el umbral, con $\lambda_{\text{incl}}=1$ y $\lambda_{\text{excl}}=3$. La línea vertical es el umbral teórico.</span></span>
-<span id="cb29-727"><a href="#cb29-727" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb29-728"><a href="#cb29-728" aria-hidden="true" tabindex="-1"></a>umbrales <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="dv">99</span>)</span>
-<span id="cb29-729"><a href="#cb29-729" aria-hidden="true" tabindex="-1"></a>costos <span class="op">=</span> [evalua(prob <span class="op">&gt;</span> u)[<span class="st">'costo'</span>] <span class="cf">for</span> u <span class="kw">in</span> umbrales]</span>
-<span id="cb29-730"><a href="#cb29-730" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb29-731"><a href="#cb29-731" aria-hidden="true" tabindex="-1"></a>ax.plot(umbrales, costos, color<span class="op">=</span>PALETTE(<span class="dv">1</span>))</span>
-<span id="cb29-732"><a href="#cb29-732" aria-hidden="true" tabindex="-1"></a>ax.axvline(umbral, color<span class="op">=</span>PALETTE(<span class="dv">5</span>), linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Umbral teórico'</span>)</span>
-<span id="cb29-733"><a href="#cb29-733" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb29-734"><a href="#cb29-734" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Umbral'</span>, ylabel<span class="op">=</span><span class="st">'Costo esperado por hogar'</span>)</span>
-<span id="cb29-735"><a href="#cb29-735" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-736"><a href="#cb29-736" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-737"><a href="#cb29-737" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cobertura contra filtraciones {#sec-cobertura-filtraciones}</span></span>
-<span id="cb29-738"><a href="#cb29-738" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-739"><a href="#cb29-739" aria-hidden="true" tabindex="-1"></a>Cada umbral define un programa distinto. Para quien diseña el programa, las dos cifras que importan son la **cobertura** (*recall*), la proporción de hogares pobres que el programa alcanza, y las **filtraciones**, $1-$ precisión, la proporción de beneficiarios que no son pobres. La función <span class="in">`precision_recall_curve`</span> calcula ambas para todos los umbrales posibles, y la @fig-cobertura-filtraciones las grafica una contra la otra, marcando las dos reglas de la @tbl-costos-umbral.</span>
-<span id="cb29-740"><a href="#cb29-740" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-743"><a href="#cb29-743" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-744"><a href="#cb29-744" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cobertura-filtraciones</span></span>
-<span id="cb29-745"><a href="#cb29-745" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Cobertura contra filtraciones ($1-$ precisión) en el conjunto de prueba al variar el umbral. Los puntos son las reglas con umbral $0.5$ y con el umbral óptimo para $\lambda_{\text{incl}}=1$ y $\lambda_{\text{excl}}=3$.</span></span>
-<span id="cb29-746"><a href="#cb29-746" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb29-747"><a href="#cb29-747" aria-hidden="true" tabindex="-1"></a>prec, cob, _ <span class="op">=</span> precision_recall_curve(yp_g, prob)</span>
-<span id="cb29-748"><a href="#cb29-748" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb29-749"><a href="#cb29-749" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">1</span> <span class="op">-</span> prec, cob, color<span class="op">=</span>PALETTE(<span class="dv">1</span>))</span>
-<span id="cb29-750"><a href="#cb29-750" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> color, (nombre, r) <span class="kw">in</span> <span class="bu">zip</span>([PALETTE(<span class="dv">3</span>), PALETTE(<span class="dv">5</span>)], reglas.iterrows()):</span>
-<span id="cb29-751"><a href="#cb29-751" aria-hidden="true" tabindex="-1"></a>    ax.plot(<span class="dv">1</span> <span class="op">-</span> r.precision, r.cobertura, <span class="st">'o'</span>, color<span class="op">=</span>color, label<span class="op">=</span>nombre)</span>
-<span id="cb29-752"><a href="#cb29-752" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb29-753"><a href="#cb29-753" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Filtraciones ($1-$ precisión)'</span>, ylabel<span class="op">=</span><span class="st">'Cobertura'</span>)</span>
-<span id="cb29-754"><a href="#cb29-754" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-755"><a href="#cb29-755" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-756"><a href="#cb29-756" aria-hidden="true" tabindex="-1"></a>Cada punto de la curva es un programa posible, y la curva es el menú de opciones de quien diseña el programa. Bajar el umbral sube la cobertura y las filtraciones a la vez, y no hay un umbral que mejore ambas; la única manera de mover la curva hacia arriba y a la izquierda es con un mejor modelo o con mejores variables. La matriz de costos es la que elige un punto del menú. La curva ROC de @sec-roc-curve es la misma idea con la tasa de falsos positivos (la proporción de hogares no pobres que el programa incluye) en lugar de las filtraciones; aquí se prefieren las filtraciones porque es la cifra que ve directamente quien administra el padrón de beneficiarios.</span>
-<span id="cb29-757"><a href="#cb29-757" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-758"><a href="#cb29-758" aria-hidden="true" tabindex="-1"></a><span class="fu">### Restricción presupuestal {#sec-restriccion-presupuestal}</span></span>
-<span id="cb29-759"><a href="#cb29-759" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-760"><a href="#cb29-760" aria-hidden="true" tabindex="-1"></a>La regla de costos supone que el programa puede atender a todos los hogares que la cumplan. Con frecuencia el presupuesto fija el número de beneficiarios y entonces el umbral lo determina el cupo. Suponiendo que el programa puede atender al $30\%$ de los hogares del conjunto de prueba, el siguiente código los ordena de mayor a menor probabilidad de ser pobres, incluye a los primeros <span class="in">`k`</span> y calcula el umbral implícito, que es la probabilidad del último hogar incluido.</span>
-<span id="cb29-761"><a href="#cb29-761" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-764"><a href="#cb29-764" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-765"><a href="#cb29-765" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb29-766"><a href="#cb29-766" aria-hidden="true" tabindex="-1"></a>CUPO <span class="op">=</span> <span class="fl">0.30</span></span>
-<span id="cb29-767"><a href="#cb29-767" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="bu">int</span>(CUPO <span class="op">*</span> <span class="bu">len</span>(prob))</span>
-<span id="cb29-768"><a href="#cb29-768" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> np.argsort(<span class="op">-</span>prob)</span>
-<span id="cb29-769"><a href="#cb29-769" aria-hidden="true" tabindex="-1"></a>incluir_cupo <span class="op">=</span> np.zeros(<span class="bu">len</span>(prob), dtype<span class="op">=</span><span class="bu">bool</span>)</span>
-<span id="cb29-770"><a href="#cb29-770" aria-hidden="true" tabindex="-1"></a>incluir_cupo[orden[:k]] <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb29-771"><a href="#cb29-771" aria-hidden="true" tabindex="-1"></a>umbral_cupo <span class="op">=</span> prob[orden[k <span class="op">-</span> <span class="dv">1</span>]]</span>
-<span id="cb29-772"><a href="#cb29-772" aria-hidden="true" tabindex="-1"></a>cupo <span class="op">=</span> evalua(incluir_cupo)</span>
-<span id="cb29-773"><a href="#cb29-773" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-774"><a href="#cb29-774" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-777"><a href="#cb29-777" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-778"><a href="#cb29-778" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb29-779"><a href="#cb29-779" aria-hidden="true" tabindex="-1"></a>k_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-780"><a href="#cb29-780" aria-hidden="true" tabindex="-1"></a>umbral_cupo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>umbral_cupo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-781"><a href="#cb29-781" aria-hidden="true" tabindex="-1"></a>cob_cupo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>cupo[<span class="st">"cobertura"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-782"><a href="#cb29-782" aria-hidden="true" tabindex="-1"></a>filt_cupo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">1</span> <span class="op">-</span> cupo[<span class="st">"precision"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-783"><a href="#cb29-783" aria-hidden="true" tabindex="-1"></a>n_costos <span class="op">=</span> <span class="bu">int</span>((prob <span class="op">&gt;</span> umbral).<span class="bu">sum</span>())</span>
-<span id="cb29-784"><a href="#cb29-784" aria-hidden="true" tabindex="-1"></a>n_costos_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>n_costos<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-785"><a href="#cb29-785" aria-hidden="true" tabindex="-1"></a>comparacion_f <span class="op">=</span> Markdown(<span class="st">'más'</span> <span class="cf">if</span> n_costos <span class="op">&gt;</span> k <span class="cf">else</span> <span class="st">'menos'</span>)</span>
-<span id="cb29-786"><a href="#cb29-786" aria-hidden="true" tabindex="-1"></a>l_excl_impl_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>L_INCL <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> umbral_cupo) <span class="op">/</span> umbral_cupo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-787"><a href="#cb29-787" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-788"><a href="#cb29-788" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-789"><a href="#cb29-789" aria-hidden="true" tabindex="-1"></a>El cupo es de <span class="in">`{python} k_f`</span> hogares y el umbral implícito es <span class="in">`{python} umbral_cupo_f`</span>; la cobertura es <span class="in">`{python} cob_cupo_f`</span> y las filtraciones <span class="in">`{python} filt_cupo_f`</span>. La regla de costos de @sec-costos-inclusion-exclusion incluiría a <span class="in">`{python} n_costos_f`</span> hogares, <span class="in">`{python} comparacion_f`</span> de los que caben. Con un cupo fijo lo que importa es el **orden** de las probabilidades y no su valor, pues cualquier transformación creciente de <span class="in">`prob`</span> selecciona a los mismos hogares. Cuando la regla de costos incluye a más hogares de los que caben, el presupuesto manda, y el costo de exclusión que se acepta de manera implícita se lee del umbral implícito despejando $\lambda_{\text{excl}}$ de la @eq-umbral-costos, $\lambda_{\text{excl}} = \lambda_{\text{incl}}\,(1 - u)/u$, donde $u$ es el umbral. Con $\lambda_{\text{incl}} = 1$ el resultado es <span class="in">`{python} l_excl_impl_f`</span>; es decir, el presupuesto actúa como si excluir a un hogar pobre costara eso y no $3$. Hacer explícita esa cifra es una manera de discutir si el presupuesto es suficiente.</span>
-<span id="cb29-790"><a href="#cb29-790" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-791"><a href="#cb29-791" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verificación en campo {#sec-verificacion-campo}</span></span>
-<span id="cb29-792"><a href="#cb29-792" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-793"><a href="#cb29-793" aria-hidden="true" tabindex="-1"></a>La acción nula de @sec-seleccion-accion-nula tiene una lectura directa en la focalización. En lugar de decidir con el modelo, el hogar se envía a una **visita domiciliaria** que determina si es pobre. Suponiendo que la visita no se equivoca y que cuesta $\lambda_{\text{ver}}$ por hogar, la tercera acción, $\alpha_2$, tiene riesgo constante,</span>
-<span id="cb29-794"><a href="#cb29-794" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-795"><a href="#cb29-795" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-796"><a href="#cb29-796" aria-hidden="true" tabindex="-1"></a>R(\alpha_2 \mid x) = \lambda_{\text{ver}},</span>
-<span id="cb29-797"><a href="#cb29-797" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-798"><a href="#cb29-798" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-799"><a href="#cb29-799" aria-hidden="true" tabindex="-1"></a>exactamente como el riesgo $\lambda$ de la acción nula. El hogar se verifica cuando $\lambda_{\text{ver}} &lt; \min<span class="sc">\{</span>\lambda_{\text{incl}}\,(1-p),\ \lambda_{\text{excl}}\,p<span class="sc">\}</span>$, es decir, cuando</span>
-<span id="cb29-800"><a href="#cb29-800" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-801"><a href="#cb29-801" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-802"><a href="#cb29-802" aria-hidden="true" tabindex="-1"></a>\frac{\lambda_{\text{ver}}}{\lambda_{\text{excl}}} &lt; p &lt; 1 - \frac{\lambda_{\text{ver}}}{\lambda_{\text{incl}}};</span>
-<span id="cb29-803"><a href="#cb29-803" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb29-804"><a href="#cb29-804" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-805"><a href="#cb29-805" aria-hidden="true" tabindex="-1"></a>por arriba de la banda se incluye y por debajo se excluye sin visita. El siguiente código usa $\lambda_{\text{ver}} = 0.5$, la mitad del costo de una inclusión indebida, calcula la banda, la fracción de hogares que se envía a verificación y el costo esperado total, que suma el costo de las visitas al de los errores de los hogares decididos de manera automática.</span>
-<span id="cb29-806"><a href="#cb29-806" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-809"><a href="#cb29-809" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-810"><a href="#cb29-810" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb29-811"><a href="#cb29-811" aria-hidden="true" tabindex="-1"></a>L_VER <span class="op">=</span> <span class="fl">0.5</span></span>
-<span id="cb29-812"><a href="#cb29-812" aria-hidden="true" tabindex="-1"></a>banda <span class="op">=</span> (L_VER <span class="op">/</span> L_EXCL, <span class="dv">1</span> <span class="op">-</span> L_VER <span class="op">/</span> L_INCL)</span>
-<span id="cb29-813"><a href="#cb29-813" aria-hidden="true" tabindex="-1"></a>verificar <span class="op">=</span> (prob <span class="op">&gt;</span> banda[<span class="dv">0</span>]) <span class="op">&amp;</span> (prob <span class="op">&lt;</span> banda[<span class="dv">1</span>])</span>
-<span id="cb29-814"><a href="#cb29-814" aria-hidden="true" tabindex="-1"></a>incluir_v <span class="op">=</span> prob <span class="op">&gt;=</span> banda[<span class="dv">1</span>]</span>
-<span id="cb29-815"><a href="#cb29-815" aria-hidden="true" tabindex="-1"></a>inclusion_v <span class="op">=</span> <span class="bu">int</span>((incluir_v <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">0</span>)).<span class="bu">sum</span>())</span>
-<span id="cb29-816"><a href="#cb29-816" aria-hidden="true" tabindex="-1"></a>exclusion_v <span class="op">=</span> <span class="bu">int</span>((<span class="op">~</span>incluir_v <span class="op">&amp;</span> <span class="op">~</span>verificar <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>())</span>
-<span id="cb29-817"><a href="#cb29-817" aria-hidden="true" tabindex="-1"></a>costo_v <span class="op">=</span> (L_INCL <span class="op">*</span> inclusion_v <span class="op">+</span> L_EXCL <span class="op">*</span> exclusion_v</span>
-<span id="cb29-818"><a href="#cb29-818" aria-hidden="true" tabindex="-1"></a>           <span class="op">+</span> L_VER <span class="op">*</span> verificar.<span class="bu">sum</span>()) <span class="op">/</span> <span class="bu">len</span>(prob)</span>
-<span id="cb29-819"><a href="#cb29-819" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-820"><a href="#cb29-820" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-823"><a href="#cb29-823" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-824"><a href="#cb29-824" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb29-825"><a href="#cb29-825" aria-hidden="true" tabindex="-1"></a>banda_f <span class="op">=</span> Markdown(<span class="ss">f'$(</span><span class="sc">{</span>banda[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">, </span><span class="sc">{</span>banda[<span class="dv">1</span>]<span class="sc">:0.4f}</span><span class="ss">)$'</span>)</span>
-<span id="cb29-826"><a href="#cb29-826" aria-hidden="true" tabindex="-1"></a>frac_ver_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> verificar<span class="sc">.</span>mean()<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
-<span id="cb29-827"><a href="#cb29-827" aria-hidden="true" tabindex="-1"></a>n_ver_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(verificar.<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-828"><a href="#cb29-828" aria-hidden="true" tabindex="-1"></a>inc_v_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>inclusion_v<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-829"><a href="#cb29-829" aria-hidden="true" tabindex="-1"></a>exc_v_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>exclusion_v<span class="sc">}</span><span class="ss">$'</span>)</span>
-<span id="cb29-830"><a href="#cb29-830" aria-hidden="true" tabindex="-1"></a>costo_v_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>costo_v<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
-<span id="cb29-831"><a href="#cb29-831" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-832"><a href="#cb29-832" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-833"><a href="#cb29-833" aria-hidden="true" tabindex="-1"></a>La banda de verificación es <span class="in">`{python} banda_f`</span>, y en ella cae <span class="in">`{python} frac_ver_f`</span> de los hogares del conjunto de prueba (<span class="in">`{python} n_ver_f`</span> visitas). Entre los hogares decididos de manera automática hay <span class="in">`{python} inc_v_f`</span> errores de inclusión y <span class="in">`{python} exc_v_f`</span> de exclusión, y el costo esperado total por hogar, con las visitas incluidas, es <span class="in">`{python} costo_v_f`</span>, frente a <span class="in">`{python} costoopt_f`</span> de la regla de dos acciones de @sec-costos-inclusion-exclusion. La @fig-riesgo-tres-acciones muestra los tres riesgos como función de $p$ y las regiones donde cada acción es la de menor riesgo.</span>
-<span id="cb29-834"><a href="#cb29-834" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-837"><a href="#cb29-837" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-838"><a href="#cb29-838" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-riesgo-tres-acciones</span></span>
-<span id="cb29-839"><a href="#cb29-839" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Riesgo de incluir, excluir y verificar como función de $p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)$, con $\lambda_{\text{incl}}=1$, $\lambda_{\text{excl}}=3$ y $\lambda_{\text{ver}}=0.5$. El área sombreada indica la acción de menor riesgo.</span></span>
-<span id="cb29-840"><a href="#cb29-840" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb29-841"><a href="#cb29-841" aria-hidden="true" tabindex="-1"></a>ps <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">201</span>)</span>
-<span id="cb29-842"><a href="#cb29-842" aria-hidden="true" tabindex="-1"></a>riesgos <span class="op">=</span> np.c_[L_INCL <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> ps), L_EXCL <span class="op">*</span> ps, np.full_like(ps, L_VER)]</span>
-<span id="cb29-843"><a href="#cb29-843" aria-hidden="true" tabindex="-1"></a>mejor <span class="op">=</span> riesgos.argmin(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb29-844"><a href="#cb29-844" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb29-845"><a href="#cb29-845" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, nombre <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="st">'Incluir'</span>, <span class="st">'Excluir'</span>, <span class="st">'Verificar'</span>]):</span>
-<span id="cb29-846"><a href="#cb29-846" aria-hidden="true" tabindex="-1"></a>    ax.plot(ps, riesgos[:, i], color<span class="op">=</span>PALETTE(<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>), label<span class="op">=</span>nombre)</span>
-<span id="cb29-847"><a href="#cb29-847" aria-hidden="true" tabindex="-1"></a>    ax.fill_between(ps, <span class="dv">0</span>, riesgos.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">1</span>), where<span class="op">=</span>mejor <span class="op">==</span> i,</span>
-<span id="cb29-848"><a href="#cb29-848" aria-hidden="true" tabindex="-1"></a>                    color<span class="op">=</span>PALETTE(<span class="dv">2</span> <span class="op">*</span> i), alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
-<span id="cb29-849"><a href="#cb29-849" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb29-850"><a href="#cb29-850" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'$p$'</span>, ylabel<span class="op">=</span><span class="st">'Riesgo'</span>, ylim<span class="op">=</span>(<span class="dv">0</span>, <span class="fl">1.5</span>))</span>
-<span id="cb29-851"><a href="#cb29-851" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-852"><a href="#cb29-852" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-853"><a href="#cb29-853" aria-hidden="true" tabindex="-1"></a>La banda de verificación es la zona de incertidumbre del modelo, donde las probabilidades no son ni suficientemente altas para incluir ni suficientemente bajas para excluir. Su anchura depende de $\lambda_{\text{ver}}$, pues una visita más barata ensancha la banda y una más cara la angosta hasta desaparecer cuando $\lambda_{\text{ver}} \geq \lambda_{\text{incl}}\lambda_{\text{excl}}/(\lambda_{\text{incl}} + \lambda_{\text{excl}})$. Fijarla es, entonces, una decisión de presupuesto operativo. En la práctica las visitas también se equivocan y tienen costos que dependen del lugar del hogar, lo que vuelve más estrecha la ventaja de verificar; aquí se supuso una visita perfecta para mantener la equivalencia con la acción nula.</span>
-<span id="cb29-854"><a href="#cb29-854" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-855"><a href="#cb29-855" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
-<span id="cb29-856"><a href="#cb29-856" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
-<span id="cb29-857"><a href="#cb29-857" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-858"><a href="#cb29-858" aria-hidden="true" tabindex="-1"></a>a. Para el problema de tu *policy paper*, identifica las dos decisiones (por ejemplo, intervenir o no intervenir), escribe la matriz de costos con una línea de justificación por cada costo y calcula el umbral que implica la @eq-umbral-costos.</span>
-<span id="cb29-859"><a href="#cb29-859" aria-hidden="true" tabindex="-1"></a>b. Con el conjunto Pobreza y el modelo de @sec-decision-focalizacion-datos, varía el cociente $\lambda_{\text{excl}}/\lambda_{\text{incl}}$ en $<span class="sc">\{</span>1, 2, 3, 5, 10<span class="sc">\}</span>$, calcula en el conjunto de prueba la cobertura y las filtraciones con el umbral de la @eq-umbral-costos y grafícalas contra el cociente, como en la @fig-actividad-cociente-costos.</span>
-<span id="cb29-860"><a href="#cb29-860" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-863"><a href="#cb29-863" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb29-864"><a href="#cb29-864" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-actividad-cociente-costos</span></span>
-<span id="cb29-865"><a href="#cb29-865" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Cobertura y filtraciones en el conjunto de prueba contra el cociente $\lambda_{\text{excl}}/\lambda_{\text{incl}}$.</span></span>
-<span id="cb29-866"><a href="#cb29-866" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb29-867"><a href="#cb29-867" aria-hidden="true" tabindex="-1"></a>cocientes <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>]</span>
-<span id="cb29-868"><a href="#cb29-868" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> []</span>
-<span id="cb29-869"><a href="#cb29-869" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> cocientes:</span>
-<span id="cb29-870"><a href="#cb29-870" aria-hidden="true" tabindex="-1"></a>    incluir <span class="op">=</span> prob <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> c)</span>
-<span id="cb29-871"><a href="#cb29-871" aria-hidden="true" tabindex="-1"></a>    aciertos <span class="op">=</span> (incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>()</span>
-<span id="cb29-872"><a href="#cb29-872" aria-hidden="true" tabindex="-1"></a>    filas.append(<span class="bu">dict</span>(cociente<span class="op">=</span>c,</span>
-<span id="cb29-873"><a href="#cb29-873" aria-hidden="true" tabindex="-1"></a>                      cobertura<span class="op">=</span>aciertos <span class="op">/</span> (yp_g <span class="op">==</span> <span class="dv">1</span>).<span class="bu">sum</span>(),</span>
-<span id="cb29-874"><a href="#cb29-874" aria-hidden="true" tabindex="-1"></a>                      filtraciones<span class="op">=</span><span class="dv">1</span> <span class="op">-</span> aciertos <span class="op">/</span> incluir.<span class="bu">sum</span>()))</span>
-<span id="cb29-875"><a href="#cb29-875" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> pd.DataFrame(filas)</span>
-<span id="cb29-876"><a href="#cb29-876" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb29-877"><a href="#cb29-877" aria-hidden="true" tabindex="-1"></a>ax.plot(filas.cociente, filas.cobertura, marker<span class="op">=</span><span class="st">'o'</span>,</span>
-<span id="cb29-878"><a href="#cb29-878" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>PALETTE(<span class="dv">1</span>), label<span class="op">=</span><span class="st">'Cobertura'</span>)</span>
-<span id="cb29-879"><a href="#cb29-879" aria-hidden="true" tabindex="-1"></a>ax.plot(filas.cociente, filas.filtraciones, marker<span class="op">=</span><span class="st">'o'</span>,</span>
-<span id="cb29-880"><a href="#cb29-880" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>PALETTE(<span class="dv">5</span>), label<span class="op">=</span><span class="st">'Filtraciones'</span>)</span>
-<span id="cb29-881"><a href="#cb29-881" aria-hidden="true" tabindex="-1"></a>ax.set_xscale(<span class="st">'log'</span>)</span>
-<span id="cb29-882"><a href="#cb29-882" aria-hidden="true" tabindex="-1"></a>ax.minorticks_off()</span>
-<span id="cb29-883"><a href="#cb29-883" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(cocientes, [<span class="bu">str</span>(c) <span class="cf">for</span> c <span class="kw">in</span> cocientes])</span>
-<span id="cb29-884"><a href="#cb29-884" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb29-885"><a href="#cb29-885" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'$</span><span class="ch">\\</span><span class="st">lambda_{</span><span class="ch">\\</span><span class="st">text</span><span class="sc">{excl}</span><span class="st">}/</span><span class="ch">\\</span><span class="st">lambda_{</span><span class="ch">\\</span><span class="st">text</span><span class="sc">{incl}</span><span class="st">}$'</span>,</span>
-<span id="cb29-886"><a href="#cb29-886" aria-hidden="true" tabindex="-1"></a>           ylabel<span class="op">=</span><span class="st">'Medida en el conjunto de prueba'</span>)</span>
-<span id="cb29-887"><a href="#cb29-887" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb29-888"><a href="#cb29-888" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb29-889"><a href="#cb29-889" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-890"><a href="#cb29-890" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-teoria-decision}</span></span>
-<span id="cb29-891"><a href="#cb29-891" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-892"><a href="#cb29-892" aria-hidden="true" tabindex="-1"></a>La teoría de decisión bayesiana plantea el aprendizaje supervisado como un problema de probabilidad. El teorema de Bayes (@eq-teorema-bayes) permite calcular la probabilidad de cada clase dada la entrada, y seleccionar la clase más probable produce el clasificador de Bayes (@eq-clasificador-bayes). Su error, el error bayesiano (@sec-error-bayesiano), es la cota inferior de lo que cualquier algoritmo puede lograr con esas variables. Cuando los errores no cuestan lo mismo se utiliza el riesgo, y la acción nula permite abstenerse de decidir si la incertidumbre es alta (@sec-seleccion-accion-nula).</span>
-<span id="cb29-893"><a href="#cb29-893" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-894"><a href="#cb29-894" aria-hidden="true" tabindex="-1"></a>La sección de focalización (@sec-decision-focalizacion) aplicó el riesgo a una decisión real, a qué hogares incluir en un programa social. Con dos acciones el umbral óptimo depende sólo del cociente entre el costo de inclusión y el de exclusión (@sec-costos-inclusion-exclusion), y cada umbral es un punto de la curva de cobertura contra filtraciones (@sec-cobertura-filtraciones). Cuando el cupo es fijo, el umbral lo decide el presupuesto (@sec-restriccion-presupuestal), y la acción nula se convierte en la verificación en campo de los hogares sobre los que el modelo tiene más incertidumbre (@sec-verificacion-campo).</span>
-<span id="cb29-895"><a href="#cb29-895" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-896"><a href="#cb29-896" aria-hidden="true" tabindex="-1"></a>En este capítulo las distribuciones se tomaron como conocidas, y en un problema real hay que estimarlas a partir de los datos. Los métodos que suponen una forma para esas distribuciones y estiman sus parámetros se estudian en @sec-metodos-parametricos.</span>
+<span id="cb29-678"><a href="#cb29-678" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evalua(incluir):</span>
+<span id="cb29-679"><a href="#cb29-679" aria-hidden="true" tabindex="-1"></a>    aciertos <span class="op">=</span> (incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>()</span>
+<span id="cb29-680"><a href="#cb29-680" aria-hidden="true" tabindex="-1"></a>    inclusion <span class="op">=</span> <span class="bu">int</span>((incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">0</span>)).<span class="bu">sum</span>())</span>
+<span id="cb29-681"><a href="#cb29-681" aria-hidden="true" tabindex="-1"></a>    exclusion <span class="op">=</span> <span class="bu">int</span>((<span class="op">~</span>incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>())</span>
+<span id="cb29-682"><a href="#cb29-682" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">dict</span>(cobertura<span class="op">=</span>aciertos <span class="op">/</span> (yp_g <span class="op">==</span> <span class="dv">1</span>).<span class="bu">sum</span>(),</span>
+<span id="cb29-683"><a href="#cb29-683" aria-hidden="true" tabindex="-1"></a>                precision<span class="op">=</span>aciertos <span class="op">/</span> incluir.<span class="bu">sum</span>(),</span>
+<span id="cb29-684"><a href="#cb29-684" aria-hidden="true" tabindex="-1"></a>                inclusion<span class="op">=</span>inclusion, exclusion<span class="op">=</span>exclusion,</span>
+<span id="cb29-685"><a href="#cb29-685" aria-hidden="true" tabindex="-1"></a>                costo<span class="op">=</span>(L_INCL <span class="op">*</span> inclusion <span class="op">+</span> L_EXCL <span class="op">*</span> exclusion) <span class="op">/</span> <span class="bu">len</span>(incluir))</span>
+<span id="cb29-686"><a href="#cb29-686" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-687"><a href="#cb29-687" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-688"><a href="#cb29-688" aria-hidden="true" tabindex="-1"></a>reglas <span class="op">=</span> pd.DataFrame([evalua(prob <span class="op">&gt;</span> <span class="fl">0.5</span>), evalua(prob <span class="op">&gt;</span> umbral)],</span>
+<span id="cb29-689"><a href="#cb29-689" aria-hidden="true" tabindex="-1"></a>                      index<span class="op">=</span>[<span class="st">'Umbral 0.5'</span>, <span class="st">'Umbral óptimo'</span>])</span>
+<span id="cb29-690"><a href="#cb29-690" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-691"><a href="#cb29-691" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-694"><a href="#cb29-694" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-695"><a href="#cb29-695" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-696"><a href="#cb29-696" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-costos-umbral</span></span>
+<span id="cb29-697"><a href="#cb29-697" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Cobertura, precisión, errores de inclusión y de exclusión y costo esperado por hogar en el conjunto de prueba con el umbral $0.5$ y con el umbral óptimo para $\lambda_{\text{incl}}=1$ y $\lambda_{\text{excl}}=3$.</span></span>
+<span id="cb29-698"><a href="#cb29-698" aria-hidden="true" tabindex="-1"></a>umbral_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>umbral<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-699"><a href="#cb29-699" aria-hidden="true" tabindex="-1"></a>r05, ropt <span class="op">=</span> reglas.iloc[<span class="dv">0</span>], reglas.iloc[<span class="dv">1</span>]</span>
+<span id="cb29-700"><a href="#cb29-700" aria-hidden="true" tabindex="-1"></a>cob05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>r05<span class="sc">.</span>cobertura<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-701"><a href="#cb29-701" aria-hidden="true" tabindex="-1"></a>cobopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ropt<span class="sc">.</span>cobertura<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-702"><a href="#cb29-702" aria-hidden="true" tabindex="-1"></a>prec05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>r05<span class="sc">.</span>precision<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-703"><a href="#cb29-703" aria-hidden="true" tabindex="-1"></a>precopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ropt<span class="sc">.</span>precision<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-704"><a href="#cb29-704" aria-hidden="true" tabindex="-1"></a>inc05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(r05.inclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-705"><a href="#cb29-705" aria-hidden="true" tabindex="-1"></a>incopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(ropt.inclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-706"><a href="#cb29-706" aria-hidden="true" tabindex="-1"></a>exc05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(r05.exclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-707"><a href="#cb29-707" aria-hidden="true" tabindex="-1"></a>excopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(ropt.exclusion)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-708"><a href="#cb29-708" aria-hidden="true" tabindex="-1"></a>costo05_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>r05<span class="sc">.</span>costo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-709"><a href="#cb29-709" aria-hidden="true" tabindex="-1"></a>costoopt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ropt<span class="sc">.</span>costo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-710"><a href="#cb29-710" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(<span class="ss">f'|</span><span class="sc">{</span>nombre<span class="sc">}</span><span class="ss">|$</span><span class="sc">{</span>r<span class="sc">.</span>cobertura<span class="sc">:0.4f}</span><span class="ss">$|$</span><span class="sc">{</span>r<span class="sc">.</span>precision<span class="sc">:0.4f}</span><span class="ss">$|'</span></span>
+<span id="cb29-711"><a href="#cb29-711" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(r.inclusion)<span class="sc">}</span><span class="ss">$|$</span><span class="sc">{</span><span class="bu">int</span>(r.exclusion)<span class="sc">}</span><span class="ss">$|$</span><span class="sc">{</span>r<span class="sc">.</span>costo<span class="sc">:0.4f}</span><span class="ss">$|'</span></span>
+<span id="cb29-712"><a href="#cb29-712" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">for</span> nombre, r <span class="kw">in</span> reglas.iterrows())</span>
+<span id="cb29-713"><a href="#cb29-713" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="st">'|Regla|Cobertura|Precisión|Inclusión|Exclusión|Costo esperado|</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb29-714"><a href="#cb29-714" aria-hidden="true" tabindex="-1"></a>         <span class="st">'|---|---|---|---|---|---|</span><span class="ch">\n</span><span class="st">'</span> <span class="op">+</span> filas)</span>
+<span id="cb29-715"><a href="#cb29-715" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-716"><a href="#cb29-716" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-717"><a href="#cb29-717" aria-hidden="true" tabindex="-1"></a>El umbral óptimo es <span class="in">`{python} umbral_f`</span>. La @tbl-costos-umbral muestra el resultado. Con el umbral $0.5$ la cobertura es <span class="in">`{python} cob05_f`</span>, la precisión <span class="in">`{python} prec05_f`</span>, hay <span class="in">`{python} inc05_f`</span> errores de inclusión y <span class="in">`{python} exc05_f`</span> de exclusión, y el costo esperado es <span class="in">`{python} costo05_f`</span>. Con el umbral óptimo la cobertura sube a <span class="in">`{python} cobopt_f`</span> y la precisión baja a <span class="in">`{python} precopt_f`</span>; los errores de exclusión bajan a <span class="in">`{python} excopt_f`</span> a cambio de subir los de inclusión a <span class="in">`{python} incopt_f`</span>, y el costo esperado baja a <span class="in">`{python} costoopt_f`</span>. El modelo es el mismo en ambos casos; lo único que cambió es la decisión que se toma con sus probabilidades.</span>
+<span id="cb29-718"><a href="#cb29-718" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-721"><a href="#cb29-721" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-722"><a href="#cb29-722" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-723"><a href="#cb29-723" aria-hidden="true" tabindex="-1"></a>umbrales <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="dv">99</span>)</span>
+<span id="cb29-724"><a href="#cb29-724" aria-hidden="true" tabindex="-1"></a>costos <span class="op">=</span> [evalua(prob <span class="op">&gt;</span> u)[<span class="st">'costo'</span>] <span class="cf">for</span> u <span class="kw">in</span> umbrales]</span>
+<span id="cb29-725"><a href="#cb29-725" aria-hidden="true" tabindex="-1"></a>umbral_emp_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>umbrales[np.argmin(costos)]<span class="sc">:0.2f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-726"><a href="#cb29-726" aria-hidden="true" tabindex="-1"></a>costo_emp_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">min</span>(costos)<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-727"><a href="#cb29-727" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-728"><a href="#cb29-728" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-729"><a href="#cb29-729" aria-hidden="true" tabindex="-1"></a>La @fig-costo-umbral muestra el costo esperado en el conjunto de prueba para una malla de umbrales. El umbral con menor costo en la malla es <span class="in">`{python} umbral_emp_f`</span>, con un costo de <span class="in">`{python} costo_emp_f`</span>, y el umbral teórico es <span class="in">`{python} umbral_f`</span>. Ambos coinciden aproximadamente porque las probabilidades que estima el modelo son razonables; si no lo fueran, el umbral de la @eq-umbral-costos aplicado a <span class="in">`prob`</span> no sería el de menor costo. Además, la curva es plana cerca del mínimo, de manera que una diferencia pequeña en el umbral cambia poco el costo.</span>
+<span id="cb29-730"><a href="#cb29-730" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-733"><a href="#cb29-733" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-734"><a href="#cb29-734" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-costo-umbral</span></span>
+<span id="cb29-735"><a href="#cb29-735" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Costo esperado por hogar en el conjunto de prueba contra el umbral, con $\lambda_{\text{incl}}=1$ y $\lambda_{\text{excl}}=3$. La línea vertical es el umbral teórico.</span></span>
+<span id="cb29-736"><a href="#cb29-736" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-737"><a href="#cb29-737" aria-hidden="true" tabindex="-1"></a>umbrales <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="dv">99</span>)</span>
+<span id="cb29-738"><a href="#cb29-738" aria-hidden="true" tabindex="-1"></a>costos <span class="op">=</span> [evalua(prob <span class="op">&gt;</span> u)[<span class="st">'costo'</span>] <span class="cf">for</span> u <span class="kw">in</span> umbrales]</span>
+<span id="cb29-739"><a href="#cb29-739" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb29-740"><a href="#cb29-740" aria-hidden="true" tabindex="-1"></a>ax.plot(umbrales, costos, color<span class="op">=</span>PALETTE(<span class="dv">1</span>))</span>
+<span id="cb29-741"><a href="#cb29-741" aria-hidden="true" tabindex="-1"></a>ax.axvline(umbral, color<span class="op">=</span>PALETTE(<span class="dv">5</span>), linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Umbral teórico'</span>)</span>
+<span id="cb29-742"><a href="#cb29-742" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb29-743"><a href="#cb29-743" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Umbral'</span>, ylabel<span class="op">=</span><span class="st">'Costo esperado por hogar'</span>)</span>
+<span id="cb29-744"><a href="#cb29-744" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-745"><a href="#cb29-745" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-746"><a href="#cb29-746" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cobertura contra filtraciones {#sec-cobertura-filtraciones}</span></span>
+<span id="cb29-747"><a href="#cb29-747" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-748"><a href="#cb29-748" aria-hidden="true" tabindex="-1"></a>Cada umbral define un programa distinto. Para quien diseña el programa, las dos cifras que importan son la **cobertura** (*recall*), la proporción de hogares pobres que el programa alcanza, y las **filtraciones**, $1-$ precisión, la proporción de beneficiarios que no son pobres. La función <span class="in">`precision_recall_curve`</span> calcula ambas para todos los umbrales posibles, y la @fig-cobertura-filtraciones las grafica una contra la otra, marcando las dos reglas de la @tbl-costos-umbral.</span>
+<span id="cb29-749"><a href="#cb29-749" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-752"><a href="#cb29-752" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-753"><a href="#cb29-753" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cobertura-filtraciones</span></span>
+<span id="cb29-754"><a href="#cb29-754" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Cobertura contra filtraciones ($1-$ precisión) en el conjunto de prueba al variar el umbral. Los puntos son las reglas con umbral $0.5$ y con el umbral óptimo para $\lambda_{\text{incl}}=1$ y $\lambda_{\text{excl}}=3$.</span></span>
+<span id="cb29-755"><a href="#cb29-755" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-756"><a href="#cb29-756" aria-hidden="true" tabindex="-1"></a>prec, cob, _ <span class="op">=</span> precision_recall_curve(yp_g, prob)</span>
+<span id="cb29-757"><a href="#cb29-757" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb29-758"><a href="#cb29-758" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">1</span> <span class="op">-</span> prec, cob, color<span class="op">=</span>PALETTE(<span class="dv">1</span>))</span>
+<span id="cb29-759"><a href="#cb29-759" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> color, (nombre, r) <span class="kw">in</span> <span class="bu">zip</span>([PALETTE(<span class="dv">3</span>), PALETTE(<span class="dv">5</span>)], reglas.iterrows()):</span>
+<span id="cb29-760"><a href="#cb29-760" aria-hidden="true" tabindex="-1"></a>    ax.plot(<span class="dv">1</span> <span class="op">-</span> r.precision, r.cobertura, <span class="st">'o'</span>, color<span class="op">=</span>color, label<span class="op">=</span>nombre)</span>
+<span id="cb29-761"><a href="#cb29-761" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb29-762"><a href="#cb29-762" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Filtraciones ($1-$ precisión)'</span>, ylabel<span class="op">=</span><span class="st">'Cobertura'</span>)</span>
+<span id="cb29-763"><a href="#cb29-763" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-764"><a href="#cb29-764" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-765"><a href="#cb29-765" aria-hidden="true" tabindex="-1"></a>Cada punto de la curva es un programa posible, y la curva es el menú de opciones de quien diseña el programa. Bajar el umbral sube la cobertura y las filtraciones a la vez, y no hay un umbral que mejore ambas; la única manera de mover la curva hacia arriba y a la izquierda es con un mejor modelo o con mejores variables. La matriz de costos es la que elige un punto del menú. La curva ROC de @sec-roc-curve es la misma idea con la tasa de falsos positivos (la proporción de hogares no pobres que el programa incluye) en lugar de las filtraciones; aquí se prefieren las filtraciones porque es la cifra que ve directamente quien administra el padrón de beneficiarios.</span>
+<span id="cb29-766"><a href="#cb29-766" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-767"><a href="#cb29-767" aria-hidden="true" tabindex="-1"></a><span class="fu">### Restricción presupuestal {#sec-restriccion-presupuestal}</span></span>
+<span id="cb29-768"><a href="#cb29-768" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-769"><a href="#cb29-769" aria-hidden="true" tabindex="-1"></a>La regla de costos supone que el programa puede atender a todos los hogares que la cumplan. Con frecuencia el presupuesto fija el número de beneficiarios y entonces el umbral lo determina el cupo. Suponiendo que el programa puede atender al $30\%$ de los hogares del conjunto de prueba, el siguiente código los ordena de mayor a menor probabilidad de ser pobres, incluye a los primeros <span class="in">`k`</span> y calcula el umbral implícito, que es la probabilidad del último hogar incluido.</span>
+<span id="cb29-770"><a href="#cb29-770" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-773"><a href="#cb29-773" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-774"><a href="#cb29-774" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-775"><a href="#cb29-775" aria-hidden="true" tabindex="-1"></a>CUPO <span class="op">=</span> <span class="fl">0.30</span></span>
+<span id="cb29-776"><a href="#cb29-776" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="bu">int</span>(CUPO <span class="op">*</span> <span class="bu">len</span>(prob))</span>
+<span id="cb29-777"><a href="#cb29-777" aria-hidden="true" tabindex="-1"></a>orden <span class="op">=</span> np.argsort(<span class="op">-</span>prob)</span>
+<span id="cb29-778"><a href="#cb29-778" aria-hidden="true" tabindex="-1"></a>incluir_cupo <span class="op">=</span> np.zeros(<span class="bu">len</span>(prob), dtype<span class="op">=</span><span class="bu">bool</span>)</span>
+<span id="cb29-779"><a href="#cb29-779" aria-hidden="true" tabindex="-1"></a>incluir_cupo[orden[:k]] <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb29-780"><a href="#cb29-780" aria-hidden="true" tabindex="-1"></a>umbral_cupo <span class="op">=</span> prob[orden[k <span class="op">-</span> <span class="dv">1</span>]]</span>
+<span id="cb29-781"><a href="#cb29-781" aria-hidden="true" tabindex="-1"></a>cupo <span class="op">=</span> evalua(incluir_cupo)</span>
+<span id="cb29-782"><a href="#cb29-782" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-783"><a href="#cb29-783" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-786"><a href="#cb29-786" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-787"><a href="#cb29-787" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-788"><a href="#cb29-788" aria-hidden="true" tabindex="-1"></a>k_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-789"><a href="#cb29-789" aria-hidden="true" tabindex="-1"></a>umbral_cupo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>umbral_cupo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-790"><a href="#cb29-790" aria-hidden="true" tabindex="-1"></a>cob_cupo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>cupo[<span class="st">"cobertura"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-791"><a href="#cb29-791" aria-hidden="true" tabindex="-1"></a>filt_cupo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">1</span> <span class="op">-</span> cupo[<span class="st">"precision"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-792"><a href="#cb29-792" aria-hidden="true" tabindex="-1"></a>n_costos <span class="op">=</span> <span class="bu">int</span>((prob <span class="op">&gt;</span> umbral).<span class="bu">sum</span>())</span>
+<span id="cb29-793"><a href="#cb29-793" aria-hidden="true" tabindex="-1"></a>n_costos_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>n_costos<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-794"><a href="#cb29-794" aria-hidden="true" tabindex="-1"></a>comparacion_f <span class="op">=</span> Markdown(<span class="st">'más'</span> <span class="cf">if</span> n_costos <span class="op">&gt;</span> k <span class="cf">else</span> <span class="st">'menos'</span>)</span>
+<span id="cb29-795"><a href="#cb29-795" aria-hidden="true" tabindex="-1"></a>l_excl_impl_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>L_INCL <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> umbral_cupo) <span class="op">/</span> umbral_cupo<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-796"><a href="#cb29-796" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-797"><a href="#cb29-797" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-798"><a href="#cb29-798" aria-hidden="true" tabindex="-1"></a>El cupo es de <span class="in">`{python} k_f`</span> hogares y el umbral implícito es <span class="in">`{python} umbral_cupo_f`</span>; la cobertura es <span class="in">`{python} cob_cupo_f`</span> y las filtraciones <span class="in">`{python} filt_cupo_f`</span>. La regla de costos de @sec-costos-inclusion-exclusion incluiría a <span class="in">`{python} n_costos_f`</span> hogares, <span class="in">`{python} comparacion_f`</span> de los que caben. Con un cupo fijo lo que importa es el **orden** de las probabilidades y no su valor, pues cualquier transformación creciente de <span class="in">`prob`</span> selecciona a los mismos hogares. Cuando la regla de costos incluye a más hogares de los que caben, el presupuesto manda, y el costo de exclusión que se acepta de manera implícita se lee del umbral implícito despejando $\lambda_{\text{excl}}$ de la @eq-umbral-costos, $\lambda_{\text{excl}} = \lambda_{\text{incl}}\,(1 - u)/u$, donde $u$ es el umbral. Con $\lambda_{\text{incl}} = 1$ el resultado es <span class="in">`{python} l_excl_impl_f`</span>; es decir, el presupuesto actúa como si excluir a un hogar pobre costara eso y no $3$. Hacer explícita esa cifra es una manera de discutir si el presupuesto es suficiente.</span>
+<span id="cb29-799"><a href="#cb29-799" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-800"><a href="#cb29-800" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verificación en campo {#sec-verificacion-campo}</span></span>
+<span id="cb29-801"><a href="#cb29-801" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-802"><a href="#cb29-802" aria-hidden="true" tabindex="-1"></a>La acción nula de @sec-seleccion-accion-nula tiene una lectura directa en la focalización. En lugar de decidir con el modelo, el hogar se envía a una **visita domiciliaria** que determina si es pobre. Suponiendo que la visita no se equivoca y que cuesta $\lambda_{\text{ver}}$ por hogar, la tercera acción, $\alpha_2$, tiene riesgo constante,</span>
+<span id="cb29-803"><a href="#cb29-803" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-804"><a href="#cb29-804" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-805"><a href="#cb29-805" aria-hidden="true" tabindex="-1"></a>R(\alpha_2 \mid x) = \lambda_{\text{ver}},</span>
+<span id="cb29-806"><a href="#cb29-806" aria-hidden="true" tabindex="-1"></a>$$ {#eq-riesgo-verificacion}</span>
+<span id="cb29-807"><a href="#cb29-807" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-808"><a href="#cb29-808" aria-hidden="true" tabindex="-1"></a>exactamente como el riesgo de la acción nula en la @eq-riesgo-accion-nula, que con el costo de la @eq-costo-accion-nula es igual a $\lambda$. El hogar se verifica cuando $\lambda_{\text{ver}} &lt; \min<span class="sc">\{</span>\lambda_{\text{incl}}\,(1-p),\ \lambda_{\text{excl}}\,p<span class="sc">\}</span>$, es decir, cuando</span>
+<span id="cb29-809"><a href="#cb29-809" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-810"><a href="#cb29-810" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb29-811"><a href="#cb29-811" aria-hidden="true" tabindex="-1"></a>\frac{\lambda_{\text{ver}}}{\lambda_{\text{excl}}} &lt; p &lt; 1 - \frac{\lambda_{\text{ver}}}{\lambda_{\text{incl}}};</span>
+<span id="cb29-812"><a href="#cb29-812" aria-hidden="true" tabindex="-1"></a>$$ {#eq-banda-verificacion}</span>
+<span id="cb29-813"><a href="#cb29-813" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-814"><a href="#cb29-814" aria-hidden="true" tabindex="-1"></a>por arriba de la banda se incluye y por debajo se excluye sin visita. El siguiente código usa $\lambda_{\text{ver}} = 0.5$, la mitad del costo de una inclusión indebida, calcula la banda, la fracción de hogares que se envía a verificación y el costo esperado total, que suma el costo de las visitas al de los errores de los hogares decididos de manera automática.</span>
+<span id="cb29-815"><a href="#cb29-815" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-818"><a href="#cb29-818" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-819"><a href="#cb29-819" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb29-820"><a href="#cb29-820" aria-hidden="true" tabindex="-1"></a>L_VER <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb29-821"><a href="#cb29-821" aria-hidden="true" tabindex="-1"></a>banda <span class="op">=</span> (L_VER <span class="op">/</span> L_EXCL, <span class="dv">1</span> <span class="op">-</span> L_VER <span class="op">/</span> L_INCL)</span>
+<span id="cb29-822"><a href="#cb29-822" aria-hidden="true" tabindex="-1"></a>verificar <span class="op">=</span> (prob <span class="op">&gt;</span> banda[<span class="dv">0</span>]) <span class="op">&amp;</span> (prob <span class="op">&lt;</span> banda[<span class="dv">1</span>])</span>
+<span id="cb29-823"><a href="#cb29-823" aria-hidden="true" tabindex="-1"></a>incluir_v <span class="op">=</span> prob <span class="op">&gt;=</span> banda[<span class="dv">1</span>]</span>
+<span id="cb29-824"><a href="#cb29-824" aria-hidden="true" tabindex="-1"></a>inclusion_v <span class="op">=</span> <span class="bu">int</span>((incluir_v <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">0</span>)).<span class="bu">sum</span>())</span>
+<span id="cb29-825"><a href="#cb29-825" aria-hidden="true" tabindex="-1"></a>exclusion_v <span class="op">=</span> <span class="bu">int</span>((<span class="op">~</span>incluir_v <span class="op">&amp;</span> <span class="op">~</span>verificar <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>())</span>
+<span id="cb29-826"><a href="#cb29-826" aria-hidden="true" tabindex="-1"></a>costo_v <span class="op">=</span> (L_INCL <span class="op">*</span> inclusion_v <span class="op">+</span> L_EXCL <span class="op">*</span> exclusion_v</span>
+<span id="cb29-827"><a href="#cb29-827" aria-hidden="true" tabindex="-1"></a>           <span class="op">+</span> L_VER <span class="op">*</span> verificar.<span class="bu">sum</span>()) <span class="op">/</span> <span class="bu">len</span>(prob)</span>
+<span id="cb29-828"><a href="#cb29-828" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-829"><a href="#cb29-829" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-832"><a href="#cb29-832" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-833"><a href="#cb29-833" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-834"><a href="#cb29-834" aria-hidden="true" tabindex="-1"></a>banda_f <span class="op">=</span> Markdown(<span class="ss">f'$(</span><span class="sc">{</span>banda[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">, </span><span class="sc">{</span>banda[<span class="dv">1</span>]<span class="sc">:0.4f}</span><span class="ss">)$'</span>)</span>
+<span id="cb29-835"><a href="#cb29-835" aria-hidden="true" tabindex="-1"></a>frac_ver_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> verificar<span class="sc">.</span>mean()<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
+<span id="cb29-836"><a href="#cb29-836" aria-hidden="true" tabindex="-1"></a>n_ver_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(verificar.<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-837"><a href="#cb29-837" aria-hidden="true" tabindex="-1"></a>inc_v_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>inclusion_v<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-838"><a href="#cb29-838" aria-hidden="true" tabindex="-1"></a>exc_v_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>exclusion_v<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb29-839"><a href="#cb29-839" aria-hidden="true" tabindex="-1"></a>costo_v_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>costo_v<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb29-840"><a href="#cb29-840" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-841"><a href="#cb29-841" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-842"><a href="#cb29-842" aria-hidden="true" tabindex="-1"></a>La banda de verificación es <span class="in">`{python} banda_f`</span>, y en ella cae <span class="in">`{python} frac_ver_f`</span> de los hogares del conjunto de prueba (<span class="in">`{python} n_ver_f`</span> visitas). Entre los hogares decididos de manera automática hay <span class="in">`{python} inc_v_f`</span> errores de inclusión y <span class="in">`{python} exc_v_f`</span> de exclusión, y el costo esperado total por hogar, con las visitas incluidas, es <span class="in">`{python} costo_v_f`</span>, frente a <span class="in">`{python} costoopt_f`</span> de la regla de dos acciones de @sec-costos-inclusion-exclusion. La @fig-riesgo-tres-acciones muestra los tres riesgos como función de $p$ y las regiones donde cada acción es la de menor riesgo.</span>
+<span id="cb29-843"><a href="#cb29-843" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-846"><a href="#cb29-846" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-847"><a href="#cb29-847" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-riesgo-tres-acciones</span></span>
+<span id="cb29-848"><a href="#cb29-848" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Riesgo de incluir, excluir y verificar como función de $p = \mathbb P(\mathcal Y=1 \mid \mathcal X=x)$, con $\lambda_{\text{incl}}=1$, $\lambda_{\text{excl}}=3$ y $\lambda_{\text{ver}}=0.5$. El área sombreada indica la acción de menor riesgo.</span></span>
+<span id="cb29-849"><a href="#cb29-849" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb29-850"><a href="#cb29-850" aria-hidden="true" tabindex="-1"></a>ps <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">201</span>)</span>
+<span id="cb29-851"><a href="#cb29-851" aria-hidden="true" tabindex="-1"></a>riesgos <span class="op">=</span> np.c_[L_INCL <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> ps), L_EXCL <span class="op">*</span> ps, np.full_like(ps, L_VER)]</span>
+<span id="cb29-852"><a href="#cb29-852" aria-hidden="true" tabindex="-1"></a>mejor <span class="op">=</span> riesgos.argmin(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb29-853"><a href="#cb29-853" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb29-854"><a href="#cb29-854" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, nombre <span class="kw">in</span> <span class="bu">enumerate</span>([<span class="st">'Incluir'</span>, <span class="st">'Excluir'</span>, <span class="st">'Verificar'</span>]):</span>
+<span id="cb29-855"><a href="#cb29-855" aria-hidden="true" tabindex="-1"></a>    ax.plot(ps, riesgos[:, i], color<span class="op">=</span>PALETTE(<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>), label<span class="op">=</span>nombre)</span>
+<span id="cb29-856"><a href="#cb29-856" aria-hidden="true" tabindex="-1"></a>    ax.fill_between(ps, <span class="dv">0</span>, riesgos.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">1</span>), where<span class="op">=</span>mejor <span class="op">==</span> i,</span>
+<span id="cb29-857"><a href="#cb29-857" aria-hidden="true" tabindex="-1"></a>                    color<span class="op">=</span>PALETTE(<span class="dv">2</span> <span class="op">*</span> i), alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb29-858"><a href="#cb29-858" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb29-859"><a href="#cb29-859" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'$p$'</span>, ylabel<span class="op">=</span><span class="st">'Riesgo'</span>, ylim<span class="op">=</span>(<span class="dv">0</span>, <span class="fl">1.5</span>))</span>
+<span id="cb29-860"><a href="#cb29-860" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-861"><a href="#cb29-861" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-862"><a href="#cb29-862" aria-hidden="true" tabindex="-1"></a>La banda de verificación es la zona de incertidumbre del modelo, donde las probabilidades no son ni suficientemente altas para incluir ni suficientemente bajas para excluir. Su anchura depende de $\lambda_{\text{ver}}$, pues una visita más barata ensancha la banda y una más cara la angosta hasta desaparecer cuando $\lambda_{\text{ver}} \geq \lambda_{\text{incl}}\lambda_{\text{excl}}/(\lambda_{\text{incl}} + \lambda_{\text{excl}})$. Fijarla es, entonces, una decisión de presupuesto operativo. En la práctica las visitas también se equivocan y tienen costos que dependen del lugar del hogar, lo que vuelve más estrecha la ventaja de verificar; aquí se supuso una visita perfecta para mantener la equivalencia con la acción nula.</span>
+<span id="cb29-863"><a href="#cb29-863" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-864"><a href="#cb29-864" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb29-865"><a href="#cb29-865" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb29-866"><a href="#cb29-866" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-867"><a href="#cb29-867" aria-hidden="true" tabindex="-1"></a>a. Para el problema de tu *policy paper*, identifica las dos decisiones (por ejemplo, intervenir o no intervenir), escribe la matriz de costos con una línea de justificación por cada costo y calcula el umbral que implica la @eq-umbral-costos.</span>
+<span id="cb29-868"><a href="#cb29-868" aria-hidden="true" tabindex="-1"></a>b. Con el conjunto Pobreza y el modelo de @sec-decision-focalizacion-datos, varía el cociente $\lambda_{\text{excl}}/\lambda_{\text{incl}}$ en $<span class="sc">\{</span>1, 2, 3, 5, 10<span class="sc">\}</span>$, calcula en el conjunto de prueba la cobertura y las filtraciones con el umbral de la @eq-umbral-costos y grafícalas contra el cociente, como en la @fig-actividad-cociente-costos.</span>
+<span id="cb29-869"><a href="#cb29-869" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-872"><a href="#cb29-872" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb29-873"><a href="#cb29-873" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-actividad-cociente-costos</span></span>
+<span id="cb29-874"><a href="#cb29-874" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Cobertura y filtraciones en el conjunto de prueba contra el cociente $\lambda_{\text{excl}}/\lambda_{\text{incl}}$.</span></span>
+<span id="cb29-875"><a href="#cb29-875" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb29-876"><a href="#cb29-876" aria-hidden="true" tabindex="-1"></a>cocientes <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>]</span>
+<span id="cb29-877"><a href="#cb29-877" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> []</span>
+<span id="cb29-878"><a href="#cb29-878" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> cocientes:</span>
+<span id="cb29-879"><a href="#cb29-879" aria-hidden="true" tabindex="-1"></a>    incluir <span class="op">=</span> prob <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> c)</span>
+<span id="cb29-880"><a href="#cb29-880" aria-hidden="true" tabindex="-1"></a>    aciertos <span class="op">=</span> (incluir <span class="op">&amp;</span> (yp_g <span class="op">==</span> <span class="dv">1</span>)).<span class="bu">sum</span>()</span>
+<span id="cb29-881"><a href="#cb29-881" aria-hidden="true" tabindex="-1"></a>    filas.append(<span class="bu">dict</span>(cociente<span class="op">=</span>c,</span>
+<span id="cb29-882"><a href="#cb29-882" aria-hidden="true" tabindex="-1"></a>                      cobertura<span class="op">=</span>aciertos <span class="op">/</span> (yp_g <span class="op">==</span> <span class="dv">1</span>).<span class="bu">sum</span>(),</span>
+<span id="cb29-883"><a href="#cb29-883" aria-hidden="true" tabindex="-1"></a>                      filtraciones<span class="op">=</span><span class="dv">1</span> <span class="op">-</span> aciertos <span class="op">/</span> incluir.<span class="bu">sum</span>()))</span>
+<span id="cb29-884"><a href="#cb29-884" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> pd.DataFrame(filas)</span>
+<span id="cb29-885"><a href="#cb29-885" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb29-886"><a href="#cb29-886" aria-hidden="true" tabindex="-1"></a>ax.plot(filas.cociente, filas.cobertura, marker<span class="op">=</span><span class="st">'o'</span>,</span>
+<span id="cb29-887"><a href="#cb29-887" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>PALETTE(<span class="dv">1</span>), label<span class="op">=</span><span class="st">'Cobertura'</span>)</span>
+<span id="cb29-888"><a href="#cb29-888" aria-hidden="true" tabindex="-1"></a>ax.plot(filas.cociente, filas.filtraciones, marker<span class="op">=</span><span class="st">'o'</span>,</span>
+<span id="cb29-889"><a href="#cb29-889" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>PALETTE(<span class="dv">5</span>), label<span class="op">=</span><span class="st">'Filtraciones'</span>)</span>
+<span id="cb29-890"><a href="#cb29-890" aria-hidden="true" tabindex="-1"></a>ax.set_xscale(<span class="st">'log'</span>)</span>
+<span id="cb29-891"><a href="#cb29-891" aria-hidden="true" tabindex="-1"></a>ax.minorticks_off()</span>
+<span id="cb29-892"><a href="#cb29-892" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(cocientes, [<span class="bu">str</span>(c) <span class="cf">for</span> c <span class="kw">in</span> cocientes])</span>
+<span id="cb29-893"><a href="#cb29-893" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb29-894"><a href="#cb29-894" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'$</span><span class="ch">\\</span><span class="st">lambda_{</span><span class="ch">\\</span><span class="st">text</span><span class="sc">{excl}</span><span class="st">}/</span><span class="ch">\\</span><span class="st">lambda_{</span><span class="ch">\\</span><span class="st">text</span><span class="sc">{incl}</span><span class="st">}$'</span>,</span>
+<span id="cb29-895"><a href="#cb29-895" aria-hidden="true" tabindex="-1"></a>           ylabel<span class="op">=</span><span class="st">'Medida en el conjunto de prueba'</span>)</span>
+<span id="cb29-896"><a href="#cb29-896" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-897"><a href="#cb29-897" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb29-898"><a href="#cb29-898" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-899"><a href="#cb29-899" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-teoria-decision}</span></span>
+<span id="cb29-900"><a href="#cb29-900" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-901"><a href="#cb29-901" aria-hidden="true" tabindex="-1"></a>La teoría de decisión bayesiana plantea el aprendizaje supervisado como un problema de probabilidad. El teorema de Bayes (@eq-teorema-bayes) permite calcular la probabilidad de cada clase dada la entrada, y seleccionar la clase más probable produce el clasificador de Bayes (@eq-clasificador-bayes). Su error, el error bayesiano (@sec-error-bayesiano), es la cota inferior de lo que cualquier algoritmo puede lograr con esas variables. Cuando los errores no cuestan lo mismo se utiliza el riesgo, y la acción nula permite abstenerse de decidir si la incertidumbre es alta (@sec-seleccion-accion-nula).</span>
+<span id="cb29-902"><a href="#cb29-902" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-903"><a href="#cb29-903" aria-hidden="true" tabindex="-1"></a>La sección de focalización (@sec-decision-focalizacion) aplicó el riesgo a una decisión real, a qué hogares incluir en un programa social. Con dos acciones el umbral óptimo depende sólo del cociente entre el costo de inclusión y el de exclusión (@sec-costos-inclusion-exclusion), y cada umbral es un punto de la curva de cobertura contra filtraciones (@sec-cobertura-filtraciones). Cuando el cupo es fijo, el umbral lo decide el presupuesto (@sec-restriccion-presupuestal), y la acción nula se convierte en la verificación en campo de los hogares sobre los que el modelo tiene más incertidumbre (@sec-verificacion-campo).</span>
+<span id="cb29-904"><a href="#cb29-904" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-905"><a href="#cb29-905" aria-hidden="true" tabindex="-1"></a>En este capítulo las distribuciones se tomaron como conocidas, y en un problema real hay que estimarlas a partir de los datos. Los métodos que suponen una forma para esas distribuciones y estiman sus parámetros se estudian en @sec-metodos-parametricos.</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
