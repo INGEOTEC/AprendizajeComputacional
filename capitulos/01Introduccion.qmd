@@ -12,10 +12,7 @@ from matplotlib import pylab as plt
 import seaborn as sns
 from CompStats.metrics import recall_score
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_iris
-from sklearn.datasets import load_breast_cancer
-from sklearn.datasets import fetch_openml
-from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import Normalizer, StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.cluster import KMeans
 from sklearn import decomposition
@@ -26,6 +23,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -115,18 +114,22 @@ Iniciamos la descripción de los diferentes tipos de aprendizaje computacional c
 
 El **objetivo** en aprendizaje no supervisado es desarrollar algoritmos capaces de encontrar patrones en los datos, es decir, en $\mathcal D$. Existen diferentes tareas que se pueden considerar dentro de este tipo de aprendizaje. Por ejemplo, el agrupamiento puede servir para segmentar clientes o productos, en otra línea también cabría el análisis del carrito de compras (Market Basket Analysis); donde el objetivo es encontrar las co-ocurrencias de productos, es decir, se quiere estimar la probabilidad de que habiendo comprado un determinado artículo también se compre otro artículo. Con esta descripción ya se podrá estar imaginando la cantidad de aplicaciones en las que este tipo de algoritmos es utilizado en la actualidad. 
 
-Regresando a la representación vectorial, existen casos donde se pueden visualizar los elementos de $\mathcal D$, los cuales están representados como puntos que se muestran en la @fig-puntos-iris. Claramente esto solo es posible si $x_i \in \mathbb R^2$ o si se hace algún tipo de transformación  $f: \mathbb R^d \rightarrow \mathbb R^2$, como se realizó en la figura.
+Regresando a la representación vectorial, existen casos donde se pueden visualizar los elementos de $\mathcal D$, los cuales están representados como puntos que se muestran en la @fig-puntos-territorio. Claramente esto solo es posible si $x_i \in \mathbb R^2$ o si se hace algún tipo de transformación  $f: \mathbb R^d \rightarrow \mathbb R^2$, como se realizó en la figura. Cada punto es un área geoestadística básica (AGEB) de Aguascalientes descrita por variables sobre sus establecimientos económicos, es decir, el número de establecimientos por sector y por tamaño, además de la población y las viviendas (@sec-datos-territorio). Las variables se estandarizan y se proyectan con el Análisis de Componentes Principales (@sec-pca).
 
 ```{python}
-#| label: fig-puntos-iris
-#| fig-cap: "Proyección de los datos del Iris en dos dimensiones"
+#| label: fig-puntos-territorio
+#| fig-cap: "Proyección de los AGEB de Aguascalientes en dos dimensiones"
 #| code-fold: true
 
-D, y = load_iris(return_X_y=True)
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+D = territorio.drop(columns=['grado_promedio_escolaridad', 'clave_ageb',
+                             'municipio', 'pct_viv_internet',
+                             'pct_sin_servicio_salud',
+                             'pct_jefatura_femenina']).to_numpy()
+D = StandardScaler().fit_transform(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-Dn = np.concatenate((Dn, np.atleast_2d(y).T), axis=1)
-df = pd.DataFrame(Dn, columns=['x', 'y', 'Clase'])
+df = pd.DataFrame(Dn, columns=['x', 'y'])
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y')
 fig.tick_params(bottom=False, top=False, 
@@ -135,20 +138,31 @@ fig.tick_params(bottom=False, top=False,
 fig.set(xlabel=None, ylabel=None)
 ```
 
-En la @fig-puntos-iris se pueden observar dos o tres grupos de puntos, entonces el objetivo sería crear el algoritmo que dado $\mathcal D$ regrese un identificador por cada elemento, dicho identificador representa el grupo al que pertenece el elemento en cuestión. Esta tarea se le conoce como agrupamiento (Clustering). Asumiendo que se aplica un algoritmo de agrupamiento a los datos anteriores; entonces, dado que podemos visualizar los datos, es factible representar el resultado del algoritmo si a cada punto se le asigna un color dependiendo de la clase a la que pertenece. La @fig-kmeans-iris muestra el resultado de este procedimiento. 
+```{python}
+#| echo: false
+n_t_f = Markdown(f'${D.shape[0]}$')
+d_t_f = Markdown(f'${D.shape[1]}$')
+var_t_f = Markdown(f'${100 * pca.explained_variance_ratio_.sum():0.0f}\\%$')
+```
+
+La @fig-puntos-territorio muestra los `{python} n_t_f` AGEB, cada uno descrito por `{python} d_t_f` variables, y las dos dimensiones conservan `{python} var_t_f` de la variabilidad de los datos estandarizados. En la figura se observa una concentración densa de puntos y, alrededor de ella, un conjunto de AGEB con muchos más establecimientos que el resto. Entonces el objetivo sería crear el algoritmo que dado $\mathcal D$ regrese un identificador por cada elemento, dicho identificador representa el grupo al que pertenece el elemento en cuestión. Esta tarea se le conoce como agrupamiento (Clustering) y en este problema serviría para segmentar los barrios por su composición de establecimientos. Supóngase que se aplica un algoritmo de agrupamiento a los datos anteriores. Entonces, dado que podemos visualizar los datos, es factible representar el resultado del algoritmo si a cada punto se le asigna un color dependiendo del grupo al que pertenece. La @fig-kmeans-territorio muestra el resultado de este procedimiento. 
 
 ```{python}
-#| label: fig-kmeans-iris
-#| fig-cap: "Proyección de agrupar los datos del Iris usando K-medias"
+#| label: fig-kmeans-territorio
+#| fig-cap: "Proyección de agrupar los AGEB de Aguascalientes usando K-medias"
 #| code-fold: true
 
-D, y = load_iris(return_X_y=True)
-m = KMeans(n_clusters=3, n_init='auto').fit(D)
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+D = territorio.drop(columns=['grado_promedio_escolaridad', 'clave_ageb',
+                             'municipio', 'pct_viv_internet',
+                             'pct_sin_servicio_salud',
+                             'pct_jefatura_femenina']).to_numpy()
+D = StandardScaler().fit_transform(D)
+m = KMeans(n_clusters=3, n_init='auto', random_state=0).fit(D)
 cl = m.predict(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
 df = pd.DataFrame(Dn, columns=['x', 'y'])
-df['Clase'] = y.astype(str)
 df['Grupo'] = cl.astype(str)
 fig = sns.relplot(data=df, kind='scatter',
                   x='x', y='y', hue='Grupo')
@@ -157,23 +171,33 @@ fig.tick_params(bottom=False, top=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
 ```
-    
-Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los puntos en tres grupos, representados por los diferentes colores. Cabe mencionar que utilizando algún otro criterio de optimización se hubiera podido encontrar dos grupos, el primero de ellos sería el grupo de los puntos que se encuentran a la izquierda de la figura y el segundo sería el grupo formado por los grupos que se encuentran en el centro y a la derecha de la figura. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en las figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
+
+```{python}
+#| echo: false
+tam_t = np.bincount(cl)
+tam_t_f = Markdown(', '.join(f'${t}$' for t in tam_t[np.argsort(-tam_t)]))
+```
+
+Se puede observar en la figura anterior, el algoritmo de agrupamiento separa los AGEB en tres grupos, representados por los diferentes colores, que tienen `{python} tam_t_f` AGEB, del más grande al más pequeño. Cabe mencionar que utilizando algún otro criterio de optimización o un número de grupos distinto se hubiera podido encontrar otra segmentación. El número de grupos es un parámetro que se fija antes de ejecutar el algoritmo y la figura por sí sola no lo determina. Es importante recalcar que no es necesario visualizar los datos para aplicar un algoritmo de agrupamiento. En particular el ejercicio de visualización de datos y del resultado de agrupamiento que se muestra en las figuras anteriores tiene el objetivo de generar una intuición de lo que está haciendo un algoritmo de agrupamiento. 
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
-Generar la figura anterior para el conjunto de datos de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin). Es necesario considerar que ese problema solamente tiene dos clases y el problema del Iris (@sec-iris) tiene tres clases, entonces se tienen que hacer las modificaciones para atender este cambio. 
+Generar la figura anterior para los datos de Salud (@sec-datos-salud), usando las siete variables numéricas (`quintil_bienestar`, `edad`, `peso_kg`, `talla_cm`, `imc`, `presion_sistolica` y `presion_diastolica`) estandarizadas. Es necesario considerar que en este caso se piden dos grupos y no tres, entonces se tienen que hacer las modificaciones para atender este cambio. Además, comparar los grupos con la variable `diabetes`, que no se usa para agrupar. ¿Los grupos coinciden con quién tiene el diagnóstico?
 
-El procedimiento desarrollado debe de generar una figura similar a la mostrada en la @fig-kmeans-breast-cancer
+El procedimiento desarrollado debe de generar una figura similar a la mostrada en la @fig-kmeans-salud
 
 ```{python}
-#| label: fig-kmeans-breast-cancer
-#| fig-cap: "Proyección de agrupar los datos de Breast Cancer Wisconsin usando K-medias"
+#| label: fig-kmeans-salud
+#| fig-cap: "Proyección de agrupar los datos de Salud usando K-medias"
 #| echo: false
 
-D, y = load_breast_cancer(return_X_y=True)
-m = KMeans(n_clusters=2, n_init='auto').fit(D)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+numericas = ['quintil_bienestar', 'edad', 'peso_kg', 'talla_cm', 'imc',
+             'presion_sistolica', 'presion_diastolica']
+D = StandardScaler().fit_transform(salud[numericas].to_numpy())
+y = salud['diabetes'].to_numpy()
+m = KMeans(n_clusters=2, n_init='auto', random_state=0).fit(D)
 cl = m.predict(D)
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
@@ -187,6 +211,16 @@ fig.tick_params(bottom=False, top=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
 ```
+
+```{python}
+#| echo: false
+dm_s = pd.crosstab(cl, y)
+pct_s = 100 * dm_s[1] / dm_s.sum(axis=1)
+pct_s_f = Markdown(' y '.join(f'${p:0.1f}\\%$' for p in pct_s))
+pct_gral_f = Markdown(f'${100 * y.mean():0.1f}\\%$')
+```
+
+Como referencia, el `{python} pct_gral_f` de las personas del conjunto tiene diagnóstico de diabetes, y en los dos grupos el porcentaje es `{python} pct_s_f`, respectivamente. Los porcentajes difieren entre los grupos, pero ninguno de los dos coincide con el diagnóstico, es decir, agrupar con las variables numéricas no equivale a identificar quién tiene diabetes.
 :::
 
 ## Aprendizaje Supervisado {#sec-aprendizaje-supervisado}
@@ -215,45 +249,59 @@ Los ejemplos anteriores corresponden a dos de las clases de problemas que se res
 
 Haciendo la liga entre los ejemplos y las definiciones anteriores, podemos observar que el asignar un crédito o la polaridad a un texto es un problema de clasificación binaria, dado que se puede asociar 0 y 1 a la clase positivo y negativo; y en el otro caso a pagar o no pagar el crédito. Si el problema tiene más categorías, supongamos que se desea identificar positivo, negativo o neutro, entonces se estaría en el problema de clasificación multi-clase. Por otro lado el problema de predecir el número de casos positivos se puede considerar como un problema de regresión, dado que el valor a predecir difícilmente se podría considerar como una categoría.
 
-Al igual que en aprendizaje no supervisado, en algunos casos es posible visualizar los elementos de  $\mathcal D$, el detalle adicional es que cada objeto tiene asociado una clase, entonces se selecciona un color para representar cada clase. En la @fig-iris-2clases se muestra el resultado donde los elementos de  $\mathcal D$ se encuentran en $\mathbb R^2$ y el color representa cada una de las clases de este problema de clasificación binaria.
+Al igual que en aprendizaje no supervisado, en algunos casos es posible visualizar los elementos de  $\mathcal D$, el detalle adicional es que cada objeto tiene asociado una clase, entonces se selecciona un color para representar cada clase. En la @fig-salud-2clases se muestra el resultado para el tamizaje de diabetes con los datos de Salud (@sec-datos-salud). Cada punto es una persona adulta descrita por siete variables numéricas (edad, peso, talla, índice de masa corporal, presión arterial y quintil de bienestar), estandarizadas y proyectadas a $\mathbb R^2$, y el color indica si tiene diagnóstico de diabetes ($P$) o no lo tiene ($N$). Es un problema de clasificación binaria donde la clase positiva es la minoría.
 
 ```{python}
-#| label: fig-iris-2clases
-#| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
+#| label: fig-salud-2clases
+#| fig-cap: "Proyección de los datos de Salud mostrando las personas con y sin diagnóstico de diabetes"
 #| code-fold: true
 
-D, y = load_iris(return_X_y=True)
-mask = y <= 1
-D = D[mask]
-y = y[mask]
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+numericas = ['quintil_bienestar', 'edad', 'peso_kg', 'talla_cm', 'imc',
+             'presion_sistolica', 'presion_diastolica']
+D = StandardScaler().fit_transform(salud[numericas].to_numpy())
+y = salud['diabetes'].to_numpy()
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
 df = pd.DataFrame(Dn, columns=['x', 'y'])
 df['Clase'] = ['P' if i else 'N' for i in y]
 fig = sns.relplot(data=df, kind='scatter',
-                  x='x', y='y', hue='Clase')
+                  x='x', y='y', hue='Clase', alpha=0.5, s=15)
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
 ```
 
+```{python}
+#| echo: false
+n_s_f = Markdown(f'${D.shape[0]}$')
+pos_s_f = Markdown(f'${100 * y.mean():0.1f}\\%$')
+```
+
+Los datos tienen `{python} n_s_f` personas y `{python} pos_s_f` de ellas tiene el diagnóstico. En la @fig-salud-2clases se observa que las dos clases se traslapan, es decir, no hay una región donde solo aparezcan personas con diagnóstico. Esto es lo esperado en un problema de política pública, pues las variables observables no determinan por completo quién tiene la enfermedad.
+
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
-Generar la figura anterior para el conjunto de datos de Breast Cancer Wisconsin (@sec-breast-cancer-wisconsin). Como se mencionó, el problema tiene dos clases entonces no se necesita ningún tipo de transformación en el número de clases como se hizo en el ejemplo anterior. La @fig-breast-cancer muestra el resultado de la actividad. 
+Generar la figura anterior para los datos de Pobreza (@sec-datos-pobreza), donde la clase es `pobre_ingresos`. A diferencia de Salud, las variables predictoras incluyen texto (la entidad, el ámbito, los materiales de la vivienda, entre otras), por lo que se convierten en variables indicadoras y después se estandarizan, como se describe en la @sec-regresion-datos. No se usa la columna `factor`. La @fig-pobreza-2clases muestra el resultado de la actividad con una muestra de $3\,000$ hogares para que los puntos se distingan. 
 
 ```{python}
-#| label: fig-breast-cancer
-#| fig-cap: "Proyección de los datos de Breast Cancer Wisconsin."
+#| label: fig-pobreza-2clases
+#| fig-cap: "Proyección de los datos de Pobreza mostrando los hogares pobres (P) y no pobres (N) por ingresos."
 #| echo: false
-D, cl = load_breast_cancer(return_X_y=True)
+
+pobreza = pd.read_csv(f'{URL_DATOS}/enigh_pobreza.csv.gz')
+D = pd.get_dummies(pobreza.drop(columns=['pobre_ingresos', 'factor']),
+                   drop_first=True, dtype=float).to_numpy()
+D = StandardScaler().fit_transform(D)
+cl = pobreza['pobre_ingresos'].to_numpy()
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
 df = pd.DataFrame(Dn, columns=['x', 'y'])
-df['Clase'] = cl.astype(str)
-fig = sns.relplot(data=df, kind='scatter',
-                  x='x', y='y', hue='Clase')
+df['Clase'] = ['P' if i else 'N' for i in cl]
+fig = sns.relplot(data=df.sample(3000, random_state=0), kind='scatter',
+                  x='x', y='y', hue='Clase', alpha=0.5, s=15)
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
@@ -261,36 +309,45 @@ fig.set(xlabel=None, ylabel=None)
 ```
 :::
 
-Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, como se puede imaginar una simple línea recta podría separar estos puntos. La @fig-iris-2clases-df muestra un ejemplo de lo que haría un clasificador representado por la línea; la clase es dada por el signo de  $ax + by + c$, donde  $a$, $b$ y $c$ son parámetros identificados a partir de  $\mathcal D$.
+Usando esta representación es sencillo imaginar que el problema de clasificación se trata en encontrar una función que separe los puntos naranjas de los puntos azules, aunque en este caso una simple línea recta no podrá separarlos por completo. La @fig-salud-2clases-df muestra un ejemplo de lo que haría un clasificador representado por la línea. La clase es dada por el signo de  $ax + by + c$, donde  $a$, $b$ y $c$ son parámetros identificados a partir de  $\mathcal D$. Como la clase positiva es la minoría, el clasificador se ajusta con `class_weight='balanced'` para que no clasifique a todas las personas como negativas.
 
 ```{python}
-#| label: fig-iris-2clases-df
-#| fig-cap: "Proyección del Iris mostrando dos clases linealmente separables"
+#| label: fig-salud-2clases-df
+#| fig-cap: "Proyección de los datos de Salud con la recta que separa las clases"
 #| code-fold: true
 
-D, y = load_iris(return_X_y=True)
-mask = y <= 1
-D = D[mask]
-y = y[mask]
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+numericas = ['quintil_bienestar', 'edad', 'peso_kg', 'talla_cm', 'imc',
+             'presion_sistolica', 'presion_diastolica']
+D = StandardScaler().fit_transform(salud[numericas].to_numpy())
+y = salud['diabetes'].to_numpy()
 pca = decomposition.PCA(n_components=2).fit(D)
 Dn = pca.transform(D)
-linear = LinearSVC(dual=False).fit(Dn, y)
+linear = LinearSVC(dual=False, class_weight='balanced').fit(Dn, y)
 w_1, w_2 = linear.coef_[0]
 w_0 = linear.intercept_[0]
 df = pd.DataFrame(Dn, columns=['x1', 'x2'])
-df['Clase'] = ['N' if i else 'P' for i in y]
+df['Clase'] = ['P' if i else 'N' for i in y]
 g_0 = [dict(x1=x, x2=y, tipo='g(x)=0')
        for x, y in zip(Dn[:, 0], (-w_0 - w_1 * Dn[:, 0]) / w_2)]
 g = pd.DataFrame(g_0)
 g['Tipo'] = 'g(x)=0'
-df = pd.concat((df, g))
-ax = sns.scatterplot(data=df, x='x1', y='x2', hue='Clase', legend=True)
-sns.lineplot(data=df, x='x1', y='x2', ax=ax, hue='Tipo', palette=['k'], legend=True)
+ax = sns.scatterplot(data=df, x='x1', y='x2', hue='Clase', alpha=0.5, s=15)
+sns.lineplot(data=g, x='x1', y='x2', ax=ax, hue='Tipo', palette=['k'], legend=True)
 ax.tick_params(axis="both", which="both", bottom=False,
                 top=False, left=False, right=False,
                 labelbottom=False, labelleft=False)
 ax.set(xlabel=None, ylabel=None)
 ```
+
+```{python}
+#| echo: false
+hy = linear.predict(Dn)
+error_s_f = Markdown(f'${100 * np.mean(hy != y):0.1f}\\%$')
+cob_s_f = Markdown(f'${100 * np.mean(hy[y == 1] == 1):0.1f}\\%$')
+```
+
+La recta clasifica de manera incorrecta a `{python} error_s_f` de las personas y detecta a `{python} cob_s_f` de quienes tienen el diagnóstico. Es decir, el clasificador lineal acierta en la mayoría de los casos pero no en todos, porque las clases se traslapan en la proyección. Si el objetivo fuera focalizar una campaña de detección, estos errores serían personas con diagnóstico a las que no se llega o personas sin diagnóstico a las que se les hace la prueba.
 
 Siguiendo en esta misma línea, también es posible observar los puntos en un problema de regresión, solamente que en este caso un eje corresponde a las entradas, i.e.  $x,$ y el otro eje es la salida, i.e. $y.$ La @fig-regresion muestra un ejemplo de regresión, donde se puede observar que la idea es encontrar una función que pueda seguir de manera adecuada los puntos dados.
 
@@ -337,23 +394,26 @@ Para encontrar $h^*$, se utiliza $\mathcal T$; el conjunto de hipótesis (funcio
 
 El encontrar la función $h^*$ no resuelve el problema de aprendizaje en su totalidad, además se busca una función que sea capaz de generalizar, es decir, que pueda predecir correctamente instancias no vistas. Considerando que se tiene un **conjunto de prueba**, $\mathcal G=\{(x_i, y_i)\}$ para $i=1 \ldots M$, donde $\mathcal T \cap \mathcal G = \emptyset$ y $\mathcal T \cup \mathcal G = \mathcal D.$ La idea es que el error empírico sea similar en el conjunto de entrenamiento y prueba. Es decir $E(h^* \mid \mathcal T) \approx E(h^* \mid \mathcal G)$.
 
-El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y comparar el rendimiento de diferentes algoritmos, permitiendo seleccionar el que tenga las mejores características. La @fig-comparacion-intro muestra el rendimiento utilizando el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap). En la figura se observa el rendimiento de clasificadores Gaussianos Ingenuo, LDA (@sec-metodos-parametricos), Máquinas de Soporte Vectorial lineal (M.S.V., ver @sec-discriminantes-lineales), Vecinos Cercanos (@sec-metodos-no-parametricos) y Árboles Aleatorios (@sec-ensambles). Se destaca que la M.S.V. presentó el mejor rendimiento, aunque estadísticamente es equivalente a algunos algoritmos marcados con la etiqueta *Equivalente* y es estadísticamente mejor que otros algoritmos marcados con la etiqueta *Diferente*.
+El conjunto de prueba $\mathcal{G}$ se utiliza para medir el error empírico y comparar el rendimiento de diferentes algoritmos, permitiendo seleccionar el que tenga las mejores características. La @fig-comparacion-intro muestra el rendimiento utilizando el promedio de la cobertura (macro-recall, ver @sec-rendimiento-cap). El problema es la focalización de un programa social con los datos de Pobreza (@sec-datos-pobreza), que consiste en predecir si un hogar es pobre por ingresos a partir de sus características. Los hogares se dividen en el conjunto de entrenamiento (75%) y el de prueba (25%) manteniendo la proporción de las clases. En la figura se observa el rendimiento de clasificadores Gaussianos Ingenuo, LDA (@sec-metodos-parametricos), Máquinas de Soporte Vectorial lineal (M.S.V., ver @sec-discriminantes-lineales), Vecinos Cercanos (@sec-metodos-no-parametricos) y Árboles Aleatorios (@sec-ensambles).
 
 ```{python}
 #| label: fig-comparacion-intro
 #| code-fold: true
 #| fig-cap: Comparación del rendimiento de algoritmos de clasificación en el conjunto de prueba.
 
-bioresponse = fetch_openml(data_id=1464)
-y = bioresponse.target.to_numpy().astype(int)
-D = bioresponse.data.to_numpy()
-Xtrain, Xtest, ytrain, ytest = train_test_split(D, np.array(y), random_state=13)
-names = ['Ingenuo', 'LDA', # 'QDA',
+pobreza = pd.read_csv(f'{URL_DATOS}/enigh_pobreza.csv.gz')
+D = pd.get_dummies(pobreza.drop(columns=['pobre_ingresos', 'factor']),
+                   drop_first=True, dtype=float).to_numpy()
+y = pobreza['pobre_ingresos'].to_numpy()
+Xtrain, Xtest, ytrain, ytest = train_test_split(D, y, test_size=0.25,
+                                                random_state=0, stratify=y)
+names = ['Ingenuo', 'LDA', # 'QDA',
          'M.S.V', 'Vecinos', 'Bosques']
-algs = [GaussianNB(), LDA(), # QDA(),
+algs = [GaussianNB(), LDA(), # QDA(),
         make_pipeline(Normalizer(), LinearSVC(class_weight='balanced')),
-        KNeighborsClassifier(),
-        RandomForestClassifier(class_weight='balanced')]
+        KNeighborsClassifier(n_jobs=-1),
+        RandomForestClassifier(class_weight='balanced', random_state=0,
+                               n_jobs=-1)]
 score = recall_score(ytest, average='macro', use_tqdm=False)
 for name, alg in zip(names, algs):
     alg.fit(Xtrain, ytrain)
@@ -364,6 +424,13 @@ score.plot(value_name='Cobertura (promedio)', alg_legend='Algoritmos',
            tie_legend='Equivalente',
            loser_legend='Diferente')
 ```
+
+```{python}
+#| echo: false
+mejor_f = Markdown(f'*{score.best}*')
+```
+
+Se destaca que el algoritmo `{python} mejor_f` presentó el mejor rendimiento, aunque estadísticamente es equivalente a algunos algoritmos marcados con la etiqueta *Equivalente* y es estadísticamente mejor que otros algoritmos marcados con la etiqueta *Diferente*.
 
 ### Estilos de Aprendizaje
 

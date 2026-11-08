@@ -10,7 +10,6 @@ from CompStats import StatisticSamples, CI
 from CompStats import performance, plot_performance
 from CompStats import difference, plot_difference
 from scipy.stats import norm, wilcoxon
-from sklearn.datasets import load_iris, load_breast_cancer
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, StratifiedKFold
@@ -18,6 +17,8 @@ from sklearn.metrics import recall_score
 import numpy as np
 import seaborn as sns
 import pandas as pd
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -71,16 +72,20 @@ Cn = (p - z * np.sqrt(p * (1 - p) / N),
 
 dando como resultado el siguiente intervalo, `{python} Markdown(f'$C = ({Cn[0]:0.2f}, {Cn[1]:0.2f})$')`.
 
-En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema del Iris. 
+En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema de tamizaje de diabetes (@sec-datos-salud), donde se clasifica si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. 
 
-Lo primero que se realiza es cargar los datos y dividir en el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) como se muestra a continuación. 
+Lo primero que se realiza es cargar los datos, convertir las variables de texto en indicadoras (@sec-regresion-datos) y dividir en el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) como se muestra a continuación. 
 
 ```{python}
 #| echo: true
-X, y = load_iris(return_X_y=True)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+D = pd.get_dummies(salud.drop(columns=['diabetes', 'factor']),
+                   drop_first=True, dtype=float)
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
 T, G, y_t, y_g = train_test_split(X, y,
-                                  random_state=1,  
-                                  test_size=0.3)
+                                  random_state=1,
+                                  test_size=0.3,
+                                  stratify=y)
 ```
 
 El siguiente paso es entrenar el algoritmo y realizar las predicciones en el conjunto de prueba ($\mathcal G$) tal y como se muestra en las siguientes instrucciones. 
@@ -101,7 +106,16 @@ N = _.shape[0]
 C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
 ```
 
-El intervalo de confianza obtenido es `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`. Se puede observar que el límite superior es mayor que $1$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ esto es resultado de generar el intervalo de confianza asumiendo una distribución normal. 
+```{python}
+#| echo: false
+if C[1] > 1:
+    lim_f = Markdown('Se puede observar que el límite superior es mayor que $1$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ esto es resultado de generar el intervalo de confianza asumiendo una distribución normal.')
+else:
+    lim_f = Markdown('Se puede observar que el intervalo queda dentro de $[0, 1]$; sin embargo, al asumir una distribución normal el límite superior podría ser mayor que $1,$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ cuando la exactitud es cercana a uno o cuando se tienen pocos datos.')
+triv_f = Markdown(f'${(y_g == 0).mean():0.2f}$')
+```
+
+El intervalo de confianza obtenido es `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`. `{python} lim_f` Para tener una referencia, un clasificador que siempre responde que la persona no tiene diabetes tendría una exactitud de `{python} triv_f`. 
 
 Cuando se cuenta con conjuntos de datos pequeños y además no se ha definido un conjunto de prueba, se puede obtener las predicciones del algoritmo de clasificación mediante el uso de validación cruzada usando K-fold. En el siguiente código se muestra su uso, el cambio solamente es en el procedimiento para obtener las predicciones.
 
@@ -160,11 +174,11 @@ C = (p - z * se, p + z * se)
 
 el intervalo de confianza corresponde a `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`. 
 
-Continuando con el mismo ejemplo pero ahora analizando Naive Bayes en el problema del Iris. El primer paso es obtener las predicciones que se pueden observar en el siguiente código (previamente descrito.)
+Continuando con el mismo ejemplo pero ahora analizando Naive Bayes en el problema de tamizaje de diabetes. El primer paso es obtener las predicciones que se pueden observar en el siguiente código (previamente descrito.)
 
 ```{python}
 #| echo: true
-X, y = load_iris(return_X_y=True)
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
 kf = StratifiedKFold(n_splits=10,
                      random_state=0,
                      shuffle=True)
@@ -202,14 +216,14 @@ obteniendo un intervalo de `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$
 
 ### Ejemplo: macro-recall
 
-Hasta el momento se ha usado una medida de rendimiento para la cual se puede conocer su varianza de manera analítica. Existen problemas donde esta medida no es recomendada, en el siguiente ejemplo utilizaremos macro-recall para medir el rendimiento de Naive Bayes en el problema del Iris. El primer paso es realizar las predicciones del algoritmo usando validación cruzada y hacer la muestra con reemplazo $B$. 
+Hasta el momento se ha usado una medida de rendimiento para la cual se puede conocer su varianza de manera analítica. Existen problemas donde esta medida no es recomendada, en el siguiente ejemplo utilizaremos macro-recall para medir el rendimiento de Naive Bayes en el problema de tamizaje de diabetes. En este problema la clase con diagnóstico de diabetes es la minoritaria, por lo que la exactitud puede ser alta aun cuando el algoritmo no detecte a las personas con diabetes, mientras que el macro-recall promedia la cobertura de cada clase y, por lo tanto, le da el mismo peso a las personas con diabetes que al resto. El primer paso es realizar las predicciones del algoritmo usando validación cruzada y hacer la muestra con reemplazo $B$. 
 
 ```{python}
 #| echo: true
 alpha = 0.05
 z = norm().ppf(1 - alpha / 2)
 
-X, y = load_iris(return_X_y=True)
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
 kf = StratifiedKFold(n_splits=10,
                      random_state=0,
                      shuffle=True)
@@ -273,7 +287,7 @@ Se han descrito varios procedimientos para conocer los intervalos de confianza d
 Suponiendo que se tienen las medidas de rendimiento de dos algoritmos mediante validación cruzada de K-fold, es decir, se tiene el rendimiento del primer algoritmo como $p_i^1$ y del segundo como $p_i^2$ en la $i$-ésima instancia. Suponiendo que el rendimiento es una normal, entonces la resta, i.e., $p_i = p_i^1 - p_i^2$ también sería normal. Dado que se está comparando los algoritmos en los mismos datos, se puede utilizar la prueba $t$ de Student de muestras dependientes. La estadística de la prueba está dada por $\frac{\sqrt{K} m}{S} \sim t_{K-1}$, donde $m$ 
 y $S^2$ es la media varianza estimada.
 
-En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de Breast Cancer. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. 
+En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de tamizaje de diabetes. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. 
 
 ```{python}
 #| echo: true
@@ -281,11 +295,11 @@ K = 30
 kf = StratifiedKFold(n_splits=K,
                      random_state=0,
                      shuffle=True)
-X, y = load_breast_cancer(return_X_y=True)
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
 
 P = []
 for tr, ts in kf.split(X, y):
-    forest = RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])
+    forest = RandomForestClassifier(random_state=0).fit(X[tr], y[tr]).predict(X[ts])
     naive = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
     P.append([recall_score(y[ts], hy, average="macro") for hy in [forest, naive]])
 P = np.array(P)
@@ -299,9 +313,22 @@ p = P[:, 0] - P[:, 1]
 t = np.sqrt(K) * np.mean(p) / np.std(p)
 ```
 
-donde el valor de la estadística es `{python} Markdown(f'${t:0.4f}$')`, si el valor está fuera del siguiente intervalo $(-2.045, 2.045)$ se rechaza la hipótesis nula de que los dos algoritmos se comportan similar. 
+```{python}
+#| echo: false
+from scipy.stats import t as t_student
+t_crit = t_student(K - 1).ppf(1 - 0.05 / 2)
+t_crit_f = Markdown(f'$({-t_crit:0.3f}, {t_crit:0.3f})$')
+p_wilcoxon = wilcoxon(P[:, 0], P[:, 1]).pvalue
+signif = abs(t) > t_crit and p_wilcoxon < 0.05
+if signif:
+    concl_t_f = Markdown('En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadísticamente diferentes con una confianza del 95% en el problema de tamizaje de diabetes.')
+else:
+    concl_t_f = Markdown('En al menos una de las pruebas no se rechaza la hipótesis nula, por lo que no se puede concluir que los algoritmos Árboles Aleatorios y Naive Bayes sean estadísticamente diferentes con una confianza del 95% en el problema de tamizaje de diabetes.')
+```
 
-En caso de que la medida de rendimiento no esté normalmente distribuida, la prueba no paramétrica equivalente corresponde a Wilcoxon. La instrucción `wilcoxon(P[:, 0], P[:, 1])` se puede utilizar para calcularla, dando un $p_{\text{value}}$ de `{python} Markdown(f'${wilcoxon(P[:, 0], P[:, 1]).pvalue:0.4f}$')`. En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadísticamente diferentes con una confianza del 95% en el problema de Breast Cancer.
+donde el valor de la estadística es `{python} Markdown(f'${t:0.4f}$')`, si el valor está fuera del siguiente intervalo `{python} t_crit_f` se rechaza la hipótesis nula de que los dos algoritmos se comportan similar. 
+
+En caso de que la medida de rendimiento no esté normalmente distribuida, la prueba no paramétrica equivalente corresponde a Wilcoxon. La instrucción `wilcoxon(P[:, 0], P[:, 1])` se puede utilizar para calcularla, dando un $p_{\text{value}}$ de `{python} Markdown(f'${p_wilcoxon:0.4f}$')`. `{python} concl_t_f`
 
 ### Método: Bootstrap en diferencias
 
@@ -314,11 +341,21 @@ El primer paso es calcular las predicciones de los algoritmos, en este caso se r
 forest = np.empty_like(y)
 naive = np.empty_like(y)
 for tr, ts in kf.split(X, y):
-    forest[ts] = RandomForestClassifier().fit(X[tr], y[tr]).predict(X[ts])
+    forest[ts] = RandomForestClassifier(random_state=0).fit(X[tr], y[tr]).predict(X[ts])
     naive[ts] = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
 ```
 
-El macro-recall para los Bosques Aleatorios es `{python} Markdown(f'${recall_score(y, forest, average="macro"):0.2f}$')` y para el Naive Bayes es `{python} Markdown(f'${recall_score(y, naive, average="macro"):0.2f}$')`. Lo que se observa es que los bosques tienen un mejor rendimiento, entonces la distribución de la diferencia del rendimiento entre bosques y Naive Bayes no debería de incluir al cero, si lo incluye la masa que está al lado izquierdo del cero debe de ser menor, esa masa corresponde al valor $p.$
+```{python}
+#| echo: false
+mr_forest = recall_score(y, forest, average="macro")
+mr_naive = recall_score(y, naive, average="macro")
+mejor_f = Markdown('Naive Bayes' if mr_naive >= mr_forest else 'los Bosques Aleatorios')
+otro_f = Markdown('los Bosques Aleatorios' if mr_naive >= mr_forest else 'Naive Bayes')
+cob_forest_f = Markdown(f'${recall_score(y, forest, pos_label=1):0.2f}$')
+cob_naive_f = Markdown(f'${recall_score(y, naive, pos_label=1):0.2f}$')
+```
+
+El macro-recall para los Bosques Aleatorios es `{python} Markdown(f'${mr_forest:0.2f}$')` y para el Naive Bayes es `{python} Markdown(f'${mr_naive:0.2f}$')`. Lo que se observa es que `{python} mejor_f` tiene un mejor rendimiento. La diferencia se explica por la clase con diabetes. La cobertura de esa clase es `{python} cob_forest_f` para los bosques y `{python} cob_naive_f` para Naive Bayes, es decir, el algoritmo con menor macro-recall deja sin detectar a la mayoría de las personas con diabetes. Entonces la distribución de la diferencia del rendimiento entre `{python} mejor_f` y `{python} otro_f` no debería de incluir al cero, si lo incluye la masa que está al lado izquierdo del cero debe de ser menor, esa masa corresponde al valor $p.$
 
 Las muestras de la diferencia de rendimiento se pueden calcular de las siguientes instrucciones. 
 
@@ -326,14 +363,27 @@ Las muestras de la diferencia de rendimiento se pueden calcular de las siguiente
 #| echo: true
 S = np.random.randint(y.shape[0],
                       size=(500, y.shape[0]))
-r = recall_score                      
+r = recall_score
 diff = lambda y, hy1, hy2: r(y, hy1, average="macro") -\
                            r(y, hy2, average="macro")
-B = [diff(y[s], forest[s], naive[s])
+if r(y, naive, average="macro") >= r(y, forest, average="macro"):
+    mejor, otro = naive, forest
+else:
+    mejor, otro = forest, naive
+B = [diff(y[s], mejor[s], otro[s])
      for s in S]
 ```
 
-Finalmente, el $p_{\text{value}}$ corresponde a la proporción de elementos que son menores que cero, i.e., `(np.array(B) < 0).mean()`, es decir, aquellas muestras donde Naive Bayes tiene un mejor desempeño que los bosques. En este caso el $p_{\text{value}}$ tiene un valor de `{python} Markdown(f'${(np.array(B) < 0).mean():0.4f}$')`. Dado que el valor es menor que $0.05$ se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos. La @fig-comparacion-diff muestra la distribución de la diferencia de rendimiento, en esta se puede observar cómo la mayor parte de la masa se encuentra del lado positivo y que muy poca masa es menor que cero. 
+```{python}
+#| echo: false
+p_boot = (np.array(B) < 0).mean()
+if p_boot < 0.05:
+    concl_b_f = Markdown('Dado que el valor es menor que $0.05$ se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos.')
+else:
+    concl_b_f = Markdown('Dado que el valor no es menor que $0.05$ no se puede rechazar la hipótesis nula, por lo que no se puede concluir que exista una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos.')
+```
+
+Finalmente, el $p_{\text{value}}$ corresponde a la proporción de elementos que son menores que cero, i.e., `(np.array(B) < 0).mean()`, es decir, aquellas muestras donde el algoritmo con menor macro-recall (`{python} otro_f`) tiene un mejor desempeño que el algoritmo con mayor macro-recall (`{python} mejor_f`). En este caso el $p_{\text{value}}$ tiene un valor de `{python} Markdown(f'${p_boot:0.4f}$')`. `{python} concl_b_f` La @fig-comparacion-diff muestra la distribución de la diferencia de rendimiento, en esta se puede observar la masa que se encuentra del lado positivo y la masa menor que cero, la cual corresponde al $p_{\text{value}}$. 
 
 ```{python} 
 #| code-fold: true
@@ -386,7 +436,18 @@ Los intervalos de confianza se pueden visualizar en la @fig-intervalos-compstats
 plot_performance(perf)
 ```
 
-El segundo paso es conocer si la diferencia en rendimiento es significativa, en la @fig-comparacion-compstats se observa la comparación entre el mejor algoritmo (i.e., `forest`) y los otros algoritmos (`naive`) incluidos en la comparación. Se observa, en la figura, una línea puntuada que se encuentra en cero para facilitar la comparación, si el intervalo de confianza intersecta con la línea se puede concluir que los algoritmos comparados no son estadísticamente diferentes. En el ejemplo mostrado se ve que el intervalo no intersecta entonces se puede concluir que la hipótesis nula se puede descartar con una cierta confianza.  
+```{python}
+#| echo: false
+mejor_cs_f = Markdown('naive' if mr_naive >= mr_forest else 'forest')
+otro_cs_f = Markdown('forest' if mr_naive >= mr_forest else 'naive')
+lo, hi = np.percentile(B, [2.5, 97.5])
+if lo > 0 or hi < 0:
+    concl_cs_f = Markdown('En el ejemplo mostrado se ve que el intervalo no intersecta entonces se puede concluir que la hipótesis nula se puede descartar con una cierta confianza.')
+else:
+    concl_cs_f = Markdown('En el ejemplo mostrado se ve que el intervalo intersecta la línea entonces no se puede descartar la hipótesis nula.')
+```
+
+El segundo paso es conocer si la diferencia en rendimiento es significativa, en la @fig-comparacion-compstats se observa la comparación entre el mejor algoritmo (i.e., `{python} mejor_cs_f`) y los otros algoritmos (`{python} otro_cs_f`) incluidos en la comparación. Se observa, en la figura, una línea puntuada que se encuentra en cero para facilitar la comparación, si el intervalo de confianza intersecta con la línea se puede concluir que los algoritmos comparados no son estadísticamente diferentes. `{python} concl_cs_f`  
 
 ```{python} 
 #| code-fold: true

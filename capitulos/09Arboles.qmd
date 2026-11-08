@@ -9,13 +9,14 @@ regresión.
 #| echo: true
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer, load_diabetes
 from sklearn.inspection import DecisionBoundaryDisplay
 from scipy.stats import multivariate_normal
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -233,21 +234,26 @@ perf, i, j = best
 La función `corte` no verifica que se esté en una hoja, entonces si se hace el corte en una hoja regresará `(np.inf, none, None)`
 :::
 
-### Ejemplo: Breast Cancer Wisconsin
+### Ejemplo: Tamizaje de Diabetes
 
-Se utiliza el conjunto de datos de Breast Cancer Wisconsin para ejemplificar el algoritmo de Árboles de Decisión. Con las siguientes instrucciones se descargan los datos y se dividen en los conjuntos de entrenamiento y prueba.
+Se utiliza el problema de tamizaje de diabetes con los datos de Salud (@sec-datos-salud) para ejemplificar el algoritmo de Árboles de Decisión. La tarea es clasificar si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. Con las siguientes instrucciones se descargan los datos, las variables de texto se convierten en indicadoras (@sec-regresion-datos) y se dividen en los conjuntos de entrenamiento y prueba. A diferencia de los algoritmos basados en distancias, los árboles no necesitan estandarizar las variables, pues cada corte compara una sola variable contra un umbral y no cambia con la escala de la variable.
 
 ```{python}
 #| echo: true
-X, y = load_breast_cancer(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+X = pd.get_dummies(salud.drop(columns=['diabetes', 'factor']),
+                   drop_first=True, dtype=float)
+y = salud['diabetes'].to_numpy()
+T, G, y_t, y_g = train_test_split(X.to_numpy(), y, test_size=0.2,
+                                  random_state=0, stratify=y)
 ```
 
 La siguiente instrucción entrena un árbol de decisión utilizando como función de costo la entropía. En la librería se encuentran implementadas otras funciones como el coeficiente Gini y Entropía Cruzada @sec-entropia-cruzada (_Log-loss_). 
 
 ```{python}
 #| echo: true
-arbol = tree.DecisionTreeClassifier(criterion='entropy').fit(T, y_t)
+arbol = tree.DecisionTreeClassifier(criterion='entropy',
+                                    random_state=0).fit(T, y_t)
 ```
 
 Como es de esperarse la predicción se realiza con el método `predict` como se ve a continuación. 
@@ -260,9 +266,10 @@ hy = arbol.predict(G)
 ```{python}
 #| echo: false
 error_f = Markdown(f'${(y_g != hy).mean():0.4f}$')
+triv_f = Markdown(f'${y_g.mean():0.4f}$')
 ```
 
-El error en el conjunto de prueba $\mathcal G$ es `{python} error_f`, se puede comparar este error con otros algoritmos utilizados en este conjunto como clasificadores paramétricos basados en distribuciones Gaussianas (@sec-gaussina-perf-breast_cancer). La siguiente instrucción muestra el cálculo del error. 
+El error en el conjunto de prueba $\mathcal G$ es `{python} error_f`, mientras que un clasificador que siempre responde que la persona no tiene diabetes tiene un error de `{python} triv_f`. Se puede comparar este error con otros algoritmos utilizados en este problema como clasificadores paramétricos basados en distribuciones Gaussianas (@sec-gaussiana-perf-salud). La siguiente instrucción muestra el cálculo del error. 
 
 ```{python}
 #| echo: true
@@ -320,21 +327,38 @@ sns.relplot(df, kind='line')
 
 ### Entrenamiento
 
-Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Diabetes tal y como se muestran en las siguientes instrucciones. 
+Con respecto al proceso de entrenamiento la diferencia entre clasificación y regresión se encuentra en la función de costo que guía el proceso de optimización. En el caso de clasificación la función de costo era la esperanza de la entropía. Por otro lado, en regresión una función de costo utilizada es la varianza que es el error cuadrático que se muestra en los nodos. Para ejemplificar el uso de esta función de costo se utilizan los datos de Territorio (@sec-datos-territorio) para aproximar el grado promedio de escolaridad de una AGEB de Aguascalientes con la composición de establecimientos del DENUE, tal y como se muestra en las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
-X, y = load_diabetes(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+X = territorio.drop(columns=['clave_ageb', 'municipio',
+                             'grado_promedio_escolaridad',
+                             'pct_viv_internet',
+                             'pct_sin_servicio_salud',
+                             'pct_jefatura_femenina'])
+columnas = X.columns
+y = territorio['grado_promedio_escolaridad'].to_numpy()
+T, G, y_t, y_g = train_test_split(X.to_numpy(), y, test_size=0.2,
+                                  random_state=0)
 ```
 
-Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestra la información de la raíz y sus dos hijos. En la raíz se observa los parámetros de la función de corte, se selecciona la variable con índice 8 y se envían 235 elementos al hijo izquierdo y el resto al hijo derecho. 
+Con los datos de entrenamiento se genera el siguiente árbol de decisión para regresión. Solamente se muestra la información de la raíz y sus dos hijos. 
 
 ```{python}
 #| echo: true
-arbol = tree.DecisionTreeRegressor().fit(T, y_t)
-_ = tree.plot_tree(arbol, max_depth=1)
+arbol = tree.DecisionTreeRegressor(random_state=0).fit(T, y_t)
+_ = tree.plot_tree(arbol, max_depth=1, feature_names=columnas)
 ```
+
+```{python}
+#| echo: false
+var_raiz_f = Markdown(f'`{columnas[arbol.tree_.feature[0]]}`')
+n_izq_f = Markdown(f'${arbol.tree_.n_node_samples[1]}$')
+n_der_f = Markdown(f'${arbol.tree_.n_node_samples[2]}$')
+```
+
+En la raíz se observa los parámetros de la función de corte. Se selecciona la variable `{python} var_raiz_f` y se envían `{python} n_izq_f` elementos al hijo izquierdo y los otros `{python} n_der_f` al hijo derecho. 
 
 
 El siguiente método implementa la función de corte para regresión se puede observar que la única diferencia con la función `corte_var` definida en clasificación (@sec-arboles-clasificacion) es que la entropía `H` se cambia por la varianza `np.var`. 
@@ -361,11 +385,16 @@ La función `corte_var` de regresión se utiliza para encontrar el punto de cort
 ```{python}
 #| echo: true
 orden = T.argsort(axis=0)
-res = [corte_var(y_t[orden[:, x]]) for x in range(10)]
+res = [corte_var(y_t[orden[:, x]]) for x in range(T.shape[1])]
 res
 ```
 
-El resultado de ejecutar el código anterior se muestra a continuación; donde se observa que el costo mínimo corresponde a la variable con índice `{python} np.argmin(res, axis=0)[0]` tal y como se muestra en la figura anterior nodo derecho de la raíz. 
+```{python}
+#| echo: false
+var_min_f = Markdown(f'`{columnas[np.argmin(res, axis=0)[0]]}`')
+```
+
+El resultado de ejecutar el código anterior se muestra a continuación, donde se observa que el costo mínimo corresponde a la variable con índice `{python} int(np.argmin(res, axis=0)[0])`, es decir, `{python} var_min_f`, tal y como se muestra en la raíz de la figura anterior. 
 
 ## Resumen {#sec-resumen-arboles}
 
