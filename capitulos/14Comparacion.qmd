@@ -1,0 +1,467 @@
+# Comparación de Algoritmos {#sec-comparacion-algoritmos}
+
+El **objetivo** de la unidad es conocer y aplicar diferentes procedimientos estadísticos para comparar y analizar el rendimiento de algoritmos. 
+
+## Paquetes usados
+
+```{python}
+#| echo: true
+from CompStats import StatisticSamples, CI
+from CompStats import performance, plot_performance
+from CompStats import difference, plot_difference
+from scipy.stats import norm, wilcoxon
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.metrics import recall_score
+import numpy as np
+import seaborn as sns
+import pandas as pd
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+sns.set_style('whitegrid')
+```
+
+::: {.content-visible when-format="html"}
+
+{{< video https://www.youtube.com/embed/a6zzTtscYtU width="560" height="315" >}}
+:::
+
+## Introducción {#sec-intro-13}
+
+Hasta el momento se han descrito diferentes algoritmos de clasificación y regresión. Se han presentado diferentes medidas para conocer su rendimiento, pero solo se ha tocado de manera práctica (con el error estándar, Bootstrap y las comparaciones de CompStats de las unidades anteriores) el conocer la distribución de estas medidas, la cual permite tener mayor información sobre el rendimiento del algoritmo y también poder comparar y seleccionar el algoritmo que tenga las mejores prestaciones ya sea en rendimiento o en complejidad. 
+
+## Intervalos de confianza {#sec-intervalos}
+
+El análisis del rendimiento se inicia partiendo de que el rendimiento se puede estimar a partir del conjunto de prueba, $\mathcal G$; el valor obtenido estima el rendimiento real, $\theta$, el cual se considera una constante. Una manera de conocer el rango de valores donde se puede encontrar $\theta$ es generando su intervalo de confianza. El intervalo de confianza de $\theta$ está dado por $C = (a(\mathcal G), b(\mathcal G)),$ de tal manera que $P_{\theta}(\theta \in C) \geq 1 - \alpha$. Es importante mencionar que el intervalo no mide la probabilidad de $\theta$ dado que $\theta$ es una constante, en su lugar mide que el valor estimado esté dentro de esos límites con esa probabilidad. Por otro lado se utiliza la notación $a(\mathcal G)$ y $b(\mathcal G)$ para hacer explícito que en este caso los límites del intervalo son obtenidos utilizando el conjunto de prueba. Una manera de entender el intervalo de confianza de cualquier parámetro es suponer que si el parámetro se estima $100$ veces con el mismo procedimiento, en diferentes muestras, un intervalo del 95% de confianza dice que 95 de las veces la estimación del parámetro estará en el intervalo calculado.
+
+### Método: Distribución Normal
+
+Existen diferentes procedimientos para generar intervalos de confianza, uno de ellos es asumir que la estimación de $\theta$, i.e., $\hat \theta$ se distribuye como una normal, i.e., $\hat \theta \sim \mathcal N(\mu, \sigma^2),$ donde $\sigma=\textsf{se}=\sqrt{\mathbb V(\hat \theta)}$ corresponde al error estándar (@sec-error-estandar) de la estimación $\hat \theta.$ En estas condiciones el intervalo está dado por:
+
+$$
+C = (\hat \theta - z_{\frac{\alpha}{2}}\textsf{se}, \hat \theta + z_{\frac{\alpha}{2}}\textsf{se}),
+$$
+
+donde $z_{\frac{\alpha}{2}} = \Phi^{-1}(1 - \frac{\alpha}{2})$ y $\Phi$ es la función de distribución acumulada de una normal. 
+
+### Ejemplo: Exactitud
+
+Recordando que dada una entrada el clasificador puede acertar la clase a la que pertenece esa entrada, entonces el resultado se puede representar como $1$ si la respuesta es correcta y $0$ de lo contrario. En este caso la respuesta es una variable aleatoria con una distribución de Bernoulli. Recordando que la distribución Bernoulli está definida por un parámetro $p$, estimado como $\hat p = \frac{1}{N} \sum_{i=1}^N \mathcal X_i$ donde $\mathcal X_i$ corresponde al resultado del algoritmo en el $i$-ésimo ejemplo. La varianza de una distribución Bernoulli es $p(1-p)$ por lo que el error estándar es: $se=\sqrt{\frac{p(1-p)}{N}}$ dando como resultado el siguiente intervalo:
+
+$$
+C = (\hat p_N - z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}, \hat p_N + z_{\frac{\alpha}{2}}\sqrt{\frac{p(1-p)}{N}}).
+$$
+
+Suponiendo $N=100$ y $p=0.85$ el siguiente código calcula el intervalo usando $\alpha=0.05$
+
+```{python}
+#| echo: true
+alpha = 0.05
+z = norm().ppf(1 - alpha / 2)
+p = 0.85
+N = 100
+Cn = (p - z * np.sqrt(p * (1 - p) / N),
+      p + z * np.sqrt(p * (1 - p) / N))
+```
+
+dando como resultado el siguiente intervalo, `{python} Markdown(f'$C = ({Cn[0]:0.2f}, {Cn[1]:0.2f})$')`.
+
+En el caso anterior se supuso que se contaba con los resultados de un algoritmo de clasificación, con el objetivo de completar este ejemplo a continuación se presenta el análisis con un Naive Bayes en el problema de tamizaje de diabetes (@sec-datos-salud), donde se clasifica si una persona adulta tiene un diagnóstico previo de diabetes para decidir a quién se le ofrece una prueba de glucosa. 
+
+Lo primero que se realiza es cargar los datos, convertir las variables de texto en indicadoras (@sec-regresion-datos) y dividir en el conjunto de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) como se muestra a continuación. 
+
+```{python}
+#| echo: true
+salud = pd.read_csv(f'{URL_DATOS}/ensanut_salud.csv.gz')
+D = pd.get_dummies(salud.drop(columns=['diabetes', 'factor']),
+                   drop_first=True, dtype=float)
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
+T, G, y_t, y_g = train_test_split(X, y,
+                                  random_state=1,
+                                  test_size=0.3,
+                                  stratify=y)
+```
+
+El siguiente paso es entrenar el algoritmo y realizar las predicciones en el conjunto de prueba ($\mathcal G$) tal y como se muestra en las siguientes instrucciones. 
+
+```{python}
+#| echo: true
+model = GaussianNB().fit(T, y_t)
+hy = model.predict(G)
+``` 
+
+Con las predicciones se estima la exactitud y se siguen los pasos para calcular el intervalo de confianza como se ilustra en el siguiente código.
+ 
+```{python}
+#| echo: true
+_ = np.where(y_g == hy, 1, 0)
+p = _.mean()
+N = _.shape[0]
+C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+```
+
+```{python}
+#| echo: false
+if C[1] > 1:
+    lim_f = Markdown('Se puede observar que el límite superior es mayor que $1$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ esto es resultado de generar el intervalo de confianza asumiendo una distribución normal.')
+else:
+    lim_f = Markdown('Se puede observar que el intervalo queda dentro de $[0, 1]$; sin embargo, al asumir una distribución normal el límite superior podría ser mayor que $1,$ lo cual no es posible dado que el máximo valor del accuracy es $1,$ cuando la exactitud es cercana a uno o cuando se tienen pocos datos.')
+triv_f = Markdown(f'${(y_g == 0).mean():0.2f}$')
+```
+
+El intervalo de confianza obtenido es `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`. `{python} lim_f` Para tener una referencia, un clasificador que siempre responde que la persona no tiene diabetes tendría una exactitud de `{python} triv_f`. 
+
+Cuando se cuenta con conjuntos de datos pequeños y además no se ha definido un conjunto de prueba, se puede obtener las predicciones del algoritmo de clasificación mediante el uso de validación cruzada usando K-fold. En el siguiente código se muestra su uso, el cambio solamente es en el procedimiento para obtener las predicciones.
+
+```{python}
+#| echo: true
+kf = StratifiedKFold(n_splits=10,
+                     random_state=0,
+                     shuffle=True)
+hy = np.empty_like(y)
+for tr, ts in kf.split(X, y):
+    model = GaussianNB().fit(X[tr], y[tr])
+    hy[ts] = model.predict(X[ts])
+```
+
+```{python}
+#| echo: false
+_ = np.where(y == hy, 1, 0)
+p = _.mean()
+N = _.shape[0]
+C = (p - z * np.sqrt(p * (1 - p) / N), p + z * np.sqrt(p * (1 - p) / N))
+```
+
+El resto del código es equivalente al usado previamente obteniendo el siguiente intervalo de confianza `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`.
+
+### Método: Bootstrap del error estándar {#sec-bootstrap-error-estandar}
+
+Existen ocasiones donde no es sencillo identificar el error estándar ($\textsf{se}$) y por lo mismo no se puede calcular el intervalo de confianza. En estos casos se emplea la técnica de Bootstrap (@sec-bootstrap) para estimar $\mathbb V(\hat \theta).$ Un ejemplo donde no es sencillo encontrar analíticamente el error estándar es en el $recall$ (@sec-recall).
+
+Es más sencillo entender este método mediante un ejemplo. Usando el ejercicio de $N=100$ y $p=0.85$ y $\alpha=0.05$ descrito previamente, el siguiente código primero construye las variables aleatorias de tal manera que den $p=0.85$
+
+```{python}
+#| echo: true
+alpha = 0.05
+N = 100
+z = norm().ppf(1 - alpha / 2)
+X = np.zeros(N)
+X[:85] = 1
+```
+
+`X` es un arreglo que podría provenir de la evaluación de un clasificador usando alguna medida de similitud entre predicción y valor medido. El siguiente paso es seleccionar con remplazo y obtener $\hat \theta$ para cada muestra, en este caso $\hat \theta$ corresponde a la media. El resultado se guarda en una lista $B$ y se repite el experimento $500$ veces.
+
+```{python}
+#| echo: true
+S = np.random.randint(X.shape[0],
+                      size=(500, X.shape[0]))
+B = [X[s].mean() for s in S]
+``` 
+
+El error estándar es y el intervalo de confianza se calcula con las siguientes instrucciones 
+
+```{python}
+#| echo: true
+se = np.sqrt(np.var(B))
+C = (p - z * se, p + z * se)
+``` 
+
+el intervalo de confianza corresponde a `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`. 
+
+Continuando con el mismo ejemplo pero ahora analizando Naive Bayes en el problema de tamizaje de diabetes. El primer paso es obtener las predicciones que se pueden observar en el siguiente código (previamente descrito.)
+
+```{python}
+#| echo: true
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
+kf = StratifiedKFold(n_splits=10,
+                     random_state=0,
+                     shuffle=True)
+
+hy = np.empty_like(y)
+for tr, ts in kf.split(X, y):
+    model = GaussianNB().fit(X[tr], y[tr])
+    hy[ts] = model.predict(X[ts])
+X = np.where(y == hy, 1, 0)
+```
+
+Realizando la selección con remplazo se obtiene el intervalo con las siguientes instrucciones 
+
+```{python}
+#| echo: true
+B = [X[s].mean() for s in S]
+se = np.sqrt(np.var(B))
+C = (p - z * se, p + z * se)
+```
+
+teniendo un valor de `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`.  
+
+
+### Método: Percentil
+
+Existe otra manera de calcular los intervalos de confianza y es mediante el uso del percentil, utilizando directamente las estimaciones realizadas a $\hat \theta$ en la selección. El siguiente código muestra este método usando el ejemplo anterior, 
+
+```python
+alpha = 0.05 / 2
+C = (np.percentile(B, alpha * 100),
+     np.percentile(B, (1 - alpha) * 100))
+```
+
+obteniendo un intervalo de `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')`.
+
+### Ejemplo: macro-recall
+
+Hasta el momento se ha usado una medida de rendimiento para la cual se puede conocer su varianza de manera analítica. Existen problemas donde esta medida no es recomendada, en el siguiente ejemplo utilizaremos macro-recall para medir el rendimiento de Naive Bayes en el problema de tamizaje de diabetes. En este problema la clase con diagnóstico de diabetes es la minoritaria, por lo que la exactitud puede ser alta aun cuando el algoritmo no detecte a las personas con diabetes, mientras que el macro-recall promedia la cobertura de cada clase y, por lo tanto, le da el mismo peso a las personas con diabetes que al resto. El primer paso es realizar las predicciones del algoritmo usando validación cruzada y hacer la muestra con reemplazo $B$. 
+
+```{python}
+#| echo: true
+alpha = 0.05
+z = norm().ppf(1 - alpha / 2)
+
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
+kf = StratifiedKFold(n_splits=10,
+                     random_state=0,
+                     shuffle=True)
+
+hy = np.empty_like(y)
+for tr, ts in kf.split(X, y):
+    model = GaussianNB().fit(X[tr], y[tr])
+    hy[ts] = model.predict(X[ts])
+
+S = np.random.randint(hy.shape[0],
+                      size=(500, hy.shape[0]))
+B = [recall_score(y[s], hy[s], average="macro")
+     for s in S]
+```
+
+El siguiente paso es calcular el intervalo asumiendo que este se comporta como una normal tal y como se muestra en las siguientes instrucciones;
+
+```{python}
+#| echo: true
+p = np.mean(B)
+se = np.sqrt(np.var(B))
+C = (p - z * se, p + z * se)
+``` 
+
+```{python}
+#| echo: false
+C2 = (np.percentile(B, alpha * 100), np.percentile(B, (1 - alpha) * 100))
+```
+
+obteniendo un intervalo de `{python} Markdown(f'$C = ({C[0]:0.2f}, {C[1]:0.2f})$')` Completando el ejercicio, el intervalo se puede calcular directamente usando el percentil, estimando un intervalo de `{python} Markdown(f'$C = ({C2[0]:0.2f}, {C2[1]:0.2f})$')`
+
+
+::: {.callout-note}
+El método de bootstrap para calcular el error estándar y el método de percentil para calcular el intervalo de confianza se pueden estimar utilizando la clase `StatisticSamples`. Las siguientes instrucciones se pueden utilizar para calcular el error estándar. 
+
+```{python} 
+#| echo: true
+
+recall = lambda y, hy: recall_score(y, hy,
+                                    average="macro")
+    
+statistic = StatisticSamples(statistic=recall)
+samples = statistic(y, hy)
+np.std(samples)                               
+```
+
+Complementando el intervalo de confianza con el método de percentil se implementa en el siguiente código.
+```{python} 
+#| echo: true
+
+CI(samples)
+```
+:::
+
+## Comparación de Algoritmos
+
+Se han descrito varios procedimientos para conocer los intervalos de confianza de un algoritmo de aprendizaje. Es momento para describir la metodología para conocer si dos algoritmos se comportan similar en un problema dado. 
+
+### Método: Distribución $t$ de Student
+
+Suponiendo que se tienen las medidas de rendimiento de dos algoritmos mediante validación cruzada de K-fold, es decir, se tiene el rendimiento del primer algoritmo como $p_i^1$ y del segundo como $p_i^2$ en la $i$-ésima instancia. Suponiendo que el rendimiento es una normal, entonces la resta, i.e., $p_i = p_i^1 - p_i^2$ también sería normal. Dado que se está comparando los algoritmos en los mismos datos, se puede utilizar la prueba $t$ de Student de muestras dependientes. La estadística de la prueba está dada por $\frac{\sqrt{K} m}{S} \sim t_{K-1}$, donde $m$ 
+y $S^2$ es la media varianza estimada.
+
+En el siguiente ejemplo se compara el rendimiento de Árboles Aleatorios y Naive Bayes en el problema de tamizaje de diabetes. El primer paso es cargar las librerías así como obtener las predicciones de los algoritmos. 
+
+```{python}
+#| echo: true
+K = 30
+kf = StratifiedKFold(n_splits=K,
+                     random_state=0,
+                     shuffle=True)
+X, y = D.to_numpy(), salud['diabetes'].to_numpy()
+
+P = []
+for tr, ts in kf.split(X, y):
+    forest = RandomForestClassifier(random_state=0).fit(X[tr], y[tr]).predict(X[ts])
+    naive = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
+    P.append([recall_score(y[ts], hy, average="macro") for hy in [forest, naive]])
+P = np.array(P)
+```
+
+Como se puede observar la medida de rendimiento es macro-recall. Continuando con el procedimiento para obtener la estadística $t_{K-1}$
+
+```{python}
+#| echo: true
+p = P[:, 0] - P[:, 1]
+t = np.sqrt(K) * np.mean(p) / np.std(p)
+```
+
+```{python}
+#| echo: false
+from scipy.stats import t as t_student
+t_crit = t_student(K - 1).ppf(1 - 0.05 / 2)
+t_crit_f = Markdown(f'$({-t_crit:0.3f}, {t_crit:0.3f})$')
+p_wilcoxon = wilcoxon(P[:, 0], P[:, 1]).pvalue
+signif = abs(t) > t_crit and p_wilcoxon < 0.05
+if signif:
+    concl_t_f = Markdown('En ambos casos podemos concluir que los algoritmos Árboles Aleatorios y Naive Bayes son estadísticamente diferentes con una confianza del 95% en el problema de tamizaje de diabetes.')
+else:
+    concl_t_f = Markdown('En al menos una de las pruebas no se rechaza la hipótesis nula, por lo que no se puede concluir que los algoritmos Árboles Aleatorios y Naive Bayes sean estadísticamente diferentes con una confianza del 95% en el problema de tamizaje de diabetes.')
+```
+
+donde el valor de la estadística es `{python} Markdown(f'${t:0.4f}$')`, si el valor está fuera del siguiente intervalo `{python} t_crit_f` se rechaza la hipótesis nula de que los dos algoritmos se comportan similar. 
+
+En caso de que la medida de rendimiento no esté normalmente distribuida, la prueba no paramétrica equivalente corresponde a Wilcoxon. La instrucción `wilcoxon(P[:, 0], P[:, 1])` se puede utilizar para calcularla, dando un $p_{\text{value}}$ de `{python} Markdown(f'${p_wilcoxon:0.4f}$')`. `{python} concl_t_f`
+
+### Método: Bootstrap en diferencias
+
+Un método para comparar el rendimiento de dos algoritmos que no asume ningún tipo de distribución se puede realizar mediante la técnica de Bootstrap. @Nava2024 utilizan esta idea para comparar diferentes algoritmos en el esquema de una competencia de aprendizaje supervisado. La idea es calcular las predicciones de los algoritmos y realizar la muestra calculando en cada una la diferencia del rendimiento. Este procedimiento se explicará mediante un ejemplo. 
+
+El primer paso es calcular las predicciones de los algoritmos, en este caso se realiza una validación cruzada, tal y como se muestra a continuación. 
+
+```{python}
+#| echo: true
+forest = np.empty_like(y)
+naive = np.empty_like(y)
+for tr, ts in kf.split(X, y):
+    forest[ts] = RandomForestClassifier(random_state=0).fit(X[tr], y[tr]).predict(X[ts])
+    naive[ts] = GaussianNB().fit(X[tr], y[tr]).predict(X[ts])
+```
+
+```{python}
+#| echo: false
+mr_forest = recall_score(y, forest, average="macro")
+mr_naive = recall_score(y, naive, average="macro")
+mejor_f = Markdown('Naive Bayes' if mr_naive >= mr_forest else 'los Bosques Aleatorios')
+otro_f = Markdown('los Bosques Aleatorios' if mr_naive >= mr_forest else 'Naive Bayes')
+cob_forest_f = Markdown(f'${recall_score(y, forest, pos_label=1):0.2f}$')
+cob_naive_f = Markdown(f'${recall_score(y, naive, pos_label=1):0.2f}$')
+```
+
+El macro-recall para los Bosques Aleatorios es `{python} Markdown(f'${mr_forest:0.2f}$')` y para el Naive Bayes es `{python} Markdown(f'${mr_naive:0.2f}$')`. Lo que se observa es que `{python} mejor_f` tiene un mejor rendimiento. La diferencia se explica por la clase con diabetes. La cobertura de esa clase es `{python} cob_forest_f` para los bosques y `{python} cob_naive_f` para Naive Bayes, es decir, el algoritmo con menor macro-recall deja sin detectar a la mayoría de las personas con diabetes. Entonces la distribución de la diferencia del rendimiento entre `{python} mejor_f` y `{python} otro_f` no debería de incluir al cero, si lo incluye la masa que está al lado izquierdo del cero debe de ser menor, esa masa corresponde al valor $p.$
+
+Las muestras de la diferencia de rendimiento se pueden calcular de las siguientes instrucciones. 
+
+```{python}
+#| echo: true
+S = np.random.randint(y.shape[0],
+                      size=(500, y.shape[0]))
+r = recall_score
+diff = lambda y, hy1, hy2: r(y, hy1, average="macro") -\
+                           r(y, hy2, average="macro")
+if r(y, naive, average="macro") >= r(y, forest, average="macro"):
+    mejor, otro = naive, forest
+else:
+    mejor, otro = forest, naive
+B = [diff(y[s], mejor[s], otro[s])
+     for s in S]
+```
+
+```{python}
+#| echo: false
+p_boot = (np.array(B) < 0).mean()
+if p_boot < 0.05:
+    concl_b_f = Markdown('Dado que el valor es menor que $0.05$ se puede rechazar la hipótesis nula con una confianza superior al 95% y concluir que existe una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos.')
+else:
+    concl_b_f = Markdown('Dado que el valor no es menor que $0.05$ no se puede rechazar la hipótesis nula, por lo que no se puede concluir que exista una diferencia estadísticamente significativa en el rendimiento entre los dos algoritmos.')
+```
+
+Finalmente, el $p_{\text{value}}$ corresponde a la proporción de elementos que son menores que cero, i.e., `(np.array(B) < 0).mean()`, es decir, aquellas muestras donde el algoritmo con menor macro-recall (`{python} otro_f`) tiene un mejor desempeño que el algoritmo con mayor macro-recall (`{python} mejor_f`). En este caso el $p_{\text{value}}$ tiene un valor de `{python} Markdown(f'${p_boot:0.4f}$')`. `{python} concl_b_f` La @fig-comparacion-diff muestra la distribución de la diferencia de rendimiento, en esta se puede observar la masa que se encuentra del lado positivo y la masa menor que cero, la cual corresponde al $p_{\text{value}}$. 
+
+```{python} 
+#| code-fold: true
+#| fig-cap: Distribución de la diferencia de rendimiento
+#| label: fig-comparacion-diff
+
+fig = sns.displot(B, kde=True)
+```
+
+## CompStats 
+
+La librería [CompStats](https://compstats.readthedocs.io) (@Nava2024) permite realizar de manera sencilla la comparación entre el rendimiento de varios algoritmos, además de presentar gráficas sobre su comportamiento. Esta librería usa la técnica de Bootstrap tal y como se ha mostrado en este capítulo. 
+
+
+```{python} 
+#| include: false
+
+from CompStats import utils
+utils.USE_TQDM = False
+```
+
+Lo primero que se realiza es calcular las muestras del rendimiento entre los dos algoritmos analizados, los cuales tienen sus predicciones en las variables `naive` y `forest`. En la primera línea se inicializa la variable `macro_recall` que calcula el promedio de la cobertura. La segunda línea crea un cuadro de datos (`DataFrame`) que contiene tanto la variable medida como las predicciones. La tercera línea calcula el rendimiento de los dos algoritmos. 
+
+```{python}
+#| echo: true
+
+macro_recall = lambda y, hy: recall_score(y, hy,
+                                          average='macro')
+df = pd.DataFrame(dict(y=y,
+                       naive=naive,
+                       forest=forest))
+perf = performance(df, score=macro_recall)
+```
+
+La variable `perf` contiene las muestras del rendimiento de cada algoritmo. Por ejemplo, la siguiente línea calcula el intervalo de confianza de cada algoritmo. 
+
+```{python} 
+#| echo: true
+
+CI(perf)
+```
+
+Los intervalos de confianza se pueden visualizar en la @fig-intervalos-compstats. 
+
+```{python} 
+#| code-fold: true
+#| fig-cap: Intervalos de confianza
+#| label: fig-intervalos-compstats
+
+plot_performance(perf)
+```
+
+```{python}
+#| echo: false
+mejor_cs_f = Markdown('naive' if mr_naive >= mr_forest else 'forest')
+otro_cs_f = Markdown('forest' if mr_naive >= mr_forest else 'naive')
+lo, hi = np.percentile(B, [2.5, 97.5])
+if lo > 0 or hi < 0:
+    concl_cs_f = Markdown('En el ejemplo mostrado se ve que el intervalo no intersecta entonces se puede concluir que la hipótesis nula se puede descartar con una cierta confianza.')
+else:
+    concl_cs_f = Markdown('En el ejemplo mostrado se ve que el intervalo intersecta la línea entonces no se puede descartar la hipótesis nula.')
+```
+
+El segundo paso es conocer si la diferencia en rendimiento es significativa, en la @fig-comparacion-compstats se observa la comparación entre el mejor algoritmo (i.e., `{python} mejor_cs_f`) y los otros algoritmos (`{python} otro_cs_f`) incluidos en la comparación. Se observa, en la figura, una línea puntuada que se encuentra en cero para facilitar la comparación, si el intervalo de confianza intersecta con la línea se puede concluir que los algoritmos comparados no son estadísticamente diferentes. `{python} concl_cs_f`  
+
+```{python} 
+#| code-fold: true
+#| fig-cap: Comparación contra el mejor
+#| label: fig-comparacion-compstats
+
+diff = difference(perf)
+plot_difference(diff)
+```
+
+## Resumen {#sec-resumen-comparacion}
+
+Una medida de rendimiento calculada en un conjunto de prueba es una estimación, y por lo tanto tiene incertidumbre. Los intervalos de confianza (@sec-intervalos) cuantifican esa incertidumbre, ya sea con la distribución normal o con el bootstrap (@sec-bootstrap-error-estandar). Para comparar dos algoritmos no basta con que uno tenga un número mayor, sino que la diferencia debe ser estadísticamente distinta de cero, lo que se puede verificar con la distribución $t$ de Student o con el bootstrap de las diferencias. La librería `CompStats` reúne estos procedimientos y los presenta de manera gráfica (@fig-comparacion-compstats). En este contexto «mejor» significa distinto con evidencia estadística y no solo mayor.
+
+Este es el último capítulo de esta versión del libro, y retoma el hilo de la @tbl-organizacion-libro. Se empezó con la diferencia entre predecir e inferir, se estudiaron modelos de regresión y de clasificación cada vez más flexibles, se vio cómo reducir la dimensión y agrupar, y se terminó con la forma de decidir entre algoritmos. Quedan en preparación los capítulos *Interpretabilidad y Equidad*, *Aprendizaje Computacional e Inferencia Causal* y *Texto como Datos*, que tratan el uso responsable de los modelos, la pregunta de qué pasa cuando se interviene y los datos en forma de texto.
+
+Para el *policy paper* de METPOL, esto se traduce en una práctica concreta. Plantear primero el problema como predicción o como inferencia, medir siempre fuera de muestra con la medida que refleje los costos de cada error, comparar contra un modelo de referencia sencillo con su intervalo de confianza y reportar la elección de manera que otra persona pueda reproducirla.

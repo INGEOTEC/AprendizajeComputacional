@@ -1,0 +1,31 @@
+# Perfil de la edición histórica MCDI (rama mcdi), publicada en /mcdi/.
+#
+# Este archivo vive en develop/master y NO en la rama mcdi, que está congelada
+# y nunca recibe commits. El flujo de publicación lo copia a la raíz de un
+# checkout de mcdi y renderiza ahí con `quarto render --profile historico`, de
+# modo que la fuente histórica queda intacta.
+#
+# El _quarto.yml de mcdi no tiene navbar: se agrega aquí el mismo menú
+# «Ediciones» que tiene _quarto.yml en develop/master. El aviso va con
+# include-before-body porque `book.announcement` no se aplica a proyectos de
+# tipo libro en Quarto 1.10.
+book:
+  site-url: https://ingeotec.github.io/AprendizajeComputacional/mcdi
+  navbar:
+    right:
+      - text: "Ediciones"
+        menu:
+          - text: "Vigente"
+            href: https://ingeotec.github.io/AprendizajeComputacional/
+          - text: "MCDI (histórica)"
+            href: https://ingeotec.github.io/AprendizajeComputacional/mcdi/
+          - text: "Borrador"
+            href: https://ingeotec.github.io/AprendizajeComputacional/dev/
+
+format:
+  html:
+    include-before-body:
+      text: |
+        <div id="aviso-edicion" class="alert alert-info text-center mb-0 rounded-0" role="alert">
+        Esta es la <strong>edición histórica</strong> del curso impartido en la MCDI (INFOTEC); ya no se actualiza. La edición vigente está en <a href="https://ingeotec.github.io/AprendizajeComputacional/">https://ingeotec.github.io/AprendizajeComputacional/</a>
+        </div>

@@ -1,4 +1,4 @@
-# Redes Neuronales
+# Redes Neuronales {#sec-redes-neuronales}
 
 El **objetivo** de la unidad es conocer, diseñar y aplicar redes neuronales artificiales para problemas de regresión y clasificación.
 
@@ -10,12 +10,16 @@ import jax
 import jax.lax as lax
 import jax.numpy as jnp
 import optax
-from sklearn.datasets import load_iris, load_digits
+from CompStats.metrics import r2_score
+from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import recall_score
 import numpy as np
 import pandas as pd
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
 ```
 
 ```{python}
@@ -31,12 +35,12 @@ sns.set_style('whitegrid')
 
 ## Introducción {#sec-intro-11}
 
-Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que mas han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial.
+Las redes neuronales son sin duda uno de los algoritmos de aprendizaje supervisado que más han tomado auge en los últimos tiempos. Para iniciar la descripción de redes neuronales se toma de base el algoritmo de Regresión Logística (@sec-regresion-logistica-optimizacion) pero en el caso de múltiples clases, es decir, Regresión Logística Multinomial. Al final del capítulo se presentan un ejemplo de clasificación (Prioridad de Planteles) y uno de regresión (@sec-redes-neuronales-regresion), ambos con los datos de abandono escolar (@sec-datos-educacion).
 
 ## Regresión Logística Multinomial {#sec-regresion-logistica-multinomial}
 
 La idea de regresión logística es modelar $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Ber}(y \mid \textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0)),$ es decir, que la 
-clase $y$ esta modelada como una distribución Bernoulli con parámetro $\textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0).$ Siguiendo está definición que es equivalente a la mostrada [anteriormente](/AprendizajeComputacional/capitulos/10Optimizacion/#sec:regresion-logistica-optimizacion), se puede modelar a un problema de multiples clases como $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Cat}(y \mid \textsf{softmax}(W \mathbf x + \mathbf w_0)),$ es decir, que la clase proviene de una distribución Categórica con parámetros $\textsf{softmax}(W \mathbf x + \mathbf w_0),$ donde $W \in \mathbb R^{K \times d},$ $\mathbf x \in \mathbb R^d$ y $\mathbf w_0 \in \mathbb R^d.$ 
+clase $y$ está modelada como una distribución Bernoulli con parámetro $\textsf{sigmoid}(\mathbf w \cdot \mathbf x + w_0).$ Siguiendo esta definición que es equivalente a la mostrada [anteriormente](@sec-regresion-logistica-optimizacion), se puede modelar a un problema de múltiples clases como $\mathbb P(\mathcal Y=y \mid \mathcal X=\mathbf x)=\textsf{Cat}(y \mid \textsf{softmax}(W \mathbf x + \mathbf w_0)),$ es decir, que la clase proviene de una distribución Categórica con parámetros $\textsf{softmax}(W \mathbf x + \mathbf w_0),$ donde $W \in \mathbb R^{K \times d},$ $\mathbf x \in \mathbb R^d$ y $\mathbf w_0 \in \mathbb R^d.$ 
 
 La función $\textsf{softmax}(\mathbf v)$, donde $\mathbf v = W \mathbf x + \mathbf w_0$ está definida como:
 
@@ -53,20 +57,39 @@ jax.nn.softmax(np.array([2, 1, 3]))
 
 Se puede observar que $\textsf{softmax}$ transforma los valores del vector $\mathbf v$ en probabilidades. 
 
-Para seguir explicando este tipo de regresión logística se utilizará el problema del Iris, el cual se obtiene de la siguiente manera, es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno. 
+Para seguir explicando este tipo de regresión logística se utilizará el problema de priorizar planteles para un programa de tutorías (@sec-datos-educacion). La variante `prioridad` (@sec-datos-educacion-prioridad) clasifica cada secundaria en prioridad baja ($0$), media ($1$) o alta ($2$) según su tasa de abandono, de tal forma que el programa atienda primero a los planteles con más abandono. Los datos se leen del release `datos-v1`, se construye la variante y las variables indicadoras (@sec-regresion-datos) y se parten en los conjuntos de entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) con una partición estratificada y la semilla fija `random_state=0`. Es importante notar que las entradas están normalizadas para tener media cero y desviación estándar uno, con los parámetros calculados solamente en $\mathcal T.$ La tasa de abandono no es una variable predictora porque con ella se define la prioridad. 
 
 ```{python}
 #| echo: true
-D, y = load_iris(return_X_y=True)
-normalize = StandardScaler().fit(D)
-D = normalize.transform(D)
+educacion = pd.read_csv(f'{URL_DATOS}/sep_f911_educacion.csv.gz')
+corte = educacion.tasa_abandono.quantile(0.9)
+prioridad = np.where(educacion.tasa_abandono == 0, 0,
+                     np.where(educacion.tasa_abandono > corte, 2, 1))
+constantes = [c for c in educacion.columns if educacion[c].nunique() == 1]
+X_e = pd.get_dummies(educacion.drop(columns=['tasa_abandono', 'clave_cct'] + constantes),
+                     drop_first=True, dtype=float)
+T, G, y_t, y_g = train_test_split(X_e.to_numpy(), prioridad,
+                                  test_size=0.2, random_state=0,
+                                  stratify=prioridad)
+normalize = StandardScaler().fit(T)
+D = normalize.transform(T)
+G = normalize.transform(G)
 ```
 
-El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d.$ Los parámetros iniciales se puede generar con la función `parametros_iniciales` tal y como se muestra a continuación.
+```{python}
+#| echo: false
+n_educacion_f = Markdown(f'${educacion.shape[0]}$')
+d_entrada_f = Markdown(f'${D.shape[1]}$')
+prop_clases_f = [Markdown(f'${100 * (prioridad == k).mean():0.1f}\\%$') for k in range(3)]
+```
+
+El conjunto tiene `{python} n_educacion_f` planteles y, después de convertir las variables de texto en indicadoras, `{python} d_entrada_f` variables de entrada. La prioridad baja tiene `{python} prop_clases_f[0]` de los planteles, la media `{python} prop_clases_f[1]` y la alta `{python} prop_clases_f[2]`.
+
+El siguiente paso es generar el modelo de la Regresión Logística Multinomial, el cual depende de una matriz de coeficientes $W \in \mathbb R^{K \times d}$ y $\mathbf w_0 \in \mathbb R^d.$ Los parámetros iniciales se pueden generar con la función `parametros_iniciales` tal y como se muestra a continuación.
 
 ```{python}
 #|  echo: true
-n_labels = np.unique(y).shape[0]
+n_labels = np.unique(y_t).shape[0]
 def parametros_iniciales(key=0):
     key = jax.random.PRNGKey(key)
     d = D.shape[1]
@@ -93,11 +116,11 @@ def modelo(params, X):
     return jax.nn.softmax(jnp.array(o), axis=0).T
 ```
 
-Una característica importante es que la función de perdida, en este caso, a la Entropía Cruzada (@sec-entropia-cruzada), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad $1$ corresponde a la clase, esto se puede realizar con el siguiente código. 
+Una característica importante es que la función de pérdida, en este caso, a la Entropía Cruzada (@sec-entropia-cruzada), requiere codificada la probabilidad de cada clase en un vector, donde el índice con probabilidad $1$ corresponde a la clase, esto se puede realizar con el siguiente código. 
 
 ```{python}
 #| echo: true
-y_oh = jax.nn.one_hot(y, n_labels)
+y_oh = jax.nn.one_hot(y_t, n_labels)
 ```
 
 Ahora se cuenta con todos los elementos para implementar la función de Entropía Cruzada para múltiples clases, la cual se muestra en el siguiente fragmento. 
@@ -115,7 +138,7 @@ def media_entropia_cruzada(params, X, y_oh):
 
 El siguiente paso es encontrar los parámetros del modelo, para esto se utiliza el método de optimización visto en Regresión Logística ( @sec-regresion-logistica-optimizacion) con algunos ajustes. Lo primero es que se desarrolla todo en una función `fit` que recibe el parámetro $\eta$, los parámetros a identificar y el número de épocas, es decir, el número de iteraciones que se va a realizar el procedimiento. 
 
-Dentro de la función `fit`se observa la función `update` que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar como va aprendiendo el modelo. La primera linea después de la función `update` genera la función que calculará el valor y el gradiente de la función `media_entropia_cruzada`. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época. 
+Dentro de la función `fit`se observa la función `update` que calcula los nuevos parámetros, también regresa el valor del error, esto para poder visualizar cómo va aprendiendo el modelo. La primera línea después de la función `update` genera la función que calculará el valor y el gradiente de la función `media_entropia_cruzada`. Finalmente viene el ciclo donde se realizan las actualizaciones de los parámetros y se guarda el error calculado en cada época. 
 
 ```{python}
 #| echo: true
@@ -138,7 +161,7 @@ def fit(eta, params, epocas=500):
 
 Como se había visto en la @sec-actualizacion-parametros existen diferentes métodos para encontrar los parámetros, en particular en esta sección se utilizará el método Adam (implementado en la librería [optax](https://optax.readthedocs.io)) para encontrar los parámetros de la Regresión Logística Multinomial. Se decide utilizar este método dado que su uso es frecuente en la identificación de parámetros de redes neuronales. 
 
-Siguiendo la misma estructura que la función `fit`, la función `adam` recibe tres parámetros el primer es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función `update` (que se encuentra en `adam`) calcula el valor de la función de error y su gradiente, estos son utilizados por `optimizer.update` para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de `update` inicializa el optimizador, después se general la función que calculará el valor y gradiente de la función `media_entropia_cruzada`. El ciclo llama la función `update` y guarda el error encontrado en cada época. 
+Siguiendo la misma estructura que la función `fit`, la función `adam` recibe tres parámetros el primero es la instancia de optimizador, la segunda son los parámetros y finalmente el número de épocas que se va a ejecutar. La primera línea de la función `update` (que se encuentra en `adam`) calcula el valor de la función de error y su gradiente, estos son utilizados por `optimizer.update` para calcular la actualización de parámetros así como el nuevo estado del optimizador, los nuevos parámetros son calculados en la tercera línea y la función regresa los nuevos parámetros, el estado del optimizador y el error en esa iteración. La primera línea después de `update` inicializa el optimizador, después se genera la función que calculará el valor y gradiente de la función `media_entropia_cruzada`. El ciclo llama la función `update` y guarda el error encontrado en cada época. 
 
 ```{python}
 #| echo: true
@@ -180,7 +203,21 @@ optimizer = optax.adam(learning_rate=1e-2)
 p2, error2 = adam(optimizer, params)
 ```
 
-La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. Se puede observar como el método `adam` converge más rápido y llega a un valor menor de Entropía Cruzada. 
+```{python}
+#| echo: false
+fit_50_f = Markdown(f'${float(error1[49]):0.4f}$')
+adam_50_f = Markdown(f'${float(error2[49]):0.4f}$')
+fit_fin_f = Markdown(f'${float(error1[-1]):0.4f}$')
+adam_fin_f = Markdown(f'${float(error2[-1]):0.4f}$')
+if error2[-1] < error1[-1] and error2[49] < error1[49]:
+    adam_conc_f = Markdown('Se puede observar cómo el método `adam` converge más rápido y llega a un valor menor de Entropía Cruzada.')
+elif error2[-1] < error1[-1]:
+    adam_conc_f = Markdown('Se puede observar que el método `adam` llega a un valor menor de Entropía Cruzada.')
+else:
+    adam_conc_f = Markdown('Se puede observar que el método `adam` no llega a un valor menor de Entropía Cruzada que `fit` en este número de épocas.')
+```
+
+La @fig-redes-neuronales-adam muestra cómo la media de la Entropía Cruzada se minimiza con respecto a las épocas para los dos métodos. En la época $50$ la Entropía Cruzada es `{python} fit_50_f` con `fit` y `{python} adam_50_f` con `adam`, y al final de las $500$ épocas es `{python} fit_fin_f` y `{python} adam_fin_f`, respectivamente. `{python} adam_conc_f` 
 
 ```{python}
 #| code-fold: true
@@ -198,22 +235,22 @@ _ = sns.relplot(data=df, x='epoca', y='entropia', hue='optimizador', kind='line'
 
 ```{python}
 #| echo: false
-_ = (y == modelo(p1, D).argmax(axis=1)).mean()
+_ = (y_t == modelo(p1, D).argmax(axis=1)).mean()
 acc_fit_f = Markdown(f'${_:0.4f}$')
-_ = (y == modelo(p2, D).argmax(axis=1)).mean()
+_ = (y_t == modelo(p2, D).argmax(axis=1)).mean()
 acc_adam_f = Markdown(f'${_:0.4f}$')
 ```
-Finalmente la exactitud (@sec-accuracy) en el conjunto de entrenamiento del modelo estimado con `fit` es `{python} acc_fit_f` (i.e., `(y == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es `{python} acc_adam_f`.
+Finalmente la exactitud (@sec-accuracy) en el conjunto de entrenamiento del modelo estimado con `fit` es `{python} acc_fit_f` (i.e., `(y_t == modelo(p1, D).argmax(axis=1)).mean()`) y del estimado con `adam` es `{python} acc_adam_f`.
 
 ## Perceptrón {#sec-preceptron}
 
 La unidad básica de procesamiento en una red neuronal es el perceptrón, el cual es un viejo conocido de Discriminantes Lineales (@sec-discriminantes-lineales), es decir,  $g(\mathbf x) = \mathbf w \cdot \mathbf x + \mathbf w_0.$ En problemas de clasificación binaria se encuentran los parámetros de $g(\mathbf x)$ de tal manera que genera un hiperplano y se clasifican los elementos de acuerdo al lado positivo o negativo del hiperplano. En problemas de Regresión (@sec-regresion-ols) los parámetros de $g(\mathbf x)$ se encuentran utilizando mínimos cuadrados. 
 
-En el case de tener $K>2$ clases entonces el problema se puede afrontar entrenando $g_k(\mathbf x)$ perceptrones ($k=1, \ldots, K$) tal y como se realizó Discriminantes Lineales (@sec-multiples-clases). De manera concisa se puede definir a $g: \mathbb R^d \rightarrow \mathbb R^K$, es decir, $g(\mathbf x)=W \mathbf x + \mathbf w_0$ tal y como se realizó en Regresión Logística Multinomial (@sec-regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$ y en el caso multiclase $g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$
+En el caso de tener $K>2$ clases entonces el problema se puede afrontar entrenando $g_k(\mathbf x)$ perceptrones ($k=1, \ldots, K$) tal y como se realizó Discriminantes Lineales (@sec-multiples-clases). De manera concisa se puede definir a $g: \mathbb R^d \rightarrow \mathbb R^K$, es decir, $g(\mathbf x)=W \mathbf x + \mathbf w_0$ tal y como se realizó en Regresión Logística Multinomial (@sec-regresion-logistica-multinomial). En el caso de desear conocer la probabilidad de pertenencia a una clase, en el caso binario se utilizó $g(\mathbf x) = \textsf{sigmoid}(\mathbf w \cdot \mathbf x + \mathbf w_0)$ y en el caso multiclase $g(\mathbf x) = \textsf{softmax}(W \mathbf x + \mathbf w_0).$
 
 ### Composición de Perceptrones Lineales
 
-Se puede realizar una composición de perceptrones de la siguiente manera, sea $g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$ y $g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$ es decir $g = g_2 \circ g_1.$ Realizando está composición en las ecuaciones descritas anteriormente se tiene 
+Se puede realizar una composición de perceptrones de la siguiente manera, sea $g_1: \mathbb R^d \rightarrow \mathbb R^{d'}$ y $g_2: \mathbb R^{d'} \rightarrow \mathbb R^K,$ es decir $g = g_2 \circ g_1.$ Realizando esta composición en las ecuaciones descritas anteriormente se tiene 
 
 $$
 \begin{split}
@@ -238,7 +275,7 @@ como se puede observar la composición realizada da como resultado una red donde
 
 ## Perceptrón Multicapa
 
-Para evitar que la composición de perceptrones colapsen a una función equivalente, es necesario incluir una función no lineal, sea $\phi$ esta función no lineal, (a esta función se le conoce como **función de activación**) entonces se puede observar que la composición $g=g_2 \circ g_1$ donde $g_1 = \phi(W_1 \mathbf x + \mathbf w_{1_0})$ resulta en
+Para evitar que la composición de perceptrones colapse a una función equivalente, es necesario incluir una función no lineal, sea $\phi$ esta función no lineal, (a esta función se le conoce como **función de activación**) entonces se puede observar que la composición $g=g_2 \circ g_1$ donde $g_1 = \phi(W_1 \mathbf x + \mathbf w_{1_0})$ resulta en
 
 $$
 \begin{split}
@@ -302,34 +339,24 @@ g12_f = Markdown(f'{tot["w1"]:0.4f}')
 g22_f = Markdown(f'{tot["w2"]:0.4f}')
 ```
 
-se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., `jax.grad(g_1)(params, 1.0)`) y $g_2$ con respecto a $w_2$ (i.e., `jax.grad(g_2)(params, 1.0)`) es `{python} g1_f` y `{python} g2_f`, respectivamente. El problema viene cuando se calcula $\frac{\partial g}{\partial w_1}$ en este caso se obsevar que el gradiente es pequeño comparado con el gradiente obtenido en $\frac{d g}{d w_1},$ i.e., `jax.grad(g)(params, 1.0)`, donde se observa que el gradiente para $w_1$ corresponde a `{python} g12_f`, el gradiente de $w_2$ sigue en la misma mágnitud teniendo un valor de `{python} g22_f`. 
+se tiene que la derivada de $g_1$ con respecto a $w_1$ (i.e., `jax.grad(g_1)(params, 1.0)`) y $g_2$ con respecto a $w_2$ (i.e., `jax.grad(g_2)(params, 1.0)`) es `{python} g1_f` y `{python} g2_f`, respectivamente. El problema viene cuando se calcula $\frac{\partial g}{\partial w_1}$ en este caso se observa que el gradiente es pequeño comparado con el gradiente obtenido en $\frac{d g}{d w_1},$ i.e., `jax.grad(g)(params, 1.0)`, donde se observa que el gradiente para $w_1$ corresponde a `{python} g12_f`, el gradiente de $w_2$ sigue en la misma magnitud teniendo un valor de `{python} g22_f`. 
 
 El problema de desvanecimiento de gradiente, hace que el gradiente disminuya de manera exponencial, entonces los pesos asociados a las capas alejadas de la capa de salida reciben un gradiente equivalente a cero y no se cuenta con información para actualizar sus pesos. Por este motivo es recomendable utilizar funciones de activación que no presenten esta característica, una muy utilizada es $\textsf{ReLU}(x) = \max(0, x)$.
 
-## Ejemplo: Dígitos
+## Ejemplo: Prioridad de Planteles
 
-Para ejemplificar el uso de una red neuronal en un poblema de clasificación se utilizarán los datos de Dígitos, los cuales se pueden obtener con las siguientes instrucciones. 
-
-```{python}
-#| echo: true
-X, y = load_digits(return_X_y=True)
-T, G, y_t, y_g = train_test_split(X, y, test_size=0.2)
-```
-
-Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estandar uno. En las siguientes lineas se normalizan los datos usando la clase `StandardScaler` se puede observar que los parámetros para la normalización son encontrados en el conjunto de entrenamiento (`T`) y aplicados tanto al conjunto de entrenamiento como el conjunto de prueba `G`. 
+Para ejemplificar el uso de una red neuronal en un problema de clasificación se continúa con el problema de priorizar planteles para un programa de tutorías, que es el mismo que se utilizó para la regresión logística multinomial, lo que permite comparar los dos modelos. Se utiliza la misma partición en entrenamiento ($\mathcal T$) y prueba ($\mathcal G$) y las mismas entradas normalizadas, es decir, `T`, `G`, `y_t` y `y_g`. Un procedimiento necesario en redes neuronales es que los datos estén normalizados, tradicionalmente esto se realiza haciendo que los datos tengan media cero y desviación estándar uno. Los parámetros de la normalización se encontraron en el conjunto de entrenamiento y se aplicaron tanto al conjunto de entrenamiento como al de prueba. La matriz `D` es la versión normalizada de `T` y la siguiente instrucción la asigna a `T`, que es el nombre que se usa en el resto del ejemplo. 
 
 ```{python}
 #| echo: true
-normalize = StandardScaler().fit(T)
-T = normalize.transform(T)
-G = normalize.transform(G)
+T = D
 ```
 
 Como se realizó previamente es necesario convertir las clases de salida para que cada ejemplo sea un vector unitario donde el índice con el valor $1$ representa la clase, esto se realiza con las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
-n_labels = np.unique(y).shape[0]
+n_labels = np.unique(y_t).shape[0]
 yt_oh = jax.nn.one_hot(y_t, n_labels)
 ```
 
@@ -339,36 +366,36 @@ t_shape_f = Markdown(f'${T.shape[1]}$')
 n_labels_f = Markdown(f'${n_labels}$')
 ```
 
-Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en esta caso corresponde a `{python} t_shape_f` (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso `{python} n_labels_f` (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que la dimensiones sean coherentes con la operación que se va a realizar. 
+Es momento de decidir la estructura de la red neuronal, las únicas dos restricciones es que la primera capa tiene que tener la dimensión del vector de entrada, en este caso corresponde a `{python} t_shape_f` (`T.shape[1]`) y la última capa tiene que tener de salida el número de clases, en este caso `{python} n_labels_f` (`n_labels`), el resto de las capas ocultas pueden tener cualquier valor solamente es necesario que las dimensiones sean coherentes con la operación que se va a realizar. 
 
-La red que se va a implementar es la siguiente, como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
+La red que se va a implementar es la siguiente, donde $d$ es la dimensión del vector de entrada y $K$ es el número de clases. Como super-índice se encuentran las dimensiones para que sea más fácil seguir la estructura de la red. 
 
 $$
 \begin{split}
-\hat{\mathbf{y}}_1^{32} &= \phi(W^{32\times 64} \mathbf x^{64} + \mathbf w_{1_0}^{32})\\
+\hat{\mathbf{y}}_1^{32} &= \phi(W^{32\times d} \mathbf x^{d} + \mathbf w_{1_0}^{32})\\
 \hat{\mathbf{y}}_2^{16} &= \phi(W^{16\times 32} \hat{\mathbf{y}}_1^{32} + \mathbf w_{2_0}^{16})\\
-\hat{\mathbf{y}}^{10} &= W^{10\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{10}
+\hat{\mathbf{y}}^{K} &= W^{K\times 16} \hat{\mathbf{y}}_2^{16} + \mathbf w_{3_0}^{K}
 \end{split}
 $$
 
-Considerando que las entradas se encuentran en una matrix $X^{N\times64},$ entonces se puede definir esta estructura en términos de múltiplicación de matrices, lo cual queda como
+Considerando que las entradas se encuentran en una matriz $X^{N\times d},$ entonces se puede definir esta estructura en términos de multiplicación de matrices, lo cual queda como
 
 $$
 \begin{split}
-\hat{Y}_1^{N\times 32} &= \phi(X^{N\times 64} W^{64\times 32} + \mathbf w_{1_0}^{32})\\
+\hat{Y}_1^{N\times 32} &= \phi(X^{N\times d} W^{d\times 32} + \mathbf w_{1_0}^{32})\\
 \hat{Y}_2^{N\times 16} &= \phi(\hat{Y}_1^{N\times 32} W^{32\times 16} + \mathbf w_{2_0}^{16})\\
-\hat{Y}^{N\times 10} &= \hat{Y}_2^{N\times 16} W^{16\times 10} + \mathbf w_{3_0}^{10}\\
+\hat{Y}^{N\times K} &= \hat{Y}_2^{N\times 16} W^{16\times K} + \mathbf w_{3_0}^{K}\\
 \end{split},
 $$
 
-donde la suma con el término $\mathbf w_0$ se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en un lista como la que se muestra a continuación. 
+donde la suma con el término $\mathbf w_0$ se realiza en la dimensión que corresponde y se replica tantas veces para cumplir con la otra dimensión. Esta configuración se puede expresar en una lista como la que se muestra a continuación. 
 
 ```{python}
 #| echo: true
-d = [64, 32, 16, 10]
+d = [T.shape[1], 32, 16, n_labels]
 ```
 
-Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar como el ciclo está iterando por los elementos de `d` creando pares, para generar las dimensiones adecuadas para las matrices $W.$
+Utilizando esta notación los parámetros iniciales de la red se pueden generar con la siguiente función, se puede observar cómo el ciclo está iterando por los elementos de `d` creando pares, para generar las dimensiones adecuadas para las matrices $W.$
 
 ```{python}
 #| echo: true
@@ -383,7 +410,7 @@ def parametros_iniciales(d, key=0):
     return params
 ```
 
-Habiendo generado los parámetros iniciales de la red, es momento para implmentar la red, la siguiente función implementa la red, se puede observar como es realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activiación $\phi$ seleccionada fue $\textsf{ReLU}$ que está implementada en la función `jax.nn.relu`.
+Habiendo generado los parámetros iniciales de la red, es momento para implementar la red, la siguiente función implementa la red, se puede observar cómo se realizan las operaciones matriciales tal y como se mostraron en las ecuaciones anteriores. La función de activación $\phi$ seleccionada fue $\textsf{ReLU}$ que está implementada en la función `jax.nn.relu`.
 
 ```{python}
 #| echo: true
@@ -394,7 +421,7 @@ def ann(params, D):
     return y2 @ params[2]['w'] + params[2]['w0']
 ```
 
-Como medida de error se usa la Entropía Cruzada (@sec-entropia-cruzada) tal y como se implementa a continuación. El caso $0 \log 0$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco este definido, para proteger la función en ese caso se usa `jnp.nansum` que trata los valores no definidos como ceros. 
+Como medida de error se usa la Entropía Cruzada (@sec-entropia-cruzada) tal y como se implementa a continuación. El caso $0 \log 0$ corresponde a un valor no definido lo cual genera que el valor de la función tampoco esté definido, para proteger la función en ese caso se usa `jnp.nansum` que trata los valores no definidos como ceros. 
 
 ```{python}
 #| echo: true
@@ -404,7 +431,7 @@ def media_entropia_cruzada(params, D, y_oh):
     return - jnp.nansum(y_oh * jnp.log(hy), axis=1).mean()
 ```
 
-En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función `update_finite` que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de los contrario se queda con el valor anterior. 
+En esta ocasión se utiliza el optimizador Adam, tal y como se muestra en la siguiente función. La única diferencia con respecto al visto previamente es la función `update_finite` que actualiza los parámetros siempre y cuando el nuevo valor sea un valor numérico, de lo contrario se queda con el valor anterior. 
 
 ```{python}
 #| echo: true
@@ -431,7 +458,7 @@ def adam(optimizer, params, epocas=500):
     return params, error
 ```
 
-Finalmente, la red creada se entrana utilizando las siguientes instrucciones, donde la primera linea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.
+Finalmente, la red creada se entrena utilizando las siguientes instrucciones, donde la primera línea genera los parámetros iniciales, después se inicializa el optimizador y en la línea final se llama al optimizador con los parámetros y número de épocas.
 
 ```{python}
 #| echo: true
@@ -442,8 +469,217 @@ p, error = adam(optimizer, params, epocas=500)
 
 ```{python}
 #| echo: false
-error_f = (ann(p, G).argmax(axis=1) != y_g).mean()
-error_f = Markdown(f'${error_f:0.4f}$')
+hy_ann = np.array(ann(p, G)).argmax(axis=1)
+hy_lm = np.array(modelo(p2, G)).argmax(axis=1)
+err_ann = (hy_ann != y_g).mean()
+err_lm = (hy_lm != y_g).mean()
+err_triv = 1 - (np.bincount(y_g) / y_g.shape[0]).max()
+error_f = Markdown(f'${err_ann:0.4f}$')
+error_lm_f = Markdown(f'${err_lm:0.4f}$')
+error_triv_f = Markdown(f'${err_triv:0.4f}$')
+rec_ann_f = Markdown(f'${recall_score(y_g, hy_ann, average="macro"):0.4f}$')
+rec_lm_f = Markdown(f'${recall_score(y_g, hy_lm, average="macro"):0.4f}$')
+if err_ann < err_lm:
+    comp_ann_f = Markdown('es menor')
+else:
+    comp_ann_f = Markdown('no es menor')
+if min(err_ann, err_lm) < err_triv:
+    triv_f = Markdown('menor')
+else:
+    triv_f = Markdown('no menor')
 ```
 
-El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. 
+El resultado de esta red, es que el error en el conjunto de prueba es `{python} error_f` calculado con la siguiente instrucción `(ann(p, G).argmax(axis=1) != y_g).mean()`. La regresión logística multinomial del inicio del capítulo (el modelo `modelo` con los parámetros `p2` encontrados con Adam), que resuelve el mismo problema con el mismo conjunto de prueba, tiene un error de `{python} error_lm_f`, es decir, el error de la red `{python} comp_ann_f` que el de la regresión logística. Como referencia, un clasificador que siempre responde la clase más frecuente tendría un error de `{python} error_triv_f`, por lo que el mejor de los dos modelos tiene un error `{python} triv_f` que ese valor. Dado que la prioridad alta es la clase minoritaria, también se mide la cobertura promedio (macro-recall), que es `{python} rec_ann_f` para la red y `{python} rec_lm_f` para la regresión logística. 
+
+## Ejemplo: Abandono Escolar {#sec-redes-neuronales-regresion}
+
+Para ejemplificar el uso de una red neuronal en un problema de regresión se utilizan los datos de Educación (@sec-datos-educacion), donde se desea predecir la tasa de abandono escolar de cada secundaria a partir de sus variables observables, con el fin de decidir qué planteles apoyar primero. Se utiliza la misma matriz de diseño `X_e` del ejemplo anterior y se parte en los conjuntos de entrenamiento y prueba con las siguientes instrucciones. Se fija la semilla (`random_state=0`) para que la partición sea la misma en cada ejecución.
+
+```{python}
+#| echo: true
+y = educacion['tasa_abandono'].to_numpy()
+T, G, y_t, y_g = train_test_split(X_e.to_numpy(), y, test_size=0.2, random_state=0)
+```
+
+Al igual que en el ejemplo anterior, las entradas se normalizan para que tengan media cero y desviación estándar uno; los parámetros de la normalización se encuentran únicamente en el conjunto de entrenamiento (`T`) y se aplican tanto a `T` como a `G`. 
+
+```{python}
+#| echo: true
+normalize = StandardScaler().fit(T)
+T = normalize.transform(T)
+G = normalize.transform(G)
+```
+
+En regresión también conviene normalizar la variable dependiente. Los valores de $y$ se encuentran en una escala muy distinta a la de las entradas, mientras que la red se inicializa para producir salidas cercanas a cero. Por este motivo, la red se entrena para predecir la variable dependiente normalizada con la media y la desviación estándar del conjunto de entrenamiento, y sus predicciones se regresan a la escala original antes de medir el rendimiento. Las siguientes instrucciones calculan estos dos valores y la variable dependiente normalizada de entrenamiento. 
+
+```{python}
+#| echo: true
+mu, sigma = y_t.mean(), y_t.std()
+yt_n = (y_t - mu) / sigma
+```
+
+La estructura de la red es la misma que en el ejemplo de Prioridad de Planteles, con dos capas ocultas y función de activación $\textsf{ReLU}$. La diferencia está en la capa de salida. En clasificación tenía una neurona por clase y las salidas pasaban por $\textsf{softmax}$ para interpretarse como probabilidades, mientras que en regresión se predice un único número, por lo que la última capa tiene una sola neurona y su salida se utiliza tal cual, es decir, no se le aplica ninguna función. La estructura $\mathbb R^{d} \rightarrow \mathbb R^{32} \rightarrow \mathbb R^{16} \rightarrow \mathbb R$, donde $d$ es el número de columnas de la entrada, queda representada en la siguiente lista. 
+
+```{python}
+#| echo: true
+d = [T.shape[1], 32, 16, 1]
+```
+
+```{python}
+#| echo: false
+t_shape_dm_f = Markdown(f'${T.shape[1]}$')
+salida_f = Markdown(f'${d[-1]}$')
+```
+
+Se observa que la única restricción para la primera capa es que tenga la dimensión del vector de entrada, que en este caso es `{python} t_shape_dm_f` (`T.shape[1]`), y que la última capa tiene dimensión `{python} salida_f` porque se predice un único valor. 
+
+Los parámetros iniciales (`parametros_iniciales`) y la red (`ann`) son los mismos que se definieron en el ejemplo de Prioridad de Planteles. La función `ann` regresa una matriz con una sola columna, por lo que en la función de pérdida se aplica `flatten` para obtener un vector. Como medida de error se utiliza el error cuadrático medio (@eq-mse), que es la función que se minimiza en regresión (@sec-regresion-ols). 
+
+```{python}
+#| echo: true
+@jax.jit
+def media_error_cuadratico(params, D, y):
+    return ((ann(params, D).flatten() - y) ** 2).mean()
+```
+
+El optimizador es Adam, igual que en el ejemplo anterior. La función `adam_regresion` sigue la misma estructura que `adam`; las diferencias son que la función de error es `media_error_cuadratico` y que los datos de entrenamiento se reciben como parámetros (`X` y `y`) en lugar de estar fijos en la función. 
+
+```{python}
+#| echo: true
+def adam_regresion(optimizer, params, X, y, epocas=500):
+    @jax.jit
+    def update_finite(a, b):
+        m = jnp.isfinite(b)
+        return jnp.where(m, b, a)
+    
+    @jax.jit
+    def update(params, opt_state, X, y):
+        loss_value, grads = error_grad(params, X, y)
+        updates, opt_state = optimizer.update(grads, opt_state, params)
+        params = optax.apply_updates(params, updates)
+        return params, opt_state, loss_value
+    
+    opt_state = optimizer.init(params)
+    error_grad  = jax.value_and_grad(media_error_cuadratico)    
+    error = []
+    for i in range(epocas):
+        p, opt_state, loss_value = update(params, opt_state, X, y)
+        params = jax.tree.map(update_finite, params, p)
+        error.append(loss_value)
+    return params, error
+```
+
+La red se entrena con las siguientes instrucciones, que primero generan los parámetros iniciales, después inicializan el optimizador y finalmente llaman a `adam_regresion` con los datos de entrenamiento normalizados. Es importante notar que entrenar durante demasiadas épocas puede hacer que la red se ajuste al ruido del conjunto de entrenamiento (sobreajuste). Por ello, en este ejemplo se utiliza una tasa de aprendizaje pequeña y un número moderado de épocas. El número de épocas es un hiperparámetro que se puede seleccionar con un conjunto de validación (@sec-validacion-cruzada). 
+
+```{python}
+#| echo: true
+params = parametros_iniciales(d)
+optimizer = optax.adam(learning_rate=1e-3)
+p, error = adam_regresion(optimizer, params, T, yt_n, epocas=200)
+```
+
+La @fig-redes-neuronales-regresion-error muestra cómo el error cuadrático medio (calculado sobre la variable dependiente normalizada) disminuye conforme avanzan las épocas.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Error cuadrático medio en el conjunto de entrenamiento en cada época.
+#| label: fig-redes-neuronales-regresion-error
+df = pd.DataFrame(dict(error=np.array(error),
+                       epoca=np.arange(1, len(error) + 1)))
+_ = sns.relplot(data=df, x='epoca', y='error', kind='line')
+```
+
+Para medir el rendimiento en el conjunto de prueba, las predicciones de la red se regresan a la escala original, es decir, se multiplican por la desviación estándar `sigma` y se suma la media `mu`. Como referencia se ajusta una regresión lineal (@sec-regresion-ols) con los mismos datos de entrenamiento y se obtienen sus predicciones en el conjunto de prueba. 
+
+```{python}
+#| echo: true
+hy_ann = np.array(ann(p, G).flatten()) * sigma + mu
+hy_lr = LinearRegression().fit(T, y_t).predict(G)
+```
+
+El rendimiento se mide con el coeficiente de determinación $R^2$ (@eq-r2) implementado en `CompStats`, tal y como se hizo en @sec-rendimiento-regresion. La siguiente instrucción calcula el $R^2$ de la red neuronal en el conjunto de prueba; el parámetro `name` es el nombre con el que aparecerá la red en las comparaciones.
+
+```{python}
+#| echo: true
+r2 = r2_score(y_g, hy_ann, name='Red Neuronal', use_tqdm=False)
+```
+
+```{python}
+#| echo: false
+r2_ann_f = Markdown(f'${r2.statistic:0.4f}$')
+r2_ann_se_f = Markdown(f'${r2.se:0.4f}.$')
+```
+
+El $R^2$ de la red neuronal es `{python} r2_ann_f` con un error estándar de `{python} r2_ann_se_f` Para compararla con la regresión lineal se agregan sus predicciones al mismo objeto y se grafican, el resultado se muestra en la @fig-redes-neuronales-regresion-compstats.
+
+```{python}
+#| echo: true
+#| fig-cap: Rendimiento ($R^2$) de la red neuronal y de la regresión lineal en el conjunto de prueba.
+#| label: fig-redes-neuronales-regresion-compstats
+r2(hy_lr, name='Regresión Lineal')
+r2.plot(comp_legend='Comparación',
+        winner_legend='Mejor',
+        tie_legend='Equivalente',
+        loser_legend='Diferente',
+        alg_legend='Algoritmo',
+        var_name='Rendimiento')
+```
+
+```{python}
+#| echo: false
+r2_lr_f = Markdown(f'${r2.statistic["Regresión Lineal"]:0.4f}$')
+r2_lr_se_f = Markdown(f'${r2.se["Regresión Lineal"]:0.4f}.$')
+```
+
+En la figura se observa el $R^2$ de cada algoritmo con su intervalo de confianza, estimado mediante bootstrap. La figura también indica cuál es el algoritmo con el mejor rendimiento (`Mejor`) y, para el otro algoritmo, si su rendimiento es estadísticamente equivalente (`Equivalente`) o diferente (`Diferente`) con respecto al mejor. El $R^2$ de la regresión lineal es `{python} r2_lr_f` con un error estándar de `{python} r2_lr_se_f`
+
+Finalmente, la @fig-redes-neuronales-regresion-prediccion muestra el valor real contra el valor predicho por la red neuronal en el conjunto de prueba, la línea punteada es la identidad, es decir, las predicciones perfectas. 
+
+```{python}
+#| code-fold: true
+#| fig-cap: Valor real contra valor predicho por la red neuronal en el conjunto de prueba.
+#| label: fig-redes-neuronales-regresion-prediccion
+df = pd.DataFrame(dict(real=y_g, predicho=hy_ann))
+g = sns.relplot(data=df, x='real', y='predicho')
+lim = [df.min().min(), df.max().max()]
+g.ax.plot(lim, lim, linestyle='--', color='gray')
+```
+
+::: {.callout-tip collapse="true"}
+### Actividad 
+
+Comparar el rendimiento ($R^2$) en el conjunto de prueba de redes neuronales con diferente número de neuronas en las capas ocultas, i.e., modificando los valores $32$ y $16$ de la lista `d`, tal y como se muestra en la @fig-actividad-redes-regresion. Utilizar los mismos datos de abandono escolar, la misma partición y el mismo procedimiento de entrenamiento descrito en esta sección. El rendimiento se compara con `CompStats`. 
+
+```{python}
+#| echo: false
+#| label: fig-actividad-redes-regresion
+#| fig-cap: Rendimiento ($R^2$) de redes neuronales con diferente número de neuronas en las capas ocultas.
+
+r2_act = None
+for ocultas in [(4, 2), (8, 4), (16, 8), (32, 16)]:
+    d_act = [T.shape[1], *ocultas, 1]
+    p_act, _ = adam_regresion(optax.adam(learning_rate=1e-3),
+                              parametros_iniciales(d_act),
+                              T, yt_n, epocas=200)
+    hy_act = np.array(ann(p_act, G).flatten()) * sigma + mu
+    nombre = f'{ocultas[0]}-{ocultas[1]}'
+    if r2_act is None:
+        r2_act = r2_score(y_g, hy_act, name=nombre, use_tqdm=False)
+    else:
+        r2_act(hy_act, name=nombre)
+r2_act.plot(comp_legend='Comparación',
+            winner_legend='Mejor',
+            tie_legend='Equivalente',
+            loser_legend='Diferente',
+            alg_legend='Algoritmo',
+            var_name='Rendimiento')
+```
+:::
+
+## Resumen {#sec-resumen-redes-neuronales}
+
+Una red neuronal se construye componiendo funciones simples. La regresión logística multinomial (@sec-regresion-logistica-multinomial) es el punto de partida, y el perceptrón (@sec-preceptron) es una unidad que calcula una combinación lineal de las entradas. Componer perceptrones lineales no agrega capacidad, y por eso el perceptrón multicapa incluye una función de activación no lineal. La elección de esa función importa, pues algunas provocan el desvanecimiento del gradiente que impide entrenar redes profundas. Los parámetros se ajustan con las herramientas de @sec-optimizacion, y el método Adam (@sec-adam) es un ejemplo de regla de actualización que suele converger más rápido que el descenso por gradiente simple. El mismo marco sirve para clasificación y para regresión (@sec-redes-neuronales-regresion).
+
+La flexibilidad de las redes exige disciplina en la evaluación. La arquitectura y los hiperparámetros se deben validar fuera de muestra con los procedimientos de @sec-rendimiento-cap, porque una red con suficientes parámetros puede ajustar casi cualquier conjunto de entrenamiento.
+
+Con este capítulo termina el aprendizaje supervisado. Queda la pregunta de qué hacer cuando no se tiene una variable respuesta y solo se quiere entender la estructura de los datos, lo que empieza con la reducción de dimensión en @sec-reduccion-dimension.
