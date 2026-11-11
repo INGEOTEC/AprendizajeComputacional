@@ -40,7 +40,7 @@ class PruebasSitio(unittest.TestCase):
         escribir(self.p404, "<html>404</html>")
         # Render nuevo
         escribir(self.render / "index.html", "nuevo index")
-        escribir(self.render / "capitulos" / "01Introduccion.html", "nuevo cap 1")
+        escribir(self.render / "capitulos" / "01Intro.html", "nuevo cap 1")
         escribir(self.render / "search.json", "[]")
         # gh-pages existente: raíz vieja más las otras dos ediciones
         escribir(self.gh / ".git" / "HEAD", "ref: refs/heads/gh-pages")
@@ -71,7 +71,7 @@ class PruebasSitio(unittest.TestCase):
         self.desplegar("raiz")
         archivos = contenido(self.gh)
         self.assertEqual(archivos["index.html"], "nuevo index")
-        self.assertEqual(archivos["capitulos/01Introduccion.html"], "nuevo cap 1")
+        self.assertEqual(archivos["capitulos/01Intro.html"], "nuevo cap 1")
         self.assertNotIn("viejo.txt", archivos)
         self.assertNotIn("capitulos/02Teoria_Decision.html", archivos)
         self.assertEqual(archivos["dev/index.html"], "dev index")
