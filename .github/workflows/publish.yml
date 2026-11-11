@@ -1,23 +1,52 @@
 name: Publish website
 
+# El sitio (rama gh-pages) tiene tres ediciones y cada rama publica solo su
+# carpeta, sin borrar las otras (la lógica vive en scripts/sitio.py):
+#
+#   master  -> raíz   edición vigente
+#   develop -> dev/   borrador (perfil _quarto-borrador.yml)
+#   mcdi    -> mcdi/  edición histórica, congelada (perfil
+#                     ediciones/mcdi/_quarto-historico.yml)
+#
+# La edición histórica solo se construye cuando falta mcdi/index.html en
+# gh-pages o cuando se lanza el flujo a mano con reconstruir_historico.
+
 on:
   push:
-    branches: [master]
+    branches: [master, develop]
   workflow_dispatch:
+    inputs:
+      reconstruir_historico:
+        description: "Reconstruir la edición histórica MCDI (/mcdi/) desde la rama mcdi"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
+# Un grupo por rama: una publicación de develop no cancela una de master ni al
+# revés. Si dos ramas publican a la vez, el push a gh-pages se reintenta.
 concurrency:
-  group: website
+  group: website-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
+      - name: Elegir destino según la rama
+        id: destino
+        run: |
+          case "$GITHUB_REF_NAME" in
+            master)  echo "destino=raiz" >> "$GITHUB_OUTPUT"; echo "perfil=" >> "$GITHUB_OUTPUT" ;;
+            develop) echo "destino=dev" >> "$GITHUB_OUTPUT"; echo "perfil=borrador" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::La rama '$GITHUB_REF_NAME' no tiene edición publicada; solo se publican master (raíz) y develop (dev/)."
+              exit 1 ;;
+          esac
 
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
@@ -59,8 +88,79 @@ jobs:
       # time. Run scripts/render.py locally before pushing to keep the
       # committed freeze cache in sync with the .qmd sources — if it drifts,
       # this job has no Python to fall back on and will fail.
-      - uses: quarto-dev/quarto-actions/publish@v2
-        with:
-          target: gh-pages
+      - name: Renderizar la edición de la rama
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERFIL: ${{ steps.destino.outputs.perfil }}
+        run: |
+          if [ -n "$PERFIL" ]; then
+            quarto render --profile "$PERFIL"
+          else
+            quarto render
+          fi
+
+      # Se trae después de renderizar para que Quarto no vea estos
+      # subdirectorios al renderizar el libro de la rama.
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: ¿Construir la edición histórica?
+        id: historico
+        env:
+          RECONSTRUIR: ${{ github.event.inputs.reconstruir_historico }}
+        run: |
+          if [ "$RECONSTRUIR" = "true" ] || [ ! -f gh-pages/mcdi/index.html ]; then
+            echo "construir=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "construir=false" >> "$GITHUB_OUTPUT"
+            echo "mcdi/ ya está publicada; se conserva tal cual."
+          fi
+
+      # La rama mcdi está congelada y nunca recibe commits: el aviso y el menú
+      # «Ediciones» se inyectan con un perfil que vive en esta rama.
+      - name: Checkout mcdi
+        if: steps.historico.outputs.construir == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: mcdi
+          path: mcdi-fuente
+
+      - name: Renderizar la edición histórica
+        if: steps.historico.outputs.construir == 'true'
+        run: |
+          cp ediciones/mcdi/_quarto-historico.yml mcdi-fuente/
+          cd mcdi-fuente
+          quarto render --profile historico
+
+      # Sin push forzado: si otra publicación llegó antes, se vuelve a traer
+      # gh-pages, se repite la sincronización y se reintenta.
+      - name: Publicar en gh-pages
+        env:
+          DESTINO: ${{ steps.destino.outputs.destino }}
+          HISTORICO: ${{ steps.historico.outputs.construir }}
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for intento in 1 2 3; do
+            python3 ../scripts/sitio.py ../_book . "$DESTINO"
+            if [ "$HISTORICO" = "true" ]; then
+              python3 ../scripts/sitio.py ../mcdi-fuente/_book . mcdi
+            fi
+            git add -A
+            if git diff --cached --quiet; then
+              echo "gh-pages ya está al día."
+              exit 0
+            fi
+            git commit -q -m "Publicar $DESTINO desde $GITHUB_REF_NAME@${GITHUB_SHA::7}"
+            if git push origin HEAD:gh-pages; then
+              exit 0
+            fi
+            echo "El push a gh-pages fue rechazado (intento $intento); se vuelve a traer gh-pages."
+            git fetch origin gh-pages
+            git reset -q --hard origin/gh-pages
+          done
+          echo "::error::No se pudo publicar en gh-pages después de 3 intentos."
+          exit 1

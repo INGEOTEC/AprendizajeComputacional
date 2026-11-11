@@ -17,6 +17,9 @@ python scripts/render.py --force capitulos/13Agrupamiento.qmd  # drop its frozen
 python scripts/render.py --verify-only                 # no render; just check _freeze/ is in sync with sources
 python scripts/check_visible.py capitulos/13Agrupamiento.qmd  # ejecuta solo el código visible de un capítulo (sin argumentos: todo el libro)
 quarto preview                                         # live preview while editing
+python3 scripts/test_sitio.py                          # pruebas de scripts/sitio.py (unittest, sin red ni Quarto)
+python3 scripts/sitio.py <render> <checkout_gh_pages> <raiz|dev|mcdi>  # despliega una edición en su carpeta de gh-pages (lo usa el flujo)
+quarto render --profile borrador --to html --output-dir "$TMPDIR/borrador"  # probar el perfil del borrador fuera de _book/
 ```
 
 `python3 scripts/render.py` is also the `test_command` in `.issue-pilot.json`; a run is "green" when it exits 0. Rendering the full book executes every chapter (model fits, UMAP, etc.) and takes several minutes.
@@ -24,7 +27,11 @@ quarto preview                                         # live preview while edit
 ## Build / publish model: the freeze cache is load-bearing
 
 - `_quarto.yml` sets `execute: freeze: auto`. Quarto stores each chapter's executed output in `_freeze/capitulos/<Chapter>/execute-results/{html,tex}.json` plus figure files, keyed by the **md5 of the `.qmd` source**.
-- `.github/workflows/publish.yml` (push to `master`) installs Quarto + TinyTeX + Chrome Headless Shell but **no Python**. It renders purely from `_freeze/`. If any chapter's hash does not match its frozen result, the publish job fails.
+- `.github/workflows/publish.yml` (push to `master` or `develop`, or `workflow_dispatch`) installs Quarto + TinyTeX + Chrome Headless Shell but **no Python**. It renders purely from `_freeze/`. If any chapter's hash does not match its frozen result, the publish job fails.
+- El sitio (rama `gh-pages`, GitHub Pages «legacy» en `/`) tiene tres ediciones y **cada rama publica solo su carpeta**, sin borrar las otras: `master` → raíz (edición vigente, `quarto render`), `develop` → `dev/` (borrador, `quarto render --profile borrador`, perfil `_quarto-borrador.yml` con aviso y `noindex`), `mcdi` → `mcdi/` (edición histórica). La sincronización la hace `scripts/sitio.py` (protege `dev/`, `mcdi/` y `.git`, y escribe siempre `.nojekyll` y `404.html`, copia de `ediciones/404.html`); el flujo hace commit y push a `gh-pages` sin `--force`, reintentando hasta 3 veces si otra publicación llegó antes. Ya no se usa `quarto-actions/publish` ni `quarto publish`. El bloque `quarto-actions/setup` debe conservar la forma `with:` / `version:` que lee `scripts/render.py`.
+- La edición histórica solo se construye si falta `mcdi/index.html` en `gh-pages` o si se lanza el flujo a mano con `reconstruir_historico: true`: el flujo hace checkout de `mcdi`, copia `ediciones/mcdi/_quarto-historico.yml` a su raíz y renderiza con `--profile historico` (agrega el aviso de edición histórica y el menú «Ediciones»). El perfil vive aquí, no en `mcdi`.
+- El menú «Ediciones» (`book.navbar` en `_quarto.yml`), la sección «Ediciones» de `index.qmd`, la tabla de `README.md` y `ediciones/404.html` listan las mismas ediciones y ramas; si cambia una, cambiar las cuatro. Los avisos usan `format.html.include-before-body` porque `book.announcement` no se aplica a libros en Quarto 1.10.
+- Los perfiles se prueban con `--output-dir` fuera del repositorio (p. ej. `$TMPDIR`), nunca sobre `_book/`, que está versionado y no debe llevar el aviso de borrador. Para la histórica: `git worktree add $TMPDIR/mcdi mcdi`, copiar el perfil, `quarto render --profile historico --to html --output-dir ...` y `git worktree remove --force`.
 - Therefore: after editing any chapter that has code chunks, re-render it with `scripts/render.py` and commit the chapter **together with** its `_freeze/` changes. Never touch a `.qmd` after rendering without rendering again (even whitespace changes the hash). `scripts/render.py` prints exactly which paths to commit.
 - `_freeze/` and `_book/` are both tracked in git (despite the docstring in `render.py` saying `_book/` is ignored); `.quarto/`, `capitulos/*_files` and `*.quarto_ipynb` are ignored.
 - The mermaid diagram in `01Introduccion.qmd` is the reason for the headless-Chrome setup in both the workflow and `postCreate.sh`; keep those apt lists in sync if either changes.
@@ -35,7 +42,7 @@ The processed public-policy datasets of the appendix (`capitulos/20ConjuntosDato
 
 ## Branching
 
-`develop` is the working branch (also `base_branch` in `.issue-pilot.json`); `master` is what CI publishes. Open PRs from `develop` (or feature branches) toward `master`.
+`develop` is the working branch (also `base_branch` in `.issue-pilot.json`) and is published as the draft in `/dev/`; `master` is the current edition, published at the site root. Open PRs from `develop` (or feature branches) toward `master`. `mcdi` (apunta a `8e4544b`) es la edición histórica del curso de la MCDI, publicada en `/mcdi/`: está **congelada y nunca recibe commits**. Las ramas `2018`, `v1.0`, `v2.0` y `v2.1` son versiones anteriores sin sitio; solo se enlazan en GitHub.
 
 ## Chapter conventions
 
