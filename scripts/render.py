@@ -26,8 +26,8 @@ Usage, from anywhere in the repo:
 
     python scripts/render.py                              # deps, render, verify
     python scripts/render.py --verify-only                # check the cache only
-    python scripts/render.py capitulos/01Introduccion.qmd
-    python scripts/render.py --force capitulos/01Introduccion.qmd
+    python scripts/render.py capitulos/01Intro.qmd
+    python scripts/render.py --force capitulos/01Intro.qmd
 
 quarto itself is not installed by this script: it comes from the
 devcontainer in .devcontainer/ (the rocker-org quarto-cli feature), so run
