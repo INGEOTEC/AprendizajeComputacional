@@ -232,7 +232,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+  <a href="../capitulos/01Intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
   </div>
 </li>
@@ -298,7 +298,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../capitulos/11RedesNeuronales.html" class="sidebar-item-text sidebar-link">
+  <a href="../capitulos/11Redes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
   </div>
 </li>
@@ -1158,7 +1158,7 @@ E(\mathbf w, w_0 \mid \mathcal D) = - \sum_{(\mathbf x, y) \in \mathcal D} y \lo
 <p><span id="eq-log-likelihood-multinomial"><span class="math display">\[
 \log \ell(W, W_0) = \sum_i \log \mathbb{\hat P}(\mathcal Y=y_i \mid \mathcal X=\mathbf x_i)
 \tag{8.8}\]</span></span></p>
-<p>y <span class="math inline">\(\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0),\)</span> donde <span class="math inline">\(\textsf{softmax}\)</span> transforma un vector <span class="math inline">\(\mathbf v\)</span> de <span class="math inline">\(K\)</span> valores en probabilidades, <span class="math inline">\(\textsf{softmax}(\mathbf v)_i = \frac{\exp v_i}{\sum_{j=1}^K \exp v_j},\)</span> y es la generalización de la función sigmoide a <span class="math inline">\(K\)</span> clases (ver también <a href="11RedesNeuronales.html#eq-softmax" class="quarto-xref">Ecuación&nbsp;<span>12.1</span></a>). Siguiendo el procedimiento anterior el siguiente código codifica en <a href="https://www.cvxpy.org/index.html">CVXPY</a> el problema de regresión logística multinomial.</p>
+<p>y <span class="math inline">\(\mathbb{\hat P}(\mathcal Y \mid \mathcal X=\mathbf x) = \textsf{softmax}(W \cdot \mathbf x + W_0),\)</span> donde <span class="math inline">\(\textsf{softmax}\)</span> transforma un vector <span class="math inline">\(\mathbf v\)</span> de <span class="math inline">\(K\)</span> valores en probabilidades, <span class="math inline">\(\textsf{softmax}(\mathbf v)_i = \frac{\exp v_i}{\sum_{j=1}^K \exp v_j},\)</span> y es la generalización de la función sigmoide a <span class="math inline">\(K\)</span> clases (ver también <a href="11Redes.html#eq-softmax" class="quarto-xref">Ecuación&nbsp;<span>12.1</span></a>). Siguiendo el procedimiento anterior el siguiente código codifica en <a href="https://www.cvxpy.org/index.html">CVXPY</a> el problema de regresión logística multinomial.</p>
 <p>En la primera línea se toman los datos del problema de prioridad de planteles (la submuestra estandarizada de <span class="math inline">\(3000\)</span> planteles, en las variables <code>X</code> y <code>y</code>), la segunda línea cuenta el número de clases. La variable <code>Wt</code> y <code>W0</code> contienen los parámetros del modelo es decir <span class="math inline">\(W^\intercal\)</span> y <span class="math inline">\(W_0\)</span>, <code>den</code> calcula el valor del denominador de la función <span class="math inline">\(\textsf{softmax}\)</span> y <code>logit</code> corresponde al numerador solamente de la clase medida. La variable <code>verosimilitud</code> contiene el valor calculado en la <a href="#eq-log-likelihood-multinomial" class="quarto-xref">Ecuación&nbsp;<span>8.8</span></a>, el problema de optimización está en <code>prob</code> y se ejecuta en la última línea.</p>
 <div id="41fd6957" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> X_s, y_s</span>
