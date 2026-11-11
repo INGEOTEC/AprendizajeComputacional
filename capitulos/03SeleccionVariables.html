@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; Selección de Variables – Aprendizaje Computacional</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../capitulos/04Teoria_Decision.html" rel="next">
+<link href="../capitulos/03Regresion.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-180847a877b30f2d91325072d88dd97f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Aprendizaje Computacional</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ediciones" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ediciones</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-ediciones">    
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/">
+ <span class="dropdown-text">Vigente</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/mcdi/">
+ <span class="dropdown-text">MCDI (histórica)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/dev/">
+ <span class="dropdown-text">Borrador</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/03SeleccionVariables.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Selección de Variables</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/01Introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/02Rendimiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Rendimiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03Regresion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regresión y Regularización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03SeleccionVariables.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Selección de Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/04Teoria_Decision.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/05Parametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/06NoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/07Lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/08Optimizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Optimización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/09Arboles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/10Ensambles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ensambles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/11RedesNeuronales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/12ReduccionDim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/13Agrupamiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/14Comparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/18Referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/19Estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/20ConjuntosDatos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Conjunto de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
+  <li><a href="#sec-intro-seleccion-variables" id="toc-sec-intro-seleccion-variables" class="nav-link" data-scroll-target="#sec-intro-seleccion-variables"><span class="header-section-number">4.1</span> Introducción</a></li>
+  <li><a href="#sec-seleccion-var-estadistica" id="toc-sec-seleccion-var-estadistica" class="nav-link" data-scroll-target="#sec-seleccion-var-estadistica"><span class="header-section-number">4.2</span> Basada en Estadísticas</a>
+  <ul class="collapse">
+  <li><a href="#ventajas-y-limitaciones" id="toc-ventajas-y-limitaciones" class="nav-link" data-scroll-target="#ventajas-y-limitaciones"><span class="header-section-number">4.2.1</span> Ventajas y Limitaciones</a></li>
+  </ul></li>
+  <li><a href="#sec-seleccion-adelante" id="toc-sec-seleccion-adelante" class="nav-link" data-scroll-target="#sec-seleccion-adelante"><span class="header-section-number">4.3</span> Selección hacia Adelante y hacia Atrás</a>
+  <ul class="collapse">
+  <li><a href="#ventajas-y-limitaciones-1" id="toc-ventajas-y-limitaciones-1" class="nav-link" data-scroll-target="#ventajas-y-limitaciones-1"><span class="header-section-number">4.3.1</span> Ventajas y Limitaciones</a></li>
+  </ul></li>
+  <li><a href="#sec-seleccion-por-modelo" id="toc-sec-seleccion-por-modelo" class="nav-link" data-scroll-target="#sec-seleccion-por-modelo"><span class="header-section-number">4.4</span> Selección mediante Modelo</a>
+  <ul class="collapse">
+  <li><a href="#ventajas-y-limitaciones-2" id="toc-ventajas-y-limitaciones-2" class="nav-link" data-scroll-target="#ventajas-y-limitaciones-2"><span class="header-section-number">4.4.1</span> Ventajas y Limitaciones</a></li>
+  </ul></li>
+  <li><a href="#sec-seleccion-comparacion" id="toc-sec-seleccion-comparacion" class="nav-link" data-scroll-target="#sec-seleccion-comparacion"><span class="header-section-number">4.5</span> Comparación de los Procedimientos</a></li>
+  <li><a href="#sec-resumen-seleccion-variables" id="toc-sec-resumen-seleccion-variables" class="nav-link" data-scroll-target="#sec-resumen-seleccion-variables"><span class="header-section-number">4.6</span> Resumen</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-seleccion-variables" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Selección de Variables</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Código</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Mostrar todo el código</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Ocultar todo el código</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">Ver el código fuente</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>El <strong>objetivo</strong> de la unidad es aplicar procedimientos de selección de variables en un problema de regresión, a saber, filtros basados en estadísticas, selección hacia adelante y hacia atrás, y selección mediante un modelo, y comparar las variables que elige cada uno con las que elige Lasso.</p>
+<section id="paquetes-usados" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
+<div id="b1e4edfd" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression, Lasso, LassoCV</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, KFold</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> f_regression, SelectKBest,<span class="op">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                                      SequentialFeatureSelector,<span class="op">\</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                                      SelectFromModel</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> r2_score <span class="im">as</span> r2</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats.metrics <span class="im">import</span> r2_score</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>PALETTE <span class="op">=</span> mpl.cm.Paired</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-intro-seleccion-variables" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sec-intro-seleccion-variables"><span class="header-section-number">4.1</span> Introducción</h2>
+<p>Lasso (<a href="03Regresion.html#sec-lasso" class="quarto-xref"><span>Sección 3.6</span></a>) selecciona variables al mismo tiempo que ajusta el modelo, y el modelo reducido (<a href="03Regresion.html#sec-regresion-ols-reducido" class="quarto-xref"><span>Sección 3.3.2</span></a>) quitó las variables cuyo estadístico <span class="math inline">\(t\)</span> era pequeño. Este capítulo presenta los procedimientos clásicos de selección, que son los filtros basados en estadísticas, la búsqueda hacia adelante y hacia atrás, y la selección mediante un modelo, y los compara con lo que eligió Lasso.</p>
+<p>Todos parten de la idea de que existen variables que no contribuyen a la solución o cuyo aporte ya está dado por otras, y una introducción general a estos procedimientos es <span class="citation" data-cites="guyon2003introduction">Guyon y Elisseeff (<a href="18Referencias.html#ref-guyon2003introduction" role="doc-biblioref">2003</a>)</span>. Esto trae como consecuencia, en el mejor de los casos, un mayor costo computacional o de recolección y, en uno menos afortunado, un modelo con un rendimiento menor al que se hubiera obtenido seleccionando las variables.</p>
+<p>Los datos son los de Abandono Escolar y la preparación es la misma que en la <a href="03Regresion.html#sec-regresion-datos" class="quarto-xref"><span>Sección 3.2</span></a>, por lo que no se vuelve a explicar. El siguiente código lee los datos, codifica las variables categóricas, separa los conjuntos de entrenamiento y prueba con el mismo <code>random_state</code> y estandariza con <span class="math inline">\(\mathcal T\)</span>.</p>
+<div id="ebbcab7b" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>educacion <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/sep_f911_educacion.csv.gz'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>constantes <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> educacion.columns <span class="cf">if</span> educacion[c].nunique() <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> educacion.drop(columns<span class="op">=</span>[<span class="st">'tasa_abandono'</span>, <span class="st">'clave_cct'</span>] <span class="op">+</span> constantes)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> educacion[<span class="st">'tasa_abandono'</span>].to_numpy()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pd.get_dummies(X, drop_first<span class="op">=</span><span class="va">True</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>columnas <span class="op">=</span> X.columns</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X.to_numpy(), y, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>escala <span class="op">=</span> StandardScaler().fit(T)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> escala.transform(T)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> escala.transform(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Para comparar con Lasso se recalcula el <span class="math inline">\(\lambda\)</span> que selecciona la validación cruzada (<a href="03Regresion.html#sec-seleccion-lambda" class="quarto-xref"><span>Sección 3.7</span></a>).</p>
+<div id="fc860709" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>kfold <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">30</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>lasso_cv <span class="op">=</span> LassoCV(cv<span class="op">=</span>kfold, alphas<span class="op">=</span>lambdas, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>lambda_opt <span class="op">=</span> lasso_cv.alpha_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El <span class="math inline">\(\lambda\)</span> seleccionado es <span class="math inline">\(0.0092\)</span> y Lasso conserva el subconjunto de variables con coeficiente distinto de cero de entre las <span class="math inline">\(56\)</span> variables.</p>
+</section>
+<section id="sec-seleccion-var-estadistica" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-seleccion-var-estadistica"><span class="header-section-number">4.2</span> Basada en Estadísticas</h2>
+<p>Una manera de seleccionar es descartar las variables que no tienen relación con la respuesta. En regresión, la prueba es la estadística <span class="math inline">\(F\)</span> de la regresión lineal simple de <span class="math inline">\(y\)</span> sobre cada variable, cuya hipótesis nula es que el coeficiente es cero. Está implementada en la función <code>f_regression</code>. (En clasificación la prueba equivalente es Kruskal-Wallis, o ANOVA si se supone normalidad.) Con esas estadísticas se pueden ordenar las variables y seleccionar las <span class="math inline">\(k\)</span> mejores con <code>SelectKBest</code>.</p>
+<div id="e517edd7" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>f_est, p_valores <span class="op">=</span> f_regression(T, y_t)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> SelectKBest(score_func<span class="op">=</span>f_regression, k<span class="op">=</span><span class="dv">10</span>).fit(T, y_t)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>seleccionadas <span class="op">=</span> columnas[sel.get_support()]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Las diez variables con mayor estadística <span class="math inline">\(F\)</span> son <code>alumnos</code>, <code>grupos</code>, <code>docentes</code>, <code>pct_primer_grado</code>, <code>aulas_en_uso</code>, <code>entidad_Oaxaca</code>, <code>tipo_sostenimiento_particular</code>, <code>tipo_servicio_general</code>, <code>tipo_servicio_telesecundaria</code>, <code>organizacion_docentes_multigrado</code>. De ellas, <span class="math inline">\(8\)</span> están entre las que conserva Lasso con el <span class="math inline">\(\lambda\)</span> elegido por validación cruzada.</p>
+<section id="ventajas-y-limitaciones" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="ventajas-y-limitaciones"><span class="header-section-number">4.2.1</span> Ventajas y Limitaciones</h3>
+<p>Las técnicas basadas en estadísticas requieren de pocos recursos computacionales y están basadas en pruebas que permiten saber cuáles son las razones de su funcionamiento. Estas fortalezas también son origen de sus debilidades, pues observan las variables de manera aislada y no consideran que pueden interactuar. Por otro lado, la selección es agnóstica del algoritmo de aprendizaje utilizado.</p>
+</section>
+</section>
+<section id="sec-seleccion-adelante" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-seleccion-adelante"><span class="header-section-number">4.3</span> Selección hacia Adelante y hacia Atrás</h2>
+<p>Un procedimiento que pone en el centro del proceso de selección al algoritmo de aprendizaje utilizado es <strong>Selección hacia Adelante</strong> y su complemento, <strong>Selección hacia Atrás.</strong> El algoritmo de selección hacia adelante es un procedimiento iterativo que selecciona una variable a la vez guiada por el rendimiento de esa variable cuando es usada en el algoritmo de aprendizaje. Al igual que los procedimientos anteriores, no modifica las características del problema, solamente selecciona las que se consideran relevantes.</p>
+<p>En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento <span class="math inline">\(\mathcal T = \{(x_i, y_i)\},\)</span> con una función <span class="math inline">\(L\)</span> que mide el rendimiento del algoritmo de aprendizaje <span class="math inline">\(\mathcal H.\)</span> La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización se puede dividir <span class="math inline">\(\mathcal T\)</span> en dos conjuntos, entrenamiento y validación, o utilizar <span class="math inline">\(k\)</span> iteraciones de validación cruzada.</p>
+<p>Suponga un conjunto <span class="math inline">\(\pi \subseteq \{1, 2, \ldots, d\}\)</span> de tal manera que <span class="math inline">\(\mathcal T_\pi\)</span> solamente cuenta con las variables identificadas en el conjunto <span class="math inline">\(\pi\)</span>. Utilizando esta notación el algoritmo se puede definir de la siguiente manera. Inicialmente <span class="math inline">\(\pi^0 = \emptyset\)</span>, en el siguiente paso <span class="math inline">\(\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)\)</span>, donde <span class="math inline">\(\mathcal P\)</span> representa el rendimiento del algoritmo <span class="math inline">\(\mathcal H\)</span> en el subconjunto <span class="math inline">\({\pi \cup i}\)</span> usando la función de rendimiento <span class="math inline">\(L\)</span>. Este proceso continúa si <span class="math inline">\(\mathcal P^{j+1} &gt; \mathcal P^j\)</span> donde <span class="math inline">\(\mathcal P^0 = 0\)</span>.</p>
+<p>Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.</p>
+<p>Ilustrando la primera iteración en el problema de abandono escolar, <span class="math inline">\(\mathcal H\)</span> es la regresión lineal y <span class="math inline">\(L\)</span> es <span class="math inline">\(R^2\)</span> medido con validación cruzada. Como inicialmente <span class="math inline">\(\pi^0 = \emptyset\)</span>, solo es necesario ajustar un modelo con cada una de las variables por separado. El siguiente código itera por todas las variables, selecciona en <code>T1</code> los datos con esa única variable, hace <span class="math inline">\(k\)</span> iteraciones de validación cruzada y guarda el rendimiento en <code>perf</code>.</p>
+<div id="dfaf88f6" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> []</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> var <span class="kw">in</span> <span class="bu">range</span>(T.shape[<span class="dv">1</span>]):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    T1 <span class="op">=</span> T[:, [var]]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    hy_v <span class="op">=</span> np.zeros_like(y_t)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> tr, vs <span class="kw">in</span> kfold.split(T1):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        hy_v[vs] <span class="op">=</span> LinearRegression().fit(T1[tr], y_t[tr]).predict(T1[vs])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    perf.append(r2(y_t, hy_v))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La <a href="#fig-rendimiento-sel" class="quarto-xref">Figura&nbsp;<span>4.1</span></a> muestra el <span class="math inline">\(R^2\)</span> de cada variable en la primera iteración. La mejor variable es <code>organizacion_docentes_multigrado</code> con un <span class="math inline">\(R^2\)</span> de <span class="math inline">\(0.0289\)</span>, y solo <span class="math inline">\(37\)</span> de las <span class="math inline">\(56\)</span> variables tienen un <span class="math inline">\(R^2\)</span> de validación positivo, es decir, mejor que predecir siempre la media. Esta variable es la que se agregaría en la primera iteración.</p>
+<div id="cell-fig-rendimiento-sel" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ax.bar(<span class="bu">range</span>(<span class="bu">len</span>(perf)), perf, color<span class="op">=</span>PALETTE(<span class="dv">1</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(perf)))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(columnas, rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Variable'</span>, ylabel<span class="op">=</span><span class="st">'$R^2$ de validación'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-rendimiento-sel" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rendimiento-sel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="03SeleccionVariables_files/figure-html/fig-rendimiento-sel-output-1.png" width="976" height="620" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rendimiento-sel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4.1: Rendimiento (<span class="math inline">\(R^2\)</span>) de cada variable en la primera iteración de la selección hacia adelante.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El algoritmo de selección hacia adelante y hacia atrás se implementa en la clase <code>SequentialFeatureSelector</code>. Para que el procedimiento no tarde, se pide seleccionar diez variables.</p>
+<div id="96f9adfd" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>seq <span class="op">=</span> SequentialFeatureSelector(LinearRegression(), n_features_to_select<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                                direction<span class="op">=</span><span class="st">'forward'</span>, scoring<span class="op">=</span><span class="st">'r2'</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                cv<span class="op">=</span>kfold, n_jobs<span class="op">=-</span><span class="dv">1</span>).fit(T, y_t)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>adelante <span class="op">=</span> columnas[seq.get_support()]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Las variables que selecciona el procedimiento hacia adelante son <code>grupos</code>, <code>pct_primer_grado</code>, <code>entidad_Chiapas</code>, <code>entidad_Chihuahua</code>, <code>entidad_Durango</code>, <code>entidad_Michoacán</code>, <code>entidad_Oaxaca</code>, <code>tipo_servicio_general</code>, <code>turno_matutino</code>, <code>organizacion_docentes_multigrado</code>. La selección hacia atrás se obtiene con <code>direction='backward'</code>. Empieza con todas las variables y elimina una a la vez, la que menos deteriora el rendimiento. Con <span class="math inline">\(56\)</span> variables es mucho más lenta que la selección hacia adelante, pues cada eliminación evalúa casi todas las variables en cada una de las iteraciones de validación cruzada, y por eso no se ejecuta aquí. Como ambos son algoritmos voraces, cada uno llega a un óptimo local distinto y las variables que selecciona la versión hacia atrás no tienen por qué coincidir con las de la versión hacia adelante.</p>
+</div>
+</div>
+<section id="ventajas-y-limitaciones-1" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="ventajas-y-limitaciones-1"><span class="header-section-number">4.3.1</span> Ventajas y Limitaciones</h3>
+<p>Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto es, para un problema en <span class="math inline">\(\mathbb R^d\)</span> se analizarán un máximo de <span class="math inline">\(d\)</span> variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que solo puedan garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Complementando esta idea, en un problema <span class="math inline">\(\mathbb R^d\)</span> se tiene un espacio de búsqueda de <span class="math inline">\(2^d - 1\)</span> subconjuntos de variables. En los algoritmos vistos se observa un máximo de <span class="math inline">\(d\)</span> elementos de ese total.</p>
+</section>
+</section>
+<section id="sec-seleccion-por-modelo" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-seleccion-por-modelo"><span class="header-section-number">4.4</span> Selección mediante Modelo</h2>
+<p>Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Considerando que las variables están estandarizadas, el valor absoluto de un coeficiente de una regresión lineal indica el efecto que tiene esa variable en el resultado y permite ordenarlas por importancia. La clase <code>SelectFromModel</code> selecciona las características que el modelo considera más importantes. Con <code>max_features</code> se indica cuántas y <code>prefit=True</code> indica que el modelo ya está entrenado. El siguiente código lo ilustra con el Lasso del <span class="math inline">\(\lambda\)</span> óptimo.</p>
+<div id="04668a16" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>lasso_opt <span class="op">=</span> Lasso(alpha<span class="op">=</span>lambda_opt, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> SelectFromModel(lasso_opt, max_features<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                      threshold<span class="op">=-</span>np.inf, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>cuatro <span class="op">=</span> columnas[sel.get_support()]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Las cuatro variables con mayor coeficiente en valor absoluto son <code>pct_primer_grado</code>, <code>entidad_Oaxaca</code>, <code>turno_vespertino</code>, <code>organizacion_docentes_multigrado</code>. Habiendo descrito el procedimiento, es necesario encontrar cuál es el número de variables que produce el mejor rendimiento. Para esto se realizan <span class="math inline">\(k\)</span> iteraciones de validación cruzada (<a href="02Rendimiento.html#sec-kfold-cross-validation" class="quarto-xref"><span>Sección 2.5.1</span></a>), donde se varía el número de variables y en cada caso se mide el rendimiento con <span class="math inline">\(R^2\)</span> (<a href="02Rendimiento.html#sec-rendimiento-regresion" class="quarto-xref"><span>Sección 2.4</span></a>).</p>
+<div id="b774a0af" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>perf_sel <span class="op">=</span> []</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dim <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, T.shape[<span class="dv">1</span>] <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    modelo <span class="op">=</span> SelectFromModel(lasso_opt, max_features<span class="op">=</span>dim,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                             threshold<span class="op">=-</span>np.inf, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    Dt <span class="op">=</span> modelo.transform(T)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    hy_v <span class="op">=</span> np.zeros_like(y_t)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> tr, vs <span class="kw">in</span> kfold.split(Dt):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        m_sel <span class="op">=</span> LinearRegression().fit(Dt[tr], y_t[tr])</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        hy_v[vs] <span class="op">=</span> m_sel.predict(Dt[vs])</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    perf_sel.append(<span class="bu">dict</span>(r2<span class="op">=</span>r2(y_t, hy_v), numero<span class="op">=</span>dim))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>perf_sel <span class="op">=</span> pd.DataFrame(perf_sel)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La <a href="#fig-seleccion-por-modelo" class="quarto-xref">Figura&nbsp;<span>4.2</span></a> muestra el <span class="math inline">\(R^2\)</span> en validación cruzada desde el modelo con las dos variables más importantes hasta el que usa todas. El rendimiento pasa de <span class="math inline">\(0.0520\)</span> con dos variables a <span class="math inline">\(0.0961\)</span> con diez, y llega a un máximo de <span class="math inline">\(0.1153\)</span> con <span class="math inline">\(37\)</span> variables. Con todas las variables vale <span class="math inline">\(0.1142\)</span>. Es decir, el rendimiento mejora rápidamente con las primeras variables y después se estabiliza, de manera que agregar las últimas casi no lo modifica.</p>
+<div id="cell-fig-seleccion-por-modelo" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax.plot(perf_sel.numero, perf_sel.r2)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Número de variables'</span>, ylabel<span class="op">=</span><span class="st">'$R^2$ de validación'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-seleccion-por-modelo" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-seleccion-por-modelo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="03SeleccionVariables_files/figure-html/fig-seleccion-por-modelo-output-1.png" width="522" height="355" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seleccion-por-modelo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4.2: Rendimiento (<span class="math inline">\(R^2\)</span>) en validación cruzada variando el número de variables seleccionadas.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="ventajas-y-limitaciones-2" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="ventajas-y-limitaciones-2"><span class="header-section-number">4.4.1</span> Ventajas y Limitaciones</h3>
+<p>Una vez entrenado el modelo, la selección es barata, pues solo ordena las variables por la magnitud de sus coeficientes y no requiere ajustar un modelo por cada subconjunto, como lo hacen la selección hacia adelante y hacia atrás. La desventaja es que el orden depende del modelo y de la escala de las variables, que en este capítulo son comparables porque se estandarizaron con <span class="math inline">\(\mathcal T\)</span>. Además, los coeficientes de un modelo lineal no capturan las interacciones entre variables, y cuando dos variables están correlacionadas el modelo reparte el coeficiente entre ellas de una manera que depende de la muestra.</p>
+</section>
+</section>
+<section id="sec-seleccion-comparacion" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-seleccion-comparacion"><span class="header-section-number">4.5</span> Comparación de los Procedimientos</h2>
+<p>Hasta aquí cada procedimiento se evaluó con validación cruzada dentro de <span class="math inline">\(\mathcal T\)</span>. Para compararlos entre sí y con Lasso, el conjunto de prueba <span class="math inline">\(\mathcal G\)</span> (<a href="02Rendimiento.html#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 2.2</span></a>), que no se ha usado, mide qué tan bien predice cada subconjunto. El siguiente código reúne los subconjuntos de variables, que son las diez de <code>SelectKBest</code>, las diez de la selección hacia adelante, las que elige <code>SelectFromModel</code> con el número de variables que maximizó el rendimiento en la <a href="#fig-seleccion-por-modelo" class="quarto-xref">Figura&nbsp;<span>4.2</span></a> y las que conserva Lasso con <code>lambda_opt</code>. A cada uno se le ajusta una regresión lineal en <span class="math inline">\(\mathcal T\)</span> y se mide el <span class="math inline">\(R^2\)</span> en <span class="math inline">\(\mathcal G\)</span>. Como referencia se incluye el modelo con todas las variables.</p>
+<div id="2a4c7a69" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mejor_dim <span class="op">=</span> <span class="bu">int</span>(perf_sel.numero[perf_sel.r2.idxmax()])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>modelo_opt <span class="op">=</span> SelectFromModel(lasso_opt, max_features<span class="op">=</span>mejor_dim,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                             threshold<span class="op">=-</span>np.inf, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>subconjuntos <span class="op">=</span> {<span class="st">'Estadísticas'</span>: seleccionadas,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Adelante'</span>: adelante,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Modelo'</span>: columnas[modelo_opt.get_support()],</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Lasso'</span>: columnas[lasso_cv.coef_ <span class="op">!=</span> <span class="dv">0</span>],</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Todas'</span>: columnas}</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>r2_comp <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> []</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, variables <span class="kw">in</span> subconjuntos.items():</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    mascara <span class="op">=</span> columnas.isin(variables)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    hy_g <span class="op">=</span> LinearRegression().fit(T[:, mascara], y_t).predict(G[:, mascara])</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    resumen.append(<span class="bu">dict</span>(procedimiento<span class="op">=</span>nombre, variables<span class="op">=</span><span class="bu">int</span>(mascara.<span class="bu">sum</span>()),</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                        r2<span class="op">=</span>r2(y_g, hy_g)))</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> r2_comp <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        r2_comp <span class="op">=</span> r2_score(y_g, hy_g, name<span class="op">=</span>nombre, use_tqdm<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        r2_comp(hy_g, name<span class="op">=</span>nombre)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> pd.DataFrame(resumen)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div id="tbl-seleccion-comparacion" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-seleccion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;4.1: Número de variables y <span class="math inline">\(R^2\)</span> en el conjunto de prueba de la regresión lineal ajustada con las variables que selecciona cada procedimiento.
+</figcaption>
+<div aria-describedby="tbl-seleccion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="19">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Procedimiento</th>
+<th>Variables</th>
+<th><span class="math inline">\(R^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estadísticas</td>
+<td><span class="math inline">\(10\)</span></td>
+<td><span class="math inline">\(0.1061\)</span></td>
+</tr>
+<tr class="even">
+<td>Adelante</td>
+<td><span class="math inline">\(10\)</span></td>
+<td><span class="math inline">\(0.1258\)</span></td>
+</tr>
+<tr class="odd">
+<td>Modelo</td>
+<td><span class="math inline">\(37\)</span></td>
+<td><span class="math inline">\(0.1434\)</span></td>
+</tr>
+<tr class="even">
+<td>Lasso</td>
+<td><span class="math inline">\(50\)</span></td>
+<td><span class="math inline">\(0.1434\)</span></td>
+</tr>
+<tr class="odd">
+<td>Todas</td>
+<td><span class="math inline">\(56\)</span></td>
+<td><span class="math inline">\(0.1433\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-seleccion-comparacion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a> presenta el número de variables y el <span class="math inline">\(R^2\)</span> de cada procedimiento. La selección basada en estadísticas usa <span class="math inline">\(10\)</span> variables y alcanza un <span class="math inline">\(R^2\)</span> de <span class="math inline">\(0.1061\)</span>, la selección hacia adelante usa <span class="math inline">\(10\)</span> y alcanza <span class="math inline">\(0.1258\)</span>, <code>SelectFromModel</code> usa <span class="math inline">\(37\)</span> y alcanza <span class="math inline">\(0.1434\)</span> y Lasso usa <span class="math inline">\(50\)</span> y alcanza <span class="math inline">\(0.1434\)</span>. Con todas las variables el <span class="math inline">\(R^2\)</span> es <span class="math inline">\(0.1433\)</span>. La <a href="#fig-seleccion-comparacion" class="quarto-xref">Figura&nbsp;<span>4.3</span></a> muestra los mismos valores con su intervalo de confianza obtenido con bootstrap y señala los procedimientos cuya diferencia con el mejor es estadísticamente significativa.</p>
+<div id="cell-fig-seleccion-comparacion" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>r2_comp.plot(comp_legend<span class="op">=</span><span class="st">'Comparación'</span>, winner_legend<span class="op">=</span><span class="st">'Mejor'</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>             tie_legend<span class="op">=</span><span class="st">'Equivalente'</span>, loser_legend<span class="op">=</span><span class="st">'Diferente'</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>             alg_legend<span class="op">=</span><span class="st">'Algoritmo'</span>, var_name<span class="op">=</span><span class="st">'Rendimiento'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-seleccion-comparacion" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-seleccion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="03SeleccionVariables_files/figure-html/fig-seleccion-comparacion-output-1.png" width="568" height="470" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seleccion-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4.3: Rendimiento (<span class="math inline">\(R^2\)</span>) en el conjunto de prueba de la regresión lineal ajustada con las variables que selecciona cada procedimiento.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Falta saber si los procedimientos eligen las mismas variables. La <a href="#tbl-seleccion-comparte" class="quarto-xref">Tabla&nbsp;<span>4.2</span></a> cuenta, para cada par de procedimientos, cuántas variables comparten, de manera que la diagonal es el número de variables que selecciona cada uno.</p>
+<div id="a389680f" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> [<span class="st">'Estadísticas'</span>, <span class="st">'Adelante'</span>, <span class="st">'Modelo'</span>, <span class="st">'Lasso'</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>comparten <span class="op">=</span> pd.DataFrame([[<span class="bu">len</span>(<span class="bu">set</span>(subconjuntos[a]) <span class="op">&amp;</span> <span class="bu">set</span>(subconjuntos[b]))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">for</span> b <span class="kw">in</span> nombres] <span class="cf">for</span> a <span class="kw">in</span> nombres],</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                         index<span class="op">=</span>nombres, columns<span class="op">=</span>nombres)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>en_todos <span class="op">=</span> <span class="bu">set</span>.intersection(<span class="op">*</span>[<span class="bu">set</span>(subconjuntos[n]) <span class="cf">for</span> n <span class="kw">in</span> nombres])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-execution_count="23">
+<div id="tbl-seleccion-comparte" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="23">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-seleccion-comparte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;4.2: Número de variables que comparten los subconjuntos que selecciona cada procedimiento.
+</figcaption>
+<div aria-describedby="tbl-seleccion-comparte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="23">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th></th>
+<th>Estadísticas</th>
+<th>Adelante</th>
+<th>Modelo</th>
+<th>Lasso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estadísticas</td>
+<td><span class="math inline">\(10\)</span></td>
+<td><span class="math inline">\(5\)</span></td>
+<td><span class="math inline">\(8\)</span></td>
+<td><span class="math inline">\(8\)</span></td>
+</tr>
+<tr class="even">
+<td>Adelante</td>
+<td><span class="math inline">\(5\)</span></td>
+<td><span class="math inline">\(10\)</span></td>
+<td><span class="math inline">\(9\)</span></td>
+<td><span class="math inline">\(9\)</span></td>
+</tr>
+<tr class="odd">
+<td>Modelo</td>
+<td><span class="math inline">\(8\)</span></td>
+<td><span class="math inline">\(9\)</span></td>
+<td><span class="math inline">\(37\)</span></td>
+<td><span class="math inline">\(37\)</span></td>
+</tr>
+<tr class="even">
+<td>Lasso</td>
+<td><span class="math inline">\(8\)</span></td>
+<td><span class="math inline">\(9\)</span></td>
+<td><span class="math inline">\(37\)</span></td>
+<td><span class="math inline">\(50\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Los subconjuntos de diez variables pierden rendimiento frente al modelo con todas. La selección basada en estadísticas pierde <span class="math inline">\(0.0372\)</span> de <span class="math inline">\(R^2\)</span> y la selección hacia adelante <span class="math inline">\(0.0176\)</span>, y la <a href="#fig-seleccion-comparacion" class="quarto-xref">Figura&nbsp;<span>4.3</span></a> marca a ambas como diferentes del mejor. Con el mismo número de variables, la selección hacia adelante supera por <span class="math inline">\(0.0196\)</span> a la basada en estadísticas porque evalúa el modelo y no cada variable por separado. En cambio, <code>SelectFromModel</code> y Lasso, que conservan más variables, igualan el rendimiento del modelo con todas. De las <span class="math inline">\(37\)</span> variables que elige <code>SelectFromModel</code>, <span class="math inline">\(37\)</span> están entre las <span class="math inline">\(50\)</span> que conserva Lasso, pues ordena los coeficientes del mismo modelo.</p>
+<p>La <a href="#tbl-seleccion-comparte" class="quarto-xref">Tabla&nbsp;<span>4.2</span></a> muestra que los procedimientos eligen subconjuntos distintos. La selección hacia adelante y la basada en estadísticas, ambas de diez variables, comparten solo <span class="math inline">\(5\)</span>, y las variables que eligen los cuatro procedimientos son <code>entidad_Oaxaca</code>, <code>grupos</code>, <code>organizacion_docentes_multigrado</code>, <code>pct_primer_grado</code>, <code>tipo_servicio_general</code>, un total de <span class="math inline">\(5\)</span>. Es la misma lección del efecto Rashomon de <a href="03Regresion.html#sec-coeficientes-regularizados" class="quarto-xref"><span>Sección 3.8</span></a>, pues subconjuntos distintos pueden tener un rendimiento similar. Con muchos datos y pocas variables, como aquí, la ganancia de seleccionar es tener un modelo con menos variables que recabar y no un mejor <span class="math inline">\(R^2\)</span>.</p>
+<p>Esa es la idea de la <a href="03Regresion.html#sec-regresion-focalizacion" class="quarto-xref"><span>Sección 3.9</span></a>. Cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política, y la <a href="#tbl-seleccion-comparacion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a> muestra el precio de reducir el modelo a diez variables. Como el subconjunto seleccionado cambia con la muestra (<a href="03Regresion.html#fig-lasso-estabilidad" class="quarto-xref">Figura&nbsp;<span>3.10</span></a>), conviene verificar que la conclusión no depende de una sola partición antes de pedir a un programa que recabe un conjunto específico de variables.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Actividad
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Repita la comparación de procedimientos con el conjunto de Territorio (<a href="20ConjuntosDatos.html#sec-datos-territorio" class="quarto-xref"><span>Sección B.1.5</span></a>). El objetivo es <code>grado_promedio_escolaridad</code> y se descartan <code>clave_ageb</code>, <code>municipio</code>, <code>pct_viv_internet</code>, <code>pct_sin_servicio_salud</code> y <code>pct_jefatura_femenina</code>. Conteste las siguientes preguntas. ¿Cuántas variables se necesitan para acercarse al <span class="math inline">\(R^2\)</span> que se obtiene con todas? ¿Los procedimientos coinciden en los sectores de establecimientos que seleccionan?</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Actividad
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Suponga que un programa de becas tiene que decidir qué información recabar en cada plantel, y que recabar cada variable tiene un costo distinto. Con los resultados de la <a href="#tbl-seleccion-comparacion" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a> escriba el párrafo de un <em>policy paper</em> que justifique qué subconjunto de variables usaría y por qué. Considere el número de variables, el <span class="math inline">\(R^2\)</span> en el conjunto de prueba y la estabilidad de la selección.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-resumen-seleccion-variables" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="sec-resumen-seleccion-variables"><span class="header-section-number">4.6</span> Resumen</h2>
+<p>Los procedimientos de selección de variables se agrupan en tres familias. Los filtros evalúan cada variable con una prueba estadística (<a href="#sec-seleccion-var-estadistica" class="quarto-xref"><span>Sección 4.2</span></a>), los procedimientos voraces agregan o quitan una variable a la vez según el rendimiento del modelo (<a href="#sec-seleccion-adelante" class="quarto-xref"><span>Sección 4.3</span></a>) y los basados en modelo aprovechan los coeficientes o la importancia que el propio modelo asigna (<a href="#sec-seleccion-por-modelo" class="quarto-xref"><span>Sección 4.4</span></a>). Cada una tiene ventajas y limitaciones que se resumen en la <a href="#sec-seleccion-comparacion" class="quarto-xref"><span>Sección 4.5</span></a>, donde además se comparan en el conjunto de prueba. Esa comparación muestra que los procedimientos eligen subconjuntos distintos con un rendimiento parecido, que es otra manifestación del efecto Rashomon de <a href="03Regresion.html#sec-coeficientes-regularizados" class="quarto-xref"><span>Sección 3.8</span></a>, y que reducir el número de variables cuesta poco rendimiento.</p>
+<p>Hasta aquí el problema era predecir un valor numérico. Cuando lo que se debe decidir es una acción y los errores no cuestan lo mismo, el problema cambia y el tema se retoma con la teoría de decisión en <a href="04Teoria_Decision.html" class="quarto-xref"><span>Capítulo 5</span></a>.</p>
+
+
+<!-- -->
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-guyon2003introduction" class="csl-entry" role="listitem">
+Guyon, Isabelle, y André Elisseeff. 2003. <span>«An Introduction to Variable and Feature Selection»</span>. <em>Journal of Machine Learning Research</em> 3: 1157-82. <a href="https://jmlr.org/papers/v3/guyon03a.html">https://jmlr.org/papers/v3/guyon03a.html</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../capitulos/03Regresion.html" class="pagination-link" aria-label="Regresión y Regularización">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regresión y Regularización</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../capitulos/04Teoria_Decision.html" class="pagination-link" aria-label="Teoría de Decisión Bayesiana">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Selección de Variables {#sec-seleccion-variables}</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es aplicar procedimientos de selección de variables en un problema de regresión, a saber, filtros basados en estadísticas, selección hacia adelante y hacia atrás, y selección mediante un modelo, y comparar las variables que elige cada uno con las que elige Lasso.</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression, Lasso, LassoCV</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, KFold</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> f_regression, SelectKBest,<span class="op">\</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                                      SequentialFeatureSelector,<span class="op">\</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                                      SelectFromModel</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> r2_score <span class="im">as</span> r2</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> CompStats.metrics <span class="im">import</span> r2_score</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>PALETTE <span class="op">=</span> mpl.cm.Paired</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-seleccion-variables}</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>Lasso (@sec-lasso) selecciona variables al mismo tiempo que ajusta el modelo, y el modelo reducido (@sec-regresion-ols-reducido) quitó las variables cuyo estadístico $t$ era pequeño. Este capítulo presenta los procedimientos clásicos de selección, que son los filtros basados en estadísticas, la búsqueda hacia adelante y hacia atrás, y la selección mediante un modelo, y los compara con lo que eligió Lasso.</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>Todos parten de la idea de que existen variables que no contribuyen a la solución o cuyo aporte ya está dado por otras, y una introducción general a estos procedimientos es @guyon2003introduction. Esto trae como consecuencia, en el mejor de los casos, un mayor costo computacional o de recolección y, en uno menos afortunado, un modelo con un rendimiento menor al que se hubiera obtenido seleccionando las variables.</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>Los datos son los de Abandono Escolar y la preparación es la misma que en la @sec-regresion-datos, por lo que no se vuelve a explicar. El siguiente código lee los datos, codifica las variables categóricas, separa los conjuntos de entrenamiento y prueba con el mismo <span class="in">`random_state`</span> y estandariza con $\mathcal T$.</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>educacion <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/sep_f911_educacion.csv.gz'</span>)</span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>constantes <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> educacion.columns <span class="cf">if</span> educacion[c].nunique() <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> educacion.drop(columns<span class="op">=</span>[<span class="st">'tasa_abandono'</span>, <span class="st">'clave_cct'</span>] <span class="op">+</span> constantes)</span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> educacion[<span class="st">'tasa_abandono'</span>].to_numpy()</span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pd.get_dummies(X, drop_first<span class="op">=</span><span class="va">True</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>columnas <span class="op">=</span> X.columns</span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X.to_numpy(), y, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>escala <span class="op">=</span> StandardScaler().fit(T)</span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> escala.transform(T)</span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> escala.transform(G)</span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a>Para comparar con Lasso se recalcula el $\lambda$ que selecciona la validación cruzada (@sec-seleccion-lambda).</span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a>kfold <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">30</span>)</span>
+<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>lasso_cv <span class="op">=</span> LassoCV(cv<span class="op">=</span>kfold, alphas<span class="op">=</span>lambdas, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t)</span>
+<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a>lambda_opt <span class="op">=</span> lasso_cv.alpha_</span>
+<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a>d_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>X<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a>lambda_opt_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>lambda_opt<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a>El $\lambda$ seleccionado es <span class="in">`{python} lambda_opt_f`</span> y Lasso conserva el subconjunto de variables con coeficiente distinto de cero de entre las <span class="in">`{python} d_f`</span> variables.</span>
+<span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## Basada en Estadísticas {#sec-seleccion-var-estadistica}</span></span>
+<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a>Una manera de seleccionar es descartar las variables que no tienen relación con la respuesta. En regresión, la prueba es la estadística $F$ de la regresión lineal simple de $y$ sobre cada variable, cuya hipótesis nula es que el coeficiente es cero. Está implementada en la función <span class="in">`f_regression`</span>. (En clasificación la prueba equivalente es Kruskal-Wallis, o ANOVA si se supone normalidad.) Con esas estadísticas se pueden ordenar las variables y seleccionar las $k$ mejores con <span class="in">`SelectKBest`</span>.</span>
+<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>f_est, p_valores <span class="op">=</span> f_regression(T, y_t)</span>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> SelectKBest(score_func<span class="op">=</span>f_regression, k<span class="op">=</span><span class="dv">10</span>).fit(T, y_t)</span>
+<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>seleccionadas <span class="op">=</span> columnas[sel.get_support()]</span>
+<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a>seleccionadas_f <span class="op">=</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> c <span class="kw">in</span> seleccionadas))</span>
+<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a>coinciden_f <span class="op">=</span> Markdown(</span>
+<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'$</span><span class="sc">{</span><span class="bu">len</span>(<span class="bu">set</span>(seleccionadas) <span class="op">&amp;</span> <span class="bu">set</span>(columnas[lasso_cv.coef_ <span class="op">!=</span> <span class="dv">0</span>]))<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-105"><a href="#cb14-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-106"><a href="#cb14-106" aria-hidden="true" tabindex="-1"></a>Las diez variables con mayor estadística $F$ son <span class="in">`{python} seleccionadas_f`</span>. De ellas, <span class="in">`{python} coinciden_f`</span> están entre las que conserva Lasso con el $\lambda$ elegido por validación cruzada.</span>
+<span id="cb14-107"><a href="#cb14-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-108"><a href="#cb14-108" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ventajas y Limitaciones</span></span>
+<span id="cb14-109"><a href="#cb14-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-110"><a href="#cb14-110" aria-hidden="true" tabindex="-1"></a>Las técnicas basadas en estadísticas requieren de pocos recursos computacionales y están basadas en pruebas que permiten saber cuáles son las razones de su funcionamiento. Estas fortalezas también son origen de sus debilidades, pues observan las variables de manera aislada y no consideran que pueden interactuar. Por otro lado, la selección es agnóstica del algoritmo de aprendizaje utilizado.</span>
+<span id="cb14-111"><a href="#cb14-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-112"><a href="#cb14-112" aria-hidden="true" tabindex="-1"></a><span class="fu">## Selección hacia Adelante y hacia Atrás {#sec-seleccion-adelante}</span></span>
+<span id="cb14-113"><a href="#cb14-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-114"><a href="#cb14-114" aria-hidden="true" tabindex="-1"></a>Un procedimiento que pone en el centro del proceso de selección al algoritmo de aprendizaje utilizado es **Selección hacia Adelante** y su complemento, **Selección hacia Atrás.** El algoritmo de selección hacia adelante es un procedimiento iterativo que selecciona una variable a la vez guiada por el rendimiento de esa variable cuando es usada en el algoritmo de aprendizaje. Al igual que los procedimientos anteriores, no modifica las características del problema, solamente selecciona las que se consideran relevantes.</span>
+<span id="cb14-115"><a href="#cb14-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-116"><a href="#cb14-116" aria-hidden="true" tabindex="-1"></a>En selección hacia adelante y hacia atrás se inicia con el conjunto de entrenamiento $\mathcal T = <span class="sc">\{</span>(x_i, y_i)<span class="sc">\}</span>,$ con una función $L$ que mide el rendimiento del algoritmo de aprendizaje $\mathcal H.$ La idea es ir seleccionando de manera iterativa aquellas variables que generan un modelo con mejores capacidades de generalización. Para medir la generalización se puede dividir $\mathcal T$ en dos conjuntos, entrenamiento y validación, o utilizar $k$ iteraciones de validación cruzada.</span>
+<span id="cb14-117"><a href="#cb14-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-118"><a href="#cb14-118" aria-hidden="true" tabindex="-1"></a>Suponga un conjunto $\pi \subseteq <span class="sc">\{</span>1, 2, \ldots, d<span class="sc">\}</span>$ de tal manera que $\mathcal T_\pi$ solamente cuenta con las variables identificadas en el conjunto $\pi$. Utilizando esta notación el algoritmo se puede definir de la siguiente manera. Inicialmente $\pi^0 = \emptyset$, en el siguiente paso $\pi^{j + 1} \leftarrow \pi^j \cup \textsf{arg max}_{\{i \mid i \in \{1, 2, \ldots, d\}, i \notin \pi^j\}} \mathcal P(\mathcal H, \mathcal T_{\pi \cup i}, L)$, donde $\mathcal P$ representa el rendimiento del algoritmo $\mathcal H$ en el subconjunto ${\pi \cup i}$ usando la función de rendimiento $L$. Este proceso continúa si $\mathcal P^{j+1} &gt; \mathcal P^j$ donde $\mathcal P^0 = 0$.</span>
+<span id="cb14-119"><a href="#cb14-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-120"><a href="#cb14-120" aria-hidden="true" tabindex="-1"></a>Es importante mencionar que el algoritmo antes descrito es un algoritmo voraz y que el encontrar el óptimo de este problema de optimización no se garantiza con este tipo de algoritmos. Lo que quiere decir es que el algoritmo encontrará un óptimo local.</span>
+<span id="cb14-121"><a href="#cb14-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-122"><a href="#cb14-122" aria-hidden="true" tabindex="-1"></a>Ilustrando la primera iteración en el problema de abandono escolar, $\mathcal H$ es la regresión lineal y $L$ es $R^2$ medido con validación cruzada. Como inicialmente $\pi^0 = \emptyset$, solo es necesario ajustar un modelo con cada una de las variables por separado. El siguiente código itera por todas las variables, selecciona en <span class="in">`T1`</span> los datos con esa única variable, hace $k$ iteraciones de validación cruzada y guarda el rendimiento en <span class="in">`perf`</span>.</span>
+<span id="cb14-123"><a href="#cb14-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-126"><a href="#cb14-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-127"><a href="#cb14-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-128"><a href="#cb14-128" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> []</span>
+<span id="cb14-129"><a href="#cb14-129" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> var <span class="kw">in</span> <span class="bu">range</span>(T.shape[<span class="dv">1</span>]):</span>
+<span id="cb14-130"><a href="#cb14-130" aria-hidden="true" tabindex="-1"></a>    T1 <span class="op">=</span> T[:, [var]]</span>
+<span id="cb14-131"><a href="#cb14-131" aria-hidden="true" tabindex="-1"></a>    hy_v <span class="op">=</span> np.zeros_like(y_t)</span>
+<span id="cb14-132"><a href="#cb14-132" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> tr, vs <span class="kw">in</span> kfold.split(T1):</span>
+<span id="cb14-133"><a href="#cb14-133" aria-hidden="true" tabindex="-1"></a>        hy_v[vs] <span class="op">=</span> LinearRegression().fit(T1[tr], y_t[tr]).predict(T1[vs])</span>
+<span id="cb14-134"><a href="#cb14-134" aria-hidden="true" tabindex="-1"></a>    perf.append(r2(y_t, hy_v))</span>
+<span id="cb14-135"><a href="#cb14-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-136"><a href="#cb14-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-139"><a href="#cb14-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-140"><a href="#cb14-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-141"><a href="#cb14-141" aria-hidden="true" tabindex="-1"></a>mejor <span class="op">=</span> <span class="bu">int</span>(np.argmax(perf))</span>
+<span id="cb14-142"><a href="#cb14-142" aria-hidden="true" tabindex="-1"></a>mejor_f <span class="op">=</span> Markdown(<span class="ss">f'`</span><span class="sc">{</span>columnas[mejor]<span class="sc">}</span><span class="ss">`'</span>)</span>
+<span id="cb14-143"><a href="#cb14-143" aria-hidden="true" tabindex="-1"></a>perf_mejor_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>perf[mejor]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb14-144"><a href="#cb14-144" aria-hidden="true" tabindex="-1"></a>n_pos_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>((np.array(perf) <span class="op">&gt;</span> <span class="dv">0</span>).<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-145"><a href="#cb14-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-146"><a href="#cb14-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-147"><a href="#cb14-147" aria-hidden="true" tabindex="-1"></a>La @fig-rendimiento-sel muestra el $R^2$ de cada variable en la primera iteración. La mejor variable es <span class="in">`{python} mejor_f`</span> con un $R^2$ de <span class="in">`{python} perf_mejor_f`</span>, y solo <span class="in">`{python} n_pos_f`</span> de las <span class="in">`{python} d_f`</span> variables tienen un $R^2$ de validación positivo, es decir, mejor que predecir siempre la media. Esta variable es la que se agregaría en la primera iteración.</span>
+<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento ($R^2$) de cada variable en la primera iteración de la selección hacia adelante.</span></span>
+<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-rendimiento-sel</span></span>
+<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a>ax.bar(<span class="bu">range</span>(<span class="bu">len</span>(perf)), perf, color<span class="op">=</span>PALETTE(<span class="dv">1</span>))</span>
+<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(perf)))</span>
+<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(columnas, rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb14-159"><a href="#cb14-159" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Variable'</span>, ylabel<span class="op">=</span><span class="st">'$R^2$ de validación'</span>)</span>
+<span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a>El algoritmo de selección hacia adelante y hacia atrás se implementa en la clase <span class="in">`SequentialFeatureSelector`</span>. Para que el procedimiento no tarde, se pide seleccionar diez variables.</span>
+<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-168"><a href="#cb14-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a>seq <span class="op">=</span> SequentialFeatureSelector(LinearRegression(), n_features_to_select<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a>                                direction<span class="op">=</span><span class="st">'forward'</span>, scoring<span class="op">=</span><span class="st">'r2'</span>,</span>
+<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a>                                cv<span class="op">=</span>kfold, n_jobs<span class="op">=-</span><span class="dv">1</span>).fit(T, y_t)</span>
+<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a>adelante <span class="op">=</span> columnas[seq.get_support()]</span>
+<span id="cb14-174"><a href="#cb14-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-175"><a href="#cb14-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-178"><a href="#cb14-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-179"><a href="#cb14-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-180"><a href="#cb14-180" aria-hidden="true" tabindex="-1"></a>adelante_f <span class="op">=</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> c <span class="kw">in</span> adelante))</span>
+<span id="cb14-181"><a href="#cb14-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-182"><a href="#cb14-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-183"><a href="#cb14-183" aria-hidden="true" tabindex="-1"></a>Las variables que selecciona el procedimiento hacia adelante son <span class="in">`{python} adelante_f`</span>. La selección hacia atrás se obtiene con <span class="in">`direction='backward'`</span>. Empieza con todas las variables y elimina una a la vez, la que menos deteriora el rendimiento. Con <span class="in">`{python} d_f`</span> variables es mucho más lenta que la selección hacia adelante, pues cada eliminación evalúa casi todas las variables en cada una de las iteraciones de validación cruzada, y por eso no se ejecuta aquí. Como ambos son algoritmos voraces, cada uno llega a un óptimo local distinto y las variables que selecciona la versión hacia atrás no tienen por qué coincidir con las de la versión hacia adelante.</span>
+<span id="cb14-184"><a href="#cb14-184" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-185"><a href="#cb14-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-186"><a href="#cb14-186" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ventajas y Limitaciones</span></span>
+<span id="cb14-187"><a href="#cb14-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-188"><a href="#cb14-188" aria-hidden="true" tabindex="-1"></a>Una de las ventajas de la selección hacia atrás y adelante es que el algoritmo termina a lo más cuando se han analizado todas las variables, esto es, para un problema en $\mathbb R^d$ se analizarán un máximo de $d$ variables. La principal desventaja es que estos algoritmos son voraces, es decir, toman la mejor decisión en el momento, lo cual tiene como consecuencia que solo puedan garantizar llegar a un máximo local y en ocasiones este máximo local no corresponde al máximo global. Complementando esta idea, en un problema $\mathbb R^d$ se tiene un espacio de búsqueda de $2^d - 1$ subconjuntos de variables. En los algoritmos vistos se observa un máximo de $d$ elementos de ese total.</span>
+<span id="cb14-189"><a href="#cb14-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-190"><a href="#cb14-190" aria-hidden="true" tabindex="-1"></a><span class="fu">## Selección mediante Modelo {#sec-seleccion-por-modelo}</span></span>
+<span id="cb14-191"><a href="#cb14-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-192"><a href="#cb14-192" aria-hidden="true" tabindex="-1"></a>Existen algoritmos de aprendizaje supervisado donde sus parámetros indican la importancia que tiene cada característica en el problema. Considerando que las variables están estandarizadas, el valor absoluto de un coeficiente de una regresión lineal indica el efecto que tiene esa variable en el resultado y permite ordenarlas por importancia. La clase <span class="in">`SelectFromModel`</span> selecciona las características que el modelo considera más importantes. Con <span class="in">`max_features`</span> se indica cuántas y <span class="in">`prefit=True`</span> indica que el modelo ya está entrenado. El siguiente código lo ilustra con el Lasso del $\lambda$ óptimo.</span>
+<span id="cb14-193"><a href="#cb14-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-196"><a href="#cb14-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-197"><a href="#cb14-197" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-198"><a href="#cb14-198" aria-hidden="true" tabindex="-1"></a>lasso_opt <span class="op">=</span> Lasso(alpha<span class="op">=</span>lambda_opt, max_iter<span class="op">=</span><span class="dv">5000</span>).fit(T, y_t)</span>
+<span id="cb14-199"><a href="#cb14-199" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> SelectFromModel(lasso_opt, max_features<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb14-200"><a href="#cb14-200" aria-hidden="true" tabindex="-1"></a>                      threshold<span class="op">=-</span>np.inf, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-201"><a href="#cb14-201" aria-hidden="true" tabindex="-1"></a>cuatro <span class="op">=</span> columnas[sel.get_support()]</span>
+<span id="cb14-202"><a href="#cb14-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-203"><a href="#cb14-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a>cuatro_f <span class="op">=</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> c <span class="kw">in</span> cuatro))</span>
+<span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-210"><a href="#cb14-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-211"><a href="#cb14-211" aria-hidden="true" tabindex="-1"></a>Las cuatro variables con mayor coeficiente en valor absoluto son <span class="in">`{python} cuatro_f`</span>. Habiendo descrito el procedimiento, es necesario encontrar cuál es el número de variables que produce el mejor rendimiento. Para esto se realizan $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation), donde se varía el número de variables y en cada caso se mide el rendimiento con $R^2$ (@sec-rendimiento-regresion).</span>
+<span id="cb14-212"><a href="#cb14-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-215"><a href="#cb14-215" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-216"><a href="#cb14-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-217"><a href="#cb14-217" aria-hidden="true" tabindex="-1"></a>perf_sel <span class="op">=</span> []</span>
+<span id="cb14-218"><a href="#cb14-218" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dim <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>, T.shape[<span class="dv">1</span>] <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb14-219"><a href="#cb14-219" aria-hidden="true" tabindex="-1"></a>    modelo <span class="op">=</span> SelectFromModel(lasso_opt, max_features<span class="op">=</span>dim,</span>
+<span id="cb14-220"><a href="#cb14-220" aria-hidden="true" tabindex="-1"></a>                             threshold<span class="op">=-</span>np.inf, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-221"><a href="#cb14-221" aria-hidden="true" tabindex="-1"></a>    Dt <span class="op">=</span> modelo.transform(T)</span>
+<span id="cb14-222"><a href="#cb14-222" aria-hidden="true" tabindex="-1"></a>    hy_v <span class="op">=</span> np.zeros_like(y_t)</span>
+<span id="cb14-223"><a href="#cb14-223" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> tr, vs <span class="kw">in</span> kfold.split(Dt):</span>
+<span id="cb14-224"><a href="#cb14-224" aria-hidden="true" tabindex="-1"></a>        m_sel <span class="op">=</span> LinearRegression().fit(Dt[tr], y_t[tr])</span>
+<span id="cb14-225"><a href="#cb14-225" aria-hidden="true" tabindex="-1"></a>        hy_v[vs] <span class="op">=</span> m_sel.predict(Dt[vs])</span>
+<span id="cb14-226"><a href="#cb14-226" aria-hidden="true" tabindex="-1"></a>    perf_sel.append(<span class="bu">dict</span>(r2<span class="op">=</span>r2(y_t, hy_v), numero<span class="op">=</span>dim))</span>
+<span id="cb14-227"><a href="#cb14-227" aria-hidden="true" tabindex="-1"></a>perf_sel <span class="op">=</span> pd.DataFrame(perf_sel)</span>
+<span id="cb14-228"><a href="#cb14-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-229"><a href="#cb14-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-232"><a href="#cb14-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-233"><a href="#cb14-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-234"><a href="#cb14-234" aria-hidden="true" tabindex="-1"></a>fila <span class="op">=</span> perf_sel.loc[perf_sel.r2.idxmax()]</span>
+<span id="cb14-235"><a href="#cb14-235" aria-hidden="true" tabindex="-1"></a>mejor_num_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(fila.numero)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a>mejor_r2_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>fila<span class="sc">.</span>r2<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a>r2_2_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>perf_sel<span class="sc">.</span>r2<span class="sc">.</span>iloc[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a>r2_todas_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>perf_sel<span class="sc">.</span>r2<span class="sc">.</span>iloc[<span class="op">-</span><span class="dv">1</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a>r2_10_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>perf_sel<span class="sc">.</span>r2<span class="sc">.</span>iloc[perf_sel.numero.tolist().index(<span class="dv">10</span>)]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a>La @fig-seleccion-por-modelo muestra el $R^2$ en validación cruzada desde el modelo con las dos variables más importantes hasta el que usa todas. El rendimiento pasa de <span class="in">`{python} r2_2_f`</span> con dos variables a <span class="in">`{python} r2_10_f`</span> con diez, y llega a un máximo de <span class="in">`{python} mejor_r2_f`</span> con <span class="in">`{python} mejor_num_f`</span> variables. Con todas las variables vale <span class="in">`{python} r2_todas_f`</span>. Es decir, el rendimiento mejora rápidamente con las primeras variables y después se estabiliza, de manera que agregar las últimas casi no lo modifica.</span>
+<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento ($R^2$) en validación cruzada variando el número de variables seleccionadas.</span></span>
+<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-seleccion-por-modelo</span></span>
+<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a>ax.plot(perf_sel.numero, perf_sel.r2)</span>
+<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Número de variables'</span>, ylabel<span class="op">=</span><span class="st">'$R^2$ de validación'</span>)</span>
+<span id="cb14-253"><a href="#cb14-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-254"><a href="#cb14-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-255"><a href="#cb14-255" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ventajas y Limitaciones</span></span>
+<span id="cb14-256"><a href="#cb14-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-257"><a href="#cb14-257" aria-hidden="true" tabindex="-1"></a>Una vez entrenado el modelo, la selección es barata, pues solo ordena las variables por la magnitud de sus coeficientes y no requiere ajustar un modelo por cada subconjunto, como lo hacen la selección hacia adelante y hacia atrás. La desventaja es que el orden depende del modelo y de la escala de las variables, que en este capítulo son comparables porque se estandarizaron con $\mathcal T$. Además, los coeficientes de un modelo lineal no capturan las interacciones entre variables, y cuando dos variables están correlacionadas el modelo reparte el coeficiente entre ellas de una manera que depende de la muestra.</span>
+<span id="cb14-258"><a href="#cb14-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-259"><a href="#cb14-259" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparación de los Procedimientos {#sec-seleccion-comparacion}</span></span>
+<span id="cb14-260"><a href="#cb14-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-261"><a href="#cb14-261" aria-hidden="true" tabindex="-1"></a>Hasta aquí cada procedimiento se evaluó con validación cruzada dentro de $\mathcal T$. Para compararlos entre sí y con Lasso, el conjunto de prueba $\mathcal G$ (@sec-conjunto-entre-prueba), que no se ha usado, mide qué tan bien predice cada subconjunto. El siguiente código reúne los subconjuntos de variables, que son las diez de <span class="in">`SelectKBest`</span>, las diez de la selección hacia adelante, las que elige <span class="in">`SelectFromModel`</span> con el número de variables que maximizó el rendimiento en la @fig-seleccion-por-modelo y las que conserva Lasso con <span class="in">`lambda_opt`</span>. A cada uno se le ajusta una regresión lineal en $\mathcal T$ y se mide el $R^2$ en $\mathcal G$. Como referencia se incluye el modelo con todas las variables.</span>
+<span id="cb14-262"><a href="#cb14-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-265"><a href="#cb14-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-266"><a href="#cb14-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-267"><a href="#cb14-267" aria-hidden="true" tabindex="-1"></a>mejor_dim <span class="op">=</span> <span class="bu">int</span>(perf_sel.numero[perf_sel.r2.idxmax()])</span>
+<span id="cb14-268"><a href="#cb14-268" aria-hidden="true" tabindex="-1"></a>modelo_opt <span class="op">=</span> SelectFromModel(lasso_opt, max_features<span class="op">=</span>mejor_dim,</span>
+<span id="cb14-269"><a href="#cb14-269" aria-hidden="true" tabindex="-1"></a>                             threshold<span class="op">=-</span>np.inf, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-270"><a href="#cb14-270" aria-hidden="true" tabindex="-1"></a>subconjuntos <span class="op">=</span> {<span class="st">'Estadísticas'</span>: seleccionadas,</span>
+<span id="cb14-271"><a href="#cb14-271" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Adelante'</span>: adelante,</span>
+<span id="cb14-272"><a href="#cb14-272" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Modelo'</span>: columnas[modelo_opt.get_support()],</span>
+<span id="cb14-273"><a href="#cb14-273" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Lasso'</span>: columnas[lasso_cv.coef_ <span class="op">!=</span> <span class="dv">0</span>],</span>
+<span id="cb14-274"><a href="#cb14-274" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Todas'</span>: columnas}</span>
+<span id="cb14-275"><a href="#cb14-275" aria-hidden="true" tabindex="-1"></a>r2_comp <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-276"><a href="#cb14-276" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> []</span>
+<span id="cb14-277"><a href="#cb14-277" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, variables <span class="kw">in</span> subconjuntos.items():</span>
+<span id="cb14-278"><a href="#cb14-278" aria-hidden="true" tabindex="-1"></a>    mascara <span class="op">=</span> columnas.isin(variables)</span>
+<span id="cb14-279"><a href="#cb14-279" aria-hidden="true" tabindex="-1"></a>    hy_g <span class="op">=</span> LinearRegression().fit(T[:, mascara], y_t).predict(G[:, mascara])</span>
+<span id="cb14-280"><a href="#cb14-280" aria-hidden="true" tabindex="-1"></a>    resumen.append(<span class="bu">dict</span>(procedimiento<span class="op">=</span>nombre, variables<span class="op">=</span><span class="bu">int</span>(mascara.<span class="bu">sum</span>()),</span>
+<span id="cb14-281"><a href="#cb14-281" aria-hidden="true" tabindex="-1"></a>                        r2<span class="op">=</span>r2(y_g, hy_g)))</span>
+<span id="cb14-282"><a href="#cb14-282" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> r2_comp <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb14-283"><a href="#cb14-283" aria-hidden="true" tabindex="-1"></a>        r2_comp <span class="op">=</span> r2_score(y_g, hy_g, name<span class="op">=</span>nombre, use_tqdm<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-284"><a href="#cb14-284" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb14-285"><a href="#cb14-285" aria-hidden="true" tabindex="-1"></a>        r2_comp(hy_g, name<span class="op">=</span>nombre)</span>
+<span id="cb14-286"><a href="#cb14-286" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> pd.DataFrame(resumen)</span>
+<span id="cb14-287"><a href="#cb14-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-seleccion-comparacion</span></span>
+<span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Número de variables y $R^2$ en el conjunto de prueba de la regresión lineal ajustada con las variables que selecciona cada procedimiento.</span></span>
+<span id="cb14-295"><a href="#cb14-295" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(<span class="ss">f'|</span><span class="sc">{</span>r<span class="sc">.</span>procedimiento<span class="sc">}</span><span class="ss">|$</span><span class="sc">{</span>r<span class="sc">.</span>variables<span class="sc">}</span><span class="ss">$|$</span><span class="sc">{</span>r<span class="sc">.</span>r2<span class="sc">:0.4f}</span><span class="ss">$|'</span></span>
+<span id="cb14-296"><a href="#cb14-296" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">for</span> r <span class="kw">in</span> resumen.itertuples())</span>
+<span id="cb14-297"><a href="#cb14-297" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="st">'|Procedimiento|Variables|$R^2$|</span><span class="ch">\n</span><span class="st">|---|---|---|</span><span class="ch">\n</span><span class="st">'</span> <span class="op">+</span> filas)</span>
+<span id="cb14-298"><a href="#cb14-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-299"><a href="#cb14-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-302"><a href="#cb14-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-303"><a href="#cb14-303" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-304"><a href="#cb14-304" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> resumen.set_index(<span class="st">'procedimiento'</span>)</span>
+<span id="cb14-305"><a href="#cb14-305" aria-hidden="true" tabindex="-1"></a>n_est_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Estadísticas'</span>, <span class="st">'variables'</span>]<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb14-306"><a href="#cb14-306" aria-hidden="true" tabindex="-1"></a>n_ade_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Adelante'</span>, <span class="st">'variables'</span>]<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb14-307"><a href="#cb14-307" aria-hidden="true" tabindex="-1"></a>n_mod_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Modelo'</span>, <span class="st">'variables'</span>]<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb14-308"><a href="#cb14-308" aria-hidden="true" tabindex="-1"></a>n_las_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Lasso'</span>, <span class="st">'variables'</span>]<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb14-309"><a href="#cb14-309" aria-hidden="true" tabindex="-1"></a>r2_est_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Estadísticas'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-310"><a href="#cb14-310" aria-hidden="true" tabindex="-1"></a>r2_ade_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Adelante'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-311"><a href="#cb14-311" aria-hidden="true" tabindex="-1"></a>r2_mod_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Modelo'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-312"><a href="#cb14-312" aria-hidden="true" tabindex="-1"></a>r2_las_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Lasso'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-313"><a href="#cb14-313" aria-hidden="true" tabindex="-1"></a>r2_tod_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Todas'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-314"><a href="#cb14-314" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-315"><a href="#cb14-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-316"><a href="#cb14-316" aria-hidden="true" tabindex="-1"></a>La @tbl-seleccion-comparacion presenta el número de variables y el $R^2$ de cada procedimiento. La selección basada en estadísticas usa <span class="in">`{python} n_est_f`</span> variables y alcanza un $R^2$ de <span class="in">`{python} r2_est_f`</span>, la selección hacia adelante usa <span class="in">`{python} n_ade_f`</span> y alcanza <span class="in">`{python} r2_ade_f`</span>, <span class="in">`SelectFromModel`</span> usa <span class="in">`{python} n_mod_f`</span> y alcanza <span class="in">`{python} r2_mod_f`</span> y Lasso usa <span class="in">`{python} n_las_f`</span> y alcanza <span class="in">`{python} r2_las_f`</span>. Con todas las variables el $R^2$ es <span class="in">`{python} r2_tod_f`</span>. La @fig-seleccion-comparacion muestra los mismos valores con su intervalo de confianza obtenido con bootstrap y señala los procedimientos cuya diferencia con el mejor es estadísticamente significativa.</span>
+<span id="cb14-317"><a href="#cb14-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-320"><a href="#cb14-320" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-321"><a href="#cb14-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-322"><a href="#cb14-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Rendimiento ($R^2$) en el conjunto de prueba de la regresión lineal ajustada con las variables que selecciona cada procedimiento.</span></span>
+<span id="cb14-323"><a href="#cb14-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-seleccion-comparacion</span></span>
+<span id="cb14-324"><a href="#cb14-324" aria-hidden="true" tabindex="-1"></a>r2_comp.plot(comp_legend<span class="op">=</span><span class="st">'Comparación'</span>, winner_legend<span class="op">=</span><span class="st">'Mejor'</span>,</span>
+<span id="cb14-325"><a href="#cb14-325" aria-hidden="true" tabindex="-1"></a>             tie_legend<span class="op">=</span><span class="st">'Equivalente'</span>, loser_legend<span class="op">=</span><span class="st">'Diferente'</span>,</span>
+<span id="cb14-326"><a href="#cb14-326" aria-hidden="true" tabindex="-1"></a>             alg_legend<span class="op">=</span><span class="st">'Algoritmo'</span>, var_name<span class="op">=</span><span class="st">'Rendimiento'</span>)</span>
+<span id="cb14-327"><a href="#cb14-327" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-328"><a href="#cb14-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-329"><a href="#cb14-329" aria-hidden="true" tabindex="-1"></a>Falta saber si los procedimientos eligen las mismas variables. La @tbl-seleccion-comparte cuenta, para cada par de procedimientos, cuántas variables comparten, de manera que la diagonal es el número de variables que selecciona cada uno.</span>
+<span id="cb14-330"><a href="#cb14-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-333"><a href="#cb14-333" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-334"><a href="#cb14-334" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-335"><a href="#cb14-335" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> [<span class="st">'Estadísticas'</span>, <span class="st">'Adelante'</span>, <span class="st">'Modelo'</span>, <span class="st">'Lasso'</span>]</span>
+<span id="cb14-336"><a href="#cb14-336" aria-hidden="true" tabindex="-1"></a>comparten <span class="op">=</span> pd.DataFrame([[<span class="bu">len</span>(<span class="bu">set</span>(subconjuntos[a]) <span class="op">&amp;</span> <span class="bu">set</span>(subconjuntos[b]))</span>
+<span id="cb14-337"><a href="#cb14-337" aria-hidden="true" tabindex="-1"></a>                           <span class="cf">for</span> b <span class="kw">in</span> nombres] <span class="cf">for</span> a <span class="kw">in</span> nombres],</span>
+<span id="cb14-338"><a href="#cb14-338" aria-hidden="true" tabindex="-1"></a>                         index<span class="op">=</span>nombres, columns<span class="op">=</span>nombres)</span>
+<span id="cb14-339"><a href="#cb14-339" aria-hidden="true" tabindex="-1"></a>en_todos <span class="op">=</span> <span class="bu">set</span>.intersection(<span class="op">*</span>[<span class="bu">set</span>(subconjuntos[n]) <span class="cf">for</span> n <span class="kw">in</span> nombres])</span>
+<span id="cb14-340"><a href="#cb14-340" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-341"><a href="#cb14-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-344"><a href="#cb14-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-345"><a href="#cb14-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-346"><a href="#cb14-346" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-seleccion-comparte</span></span>
+<span id="cb14-347"><a href="#cb14-347" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Número de variables que comparten los subconjuntos que selecciona cada procedimiento.</span></span>
+<span id="cb14-348"><a href="#cb14-348" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(<span class="ss">f'|</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">|'</span> <span class="op">+</span> <span class="st">'|'</span>.join(<span class="ss">f'$</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">$'</span> <span class="cf">for</span> v <span class="kw">in</span> comparten.loc[n]) <span class="op">+</span> <span class="st">'|'</span></span>
+<span id="cb14-349"><a href="#cb14-349" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">for</span> n <span class="kw">in</span> nombres)</span>
+<span id="cb14-350"><a href="#cb14-350" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="st">'||'</span> <span class="op">+</span> <span class="st">'|'</span>.join(nombres) <span class="op">+</span> <span class="st">'|</span><span class="ch">\n</span><span class="st">|---|'</span> <span class="op">+</span> <span class="st">'---|'</span> <span class="op">*</span> <span class="bu">len</span>(nombres)</span>
+<span id="cb14-351"><a href="#cb14-351" aria-hidden="true" tabindex="-1"></a>         <span class="op">+</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span> <span class="op">+</span> filas)</span>
+<span id="cb14-352"><a href="#cb14-352" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-353"><a href="#cb14-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-356"><a href="#cb14-356" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-357"><a href="#cb14-357" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-358"><a href="#cb14-358" aria-hidden="true" tabindex="-1"></a>n_todos_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">len</span>(en_todos)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-359"><a href="#cb14-359" aria-hidden="true" tabindex="-1"></a>todos_f <span class="op">=</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> c <span class="kw">in</span> <span class="bu">sorted</span>(en_todos)))</span>
+<span id="cb14-360"><a href="#cb14-360" aria-hidden="true" tabindex="-1"></a>comp_ade_est_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>comparten<span class="sc">.</span>loc[<span class="st">"Adelante"</span>, <span class="st">"Estadísticas"</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-361"><a href="#cb14-361" aria-hidden="true" tabindex="-1"></a>comp_mod_las_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>comparten<span class="sc">.</span>loc[<span class="st">"Modelo"</span>, <span class="st">"Lasso"</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb14-362"><a href="#cb14-362" aria-hidden="true" tabindex="-1"></a>dif_ade_est_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Adelante'</span>, <span class="st">'r2'</span>] <span class="op">-</span> res<span class="sc">.</span>loc[<span class="st">'Estadísticas'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-363"><a href="#cb14-363" aria-hidden="true" tabindex="-1"></a>perdida_ade_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Todas'</span>, <span class="st">'r2'</span>] <span class="op">-</span> res<span class="sc">.</span>loc[<span class="st">'Adelante'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-364"><a href="#cb14-364" aria-hidden="true" tabindex="-1"></a>perdida_est_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'Todas'</span>, <span class="st">'r2'</span>] <span class="op">-</span> res<span class="sc">.</span>loc[<span class="st">'Estadísticas'</span>, <span class="st">'r2'</span>]<span class="sc">:0.4f}</span><span class="ss">$"</span>)</span>
+<span id="cb14-365"><a href="#cb14-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-366"><a href="#cb14-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-367"><a href="#cb14-367" aria-hidden="true" tabindex="-1"></a>Los subconjuntos de diez variables pierden rendimiento frente al modelo con todas. La selección basada en estadísticas pierde <span class="in">`{python} perdida_est_f`</span> de $R^2$ y la selección hacia adelante <span class="in">`{python} perdida_ade_f`</span>, y la @fig-seleccion-comparacion marca a ambas como diferentes del mejor. Con el mismo número de variables, la selección hacia adelante supera por <span class="in">`{python} dif_ade_est_f`</span> a la basada en estadísticas porque evalúa el modelo y no cada variable por separado. En cambio, <span class="in">`SelectFromModel`</span> y Lasso, que conservan más variables, igualan el rendimiento del modelo con todas. De las <span class="in">`{python} n_mod_f`</span> variables que elige <span class="in">`SelectFromModel`</span>, <span class="in">`{python} comp_mod_las_f`</span> están entre las <span class="in">`{python} n_las_f`</span> que conserva Lasso, pues ordena los coeficientes del mismo modelo.</span>
+<span id="cb14-368"><a href="#cb14-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-369"><a href="#cb14-369" aria-hidden="true" tabindex="-1"></a>La @tbl-seleccion-comparte muestra que los procedimientos eligen subconjuntos distintos. La selección hacia adelante y la basada en estadísticas, ambas de diez variables, comparten solo <span class="in">`{python} comp_ade_est_f`</span>, y las variables que eligen los cuatro procedimientos son <span class="in">`{python} todos_f`</span>, un total de <span class="in">`{python} n_todos_f`</span>. Es la misma lección del efecto Rashomon de @sec-coeficientes-regularizados, pues subconjuntos distintos pueden tener un rendimiento similar. Con muchos datos y pocas variables, como aquí, la ganancia de seleccionar es tener un modelo con menos variables que recabar y no un mejor $R^2$.</span>
+<span id="cb14-370"><a href="#cb14-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-371"><a href="#cb14-371" aria-hidden="true" tabindex="-1"></a>Esa es la idea de la @sec-regresion-focalizacion. Cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política, y la @tbl-seleccion-comparacion muestra el precio de reducir el modelo a diez variables. Como el subconjunto seleccionado cambia con la muestra (@fig-lasso-estabilidad), conviene verificar que la conclusión no depende de una sola partición antes de pedir a un programa que recabe un conjunto específico de variables.</span>
+<span id="cb14-372"><a href="#cb14-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-373"><a href="#cb14-373" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb14-374"><a href="#cb14-374" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb14-375"><a href="#cb14-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-376"><a href="#cb14-376" aria-hidden="true" tabindex="-1"></a>Repita la comparación de procedimientos con el conjunto de Territorio (@sec-datos-territorio). El objetivo es <span class="in">`grado_promedio_escolaridad`</span> y se descartan <span class="in">`clave_ageb`</span>, <span class="in">`municipio`</span>, <span class="in">`pct_viv_internet`</span>, <span class="in">`pct_sin_servicio_salud`</span> y <span class="in">`pct_jefatura_femenina`</span>. Conteste las siguientes preguntas. ¿Cuántas variables se necesitan para acercarse al $R^2$ que se obtiene con todas? ¿Los procedimientos coinciden en los sectores de establecimientos que seleccionan?</span>
+<span id="cb14-377"><a href="#cb14-377" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-378"><a href="#cb14-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-379"><a href="#cb14-379" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb14-380"><a href="#cb14-380" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb14-381"><a href="#cb14-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-382"><a href="#cb14-382" aria-hidden="true" tabindex="-1"></a>Suponga que un programa de becas tiene que decidir qué información recabar en cada plantel, y que recabar cada variable tiene un costo distinto. Con los resultados de la @tbl-seleccion-comparacion escriba el párrafo de un *policy paper* que justifique qué subconjunto de variables usaría y por qué. Considere el número de variables, el $R^2$ en el conjunto de prueba y la estabilidad de la selección.</span>
+<span id="cb14-383"><a href="#cb14-383" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-384"><a href="#cb14-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-385"><a href="#cb14-385" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-seleccion-variables}</span></span>
+<span id="cb14-386"><a href="#cb14-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-387"><a href="#cb14-387" aria-hidden="true" tabindex="-1"></a>Los procedimientos de selección de variables se agrupan en tres familias. Los filtros evalúan cada variable con una prueba estadística (@sec-seleccion-var-estadistica), los procedimientos voraces agregan o quitan una variable a la vez según el rendimiento del modelo (@sec-seleccion-adelante) y los basados en modelo aprovechan los coeficientes o la importancia que el propio modelo asigna (@sec-seleccion-por-modelo). Cada una tiene ventajas y limitaciones que se resumen en la @sec-seleccion-comparacion, donde además se comparan en el conjunto de prueba. Esa comparación muestra que los procedimientos eligen subconjuntos distintos con un rendimiento parecido, que es otra manifestación del efecto Rashomon de @sec-coeficientes-regularizados, y que reducir el número de variables cuesta poco rendimiento.</span>
+<span id="cb14-388"><a href="#cb14-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-389"><a href="#cb14-389" aria-hidden="true" tabindex="-1"></a>Hasta aquí el problema era predecir un valor numérico. Cuando lo que se debe decidir es una acción y los errores no cuestan lo mismo, el problema cambia y el tema se retoma con la teoría de decisión en @sec-teoria-decision-bayesianas.</span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" class="img-fluid"></a> <br> Esta obra está bajo una <a href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
