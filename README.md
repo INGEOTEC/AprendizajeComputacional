@@ -1,9 +1,9 @@
 # Aprendizaje Computacional  
 
-## Mario Graff (mgraffg@ieee.org, mario.graff@infotec.mx)  
+## Mario Graff (mgraffg@ieee.org)  
 ## [https://github.com/ingeotec](https://github.com/ingeotec)
 ## [https://github.com/mgraffg](https://github.com/mgraffg)
-## CONACYT - INFOTEC
+## División de Economía Aplicada, Centro de Investigación y Docencia Económicas (CIDE)
 
 # Objetivo 
 
