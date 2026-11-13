@@ -18,6 +18,7 @@ python scripts/render.py --verify-only                 # no render; just check _
 python scripts/check_visible.py capitulos/13Agrupamiento.qmd  # ejecuta solo el código visible de un capítulo (sin argumentos: todo el libro)
 quarto preview                                         # live preview while editing
 python3 scripts/test_sitio.py                          # pruebas de scripts/sitio.py (unittest, sin red ni Quarto)
+python3 scripts/test_nombres.py                        # ningún capítulo se llama como uno del MCDI (unittest, sin red ni Quarto)
 python3 scripts/sitio.py <render> <checkout_gh_pages> <raiz|dev|mcdi>  # despliega una edición en su carpeta de gh-pages (lo usa el flujo)
 quarto render --profile borrador --to html --output-dir "$TMPDIR/borrador"  # probar el perfil del borrador fuera de _book/
 ```
@@ -33,8 +34,9 @@ quarto render --profile borrador --to html --output-dir "$TMPDIR/borrador"  # pr
 - El menú «Ediciones» (`book.navbar` en `_quarto.yml`), la sección «Ediciones» de `index.qmd`, la tabla de `README.md` y `ediciones/404.html` listan las mismas ediciones y ramas; si cambia una, cambiar las cuatro. Los avisos usan `format.html.include-before-body` porque `book.announcement` no se aplica a libros en Quarto 1.10.
 - Los perfiles se prueban con `--output-dir` fuera del repositorio (p. ej. `$TMPDIR`), nunca sobre `_book/`, que está versionado y no debe llevar el aviso de borrador. Para la histórica: `git worktree add $TMPDIR/mcdi mcdi`, copiar el perfil, `quarto render --profile historico --to html --output-dir ...` y `git worktree remove --force`.
 - Therefore: after editing any chapter that has code chunks, re-render it with `scripts/render.py` and commit the chapter **together with** its `_freeze/` changes. Never touch a `.qmd` after rendering without rendering again (even whitespace changes the hash). `scripts/render.py` prints exactly which paths to commit.
+- Renderizar un capítulo suelto (`quarto render capitulos/X.qmd` o `scripts/render.py capitulos/X.qmd`) siempre ejecuta su código aunque exista resultado congelado; `freeze: auto` solo se respeta en el render del libro completo. Además `quarto render` acepta un solo archivo: para varios capítulos, una llamada por capítulo.
 - `_freeze/` and `_book/` are both tracked in git (despite the docstring in `render.py` saying `_book/` is ignored); `.quarto/`, `capitulos/*_files` and `*.quarto_ipynb` are ignored.
-- The mermaid diagram in `01Introduccion.qmd` is the reason for the headless-Chrome setup in both the workflow and `postCreate.sh`; keep those apt lists in sync if either changes.
+- The mermaid diagram in `01Intro.qmd` is the reason for the headless-Chrome setup in both the workflow and `postCreate.sh`; keep those apt lists in sync if either changes.
 
 ## Data (release `datos-v1`)
 
@@ -58,6 +60,8 @@ Every chapter in `capitulos/` follows the same skeleton; new sections or chapter
 8. Cross-references use `@sec-...` across chapters (58 distinct anchors exist, so renaming a `{#sec-...}` id requires grepping all of `capitulos/`). Citations are `@bibkey` from `references.bib`; the bibliography renders in `18Referencias.qmd`.
 
 Chapter order and the appendix split live only in `_quarto.yml` (`book.chapters` / `book.appendices`). File numbers are deliberately sparse: 15, 16, 17 and 21 are reserved for planned chapters (interpretability, causal inference, text, etc.; `03Regresion.qmd` and `03SeleccionVariables.qmd` already exist and share the 03 prefix), so a gap in the numbering is intentional and does not affect Quarto, which numbers chapters by their position in `_quarto.yml`. The current edition is oriented to the METPOL course (CIDE), so the Introduction frames the book around public-policy problems. `capitulos/22Codigo.qmd` exists but is **not** listed there, so it is not rendered.
+
+Ningún capítulo de la edición vigente puede llamarse como uno de la edición MCDI (rama `mcdi`): las ligas viejas a `/capitulos/<capítulo MCDI>.html` deben caer en la página 404 (`ediciones/404.html`) y no mostrar sin aviso otro contenido. Por eso la Introducción y Redes Neuronales se llaman `01Intro.qmd` y `11Redes.qmd` (ex `01Introduccion.qmd` y `11RedesNeuronales.qmd`). `python3 scripts/test_nombres.py` lo comprueba con la lista fija de los 16 nombres del MCDI (no forma parte de `test_command` ni de CI; correrlo a mano al agregar o renombrar un capítulo).
 
 ## Spell checking
 
