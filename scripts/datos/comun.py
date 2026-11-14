@@ -111,12 +111,14 @@ def descargar(url: str, nombre: str | None = None, datos: dict | None = None,
     raise RuntimeError(f"No se pudo descargar {url}: {ultimo}")
 
 
-def guardar(df, nombre: str) -> Path:
+def guardar(df, nombre: str, no_personas: tuple = ()) -> Path:
     """Escribe ``df`` en ``salida_dir()/<nombre>`` (CSV, comprimido si el nombre
     termina en ``.gz``) de forma determinista y verifica que ninguna columna
-    sea un identificador directo de personas."""
+    sea un identificador directo de personas. ``no_personas`` lista columnas
+    que coinciden con ``IDENTIFICADORES`` sin referirse a personas (por
+    ejemplo, el ``nombre`` de un instrumento jurídico)."""
     directos = [c for c in df.columns
-                if c.lower().startswith(IDENTIFICADORES)]
+                if c.lower().startswith(IDENTIFICADORES) and c not in no_personas]
     if directos:
         raise RuntimeError(f"{nombre} tiene columnas que identifican "
                            f"directamente a personas: {directos}")

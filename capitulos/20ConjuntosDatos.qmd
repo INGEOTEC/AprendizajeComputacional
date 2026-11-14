@@ -1,6 +1,6 @@
 # Conjunto de Datos
 
-El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
+El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; después, la matriz de similitud entre instrumentos jurídicos federales, que no tiene variable respuesta; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
 
 ## Paquetes usados {.unnumbered}
 
@@ -356,6 +356,120 @@ _ = sns.scatterplot(df, x='establecimientos_por_mil',
                     color=PALETTE(1))
 _ = ax.set(xlabel='Establecimientos por cada mil habitantes',
            ylabel='Grado promedio de escolaridad')
+```
+
+## Instrumentos Jurídicos Federales {#sec-datos-instrumentos}
+
+El marco normativo federal de México está disperso en miles de instrumentos. Además de las leyes que aprueba el Congreso, hay reglamentos que las desarrollan, lineamientos que fijan criterios de operación y tratados internacionales que el país ha firmado. Quien diseña o evalúa una política pública necesita saber qué instrumentos regulan un tema y cuáles se parecen entre sí, pero esa relación no siempre está escrita, porque un instrumento no tiene que citar a otro para tratar el mismo asunto. Este conjunto describe a cada instrumento por los lugares donde están los textos más parecidos a los suyos. No hay una variable respuesta que predecir. La pregunta es qué estructura tienen los datos, es decir, qué instrumentos quedan cerca de cuáles y si forman grupos, que es el tema de @sec-reduccion-dimension y @sec-agrupamiento.
+
+```{python}
+#| echo: false
+COLECCIONES = ['leyes', 'reglamentos', 'lineamientos', 'tratados']
+instrumentos = pd.read_csv(f'{URL_DATOS}/legalia_instrumentos.csv')
+similitud = pd.read_csv(f'{URL_DATOS}/legalia_similitud.csv.gz')
+n_inst = instrumentos.shape[0]
+n_inst_f = pp_f(n_inst)
+n_col_f = {c: pp_f(int((instrumentos.coleccion == c).sum())) for c in COLECCIONES}
+n_frag_f = pp_f(int(instrumentos.fragmentos.sum()))
+n_contados_f = pp_f(int(instrumentos.fragmentos_contados.sum()))
+n_casillas = similitud.shape[0]
+n_casillas_f = pp_f(n_casillas)
+densidad_f = Markdown(f'${100 * n_casillas / n_inst ** 2:0.2f}\\%$')
+```
+
+**Ficha**
+
+- **Fuente:** Atlas de la legislación federal del proyecto [LegalIA](https://ingeotec.github.io/LegalIA/pages/atlas.html) ([repositorio](https://github.com/INGEOTEC/LegalIA)), construido sobre las colecciones de leyes, reglamentos, lineamientos y tratados de la Suprema Corte de Justicia de la Nación (SCJN). La matriz se recalcula con el script `scripts/datos/legalia_instrumentos.py` a partir de los vectores que publica LegalIA para el modelo Qwen3-Embedding-4B y se verifica contra el atlas público del 28 de octubre de 2026.
+- **Licencia:** Apache 2.0.
+- **Unidad de observación:** instrumento jurídico federal. Cuando una colección tiene varios instrumentos con el mismo nombre, o con exactamente los mismos textos, se conserva uno solo.
+- **Tamaño:** `{python} n_inst_f` instrumentos, que son `{python} n_col_f['leyes']` leyes, `{python} n_col_f['reglamentos']` reglamentos, `{python} n_col_f['lineamientos']` lineamientos y `{python} n_col_f['tratados']` tratados. Entre todos suman `{python} n_frag_f` fragmentos, de los cuales `{python} n_contados_f` se cuentan en la matriz.
+- **Variables:** el archivo `legalia_instrumentos.csv` tiene un renglón por instrumento, en el orden de la matriz, con la posición `i` (de $0$ a $n-1$), la colección (`coleccion`), la clave del instrumento en su colección (`clave`), el nombre (`nombre`), el número de fragmentos (`fragmentos`), los fragmentos contados (`fragmentos_contados`, la suma de su renglón en la matriz) y el peso entrante (`peso_entrante`, la suma de su columna). El archivo `legalia_similitud.csv.gz` guarda la matriz en forma dispersa, con un renglón por cada una de las `{python} n_casillas_f` casillas con valor, es decir, `{python} densidad_f` de las casillas. Sus columnas son `origen` y `destino`, las posiciones `i` de los dos instrumentos, y `peso`. Las claves no son únicas entre colecciones, por eso la llave es la posición `i`.
+- **Tarea:** aprendizaje no supervisado. Cada renglón de la matriz es un vector de `{python} n_inst_f` números que describe a un instrumento y sirve para reducir la dimensión, dibujar un mapa de los instrumentos o agruparlos. Las colecciones permiten revisar si los grupos encontrados coinciden con el tipo de instrumento.
+
+### Construcción de la matriz {#sec-datos-instrumentos-matriz}
+
+La matriz pregunta, para cada fragmento de un instrumento, en qué otro instrumento está el texto más parecido. La construcción tiene cinco pasos.
+
+1. **Fragmentos.** Cada instrumento se parte en fragmentos, que en su mayoría son artículos.
+2. **Texto a vector.** Cada fragmento se convierte en un vector de $2560$ números con el modelo Qwen3-Embedding-4B [@Zhang2025Qwen3Models]. Los textos con significado parecido quedan representados por vectores cercanos.
+3. **El texto más parecido fuera del instrumento.** Para cada fragmento se busca, con la similitud coseno calculada de manera exacta, el texto más parecido entre todos los que no pertenecen sólo a su propio instrumento.
+4. **El voto.** El instrumento dueño de ese texto recibe un voto del fragmento. Si el texto ganador pertenece a $m$ instrumentos, cada uno recibe $1/m$, de modo que cada fragmento reparte en total un voto.
+5. **Lo que no se compara.** Los encabezados, los artículos transitorios y la envoltura (el título que imprime la Corte y, en los tratados, el decreto de promulgación y su certificación) no se comparan, porque repiten fórmulas que no dicen nada del contenido del instrumento. Tampoco se cuenta un fragmento cuyo texto ganador es idéntico y lo comparten varios instrumentos, porque no distingue a un par de instrumentos de cualquier otro. Según el atlas del 28 de octubre de 2026 quedan fuera $36{,}137$ encabezados, $22{,}575$ transitorios y $10{,}093$ fragmentos de envoltura, y de los $158{,}327$ fragmentos comparados no se cuentan $1{,}895$ con texto idéntico compartido.
+
+Con lo anterior, el elemento $A_{ij}$ de la matriz es la suma de los votos que reciben los textos del instrumento $j$ desde los fragmentos del instrumento $i$, esto es,
+
+$$
+A_{ij} = \sum_{f \in \mathcal F_i} \frac{\mathbb 1(j \in G_f)}{\mid G_f \mid},
+$$ {#eq-datos-instrumentos-matriz}
+
+donde $\mathcal F_i$ es el conjunto de fragmentos contados del instrumento $i$, $G_f$ es el conjunto de instrumentos dueños del texto más parecido al fragmento $f$ y $\mathbb 1$ es la función indicadora. La matriz tiene tres propiedades que se pueden comprobar con los datos. Es dirigida, porque que un reglamento apunte a su ley no implica que la ley apunte al reglamento, así que en general $A_{ij} \neq A_{ji}$. La diagonal es cero, porque un fragmento nunca vota por su propio instrumento. Finalmente, cada renglón suma los fragmentos contados del instrumento, $\sum_j A_{ij} = \mid \mathcal F_i \mid$. Conviene tener presente que la matriz es una heurística que acerca a los instrumentos que comparten textos parecidos, y no mide si dos instrumentos están emparentados jurídicamente.
+
+El siguiente código lee los dos archivos y arma la matriz densa `A`.
+
+```{python}
+#| echo: true
+URL = 'https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1'
+instrumentos = pd.read_csv(f'{URL}/legalia_instrumentos.csv')
+similitud = pd.read_csv(f'{URL}/legalia_similitud.csv.gz')
+n = instrumentos.shape[0]
+A = np.zeros((n, n))
+A[similitud.origen, similitud.destino] = similitud.peso
+```
+
+Se puede comprobar que la matriz es cuadrada, que la diagonal es cero y que cada renglón suma los fragmentos contados de su instrumento.
+
+```{python}
+#| echo: true
+diagonal_cero = bool(np.all(np.diag(A) == 0))
+suma_renglones = bool(np.allclose(A.sum(axis=1), instrumentos.fragmentos_contados))
+A.shape, diagonal_cero, suma_renglones
+```
+
+La @tbl-datos-instrumentos-colecciones muestra cuántos instrumentos y fragmentos tiene cada colección. Los tratados son los más numerosos, pero cada uno tiene pocos fragmentos comparados con las leyes.
+
+```{python}
+#| echo: false
+#| tbl-cap: Instrumentos y fragmentos por colección
+#| label: tbl-datos-instrumentos-colecciones
+resumen = instrumentos.groupby('coleccion')[['fragmentos', 'fragmentos_contados']].sum()
+resumen['instrumentos'] = instrumentos.groupby('coleccion').size()
+txt = '|Colección | Instrumentos | Fragmentos | Fragmentos contados |\n'
+txt += '|----------|-------------:|-----------:|--------------------:|\n'
+for c in COLECCIONES:
+    r = resumen.loc[c]
+    txt += (f'|{c.capitalize()}|${int(r.instrumentos):,}$|${int(r.fragmentos):,}$|'
+            f'${int(r.fragmentos_contados):,}$|\n')
+Markdown(txt.replace(',', '{,}'))
+```
+
+```{python}
+#| echo: false
+col = instrumentos.coleccion.to_numpy()
+peso = similitud.assign(o=col[similitud.origen], d=col[similitud.destino])
+P = peso.pivot_table(index='o', columns='d', values='peso', aggfunc='sum',
+                     fill_value=0).loc[COLECCIONES, COLECCIONES]
+P = P.div(P.sum(axis=1), axis=0)
+prop_f = lambda o, d: Markdown(f'${100 * P.loc[o, d]:0.1f}\\%$')
+```
+
+La @fig-datos-instrumentos muestra, para cada colección de origen, qué proporción de su peso cae en cada colección de destino. Los tratados votan casi siempre por otros tratados (`{python} prop_f('tratados', 'tratados')`), mientras que las otras tres colecciones se mezclan más. Los reglamentos dejan `{python} prop_f('reglamentos', 'reglamentos')` de su peso en otros reglamentos y `{python} prop_f('reglamentos', 'leyes')` en las leyes, lo que es consistente con que un reglamento desarrolla una ley. Las leyes votan por otras leyes (`{python} prop_f('leyes', 'leyes')`) y por los reglamentos (`{python} prop_f('leyes', 'reglamentos')`). Los lineamientos dejan `{python} prop_f('lineamientos', 'lineamientos')` de su peso en su propia colección y `{python} prop_f('lineamientos', 'reglamentos')` en los reglamentos. Esta mezcla anticipa que un agrupamiento de los instrumentos no tiene por qué reproducir las colecciones.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Proporción del peso de cada colección de origen (renglones) que cae en cada colección de destino (columnas).
+#| label: fig-datos-instrumentos
+colecciones = ['leyes', 'reglamentos', 'lineamientos', 'tratados']
+col = instrumentos.coleccion.to_numpy()
+df = similitud.assign(origen=col[similitud.origen],
+                      destino=col[similitud.destino])
+tabla = df.pivot_table(index='origen', columns='destino', values='peso',
+                       aggfunc='sum', fill_value=0)
+tabla = tabla.loc[colecciones, colecciones]
+tabla = tabla.div(tabla.sum(axis=1), axis=0)
+fig, ax = plt.subplots(figsize=(6, 5))
+_ = sns.heatmap(tabla, annot=True, fmt='0.2f', cmap='Blues', vmin=0, vmax=1,
+                ax=ax)
+_ = ax.set(xlabel='Colección de destino', ylabel='Colección de origen')
 ```
 
 ## Problemas Sintéticos y Clásicos {#sec-datos-sinteticos-clasicos}

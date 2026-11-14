@@ -2,12 +2,12 @@
 
 El **objetivo** de la unidad es conocer y aplicar el algoritmo de agrupamiento k-medias
 
-## Paquetes usados
+## Paquetes usados {.unnumbered}
 
 ```{python}
 #| echo: true
 from sklearn.cluster import KMeans
-from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler, normalize
 from sklearn import decomposition
 from sklearn import metrics
 from scipy import linalg
@@ -16,12 +16,18 @@ from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
+INDICADORES = ['grado_promedio_escolaridad', 'pct_viv_internet',
+               'pct_sin_servicio_salud', 'pct_jefatura_femenina']
+COLECCIONES = ['leyes', 'reglamentos', 'lineamientos', 'tratados']
 ```
 
 ```{python}
 #| echo: false
 from IPython.display import Markdown
 np.set_printoptions(precision=4)
+sns.set_style('whitegrid')
 ```
 
 ::: {.content-visible when-format="html"}
@@ -41,21 +47,30 @@ De manera formal el objetivo de K-medias es encontrar la partición $G = \{G_1, 
 
 Para comprender la función objetivo ($\min \sum_{i=1}^K \sum_{x \in G_i} \mid\mid x - \mu_i \mid\mid$) de k-medias se explican los dos componentes principales que son las medias $\mu_i$ y los grupos $G_i.$
 
-Para ilustrar tanto a $\mu_i$ como a $G_i$ se utiliza el problema del iris (@sec-visualizacion-iris) cuyos datos se pueden obtener de la siguiente manera.
+Para ilustrar tanto a $\mu_i$ como a $G_i$ se utilizan los AGEB urbanos de Aguascalientes del conjunto Territorio (@sec-datos-territorio), descritos por los establecimientos del DENUE de cada sector y tamaño, la población y las viviendas. Es la continuación del adelanto de la Introducción (@fig-kmeans-territorio), con la misma selección de variables y la misma estandarización. Los cuatro indicadores censales se dejan fuera del agrupamiento para usarlos después en la interpretación de los grupos.
 
 ```{python}
 #| echo: true
-D, y = load_iris(return_X_y=True)
+territorio = pd.read_csv(f'{URL_DATOS}/censo_denue_territorio.csv')
+D = territorio.drop(columns=INDICADORES + ['clave_ageb',
+                                           'municipio']).to_numpy()
+D = StandardScaler().fit_transform(D)
+```
+
+```{python}
+#| echo: false
+N_f = Markdown(f'${D.shape[0]}$')
+d_f = Markdown(f'${D.shape[1]}$')
 ```
 
 ### $\mu_i$
 
-Como se describió, $\mu_i$ es la media de los elementos que corresponden al grupo $G_i$. Asumiendo que el grupo $1$ ($G_1$) tiene $10$ elementos seleccionados de manera aleatoria de $\mathcal D$ como se muestra a continuación.
+Como se describió, $\mu_i$ es la media de los elementos que corresponden al grupo $G_i$. Asumiendo que el grupo $1$ ($G_1$) tiene $10$ elementos seleccionados de manera aleatoria de $\mathcal D$ como se muestra a continuación; se fija la semilla del generador de números aleatorios para que la selección sea siempre la misma.
 
 ```{python}
 #| echo: true
-index = np.arange(len(D))
-np.random.shuffle(index)
+rng = np.random.default_rng(0)
+index = rng.permutation(len(D))
 sel = index[:10]
 G_1 = D[sel]
 ```
@@ -67,7 +82,7 @@ La variable `G_1` tiene los 10 elementos considerados como miembros de $G_1$ ent
 mu_1 = G_1.mean(axis=0)
 ```
 
-La @fig-g1-centro muestra los elementos seleccionados ($x \in G_1$) y la media ($\mu_1$) del grupo. Los elementos se encuentran en $\mathbb R^4$ y para visualizarlos se transformaron usando PCA descrito en la @sec-visualizacion-iris.
+La @fig-g1-centro muestra los elementos seleccionados ($x \in G_1$) y la media ($\mu_1$) del grupo. Los elementos están descritos por `{python} d_f` variables y para visualizarlos se transformaron usando PCA (@sec-pca), como en la Introducción.
 
 
 ```{python}
@@ -79,7 +94,6 @@ Xn = pca.transform(G_1)
 mu = pca.transform(np.atleast_2d(G_1.mean(axis=0)))[0]
 data = pd.DataFrame(dict(x=Xn[:, 0], y=Xn[:, 1], tipo=['G_1'] * Xn.shape[0]))
 data.loc[Xn.shape[0]] = dict(x=mu[0], y=mu[1], tipo='mu_1')
-sns.set_style('whitegrid')
 fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
@@ -107,7 +121,13 @@ dis = np.array([linalg.norm((D - np.atleast_2d(mu)),
                 for mu in [mu_1, mu_2]]).T
 ```
 
-donde se puede observar que el ciclo itera por cada una de las medias, i.e., `mu_1` y `mu_2`. Después se calcula la norma utilizando la función `linalg.norm` y finalmente se regresa la transpuesta para tener una matriz de 150 renglones y dos columnas que corresponden al número de ejemplos en $\mathcal D$ y a las dos medias. Los valores de `dis[50]` y `dis[100]` son `{python} dis[50]` y `{python} dis[100]` respectivamente. Tal y como se espera porque $\mu_1$ corresponde al índice 50 y $\mu_2$ es el índice 100. Estos dos ejemplos, `{python} dis[50]` y `{python} dis[100]`, permiten observar que el argumento mínimo de `dis` identifica al grupo del elemento, haciendo la consideración que el índice 0 representa $G_1$ y el índice 1 es $G_2.$ La siguiente instrucción muestra cómo se realiza esta asignación. 
+```{python}
+#| echo: false
+dis50_f = Markdown(f'$({dis[50, 0]:0.4f}, {dis[50, 1]:0.4f})$')
+dis100_f = Markdown(f'$({dis[100, 0]:0.4f}, {dis[100, 1]:0.4f})$')
+```
+
+donde se puede observar que el ciclo itera por cada una de las medias, i.e., `mu_1` y `mu_2`. Después se calcula la norma utilizando la función `linalg.norm` y finalmente se regresa la transpuesta para tener una matriz de `{python} N_f` renglones y dos columnas que corresponden al número de ejemplos en $\mathcal D$ y a las dos medias. Los valores de `dis[50]` y `dis[100]` son `{python} dis50_f` y `{python} dis100_f` respectivamente. Tal y como se espera porque $\mu_1$ corresponde al índice 50 y $\mu_2$ es el índice 100. Estos dos ejemplos, `{python} dis50_f` y `{python} dis100_f`, permiten observar que el argumento mínimo de `dis` identifica al grupo del elemento, haciendo la consideración que el índice 0 representa $G_1$ y el índice 1 es $G_2.$ La siguiente instrucción muestra cómo se realiza esta asignación. 
 
 ```{python}
 #| echo: true
@@ -123,15 +143,15 @@ La @fig-k-means-g muestra los grupos formados, el primer grupo `G_1` se encuentr
 #| label: fig-k-means-g
 pca = decomposition.PCA(n_components=2).fit(D)
 D_pca = pca.transform(D)
-data = pd.DataFrame([dict(x=x, y=y, tipo=f'G_{g}') 
+data = pd.DataFrame([dict(x=x, y=y, tipo=f'G_{g + 1}') 
                      for (x, y), g in zip(D_pca, G)])
 mu = np.vstack((D_pca[50], D_pca[100]))
 mu_data = pd.DataFrame(dict(x=mu[:, 0], 
                             y=mu[:, 1],
                             tipo=['mu'] * mu.shape[0]))
 data = pd.concat((data, mu_data))
-sns.set_style('whitegrid')
-fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y',
+                  hue_order=['G_1', 'G_2', 'mu'])
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
@@ -255,17 +275,17 @@ En la @eq-em-gamma-diferencias cada exponente está escrito en términos de $d_j
 
 Con esta asignación completa, i.e., $\gamma_i(x) \in \{0, 1\}$, la actualización de $\mu_i$ del **Paso M** (@eq-em-paso-m-mu) se reduce a la media de los elementos de $G_i,$ que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que $\sigma^2 \to 0$ y sustituyendo la responsabilidad $\gamma_i(x)$ por la asignación completa al grupo más cercano.
 
-## Ejemplo: Iris
+## Ejemplo: Tipologías de AGEB {#sec-agrupamiento-ejemplo-territorio}
 
-En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos en el conjunto del iris. La clase se inicializa primero con 2 grupos (primera línea). En la segunda instrucción se predice los grupos para todo el conjunto de datos. Las medias para cada grupo se encuentran en el atributo `cluster_centers_.`
+Una aplicación del agrupamiento en política pública es construir tipologías de barrios, es decir, clasificar las zonas de una ciudad en unos cuantos tipos para diseñar intervenciones diferenciadas. En el siguiente ejemplo se usará K-medias para encontrar 2 y 3 grupos de AGEB según su composición de establecimientos. La clase se inicializa primero con 2 grupos (primera línea) y se fija `random_state` para que el resultado sea el mismo en cada ejecución. En la segunda instrucción se predicen los grupos para todo el conjunto de datos. Las medias para cada grupo se encuentran en el atributo `cluster_centers_.`
 
 ```{python}
 #| echo: true
-m = KMeans(n_clusters=2, n_init='auto').fit(D)
+m = KMeans(n_clusters=2, n_init='auto', random_state=0).fit(D)
 cl = m.predict(D)
 ```
 
-La @fig-kmeans-2gr muestra el resultado del algoritmo k-medias en el conjunto del Iris, se muestran los dos grupos $G_1$ y $G_2$ y en color verde $\mu_1$ y $\mu_2$. 
+La @fig-kmeans-2gr muestra el resultado del algoritmo k-medias en los AGEB, se muestran los dos grupos $G_1$ y $G_2$ y en color verde $\mu_1$ y $\mu_2$. 
 
 ```{python}
 #| code-fold: true
@@ -281,8 +301,8 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          y=D_pca[:, 1],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
-sns.set_style('whitegrid')
-fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y',
+                  hue_order=['G_1', 'G_2', 'mu'])
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
@@ -295,7 +315,7 @@ en la clase `KMeans` de la siguiente manera.
 
 ```{python}
 #| echo: true
-m = KMeans(n_clusters=3, n_init='auto').fit(D)
+m = KMeans(n_clusters=3, n_init='auto', random_state=0).fit(D)
 cl = m.predict(D)
 ```
 
@@ -316,43 +336,59 @@ data = pd.DataFrame(dict(x=D_pca[:, 0],
                          y=D_pca[:, 1],
                          tipo=[f'G_{x+1}' for x in cl]))
 data = pd.concat((data, mu_data))
-sns.set_style('whitegrid')
-fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y')
+fig = sns.relplot(data, kind='scatter', hue='tipo', x='x', y='y',
+                  hue_order=['G_1', 'G_2', 'G_3', 'mu'])
 fig.tick_params(bottom=False, top=False, 
                 left=False, right=False,
                 labelbottom=False, labelleft=False)
 fig.set(xlabel=None, ylabel=None)
 ```
 
-## Rendimiento
-
-Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir. En este caso particular se utilizó un problema de clasificación para ilustrar el procedimiento de k-medias, entonces se cuenta con una clase para cada elemento $x \in \mathcal D$. Además se sabe que el problema del iris tiene tres clases, entonces utilizando los tres grupos obtenidos previamente podemos medir qué tanto se parecen estos tres grupos a las clases del iris. Es decir, se puede saber si el algoritmo de k-medias agrupa los elementos de tal manera que cada grupo corresponda a una clase del iris. 
-
-Los grupos generados se encuentran en la lista `cl` y las clases se encuentran en `y`. La lista `y` tiene organizada las clases de la siguiente manera: los primeros 50 elementos son la clase $0$, los siguientes $50$ son clase $1$ y los últimos son la clase $2$. Dado que K-medias no conoce las clases y genera los grupos empezando de manera aleatoria, entonces es probable que los grupos sigan una numeración diferente al problema del iris. Los grupos en `cl` están organizados de la siguiente manera aproximadamente los $50$ primeros elementos son del grupo $1$, los siguientes son grupo $0$ y finalmente los últimos son grupo $2$. Entonces se puede hacer una transformación que asigne a cada grupo una clase. La siguiente instrucción prueba todas las permutaciones de las tres clases y se queda con la que obtiene la mayor exactitud, la cual se guarda en la variable `perm`.
+Para interpretar los grupos como una tipología se describe cada uno con variables que no entraron al agrupamiento, en este caso los cuatro indicadores censales. El siguiente código calcula el tamaño de cada grupo y la media por grupo de esos indicadores, junto con la media de establecimientos y de población.
 
 ```{python}
 #| echo: true
-perms = list(permutations([0, 1, 2]))
-perfs = [(metrics.accuracy_score(y, np.array(x)[cl]), x)
-         for x in perms]
-perm = np.r_[sorted(perfs, key=lambda x: x[0])[-1][1]]
+perfil = territorio.assign(grupo=[f'G_{x+1}' for x in cl])
+perfil = perfil.groupby('grupo').agg(AGEB=('clave_ageb', 'size'),
+                                     establecimientos=('est_total', 'mean'),
+                                     poblacion=('pob_total', 'mean'),
+                                     **{c: (c, 'mean') for c in INDICADORES})
 ```
-
-La variable `perm` contiene `{python} perm`.
 
 ```{python}
 #| echo: false
-acc_f = Markdown(f'${metrics.accuracy_score(y, perm[cl]):0.4f}$')
+#| tbl-cap: Perfil de los tres grupos de AGEB. Las columnas son el número de AGEB y la media por grupo de los establecimientos, la población y los cuatro indicadores censales (escolaridad en años y los demás en porcentaje).
+#| label: tbl-perfil-grupos-territorio
+txt = ('|Grupo | AGEB | Establecimientos | Población | Escolaridad | '
+       'Viviendas con internet | Sin servicio de salud | Jefatura femenina |\n')
+txt += '|---|---:|---:|---:|---:|---:|---:|---:|\n'
+for g, r in perfil.iterrows():
+    txt += (f'|${g}$|${r.AGEB:.0f}$|${r.establecimientos:.0f}$|'
+            f'${r.poblacion:.0f}$|${r.grado_promedio_escolaridad:.2f}$|'
+            f'${r.pct_viv_internet:.1f}$|${r.pct_sin_servicio_salud:.1f}$|'
+            f'${r.pct_jefatura_femenina:.1f}$|\n')
+Markdown(txt)
 ```
-
-Utilizando `perm` se calcula la exactitud (@sec-accuracy) utilizando la siguiente instrucción. Se obtiene una exactitud de `{python} acc_f` que significa que la mayoría de los datos se agrupan en un conjunto que corresponde a la clase del conjunto del iris. 
 
 ```{python}
-#| echo: true
-acc = metrics.accuracy_score(y, perm[cl])
+#| echo: false
+g_est = perfil.establecimientos.idxmax()
+g_num = perfil.AGEB.idxmax()
+g_otro = [g for g in perfil.index if g not in (g_est, g_num)][0]
+fmt = lambda v, d=1: Markdown(f'${v:0.{d}f}$')
+pg = {g: dict(n=fmt(r.AGEB, 0), est=fmt(r.establecimientos, 0),
+              pob=fmt(r.poblacion, 0),
+              esc=fmt(r.grado_promedio_escolaridad, 2),
+              inter=Markdown(f'${r.pct_viv_internet:0.1f}\\%$'))
+      for g, r in perfil.iterrows()}
+g_est_f, g_num_f, g_otro_f = [Markdown(f'$G_{g[-1]}$') for g in (g_est, g_num, g_otro)]
 ```
 
-En general en agrupamiento no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Para estas ocasiones es imposible medir la exactitud o cualquier otra medida de agrupamiento que requiera la composición real de los grupos. 
+La @tbl-perfil-grupos-territorio muestra el perfil de los grupos. El grupo `{python} g_est_f` reúne `{python} pg[g_est]['n']` AGEB con `{python} pg[g_est]['est']` establecimientos en promedio, y es también el de mayor escolaridad (`{python} pg[g_est]['esc']` años) y el de más viviendas con internet (`{python} pg[g_est]['inter']`), por lo que corresponde a las zonas con más actividad económica y más escolaridad, aunque no es el de menor porcentaje de población sin servicio de salud. El grupo más numeroso, `{python} g_num_f`, tiene `{python} pg[g_num]['n']` AGEB con sólo `{python} pg[g_num]['est']` establecimientos en promedio, es decir, zonas sobre todo habitacionales. El grupo `{python} g_otro_f` tiene `{python} pg[g_otro]['est']` establecimientos y `{python} pg[g_otro]['pob']` habitantes en promedio, más población que los otros dos, con una escolaridad (`{python} pg[g_otro]['esc']` años) parecida a la de `{python} g_num_f` (`{python} pg[g_num]['esc']` años). La tipología separa a los AGEB por su actividad económica y los indicadores censales muestran que esa separación se asocia con diferencias en las condiciones sociales, sobre todo entre el grupo con más establecimientos y el resto. Hay que recordar que estas medias describen a los grupos y no a cada AGEB, y que la tipología depende de las variables elegidas y del número de grupos.
+
+## Rendimiento {#sec-agrupamiento-rendimiento}
+
+Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir, en general no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Es el caso de los AGEB, donde no existe una tipología correcta con la cual comparar. Para estas ocasiones es imposible medir la exactitud o cualquier otra medida de agrupamiento que requiera la composición real de los grupos. 
 
 Una medida que no requiere conocer los grupos es el **Silhouette Coefficient**; el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:
 
@@ -370,31 +406,110 @@ cal_har_f = metrics.calinski_harabasz_score(D, cl)
 cal_har_f = Markdown(f'${cal_har_f:0.4f}$')
 ```
 
-Por ejemplo, en el problema del Iris $s$ tiene un valor de `{python} sil_f` calculado con la siguiente instrucción. 
+Por ejemplo, para los tres grupos de AGEB $s$ tiene un valor de `{python} sil_f` calculado con la siguiente instrucción. 
 
 ```{python}
 #| echo: true
 sil = metrics.silhouette_score(D, cl, metric='euclidean')
 ```
 
-Otra medida de la calidad de los grupos es el índice de **Calinski-Harabasz** que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para el problema del Iris el índice de Calinski-Harabasz tiene un valor de `{python} cal_har_f` obtenido con la siguiente instrucción.
+Otra medida de la calidad de los grupos es el índice de **Calinski-Harabasz** que mide la dispersión entre grupos y dentro del grupo, al igual que Silhouette, mientras mayor sea la estadística mejor es el agrupamiento. Para los tres grupos de AGEB el índice de Calinski-Harabasz tiene un valor de `{python} cal_har_f` obtenido con la siguiente instrucción.
 
-```python
+```{python}
+#| echo: true
 cal_har = metrics.calinski_harabasz_score(D, cl)
 ```
 
-## Número de Grupos
+### Comparación con una etiqueta conocida {#sec-agrupamiento-etiqueta}
+
+En ocasiones sí se cuenta con una etiqueta de referencia para cada elemento, aunque no se haya usado para agrupar, y se puede medir qué tanto se parecen los grupos a esa etiqueta. Para ilustrarlo se usa la matriz de similitud de los instrumentos jurídicos federales (@sec-datos-instrumentos), donde cada instrumento pertenece a una de cuatro colecciones (leyes, reglamentos, lineamientos y tratados). El siguiente código lee los datos, arma la matriz `A` (@sec-datos-instrumentos-matriz), normaliza sus renglones como en la @sec-umap-visualizacion y codifica la colección de $0$ a $3$ en la variable `y`.
+
+```{python}
+#| echo: true
+instrumentos = pd.read_csv(f'{URL_DATOS}/legalia_instrumentos.csv')
+similitud = pd.read_csv(f'{URL_DATOS}/legalia_similitud.csv.gz')
+n = instrumentos.shape[0]
+A = np.zeros((n, n))
+A[similitud.origen, similitud.destino] = similitud.peso
+X = normalize(A)
+y = instrumentos.coleccion.map({c: k for k, c in enumerate(COLECCIONES)}).to_numpy()
+```
+
+Se buscan cuatro grupos con K-medias, uno por colección.
+
+```{python}
+#| echo: true
+cl_inst = KMeans(n_clusters=4, n_init='auto', random_state=0).fit_predict(X)
+```
+
+Dado que K-medias no conoce las colecciones, la numeración de sus grupos es arbitraria y no tiene por qué coincidir con la de `y`. Entonces se puede hacer una transformación que asigne a cada grupo una colección. La siguiente instrucción prueba las $4! = 24$ permutaciones de las cuatro colecciones y se queda con la que obtiene la mayor exactitud, la cual se guarda en la variable `perm`.
+
+```{python}
+#| echo: true
+perms = list(permutations([0, 1, 2, 3]))
+perfs = [(metrics.accuracy_score(y, np.array(x)[cl_inst]), x)
+         for x in perms]
+perm = np.r_[sorted(perfs, key=lambda x: x[0])[-1][1]]
+```
+
+```{python}
+#| echo: false
+perm_f = Markdown('$(' + ', '.join(str(v) for v in perm) + ')$')
+```
+
+La variable `perm` contiene `{python} perm_f`. Utilizando `perm` se calcula la exactitud (@sec-accuracy) con la siguiente instrucción.
+
+```{python}
+#| echo: true
+acc = metrics.accuracy_score(y, perm[cl_inst])
+```
+
+La @tbl-contingencia-instrumentos muestra la tabla de contingencia entre los grupos y las colecciones, es decir, cuántos instrumentos de cada colección quedaron en cada grupo.
+
+```{python}
+#| echo: false
+#| tbl-cap: Tabla de contingencia entre los cuatro grupos de K-medias (renglones) y la colección de cada instrumento (columnas)
+#| label: tbl-contingencia-instrumentos
+tabla = pd.crosstab(cl_inst + 1, instrumentos.coleccion)[COLECCIONES]
+txt = '|Grupo | ' + ' | '.join(c.capitalize() for c in COLECCIONES) + ' | Total |\n'
+txt += '|---|' + '---:|' * (len(COLECCIONES) + 1) + '\n'
+for g, r in tabla.iterrows():
+    txt += f'|$G_{g}$|' + '|'.join(f'${v}$' for v in r) + f'|${r.sum()}$|\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+acc_f = Markdown(f'${acc:0.4f}$')
+base_f = Markdown(f'${(y == 3).mean():0.4f}$')
+tam = tabla.sum(axis=1)
+g_mayor = tam.idxmax()
+g_mayor_f = Markdown(f'$G_{g_mayor}$')
+n_mayor_f = Markdown(f'${tam[g_mayor]}$')
+pct_mayor_f = Markdown(f'${100 * tam[g_mayor] / n:0.1f}\\%$')
+otros = tam.drop(g_mayor)
+n_otros_f = Markdown(f'${otros.sum()}$')
+trat_otros_f = Markdown(f'${tabla.loc[otros.index, "tratados"].sum()}$')
+n_dim_f = Markdown(f'${n}$')
+no_trat_mayor_f = Markdown(f'${100 * tabla.loc[g_mayor, COLECCIONES[:3]].sum() / tabla[COLECCIONES[:3]].values.sum():0.1f}\\%$')
+```
+
+Se obtiene una exactitud de `{python} acc_f`, que es menor que la que se obtendría asignando todos los instrumentos a la colección más numerosa, la de los tratados (`{python} base_f`). La tabla explica por qué. El grupo `{python} g_mayor_f` reúne `{python} n_mayor_f` instrumentos, es decir, `{python} pct_mayor_f` del total, incluido `{python} no_trat_mayor_f` de las leyes, reglamentos y lineamientos, y los otros tres grupos suman apenas `{python} n_otros_f` instrumentos, de los cuales `{python} trat_otros_f` son tratados. Es decir, K-medias no separa las colecciones sino que encuentra unas cuantas familias de tratados con textos muy parecidos entre sí, que se alejan del resto, y deja a casi todos los demás instrumentos en un solo grupo.
+
+Este resultado no es un defecto que haya que corregir. La colección es una etiqueta administrativa, que dice qué tipo de instrumento es cada uno, y la matriz describe otra cosa, a saber, dónde están los textos más parecidos. Como se vio en la @sec-umap-visualizacion, leyes, reglamentos y lineamientos se mezclan entre sí porque un reglamento desarrolla una ley y comparte sus textos. Además, en `{python} n_dim_f` dimensiones con renglones dispersos, las distancias euclidianas que usa K-medias separan primero a los grupos pequeños y muy compactos. Cuando la estructura que busca el algoritmo no coincide con la etiqueta de referencia, una exactitud baja dice más de la etiqueta y de la representación que del algoritmo.
+
+## Número de Grupos {#sec-agrupamiento-numero-grupos}
 
 Utilizando una medida de rendimiento de agrupamiento se analiza cuál sería el número adecuado de grupos para un problema dado. El procedimiento es variar el número de grupos y medir el rendimiento para cada grupo y quedarse con aquel que da el mejor rendimiento considerando también el número de grupos. 
 
-Por ejemplo, la siguiente instrucción calcula el coeficiente de Silhouette y el índice de Calinski-Harabasz en el problema del Iris. 
+Por ejemplo, la siguiente instrucción calcula el coeficiente de Silhouette y el índice de Calinski-Harabasz para los AGEB con $K$ de $2$ a $10$. 
 
 ```{python}
 #| echo: true
 S1 = []
 S2 = []
 for k in range(2, 11):
-    m = KMeans(n_clusters=k, n_init='auto').fit(D)
+    m = KMeans(n_clusters=k, n_init='auto', random_state=0).fit(D)
     cl = m.predict(D)
     _ = metrics.silhouette_score(D, cl, metric='euclidean')
     S1.append(_)
@@ -402,7 +517,17 @@ for k in range(2, 11):
     S2.append(_)
 ```
 
-Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En color azul se observa el coeficiente de Silhouette; donde el mejor resultado es cuando $K=2$. En color naranja se muestra el índice Calinski-Harabasz donde el mejor resultado se tiene cuando $K=3$. Considerando que se está trabajando con el problema del Iris se conoce que la mejor agrupación es para $K=3$ dado que son tres clases.
+```{python}
+#| echo: false
+k_sil = int(np.argmax(S1)) + 2
+k_ch = int(np.argmax(S2)) + 2
+k_sil_f = Markdown(f'$K={k_sil}$')
+k_ch_f = Markdown(f'$K={k_ch}$')
+sil_k_f = Markdown(f'${max(S1):0.4f}$')
+sil_3_f = Markdown(f'${S1[1]:0.4f}$')
+```
+
+Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En color azul se observa el coeficiente de Silhouette, cuyo mejor resultado es con `{python} k_sil_f` (`{python} sil_k_f`, contra `{python} sil_3_f` con tres grupos). En color naranja se muestra el índice de Calinski-Harabasz, cuyo mejor resultado se tiene con `{python} k_ch_f`. Ambas medidas favorecen los agrupamientos con pocos grupos, lo que es consistente con la @tbl-perfil-grupos-territorio, donde la diferencia más marcada es la del grupo de AGEB con mucha actividad económica frente al resto. Esto no quiere decir que haya un número correcto de tipos de barrio. Las medidas dicen qué partición es más compacta y separada con estas variables, y el número de grupos que se use en una política depende también de cuántos tipos de intervención se pueden diseñar y de que cada grupo se pueda interpretar.
 
 ```{python}
 #| code-fold: true
@@ -411,15 +536,20 @@ Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En 
 data = pd.DataFrame([{'Calinski-Harabasz': b,  'Silhouette': a, 'K': k + 2} 
                      for k, (a, b) in enumerate(zip(S1, S2))])
 data.set_index('K', inplace=True)
-sns.set_style('whitegrid')
 sns.lineplot(data=data.Silhouette, color=sns.color_palette()[0])
 ax2 = plt.twinx()
 fig = sns.lineplot(data=data['Calinski-Harabasz'], 
                    color=sns.color_palette()[1], ax=ax2)
 ```
 
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Repite la exploración del número de grupos de la @fig-k-means-performance-k con los renglones normalizados de la matriz de instrumentos (`X`), con $K$ de $2$ a $10$. ¿Qué número de grupos favorece cada medida? Para el número que elijas, construye la tabla de contingencia de los grupos contra la colección y busca, con la columna `nombre` de `instrumentos`, qué tienen en común los instrumentos de los grupos más pequeños.
+:::
+
 ## Resumen {#sec-resumen-agrupamiento}
 
-El agrupamiento busca estructura en datos sin variable respuesta. El algoritmo k-medias (@sec-agrupamiento-k-medias) alterna entre asignar cada observación al centro más cercano y recalcular los centros, y la maximización de la expectativa (@sec-agrupamiento-em) generaliza esa idea a mezclas de distribuciones, con k-medias como un caso particular. Como no hay respuesta que predecir, el rendimiento se mide con índices propios del agrupamiento, y esos mismos índices sirven para elegir el número de grupos, como se muestra en la @fig-k-means-performance-k. Ese número no es un dato del problema sino una decisión que se apoya en un criterio.
+El agrupamiento busca estructura en datos sin variable respuesta. El algoritmo k-medias (@sec-agrupamiento-k-medias) alterna entre asignar cada observación al centro más cercano y recalcular los centros, y la maximización de la expectativa (@sec-agrupamiento-em) generaliza esa idea a mezclas de distribuciones, con k-medias como un caso particular. Los grupos se interpretan con variables que no entraron al agrupamiento, como en la tipología de AGEB de la @tbl-perfil-grupos-territorio. Como no hay respuesta que predecir, el rendimiento se mide con índices propios del agrupamiento, y esos mismos índices sirven para elegir el número de grupos, como se muestra en la @fig-k-means-performance-k. Ese número no es un dato del problema sino una decisión que se apoya en un criterio. Cuando existe una etiqueta de referencia, como la colección de los instrumentos jurídicos, se puede comparar con los grupos, pero una coincidencia baja puede indicar que la etiqueta y la estructura de los datos describen cosas distintas.
 
 A lo largo del libro se han presentado muchos algoritmos, y para decidir cuál es mejor en un problema hace falta una comparación que tome en cuenta la incertidumbre de las medidas. Ese es el tema de @sec-comparacion-algoritmos.
