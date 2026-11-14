@@ -101,7 +101,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-d666b8f2bdaff57f6552dbc82023c6b1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-180847a877b30f2d91325072d88dd97f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -363,7 +363,7 @@ window.Quarto = {
   <li><a href="#sec-intro-05" id="toc-sec-intro-05" class="nav-link" data-scroll-target="#sec-intro-05"><span class="header-section-number">13.1</span> Introducción</a></li>
   <li><a href="#sec-pca" id="toc-sec-pca" class="nav-link" data-scroll-target="#sec-pca"><span class="header-section-number">13.2</span> Análisis de Componentes Principales</a>
   <ul class="collapse">
-  <li><a href="#sec-visualizacion-iris" id="toc-sec-visualizacion-iris" class="nav-link" data-scroll-target="#sec-visualizacion-iris"><span class="header-section-number">13.2.1</span> Ejemplo - Visualización</a></li>
+  <li><a href="#sec-pca-indice-territorio" id="toc-sec-pca-indice-territorio" class="nav-link" data-scroll-target="#sec-pca-indice-territorio"><span class="header-section-number">13.2.1</span> Ejemplo - Un índice de condiciones sociales</a></li>
   </ul></li>
   <li><a href="#sec-umap-visualizacion" id="toc-sec-umap-visualizacion" class="nav-link" data-scroll-target="#sec-umap-visualizacion"><span class="header-section-number">13.3</span> UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</a></li>
   <li><a href="#sec-resumen-reduccion-dimension" id="toc-sec-resumen-reduccion-dimension" class="nav-link" data-scroll-target="#sec-resumen-reduccion-dimension"><span class="header-section-number">13.4</span> Resumen</a></li>
@@ -398,16 +398,19 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es aplicar técnicas de reducción de dimensionalidad, para mejorar el aprendizaje y para visualizar los datos</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="5f92936b" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris,<span class="op">\</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                             load_digits</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> decomposition</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> umap</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="bc9f8ef8" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, normalize</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> decomposition</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> umap</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>COLECCIONES <span class="op">=</span> [<span class="st">'leyes'</span>, <span class="st">'reglamentos'</span>, <span class="st">'lineamientos'</span>, <span class="st">'tratados'</span>]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>PALETA_COLECCION <span class="op">=</span> <span class="bu">dict</span>(leyes<span class="op">=</span><span class="st">'#2a78d6'</span>, reglamentos<span class="op">=</span><span class="st">'#008300'</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                        lineamientos<span class="op">=</span><span class="st">'#e87ba4'</span>, tratados<span class="op">=</span><span class="st">'#eda100'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/mNrDb9YSK8A" width="560" height="315" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </section>
@@ -423,155 +426,219 @@ window.Quarto = {
 <p>La idea de PCA es buscar una matriz de proyección <span class="math inline">\(W^\intercal \in \mathbb R^{m \times d}\)</span> tal que los elementos de <span class="math inline">\(\mathcal D = \{x_i\}\)</span> sean transformados utilizando <span class="math inline">\(z = W^\intercal x\)</span> donde <span class="math inline">\(z \in \mathbb R^m\)</span>. El objetivo es que la muestra <span class="math inline">\(z_1\)</span> tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.</p>
 <p>Si suponemos que <span class="math inline">\(\mathbf x \sim \mathcal N_d(\mu, \Sigma)\)</span> y <span class="math inline">\(\mathbf w \in \mathbb R^d\)</span> entonces <span class="math inline">\(\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)\)</span> y por lo tanto <span class="math inline">\(\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.\)</span></p>
 <p>Utilizando esta información se puede describir el problema como encontrar <span class="math inline">\(\mathbf w_1\)</span> tal que <span class="math inline">\(\textsf{Var}(\mathbf z_1)\)</span> sea máxima, donde <span class="math inline">\(\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.\)</span> Dado que en este problema de optimización tiene múltiples soluciones, se busca además maximizar bajo la restricción de <span class="math inline">\(\mid\mid \mathbf w_1 \mid\mid = 1.\)</span> Escribiéndolo como un problema de Lagrange quedaría como: <span class="math inline">\(\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).\)</span> Derivando con respecto a <span class="math inline">\(\mathbf w_1\)</span> se tiene que la solución es: <span class="math inline">\(\Sigma \mathbf w_i = \alpha \mathbf w_i\)</span> donde esto se cumple solo si <span class="math inline">\(\mathbf w_1\)</span> es un vector propio de <span class="math inline">\(\Sigma\)</span> y <span class="math inline">\(\alpha\)</span> es el valor propio correspondiente. Para encontrar <span class="math inline">\(\mathbf w_2\)</span> se requiere <span class="math inline">\(\mid\mid \mathbf w_2 \mid\mid = 1\)</span> y que los vectores sean ortogonales, es decir, <span class="math inline">\(\mathbf w_2 \cdot \mathbf w_1 = 0.\)</span> Realizando las operaciones necesarias se encuentra que <span class="math inline">\(\mathbf w_2\)</span> corresponde al segundo vector propio y así sucesivamente.</p>
-<section id="sec-visualizacion-iris" class="level3" data-number="13.2.1">
-<h3 data-number="13.2.1" class="anchored" data-anchor-id="sec-visualizacion-iris"><span class="header-section-number">13.2.1</span> Ejemplo - Visualización</h3>
-<p>Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemplos se encuentran en <span class="math inline">\(\mathbb R^4\)</span> entonces para poderlos graficar en <span class="math inline">\(\mathbb R^2\)</span> se requiere realizar una transformación como podría ser Análisis de Componentes Principales.</p>
-<p>Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción, en la segunda línea se normalizan los datos para tener una media <span class="math inline">\(0\)</span> y desviación estándar <span class="math inline">\(1\)</span>, este procedimiento es necesario cuando los valores de las características se encuentran en diferentes escalas.</p>
-<div id="030cbc40" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(D)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="sec-pca-indice-territorio" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="sec-pca-indice-territorio"><span class="header-section-number">13.2.1</span> Ejemplo - Un índice de condiciones sociales</h3>
+<p>Una aplicación clásica de PCA en política pública es resumir varios indicadores sociales en un solo número por unidad territorial, para ordenar las unidades y focalizar programas. El índice de marginación del Consejo Nacional de Población (CONAPO) es el ejemplo más conocido en México. En sus ediciones anteriores a 2020 se calculó con la primera componente principal de un conjunto de indicadores de educación, vivienda, ingreso y tamaño de localidad, y la edición 2020 cambió al método de Distancias Ponderadas al cuadrado (DP2), entre otras razones porque los resultados de PCA no eran comparables en el tiempo <span class="citation" data-cites="conapo2023marginacion">(<a href="18Referencias.html#ref-conapo2023marginacion" role="doc-biblioref">Consejo Nacional de Población 2023</a>)</span>. Esta sección construye una versión didáctica de un índice de este tipo con la primera componente principal. No es el índice oficial, pues usa sólo cuatro indicadores censales de los AGEB urbanos de Aguascalientes del conjunto Territorio (<a href="20ConjuntosDatos.html#sec-datos-territorio" class="quarto-xref"><span>Sección B.1.5</span></a>).</p>
+<p>El siguiente código lee los datos, toma los cuatro indicadores censales y descarta los AGEB que tienen algún indicador vacío. En la última línea los indicadores se estandarizan para tener media <span class="math inline">\(0\)</span> y desviación estándar <span class="math inline">\(1\)</span>, lo que es necesario porque están en escalas diferentes (años de escolaridad y porcentajes).</p>
+<div id="706322af" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/censo_denue_territorio.csv'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>INDICADORES <span class="op">=</span> [<span class="st">'grado_promedio_escolaridad'</span>, <span class="st">'pct_viv_internet'</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">'pct_sin_servicio_salud'</span>, <span class="st">'pct_jefatura_femenina'</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> territorio.dropna(subset<span class="op">=</span>INDICADORES)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(datos[INDICADORES])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en <span class="math inline">\(\mathbb R^2\)</span> los datos, entonces ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección.</p>
-<div id="b550b506" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(D)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>El siguiente paso es ajustar PCA. Como hay cuatro indicadores se pueden calcular hasta cuatro componentes, y el atributo <code>explained_variance_ratio_</code> contiene la proporción de la varianza que explica cada una.</p>
+<div id="b927d642" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">4</span>).fit(D)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pca.explained_variance_ratio_</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>array([0.4822, 0.3232, 0.1686, 0.026 ])</code></pre>
 </div>
-<p>El siguiente código se utiliza para visualizar los datos. El resultado se muestra en la <a href="#fig-pca-iris" class="quarto-xref">Figura&nbsp;<span>13.1</span></a>, donde se observa en diferente color cada una de las clases.</p>
-<div id="cell-fig-pca-iris" class="cell" data-execution_count="5">
+</div>
+<p>Los pesos de cada componente, es decir, los vectores <span class="math inline">\(\mathbf w_i\)</span>, se encuentran en el atributo <code>components_</code>. Los pesos de la primera componente son los siguientes.</p>
+<div id="287cf914" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pd.Series(pca.components_[<span class="dv">0</span>], index<span class="op">=</span>INDICADORES)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>grado_promedio_escolaridad    0.695623
+pct_viv_internet              0.697966
+pct_sin_servicio_salud       -0.099411
+pct_jefatura_femenina         0.138096
+dtype: float64</code></pre>
+</div>
+</div>
+<p>Se usan <span class="math inline">\(463\)</span> AGEB, después de descartar los que tienen algún indicador vacío (<span class="math inline">\(1\)</span> en total). La primera componente explica <span class="math inline">\(48.2\%\)</span> de la varianza y la segunda <span class="math inline">\(32.3\%\)</span>, por lo que entre las dos conservan <span class="math inline">\(80.5\%\)</span>. En la primera componente el grado promedio de escolaridad y el porcentaje de viviendas con internet tienen pesos de <span class="math inline">\(0.70\)</span> y <span class="math inline">\(0.70\)</span>, mucho mayores en magnitud que los del porcentaje de población sin servicio de salud (<span class="math inline">\(-0.10\)</span>) y de hogares con jefatura femenina (<span class="math inline">\(0.14\)</span>). Es decir, la primera componente mide sobre todo escolaridad y conectividad. La segunda componente, en cambio, tiene sus pesos mayores en la falta de servicio de salud (<span class="math inline">\(0.71\)</span>) y en la jefatura femenina (<span class="math inline">\(0.70\)</span>), lo que muestra que esos dos indicadores describen otra dimensión de las condiciones del AGEB.</p>
+<p>El signo de una componente principal es arbitrario, pues <span class="math inline">\(\mathbf w_1\)</span> y <span class="math inline">\(-\mathbf w_1\)</span> explican la misma varianza. Para que el índice crezca con el rezago, como el índice de marginación, se elige el signo que hace negativo el peso de la escolaridad, y el índice de cada AGEB es su valor en la primera componente con ese signo.</p>
+<div id="ddd62b01" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>signo <span class="op">=</span> <span class="op">-</span>np.sign(pca.components_[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> signo <span class="op">*</span> pca.transform(D)[:, <span class="dv">0</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El AGEB con el índice más alto, es decir, con más rezago, tiene un grado promedio de escolaridad de <span class="math inline">\(6.92\)</span> y <span class="math inline">\(11.6\%\)</span> de viviendas con internet, mientras que el de índice más bajo tiene <span class="math inline">\(15.36\)</span> y <span class="math inline">\(100.0\%\)</span>. La <a href="#fig-pca-territorio" class="quarto-xref">Figura&nbsp;<span>13.1</span></a> muestra los AGEB en <span class="math inline">\(\mathbb R^2\)</span> con las dos primeras componentes, coloreados por el grado promedio de escolaridad. Se observa que la escolaridad cambia a lo largo del eje horizontal, que es la primera componente, y no a lo largo del vertical.</p>
+<div id="cell-fig-pca-territorio" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span>c)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> (x, y), c <span class="kw">in</span> <span class="bu">zip</span>(Xn, y)])</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                  x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(D)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>signo <span class="op">*</span> Xn[:, <span class="dv">0</span>], y<span class="op">=</span>Xn[:, <span class="dv">1</span>],</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                       escolaridad<span class="op">=</span>datos.grado_promedio_escolaridad.to_numpy()))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'escolaridad'</span>, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Primera componente (índice de rezago)'</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        ylabel<span class="op">=</span><span class="st">'Segunda componente'</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>fig._legend.set_title(<span class="st">'Escolaridad'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-pca-iris" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-pca-territorio" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-pca-iris-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="12ReduccionDim_files/figure-html/fig-pca-iris-output-1.png" width="484" height="430" class="figure-img">
+<div aria-describedby="fig-pca-territorio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12ReduccionDim_files/figure-html/fig-pca-territorio-output-1.png" width="546" height="470" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pca-iris-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;13.1: Proyección mediante PCA del problema del Iris
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pca-territorio-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.1: Proyección mediante PCA de los cuatro indicadores censales de los AGEB de Aguascalientes, coloreada por el grado promedio de escolaridad
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
+<p>El índice resume cuatro indicadores en uno solo a cambio de perder la información que no está en la primera componente. En este caso esa pérdida es grande, pues la segunda componente explica una parte importante de la varianza y no se refleja en el índice. Además, los pesos dependen de los datos con los que se ajusta PCA, de modo que un índice calculado con otro censo o con otras unidades no es directamente comparable, que es precisamente la limitación que llevó a CONAPO a cambiar de método.</p>
 </section>
 </section>
 <section id="sec-umap-visualizacion" class="level2" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="sec-umap-visualizacion"><span class="header-section-number">13.3</span> UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</h2>
-<p>En esta sección se presenta el uso de UMAP propuesto por <span class="citation" data-cites="UMAP">McInnes et&nbsp;al. (<a href="18Referencias.html#ref-UMAP" role="doc-biblioref">2020</a>)</span>. UMAP es una técnica no lineal para reducir la dimensión y que con dimensiones bajas (<span class="math inline">\(d=2\)</span>) permite tener una visualización de los datos. El ejemplo que se realizará es visualizar mediante UMAP los datos del problema de Dígitos, estos datos se pueden obtener con la siguiente instrucción; en estas instrucciones también se normalizan los datos para tener una media <span class="math inline">\(0\)</span> y desviación estándar <span class="math inline">\(1.\)</span></p>
-<div id="9ba0cd6f" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(D)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>En esta sección se presenta el uso de UMAP propuesto por <span class="citation" data-cites="UMAP">McInnes et&nbsp;al. (<a href="18Referencias.html#ref-UMAP" role="doc-biblioref">2020</a>)</span>. UMAP es una técnica no lineal para reducir la dimensión y que con dimensiones bajas (<span class="math inline">\(d=2\)</span>) permite tener una visualización de los datos. El ejemplo que se realizará es dibujar un mapa de los instrumentos jurídicos federales de México (leyes, reglamentos, lineamientos y tratados) a partir de la matriz de similitud del Atlas de LegalIA, descrita en <a href="20ConjuntosDatos.html#sec-datos-instrumentos" class="quarto-xref"><span>Sección B.2</span></a>. En esa matriz, el renglón <span class="math inline">\(i\)</span> describe al instrumento <span class="math inline">\(i\)</span> por los instrumentos donde están los textos más parecidos a los suyos (ver <a href="20ConjuntosDatos.html#sec-datos-instrumentos-matriz" class="quarto-xref"><span>Sección B.2.1</span></a>). Los datos se leen con las siguientes instrucciones y con ellos se arma la matriz densa <code>A</code>.</p>
+<div id="83a68214" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>instrumentos <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/legalia_instrumentos.csv'</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>similitud <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/legalia_similitud.csv.gz'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> instrumentos.shape[<span class="dv">0</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.zeros((n, n))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>A[similitud.origen, similitud.destino] <span class="op">=</span> similitud.peso</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la <a href="#fig-pca-digits" class="quarto-xref">Figura&nbsp;<span>13.2</span></a> presenta la proyección del conjunto de Dígitos utilizando PCA. Como se puede observar en la figura, esta proyección no da una separación clara entre grupos, aunque sí se puede identificar una estructura, donde algunos números se encuentran en la periferia de la figura.</p>
-<div id="cell-fig-pca-digits" class="cell" data-execution_count="7">
+<p>Cada uno de los <span class="math inline">\(2670\)</span> instrumentos es un vector de <span class="math inline">\(2670\)</span> números. Cada renglón suma los fragmentos contados de su instrumento, y estos van de <span class="math inline">\(3064\)</span> en el caso del Código Civil Federal a unos cuantos, con una mediana de <span class="math inline">\(28\)</span>. Si se usaran los renglones así, la distancia entre dos instrumentos dependería sobre todo de su tamaño. Por eso cada renglón se normaliza para tener norma <span class="math inline">\(1\)</span>, de modo que un código de miles de artículos y un reglamento de veinte quedan comparables y lo que importa es <strong>hacia dónde</strong> apuntan sus fragmentos y no cuántos son.</p>
+<div id="b895ab5f" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> normalize(A)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la <a href="#fig-pca-instrumentos" class="quarto-xref">Figura&nbsp;<span>13.2</span></a> presenta la proyección de los instrumentos utilizando PCA, con cada punto coloreado según su colección.</p>
+<div id="cell-fig-pca-instrumentos" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pal <span class="op">=</span> mpl.cm.Paired</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(D)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(Xn, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                  x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(X)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(X)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(Xn, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Colección'</span>] <span class="op">=</span> instrumentos.coleccion</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, s<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Colección'</span>, hue_order<span class="op">=</span>COLECCIONES,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>PALETA_COLECCION)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-pca-digits" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-pca-instrumentos" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-pca-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="12ReduccionDim_files/figure-html/fig-pca-digits-output-1.png" width="472" height="430" class="figure-img">
+<div aria-describedby="fig-pca-instrumentos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12ReduccionDim_files/figure-html/fig-pca-instrumentos-output-1.png" width="529" height="430" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pca-digits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;13.2: Proyección mediante PCA del problema de Dígitos
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pca-instrumentos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.2: Proyección mediante PCA de la matriz de similitud de los instrumentos jurídicos federales
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los <span class="math inline">\(K\)</span> vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para <span class="math inline">\(K=[2, 4, 8, 16].\)</span> El código que realiza esta exploración se muestra en las siguientes instrucciones.</p>
-<div id="5496f274" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> K <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>]:</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    reducer <span class="op">=</span> umap.UMAP(n_neighbors<span class="op">=</span>K)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    low_dim <span class="op">=</span> reducer.fit_transform(D)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> pd.DataFrame(low_dim, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'Clase'</span>] <span class="op">=</span> y</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'K'</span>] <span class="op">=</span> K</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat((df, _))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Las dos componentes conservan apenas <span class="math inline">\(1.3\%\)</span> de la varianza de los renglones normalizados. La mayoría de los instrumentos queda amontonada en una región pequeña y sólo unos cuantos se alejan a lo largo de los ejes, por lo que la proyección lineal no deja ver cómo se organizan los instrumentos.</p>
+<p>UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los <span class="math inline">\(K\)</span> vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para <span class="math inline">\(K=[4, 8, 16, 32].\)</span> Se usan los mismos parámetros que el Atlas de LegalIA, es decir, la distancia coseno (<code>metric='cosine'</code>), <code>min_dist=0.1</code> y una semilla fija (<code>random_state=0</code>) para que el resultado sea el mismo cada vez que se ejecuta, de modo que las figuras pueden compararse con el <a href="https://ingeotec.github.io/LegalIA/pages/atlas.html">atlas interactivo</a>, aunque no tienen que ser idénticas.</p>
+<div id="d6f62546" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> K <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>]:</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    reducer <span class="op">=</span> umap.UMAP(n_components<span class="op">=</span><span class="dv">2</span>, n_neighbors<span class="op">=</span>K, min_dist<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                        metric<span class="op">=</span><span class="st">'cosine'</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    low_dim <span class="op">=</span> reducer.fit_transform(X)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> pd.DataFrame(low_dim, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'Colección'</span>] <span class="op">=</span> instrumentos.coleccion</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'K'</span>] <span class="op">=</span> K</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat((df, _))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>La <a href="#fig-umap-digits-k" class="quarto-xref">Figura&nbsp;<span>13.3</span></a> muestra las diferentes visualizaciones cuando el número de vecinos cambia en UMAP, se puede observar cómo para <span class="math inline">\(K=2\)</span> la visualización no muestra ninguna estructura, pero partiendo de <span class="math inline">\(K=4\)</span> se puede visualizar grupos que corresponden a los diferentes dígitos.</p>
-<div id="cell-fig-umap-digits-k" class="cell" data-execution_count="9">
+<p>La <a href="#fig-umap-instrumentos-k" class="quarto-xref">Figura&nbsp;<span>13.3</span></a> muestra las diferentes visualizaciones cuando el número de vecinos cambia en UMAP. Con pocos vecinos UMAP prioriza la estructura local, por lo que aparecen muchos grupos pequeños y separados. Conforme aumenta <span class="math inline">\(K\)</span> los grupos pequeños se integran en regiones más amplias. En todos los casos los tratados ocupan una región propia del mapa, separada de la que comparten las otras tres colecciones.</p>
+<div id="cell-fig-umap-instrumentos-k" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Clase'</span>, col<span class="op">=</span><span class="st">'K'</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)            </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, s<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Colección'</span>, hue_order<span class="op">=</span>COLECCIONES,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>PALETA_COLECCION, col<span class="op">=</span><span class="st">'K'</span>, col_wrap<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                  facet_kws<span class="op">=</span><span class="bu">dict</span>(sharex<span class="op">=</span><span class="va">False</span>, sharey<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-umap-digits-k" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-umap-instrumentos-k" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-umap-digits-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="12ReduccionDim_files/figure-html/fig-umap-digits-k-output-1.png" width="1922" height="430" class="figure-img">
+<div aria-describedby="fig-umap-instrumentos-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12ReduccionDim_files/figure-html/fig-umap-instrumentos-k-output-1.png" width="1022" height="910" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-umap-digits-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;13.3: Proyección mediante UMAP del problema de Dígitos variando el número de vecinos
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-umap-instrumentos-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.3: Proyección mediante UMAP de los instrumentos jurídicos federales variando el número de vecinos
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Con el objetivo de mostrar con mayor detalle los grupos encontrados, la <a href="#fig-umap-digits-k8" class="quarto-xref">Figura&nbsp;<span>13.4</span></a> muestra la visualización de <span class="math inline">\(K=8\)</span> en ella se puede observar cómo los ejemplos se agrupan de acuerdo al dígito que representan, también se puede ver la similitud entre los diferentes dígitos y cómo algunos ejemplos están muy cerca a un grupo al cual no pertenecen.</p>
-<div id="cell-fig-umap-digits-k8" class="cell" data-execution_count="10">
+<p>Que los tratados ocupen una región propia se explica con la matriz. De los <span class="math inline">\(1367\)</span> tratados, en <span class="math inline">\(1298\)</span> el instrumento hacia el que apuntan más fragmentos, es decir, <code>A[i].argmax()</code>, es otro tratado. En cambio, esa proporción es de <span class="math inline">\(48.1\%\)</span> para las leyes, <span class="math inline">\(69.8\%\)</span> para los reglamentos y <span class="math inline">\(46.4\%\)</span> para los lineamientos, que por eso se mezclan entre sí en el mapa.</p>
+<p>La <a href="#fig-umap-instrumentos-k16" class="quarto-xref">Figura&nbsp;<span>13.4</span></a> muestra con mayor detalle la visualización con <span class="math inline">\(K=16\)</span>, que es con la que abre el atlas, y marca tres instrumentos. El instrumento hacia el que apuntan más fragmentos de la Constitución es la Ley General de Instituciones y Procedimientos Electorales, y en el caso de la Ley Orgánica de Nacional Financiera es la Ley Orgánica del Banco Nacional de Obras y Servicios Públicos. Este último es un ejemplo de las islas de familias que se observan en el mapa, en este caso las leyes orgánicas de los bancos de desarrollo, cuyos textos son muy parecidos entre sí.</p>
+<div id="cell-fig-umap-instrumentos-k16" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df[df.K<span class="op">==</span><span class="dv">8</span>], kind<span class="op">=</span><span class="st">'scatter'</span>, </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                  x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>k16 <span class="op">=</span> df[df.K <span class="op">==</span> <span class="dv">16</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(k16, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, s<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Colección'</span>, hue_order<span class="op">=</span>COLECCIONES,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>PALETA_COLECCION, height<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.ax</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> clave, etiqueta <span class="kw">in</span> [(<span class="st">'cpeum'</span>, <span class="st">'Constitución'</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                        (<span class="st">'lgipe'</span>, <span class="st">'LGIPE'</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>                        (<span class="st">'lonf'</span>, <span class="st">'Nacional Financiera'</span>)]:</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> <span class="bu">int</span>(instrumentos.index[instrumentos.clave <span class="op">==</span> clave][<span class="dv">0</span>])</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    ax.scatter(k16.x[i], k16.y[i], s<span class="op">=</span><span class="dv">60</span>, facecolors<span class="op">=</span><span class="st">'none'</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>               edgecolors<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    ax.annotate(etiqueta, (k16.x[i], k16.y[i]), xytext<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">5</span>),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                textcoords<span class="op">=</span><span class="st">'offset points'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-umap-digits-k8" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-umap-instrumentos-k16" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-umap-digits-k8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="12ReduccionDim_files/figure-html/fig-umap-digits-k8-output-1.png" width="476" height="430" class="figure-img">
+<div aria-describedby="fig-umap-instrumentos-k16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12ReduccionDim_files/figure-html/fig-umap-instrumentos-k16-output-1.png" width="642" height="526" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-umap-digits-k8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;13.4: Proyección mediante UMAP del problema de dígitos con ocho vecinos
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-umap-instrumentos-k16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.4: Proyección mediante UMAP de los instrumentos jurídicos federales con dieciséis vecinos
 </figcaption>
 </figure>
+</div>
+</div>
+</div>
+<p>El mapa debe leerse con cuidado. Que dos instrumentos estén cerca dice que tienen textos parecidos, no que estén emparentados jurídicamente, pues la matriz es una heurística (<a href="20ConjuntosDatos.html#sec-datos-instrumentos-matriz" class="quarto-xref"><span>Sección B.2.1</span></a>). Además, UMAP preserva las vecindades, pero no las distancias entre grupos lejanos, por lo que la separación entre dos regiones distantes del mapa no se interpreta. Finalmente, como lo muestra la <a href="#fig-umap-instrumentos-k" class="quarto-xref">Figura&nbsp;<span>13.3</span></a>, el dibujo cambia con <span class="math inline">\(K\)</span> aunque los datos sean los mismos.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Actividad
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>La matriz <code>A</code> es dirigida, es decir, en general <span class="math inline">\(A_{ij} \neq A_{ji}\)</span>. Repite el mapa de la <a href="#fig-umap-instrumentos-k16" class="quarto-xref">Figura&nbsp;<span>13.4</span></a> con la matriz simetrizada <span class="math inline">\(A + A^\intercal\)</span>, normalizando sus renglones de la misma manera, y describe qué cambia. Después repítelo con los renglones de <code>A</code> sin normalizar y explica, con la diferencia de tamaño entre los instrumentos, por qué el mapa resultante es distinto.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="sec-resumen-reduccion-dimension" class="level2" data-number="13.4">
 <h2 data-number="13.4" class="anchored" data-anchor-id="sec-resumen-reduccion-dimension"><span class="header-section-number">13.4</span> Resumen</h2>
-<p>Reducir la dimensión es transformar la representación original en una con menos variables, ya sea para mejorar el aprendizaje o para visualizar los datos. A diferencia de la selección de variables (<a href="03SeleccionVariables.html" class="quarto-xref"><span>Capítulo 4</span></a>), que escoge un subconjunto de las variables originales, las proyecciones construyen variables nuevas a partir de ellas. El Análisis de Componentes Principales (<a href="#sec-pca" class="quarto-xref"><span>Sección 13.2</span></a>) encuentra las direcciones de mayor varianza y produce una proyección lineal, mientras que UMAP (<a href="#sec-umap-visualizacion" class="quarto-xref"><span>Sección 13.3</span></a>) busca preservar la vecindad de los datos y puede revelar estructuras que una proyección lineal no muestra. La <a href="#fig-umap-digits-k" class="quarto-xref">Figura&nbsp;<span>13.3</span></a> muestra además que el resultado de UMAP depende de sus hiperparámetros, por lo que debe leerse con cautela.</p>
+<p>Reducir la dimensión es transformar la representación original en una con menos variables, ya sea para mejorar el aprendizaje o para visualizar los datos. A diferencia de la selección de variables (<a href="03SeleccionVariables.html" class="quarto-xref"><span>Capítulo 4</span></a>), que escoge un subconjunto de las variables originales, las proyecciones construyen variables nuevas a partir de ellas. El Análisis de Componentes Principales (<a href="#sec-pca" class="quarto-xref"><span>Sección 13.2</span></a>) encuentra las direcciones de mayor varianza y produce una proyección lineal, que también sirve para resumir varios indicadores en un índice, mientras que UMAP (<a href="#sec-umap-visualizacion" class="quarto-xref"><span>Sección 13.3</span></a>) busca preservar la vecindad de los datos y puede revelar estructuras que una proyección lineal no muestra. La <a href="#fig-umap-instrumentos-k" class="quarto-xref">Figura&nbsp;<span>13.3</span></a> muestra además que el resultado de UMAP depende de sus hiperparámetros, por lo que debe leerse con cautela.</p>
 <p>Cuando una visualización sugiere que los datos forman grupos, el paso siguiente es encontrarlos de manera formal, lo que se hace con los métodos de agrupamiento de <a href="13Agrupamiento.html" class="quarto-xref"><span>Capítulo 14</span></a>.</p>
 
 
 <!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-conapo2023marginacion" class="csl-entry" role="listitem">
+Consejo Nacional de Población. 2023. <em>Índices de marginación 2020</em>. Secretaría de Gobernación, Consejo Nacional de Población. <a href="https://www.gob.mx/conapo/documentos/indices-de-marginacion-2020-284372">https://www.gob.mx/conapo/documentos/indices-de-marginacion-2020-284372</a>.
+</div>
 <div id="ref-UMAP" class="csl-entry" role="listitem">
 McInnes, Leland, John Healy, y James Melville. 2020. <em>UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</em>. <a href="https://arxiv.org/abs/1802.03426">https://arxiv.org/abs/1802.03426</a>.
 </div>
@@ -1042,170 +1109,283 @@ McInnes, Leland, John Healy, y James Melville. 2020. <em>UMAP: Uniform Manifold 
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reducción de Dimensión {#sec-reduccion-dimension}</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es aplicar técnicas de reducción de dimensionalidad, para mejorar el aprendizaje y para visualizar los datos</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris,<span class="op">\</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                             load_digits</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> decomposition</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> umap</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>)</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/mNrDb9YSK8A width="560" height="315" &gt;}}</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-05}</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>Existen ocasiones donde las variables que describen al problema no contribuyen dentro de la solución, o su aporte está dado por otras componentes de la descripción. Esto trae como consecuencia, en el mejor de los casos, que el algoritmo tenga un mayor costo computacional o, en un caso menos afortunado, que tenga un rendimiento menor al que se hubiera obtenido con una mejor representación. Es pertinente mencionar que el caso contrario, el incremento del número de variables, es también un escenario factible y se abordará en otra ocasión.</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>Reducir la dimensión de un problema es transformar la representación original $x \in \mathbb R^d$ a una representación $\hat x \in \mathbb R^m$ donde $m &lt; d$. Tiene dos usos: mejorar el aprendizaje, pues el objetivo es que la nueva representación $\hat x$ contenga la información necesaria para realizar la tarea de clasificación o regresión; y visualizar los datos, reduciendo a $\mathbb R^2$ o $\mathbb R^3$, donde el objetivo es que se mantengan en la reducción las características de los datos en $\mathbb R^d$.</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>La **selección** de variables, que escoge un subconjunto de las variables originales sin transformarlas, se trató en la @sec-seleccion-variables. Este capítulo trata las **proyecciones**, que construyen variables nuevas a partir de las originales: Análisis de Componentes Principales (PCA) y UMAP.</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Análisis de Componentes Principales {#sec-pca}</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>Los métodos de selección de variables (@sec-seleccion-variables) requieren un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m &lt; d$</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = <span class="sc">\{</span>x_i<span class="sc">\}</span>$ sean transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>Si suponemos que $\mathbf x \sim \mathcal N_d(\mu, \Sigma)$ y $\mathbf w \in \mathbb R^d$ entonces $\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)$ y por lo tanto $\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.$</span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>Utilizando esta información se puede describir el problema como encontrar $\mathbf w_1$ tal que $\textsf{Var}(\mathbf z_1)$ sea máxima, donde $\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$ Dado que en este problema de optimización tiene múltiples soluciones, se busca además maximizar bajo la restricción de $\mid\mid \mathbf w_1 \mid\mid = 1.$ Escribiéndolo como un problema de Lagrange quedaría como: $\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$ Derivando con respecto a $\mathbf w_1$ se tiene que la solución es: $\Sigma \mathbf w_i = \alpha \mathbf w_i$ donde esto se cumple solo si $\mathbf w_1$ es un vector propio de $\Sigma$ y $\alpha$ es el valor propio correspondiente. Para encontrar $\mathbf w_2$ se requiere $\mid\mid \mathbf w_2 \mid\mid = 1$ y que los vectores sean ortogonales, es decir, $\mathbf w_2 \cdot \mathbf w_1 = 0.$ Realizando las operaciones necesarias se encuentra que $\mathbf w_2$ corresponde al segundo vector propio y así sucesivamente.</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo - Visualización {#sec-visualizacion-iris}</span></span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>Supongamos que deseamos visualizar los ejemplos del problema del iris. Los ejemplos se encuentran en $\mathbb R^4$ entonces para poderlos graficar en $\mathbb R^2$ se requiere realizar una transformación como podría ser Análisis de Componentes Principales.</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>Empezamos por cargar los datos del problema tal y como se muestra en la siguiente instrucción, en la segunda línea se normalizan los datos para tener una media $0$ y desviación estándar $1$, este procedimiento es necesario cuando los valores de las características se encuentran en diferentes escalas. </span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(D)</span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>Habiendo importado los datos el siguiente paso es inicializar la clase de PCA, para esto requerimos especificar el parámetro que indica el número de componentes deseado, dado que el objetivo es representar en $\mathbb R^2$ los datos, entonces ocupamos dos componentes. La primera línea inicializa la clase de PCA, después, en la segunda línea se hace la proyección. </span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
-<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(D)</span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>El siguiente código se utiliza para visualizar los datos. El resultado se muestra en la @fig-pca-iris, donde se observa en diferente color cada una de las clases. </span>
-<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante PCA del problema del Iris</span></span>
-<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-pca-iris</span></span>
-<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(x<span class="op">=</span>x, y<span class="op">=</span>y, clase<span class="op">=</span>c)</span>
-<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> (x, y), c <span class="kw">in</span> <span class="bu">zip</span>(Xn, y)])</span>
-<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(data, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
-<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>                  x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'clase'</span>)</span>
-<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction {#sec-umap-visualizacion}</span></span>
-<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>En esta sección se presenta el uso de UMAP propuesto por @UMAP. UMAP es una técnica no lineal para reducir la dimensión y que con dimensiones bajas ($d=2$) permite tener una visualización de los datos. El ejemplo que se realizará es visualizar mediante UMAP los datos del problema de Dígitos, estos datos se pueden obtener con la siguiente instrucción; en estas instrucciones también se normalizan los datos para tener una media $0$ y desviación estándar $1.$ </span>
-<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>D, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(D)</span>
-<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la @fig-pca-digits presenta la proyección del conjunto de Dígitos utilizando PCA. Como se puede observar en la figura, esta proyección no da una separación clara entre grupos, aunque sí se puede identificar una estructura, donde algunos números se encuentran en la periferia de la figura. </span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante PCA del problema de Dígitos</span></span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-pca-digits</span></span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>pal <span class="op">=</span> mpl.cm.Paired</span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(D)</span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(D)</span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(Xn, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Clase'</span>] <span class="op">=</span> y</span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>,</span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>                  x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>)</span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los $K$ vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para $K=<span class="co">[</span><span class="ot">2, 4, 8, 16</span><span class="co">]</span>.$ El código que realiza esta exploración se muestra en las siguientes instrucciones. </span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> K <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>]:</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>    reducer <span class="op">=</span> umap.UMAP(n_neighbors<span class="op">=</span>K)</span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>    low_dim <span class="op">=</span> reducer.fit_transform(D)</span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> pd.DataFrame(low_dim, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'Clase'</span>] <span class="op">=</span> y</span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'K'</span>] <span class="op">=</span> K</span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat((df, _))</span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>La @fig-umap-digits-k muestra las diferentes visualizaciones cuando el número de vecinos cambia en UMAP, se puede observar cómo para $K=2$ la visualización no muestra ninguna estructura, pero partiendo de $K=4$ se puede visualizar grupos que corresponden a los diferentes dígitos. </span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante UMAP del problema de Dígitos variando el número de vecinos</span></span>
-<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-umap-digits-k</span></span>
-<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>,</span>
-<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
-<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Clase'</span>, col<span class="op">=</span><span class="st">'K'</span>)</span>
-<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)            </span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>Con el objetivo de mostrar con mayor detalle los grupos encontrados, la @fig-umap-digits-k8 muestra la visualización de $K=8$ en ella se puede observar cómo los ejemplos se agrupan de acuerdo al dígito que representan, también se puede ver la similitud entre los diferentes dígitos y cómo algunos ejemplos están muy cerca a un grupo al cual no pertenecen. </span>
-<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante UMAP del problema de dígitos con ocho vecinos</span></span>
-<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-umap-digits-k8</span></span>
-<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df[df.K<span class="op">==</span><span class="dv">8</span>], kind<span class="op">=</span><span class="st">'scatter'</span>, </span>
-<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="st">'full'</span>, palette<span class="op">=</span>pal,</span>
-<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>                  x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, hue<span class="op">=</span><span class="st">'Clase'</span>)</span>
-<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>, </span>
-<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-reduccion-dimension}</span></span>
-<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a>Reducir la dimensión es transformar la representación original en una con menos variables, ya sea para mejorar el aprendizaje o para visualizar los datos. A diferencia de la selección de variables (@sec-seleccion-variables), que escoge un subconjunto de las variables originales, las proyecciones construyen variables nuevas a partir de ellas. El Análisis de Componentes Principales (@sec-pca) encuentra las direcciones de mayor varianza y produce una proyección lineal, mientras que UMAP (@sec-umap-visualizacion) busca preservar la vecindad de los datos y puede revelar estructuras que una proyección lineal no muestra. La @fig-umap-digits-k muestra además que el resultado de UMAP depende de sus hiperparámetros, por lo que debe leerse con cautela.</span>
-<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a>Cuando una visualización sugiere que los datos forman grupos, el paso siguiente es encontrarlos de manera formal, lo que se hace con los métodos de agrupamiento de @sec-agrupamiento.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reducción de Dimensión {#sec-reduccion-dimension}</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es aplicar técnicas de reducción de dimensionalidad, para mejorar el aprendizaje y para visualizar los datos</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, normalize</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> decomposition</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> umap</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>COLECCIONES <span class="op">=</span> [<span class="st">'leyes'</span>, <span class="st">'reglamentos'</span>, <span class="st">'lineamientos'</span>, <span class="st">'tratados'</span>]</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>PALETA_COLECCION <span class="op">=</span> <span class="bu">dict</span>(leyes<span class="op">=</span><span class="st">'#2a78d6'</span>, reglamentos<span class="op">=</span><span class="st">'#008300'</span>,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                        lineamientos<span class="op">=</span><span class="st">'#e87ba4'</span>, tratados<span class="op">=</span><span class="st">'#eda100'</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>{{&lt; video https://www.youtube.com/embed/mNrDb9YSK8A width="560" height="315" &gt;}}</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-05}</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>Existen ocasiones donde las variables que describen al problema no contribuyen dentro de la solución, o su aporte está dado por otras componentes de la descripción. Esto trae como consecuencia, en el mejor de los casos, que el algoritmo tenga un mayor costo computacional o, en un caso menos afortunado, que tenga un rendimiento menor al que se hubiera obtenido con una mejor representación. Es pertinente mencionar que el caso contrario, el incremento del número de variables, es también un escenario factible y se abordará en otra ocasión.</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>Reducir la dimensión de un problema es transformar la representación original $x \in \mathbb R^d$ a una representación $\hat x \in \mathbb R^m$ donde $m &lt; d$. Tiene dos usos: mejorar el aprendizaje, pues el objetivo es que la nueva representación $\hat x$ contenga la información necesaria para realizar la tarea de clasificación o regresión; y visualizar los datos, reduciendo a $\mathbb R^2$ o $\mathbb R^3$, donde el objetivo es que se mantengan en la reducción las características de los datos en $\mathbb R^d$.</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>La **selección** de variables, que escoge un subconjunto de las variables originales sin transformarlas, se trató en la @sec-seleccion-variables. Este capítulo trata las **proyecciones**, que construyen variables nuevas a partir de las originales: Análisis de Componentes Principales (PCA) y UMAP.</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Análisis de Componentes Principales {#sec-pca}</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>Los métodos de selección de variables (@sec-seleccion-variables) requieren un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m &lt; d$</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = <span class="sc">\{</span>x_i<span class="sc">\}</span>$ sean transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>Si suponemos que $\mathbf x \sim \mathcal N_d(\mu, \Sigma)$ y $\mathbf w \in \mathbb R^d$ entonces $\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)$ y por lo tanto $\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.$</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>Utilizando esta información se puede describir el problema como encontrar $\mathbf w_1$ tal que $\textsf{Var}(\mathbf z_1)$ sea máxima, donde $\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$ Dado que en este problema de optimización tiene múltiples soluciones, se busca además maximizar bajo la restricción de $\mid\mid \mathbf w_1 \mid\mid = 1.$ Escribiéndolo como un problema de Lagrange quedaría como: $\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$ Derivando con respecto a $\mathbf w_1$ se tiene que la solución es: $\Sigma \mathbf w_i = \alpha \mathbf w_i$ donde esto se cumple solo si $\mathbf w_1$ es un vector propio de $\Sigma$ y $\alpha$ es el valor propio correspondiente. Para encontrar $\mathbf w_2$ se requiere $\mid\mid \mathbf w_2 \mid\mid = 1$ y que los vectores sean ortogonales, es decir, $\mathbf w_2 \cdot \mathbf w_1 = 0.$ Realizando las operaciones necesarias se encuentra que $\mathbf w_2$ corresponde al segundo vector propio y así sucesivamente.</span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo - Un índice de condiciones sociales {#sec-pca-indice-territorio}</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>Una aplicación clásica de PCA en política pública es resumir varios indicadores sociales en un solo número por unidad territorial, para ordenar las unidades y focalizar programas. El índice de marginación del Consejo Nacional de Población (CONAPO) es el ejemplo más conocido en México. En sus ediciones anteriores a 2020 se calculó con la primera componente principal de un conjunto de indicadores de educación, vivienda, ingreso y tamaño de localidad, y la edición 2020 cambió al método de Distancias Ponderadas al cuadrado (DP2), entre otras razones porque los resultados de PCA no eran comparables en el tiempo <span class="co">[</span><span class="ot">@conapo2023marginacion</span><span class="co">]</span>. Esta sección construye una versión didáctica de un índice de este tipo con la primera componente principal. No es el índice oficial, pues usa sólo cuatro indicadores censales de los AGEB urbanos de Aguascalientes del conjunto Territorio (@sec-datos-territorio).</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>El siguiente código lee los datos, toma los cuatro indicadores censales y descarta los AGEB que tienen algún indicador vacío. En la última línea los indicadores se estandarizan para tener media $0$ y desviación estándar $1$, lo que es necesario porque están en escalas diferentes (años de escolaridad y porcentajes).</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>territorio <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/censo_denue_territorio.csv'</span>)</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>INDICADORES <span class="op">=</span> [<span class="st">'grado_promedio_escolaridad'</span>, <span class="st">'pct_viv_internet'</span>,</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>               <span class="st">'pct_sin_servicio_salud'</span>, <span class="st">'pct_jefatura_femenina'</span>]</span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> territorio.dropna(subset<span class="op">=</span>INDICADORES)</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> StandardScaler().fit_transform(datos[INDICADORES])</span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>El siguiente paso es ajustar PCA. Como hay cuatro indicadores se pueden calcular hasta cuatro componentes, y el atributo <span class="in">`explained_variance_ratio_`</span> contiene la proporción de la varianza que explica cada una.</span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">4</span>).fit(D)</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>pca.explained_variance_ratio_</span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>Los pesos de cada componente, es decir, los vectores $\mathbf w_i$, se encuentran en el atributo <span class="in">`components_`</span>. Los pesos de la primera componente son los siguientes.</span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>pd.Series(pca.components_[<span class="dv">0</span>], index<span class="op">=</span>INDICADORES)</span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>n_ageb_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>datos<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>n_vacios_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>territorio<span class="sc">.</span>shape[<span class="dv">0</span>] <span class="op">-</span> datos<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>var_f <span class="op">=</span> [Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> v<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>) <span class="cf">for</span> v <span class="kw">in</span> pca.explained_variance_ratio_]</span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>var12_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> pca<span class="sc">.</span>explained_variance_ratio_[:<span class="dv">2</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>peso_f <span class="op">=</span> [[Markdown(<span class="ss">f'$</span><span class="sc">{</span>w<span class="sc">:0.2f}</span><span class="ss">$'</span>) <span class="cf">for</span> w <span class="kw">in</span> comp] <span class="cf">for</span> comp <span class="kw">in</span> pca.components_]</span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a>Se usan <span class="in">`{python} n_ageb_f`</span> AGEB, después de descartar los que tienen algún indicador vacío (<span class="in">`{python} n_vacios_f`</span> en total). La primera componente explica <span class="in">`{python} var_f[0]`</span> de la varianza y la segunda <span class="in">`{python} var_f[1]`</span>, por lo que entre las dos conservan <span class="in">`{python} var12_f`</span>. En la primera componente el grado promedio de escolaridad y el porcentaje de viviendas con internet tienen pesos de <span class="in">`{python} peso_f[0][0]`</span> y <span class="in">`{python} peso_f[0][1]`</span>, mucho mayores en magnitud que los del porcentaje de población sin servicio de salud (<span class="in">`{python} peso_f[0][2]`</span>) y de hogares con jefatura femenina (<span class="in">`{python} peso_f[0][3]`</span>). Es decir, la primera componente mide sobre todo escolaridad y conectividad. La segunda componente, en cambio, tiene sus pesos mayores en la falta de servicio de salud (<span class="in">`{python} peso_f[1][2]`</span>) y en la jefatura femenina (<span class="in">`{python} peso_f[1][3]`</span>), lo que muestra que esos dos indicadores describen otra dimensión de las condiciones del AGEB.</span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>El signo de una componente principal es arbitrario, pues $\mathbf w_1$ y $-\mathbf w_1$ explican la misma varianza. Para que el índice crezca con el rezago, como el índice de marginación, se elige el signo que hace negativo el peso de la escolaridad, y el índice de cada AGEB es su valor en la primera componente con ese signo.</span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a>signo <span class="op">=</span> <span class="op">-</span>np.sign(pca.components_[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> signo <span class="op">*</span> pca.transform(D)[:, <span class="dv">0</span>]</span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>rezago <span class="op">=</span> datos.assign(indice<span class="op">=</span>indice).sort_values(<span class="st">'indice'</span>)</span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>esc_alto_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>rezago<span class="sc">.</span>grado_promedio_escolaridad<span class="sc">.</span>iloc[<span class="op">-</span><span class="dv">1</span>]<span class="sc">:0.2f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>esc_bajo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>rezago<span class="sc">.</span>grado_promedio_escolaridad<span class="sc">.</span>iloc[<span class="dv">0</span>]<span class="sc">:0.2f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>int_alto_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>rezago<span class="sc">.</span>pct_viv_internet<span class="sc">.</span>iloc[<span class="op">-</span><span class="dv">1</span>]<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>int_bajo_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>rezago<span class="sc">.</span>pct_viv_internet<span class="sc">.</span>iloc[<span class="dv">0</span>]<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a>El AGEB con el índice más alto, es decir, con más rezago, tiene un grado promedio de escolaridad de <span class="in">`{python} esc_alto_f`</span> y <span class="in">`{python} int_alto_f`</span> de viviendas con internet, mientras que el de índice más bajo tiene <span class="in">`{python} esc_bajo_f`</span> y <span class="in">`{python} int_bajo_f`</span>. La @fig-pca-territorio muestra los AGEB en $\mathbb R^2$ con las dos primeras componentes, coloreados por el grado promedio de escolaridad. Se observa que la escolaridad cambia a lo largo del eje horizontal, que es la primera componente, y no a lo largo del vertical.</span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante PCA de los cuatro indicadores censales de los AGEB de Aguascalientes, coloreada por el grado promedio de escolaridad</span></span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-pca-territorio</span></span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(D)</span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(<span class="bu">dict</span>(x<span class="op">=</span>signo <span class="op">*</span> Xn[:, <span class="dv">0</span>], y<span class="op">=</span>Xn[:, <span class="dv">1</span>],</span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a>                       escolaridad<span class="op">=</span>datos.grado_promedio_escolaridad.to_numpy()))</span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>,</span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'escolaridad'</span>, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Primera componente (índice de rezago)'</span>,</span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a>        ylabel<span class="op">=</span><span class="st">'Segunda componente'</span>)</span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a>fig._legend.set_title(<span class="st">'Escolaridad'</span>)</span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a>El índice resume cuatro indicadores en uno solo a cambio de perder la información que no está en la primera componente. En este caso esa pérdida es grande, pues la segunda componente explica una parte importante de la varianza y no se refleja en el índice. Además, los pesos dependen de los datos con los que se ajusta PCA, de modo que un índice calculado con otro censo o con otras unidades no es directamente comparable, que es precisamente la limitación que llevó a CONAPO a cambiar de método.</span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a><span class="fu">## UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction {#sec-umap-visualizacion}</span></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a>En esta sección se presenta el uso de UMAP propuesto por @UMAP. UMAP es una técnica no lineal para reducir la dimensión y que con dimensiones bajas ($d=2$) permite tener una visualización de los datos. El ejemplo que se realizará es dibujar un mapa de los instrumentos jurídicos federales de México (leyes, reglamentos, lineamientos y tratados) a partir de la matriz de similitud del Atlas de LegalIA, descrita en @sec-datos-instrumentos. En esa matriz, el renglón $i$ describe al instrumento $i$ por los instrumentos donde están los textos más parecidos a los suyos (ver @sec-datos-instrumentos-matriz). Los datos se leen con las siguientes instrucciones y con ellos se arma la matriz densa <span class="in">`A`</span>.</span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>instrumentos <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/legalia_instrumentos.csv'</span>)</span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>similitud <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/legalia_similitud.csv.gz'</span>)</span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> instrumentos.shape[<span class="dv">0</span>]</span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.zeros((n, n))</span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a>A[similitud.origen, similitud.destino] <span class="op">=</span> similitud.peso</span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a>n_inst_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a>contados <span class="op">=</span> instrumentos.fragmentos_contados</span>
+<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a>max_contados_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>contados<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a>mediana_contados_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>contados<span class="sc">.</span>median()<span class="sc">:0.0f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a>inst_max <span class="op">=</span> instrumentos.nombre[contados.idxmax()]</span>
+<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a>inst_max_f <span class="op">=</span> Markdown(re.sub(<span class="vs">r'</span><span class="dv">^</span><span class="kw">(</span><span class="pp">[A-ZÁÉÍÓÚÑ]</span><span class="op">+</span><span class="kw">)</span><span class="vs">'</span>, <span class="kw">lambda</span> m: m.group(<span class="dv">1</span>).capitalize(), inst_max))</span>
+<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a>Cada uno de los <span class="in">`{python} n_inst_f`</span> instrumentos es un vector de <span class="in">`{python} n_inst_f`</span> números. Cada renglón suma los fragmentos contados de su instrumento, y estos van de <span class="in">`{python} max_contados_f`</span> en el caso del <span class="in">`{python} inst_max_f`</span> a unos cuantos, con una mediana de <span class="in">`{python} mediana_contados_f`</span>. Si se usaran los renglones así, la distancia entre dos instrumentos dependería sobre todo de su tamaño. Por eso cada renglón se normaliza para tener norma $1$, de modo que un código de miles de artículos y un reglamento de veinte quedan comparables y lo que importa es **hacia dónde** apuntan sus fragmentos y no cuántos son.</span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> normalize(A)</span>
+<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a>Con el objetivo de ilustrar la diferencia entre una técnica de proyección lineal como PCA con respecto a una técnica no lineal, la @fig-pca-instrumentos presenta la proyección de los instrumentos utilizando PCA, con cada punto coloreado según su colección.</span>
+<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-189"><a href="#cb15-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante PCA de la matriz de similitud de los instrumentos jurídicos federales</span></span>
+<span id="cb15-190"><a href="#cb15-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-pca-instrumentos</span></span>
+<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> decomposition.PCA(n_components<span class="op">=</span><span class="dv">2</span>).fit(X)</span>
+<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> pca.transform(X)</span>
+<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(Xn, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Colección'</span>] <span class="op">=</span> instrumentos.coleccion</span>
+<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, s<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Colección'</span>, hue_order<span class="op">=</span>COLECCIONES,</span>
+<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>PALETA_COLECCION)</span>
+<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-204"><a href="#cb15-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a>var_inst_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> pca<span class="sc">.</span>explained_variance_ratio_<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
+<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a>Las dos componentes conservan apenas <span class="in">`{python} var_inst_f`</span> de la varianza de los renglones normalizados. La mayoría de los instrumentos queda amontonada en una región pequeña y sólo unos cuantos se alejan a lo largo de los ejes, por lo que la proyección lineal no deja ver cómo se organizan los instrumentos.</span>
+<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a>UMAP genera una proyección que intuitivamente trata de preservar la distancia que existe entre los $K$ vecinos cercanos en la dimensión original como en la dimensión destino. Por este motivo un parámetro importante de UMAP es la cantidad de vecinos, que tiene el efecto de priorizar la estructura global o local de los datos. En el siguiente código se realiza una exploración de este parámetro generando una visualización para $K=<span class="co">[</span><span class="ot">4, 8, 16, 32</span><span class="co">]</span>.$ Se usan los mismos parámetros que el Atlas de LegalIA, es decir, la distancia coseno (<span class="in">`metric='cosine'`</span>), <span class="in">`min_dist=0.1`</span> y una semilla fija (<span class="in">`random_state=0`</span>) para que el resultado sea el mismo cada vez que se ejecuta, de modo que las figuras pueden compararse con el <span class="co">[</span><span class="ot">atlas interactivo</span><span class="co">](https://ingeotec.github.io/LegalIA/pages/atlas.html)</span>, aunque no tienen que ser idénticas.</span>
+<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-218"><a href="#cb15-218" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-219"><a href="#cb15-219" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> K <span class="kw">in</span> [<span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>]:</span>
+<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a>    reducer <span class="op">=</span> umap.UMAP(n_components<span class="op">=</span><span class="dv">2</span>, n_neighbors<span class="op">=</span>K, min_dist<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a>                        metric<span class="op">=</span><span class="st">'cosine'</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a>    low_dim <span class="op">=</span> reducer.fit_transform(X)</span>
+<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> pd.DataFrame(low_dim, columns<span class="op">=</span>[<span class="st">'x'</span>, <span class="st">'y'</span>])</span>
+<span id="cb15-226"><a href="#cb15-226" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'Colección'</span>] <span class="op">=</span> instrumentos.coleccion</span>
+<span id="cb15-227"><a href="#cb15-227" aria-hidden="true" tabindex="-1"></a>    _[<span class="st">'K'</span>] <span class="op">=</span> K</span>
+<span id="cb15-228"><a href="#cb15-228" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat((df, _))</span>
+<span id="cb15-229"><a href="#cb15-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-230"><a href="#cb15-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-231"><a href="#cb15-231" aria-hidden="true" tabindex="-1"></a>La @fig-umap-instrumentos-k muestra las diferentes visualizaciones cuando el número de vecinos cambia en UMAP. Con pocos vecinos UMAP prioriza la estructura local, por lo que aparecen muchos grupos pequeños y separados. Conforme aumenta $K$ los grupos pequeños se integran en regiones más amplias. En todos los casos los tratados ocupan una región propia del mapa, separada de la que comparten las otras tres colecciones.</span>
+<span id="cb15-232"><a href="#cb15-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-235"><a href="#cb15-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-236"><a href="#cb15-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante UMAP de los instrumentos jurídicos federales variando el número de vecinos</span></span>
+<span id="cb15-237"><a href="#cb15-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-umap-instrumentos-k</span></span>
+<span id="cb15-238"><a href="#cb15-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb15-239"><a href="#cb15-239" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(df, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, s<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb15-240"><a href="#cb15-240" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Colección'</span>, hue_order<span class="op">=</span>COLECCIONES,</span>
+<span id="cb15-241"><a href="#cb15-241" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>PALETA_COLECCION, col<span class="op">=</span><span class="st">'K'</span>, col_wrap<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb15-242"><a href="#cb15-242" aria-hidden="true" tabindex="-1"></a>                  facet_kws<span class="op">=</span><span class="bu">dict</span>(sharex<span class="op">=</span><span class="va">False</span>, sharey<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb15-243"><a href="#cb15-243" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-244"><a href="#cb15-244" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-245"><a href="#cb15-245" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-246"><a href="#cb15-246" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb15-247"><a href="#cb15-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-248"><a href="#cb15-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-251"><a href="#cb15-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-252"><a href="#cb15-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-253"><a href="#cb15-253" aria-hidden="true" tabindex="-1"></a>coleccion <span class="op">=</span> instrumentos.coleccion.to_numpy()</span>
+<span id="cb15-254"><a href="#cb15-254" aria-hidden="true" tabindex="-1"></a>cercano <span class="op">=</span> A.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-255"><a href="#cb15-255" aria-hidden="true" tabindex="-1"></a>tratados <span class="op">=</span> coleccion <span class="op">==</span> <span class="st">'tratados'</span></span>
+<span id="cb15-256"><a href="#cb15-256" aria-hidden="true" tabindex="-1"></a>n_trat_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>tratados<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-257"><a href="#cb15-257" aria-hidden="true" tabindex="-1"></a>n_trat_trat_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>(coleccion[cercano][tratados] <span class="op">==</span> <span class="st">"tratados"</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-258"><a href="#cb15-258" aria-hidden="true" tabindex="-1"></a>misma_f <span class="op">=</span> {c: Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> (coleccion[cercano][coleccion <span class="op">==</span> c] <span class="op">==</span> c)<span class="sc">.</span>mean()<span class="sc">:0.1f}</span><span class="ch">\\</span><span class="ss">%$'</span>)</span>
+<span id="cb15-259"><a href="#cb15-259" aria-hidden="true" tabindex="-1"></a>           <span class="cf">for</span> c <span class="kw">in</span> COLECCIONES}</span>
+<span id="cb15-260"><a href="#cb15-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-261"><a href="#cb15-261" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> titulo(nombre):</span>
+<span id="cb15-262"><a href="#cb15-262" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> re.sub(<span class="vs">r'</span><span class="dv">^</span><span class="kw">(</span><span class="pp">[A-ZÁÉÍÓÚÑ]</span><span class="op">+</span><span class="kw">)</span><span class="vs">'</span>, <span class="kw">lambda</span> m: m.group(<span class="dv">1</span>).capitalize(), nombre)</span>
+<span id="cb15-263"><a href="#cb15-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-264"><a href="#cb15-264" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vecino(clave):</span>
+<span id="cb15-265"><a href="#cb15-265" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> <span class="bu">int</span>(instrumentos.index[instrumentos.clave <span class="op">==</span> clave][<span class="dv">0</span>])</span>
+<span id="cb15-266"><a href="#cb15-266" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> i, Markdown(titulo(instrumentos.nombre[cercano[i]]))</span>
+<span id="cb15-267"><a href="#cb15-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-268"><a href="#cb15-268" aria-hidden="true" tabindex="-1"></a>i_cpeum, cpeum_vecino_f <span class="op">=</span> vecino(<span class="st">'cpeum'</span>)</span>
+<span id="cb15-269"><a href="#cb15-269" aria-hidden="true" tabindex="-1"></a>i_lonf, lonf_vecino_f <span class="op">=</span> vecino(<span class="st">'lonf'</span>)</span>
+<span id="cb15-270"><a href="#cb15-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-271"><a href="#cb15-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-272"><a href="#cb15-272" aria-hidden="true" tabindex="-1"></a>Que los tratados ocupen una región propia se explica con la matriz. De los <span class="in">`{python} n_trat_f`</span> tratados, en <span class="in">`{python} n_trat_trat_f`</span> el instrumento hacia el que apuntan más fragmentos, es decir, <span class="in">`A[i].argmax()`</span>, es otro tratado. En cambio, esa proporción es de <span class="in">`{python} misma_f['leyes']`</span> para las leyes, <span class="in">`{python} misma_f['reglamentos']`</span> para los reglamentos y <span class="in">`{python} misma_f['lineamientos']`</span> para los lineamientos, que por eso se mezclan entre sí en el mapa.</span>
+<span id="cb15-273"><a href="#cb15-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-274"><a href="#cb15-274" aria-hidden="true" tabindex="-1"></a>La @fig-umap-instrumentos-k16 muestra con mayor detalle la visualización con $K=16$, que es con la que abre el atlas, y marca tres instrumentos. El instrumento hacia el que apuntan más fragmentos de la Constitución es la <span class="in">`{python} cpeum_vecino_f`</span>, y en el caso de la Ley Orgánica de Nacional Financiera es la <span class="in">`{python} lonf_vecino_f`</span>. Este último es un ejemplo de las islas de familias que se observan en el mapa, en este caso las leyes orgánicas de los bancos de desarrollo, cuyos textos son muy parecidos entre sí.</span>
+<span id="cb15-275"><a href="#cb15-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-278"><a href="#cb15-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-279"><a href="#cb15-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Proyección mediante UMAP de los instrumentos jurídicos federales con dieciséis vecinos</span></span>
+<span id="cb15-280"><a href="#cb15-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-umap-instrumentos-k16</span></span>
+<span id="cb15-281"><a href="#cb15-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb15-282"><a href="#cb15-282" aria-hidden="true" tabindex="-1"></a>k16 <span class="op">=</span> df[df.K <span class="op">==</span> <span class="dv">16</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-283"><a href="#cb15-283" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> sns.relplot(k16, kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'x'</span>, y<span class="op">=</span><span class="st">'y'</span>, s<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb15-284"><a href="#cb15-284" aria-hidden="true" tabindex="-1"></a>                  hue<span class="op">=</span><span class="st">'Colección'</span>, hue_order<span class="op">=</span>COLECCIONES,</span>
+<span id="cb15-285"><a href="#cb15-285" aria-hidden="true" tabindex="-1"></a>                  palette<span class="op">=</span>PALETA_COLECCION, height<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb15-286"><a href="#cb15-286" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.ax</span>
+<span id="cb15-287"><a href="#cb15-287" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> clave, etiqueta <span class="kw">in</span> [(<span class="st">'cpeum'</span>, <span class="st">'Constitución'</span>),</span>
+<span id="cb15-288"><a href="#cb15-288" aria-hidden="true" tabindex="-1"></a>                        (<span class="st">'lgipe'</span>, <span class="st">'LGIPE'</span>),</span>
+<span id="cb15-289"><a href="#cb15-289" aria-hidden="true" tabindex="-1"></a>                        (<span class="st">'lonf'</span>, <span class="st">'Nacional Financiera'</span>)]:</span>
+<span id="cb15-290"><a href="#cb15-290" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> <span class="bu">int</span>(instrumentos.index[instrumentos.clave <span class="op">==</span> clave][<span class="dv">0</span>])</span>
+<span id="cb15-291"><a href="#cb15-291" aria-hidden="true" tabindex="-1"></a>    ax.scatter(k16.x[i], k16.y[i], s<span class="op">=</span><span class="dv">60</span>, facecolors<span class="op">=</span><span class="st">'none'</span>,</span>
+<span id="cb15-292"><a href="#cb15-292" aria-hidden="true" tabindex="-1"></a>               edgecolors<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb15-293"><a href="#cb15-293" aria-hidden="true" tabindex="-1"></a>    ax.annotate(etiqueta, (k16.x[i], k16.y[i]), xytext<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">5</span>),</span>
+<span id="cb15-294"><a href="#cb15-294" aria-hidden="true" tabindex="-1"></a>                textcoords<span class="op">=</span><span class="st">'offset points'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb15-295"><a href="#cb15-295" aria-hidden="true" tabindex="-1"></a>fig.tick_params(bottom<span class="op">=</span><span class="va">False</span>, top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-296"><a href="#cb15-296" aria-hidden="true" tabindex="-1"></a>                left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-297"><a href="#cb15-297" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-298"><a href="#cb15-298" aria-hidden="true" tabindex="-1"></a>fig.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="va">None</span>, ylabel<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb15-299"><a href="#cb15-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-300"><a href="#cb15-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-301"><a href="#cb15-301" aria-hidden="true" tabindex="-1"></a>El mapa debe leerse con cuidado. Que dos instrumentos estén cerca dice que tienen textos parecidos, no que estén emparentados jurídicamente, pues la matriz es una heurística (@sec-datos-instrumentos-matriz). Además, UMAP preserva las vecindades, pero no las distancias entre grupos lejanos, por lo que la separación entre dos regiones distantes del mapa no se interpreta. Finalmente, como lo muestra la @fig-umap-instrumentos-k, el dibujo cambia con $K$ aunque los datos sean los mismos.</span>
+<span id="cb15-302"><a href="#cb15-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-303"><a href="#cb15-303" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb15-304"><a href="#cb15-304" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb15-305"><a href="#cb15-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-306"><a href="#cb15-306" aria-hidden="true" tabindex="-1"></a>La matriz <span class="in">`A`</span> es dirigida, es decir, en general $A_{ij} \neq A_{ji}$. Repite el mapa de la @fig-umap-instrumentos-k16 con la matriz simetrizada $A + A^\intercal$, normalizando sus renglones de la misma manera, y describe qué cambia. Después repítelo con los renglones de <span class="in">`A`</span> sin normalizar y explica, con la diferencia de tamaño entre los instrumentos, por qué el mapa resultante es distinto.</span>
+<span id="cb15-307"><a href="#cb15-307" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-308"><a href="#cb15-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-309"><a href="#cb15-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-reduccion-dimension}</span></span>
+<span id="cb15-310"><a href="#cb15-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a>Reducir la dimensión es transformar la representación original en una con menos variables, ya sea para mejorar el aprendizaje o para visualizar los datos. A diferencia de la selección de variables (@sec-seleccion-variables), que escoge un subconjunto de las variables originales, las proyecciones construyen variables nuevas a partir de ellas. El Análisis de Componentes Principales (@sec-pca) encuentra las direcciones de mayor varianza y produce una proyección lineal, que también sirve para resumir varios indicadores en un índice, mientras que UMAP (@sec-umap-visualizacion) busca preservar la vecindad de los datos y puede revelar estructuras que una proyección lineal no muestra. La @fig-umap-instrumentos-k muestra además que el resultado de UMAP depende de sus hiperparámetros, por lo que debe leerse con cautela.</span>
+<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a>Cuando una visualización sugiere que los datos forman grupos, el paso siguiente es encontrarlos de manera formal, lo que se hace con los métodos de agrupamiento de @sec-agrupamiento.</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
