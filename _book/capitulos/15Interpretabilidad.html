@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.20">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>16&nbsp; Interpretabilidad y Equidad – Aprendizaje Computacional</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../capitulos/18Referencias.html" rel="next">
+<link href="../capitulos/14Comparacion.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-17888a1159294d3eb470f19f6f52f5a5.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-d3f7f8e73c8d287b30bcf59c2b563615.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Aprendizaje Computacional</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ediciones" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ediciones</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-ediciones">    
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/">
+ <span class="dropdown-text">Vigente</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/mcdi/">
+ <span class="dropdown-text">MCDI (histórica)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/dev/">
+ <span class="dropdown-text">Borrador</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/15Interpretabilidad.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Interpretabilidad y Equidad</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/01Intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/02Rendimiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Rendimiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03Regresion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regresión y Regularización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03SeleccionVariables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Selección de Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/04Teoria_Decision.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/05Parametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/06NoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/07Lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/08Optimizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Optimización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/09Arboles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/10Ensambles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ensambles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/11Redes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/12ReduccionDim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/13Agrupamiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/14Comparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/15Interpretabilidad.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Interpretabilidad y Equidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/18Referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/19Estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/20ConjuntosDatos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Conjunto de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
+  <li><a href="#sec-intro-15" id="toc-sec-intro-15" class="nav-link" data-scroll-target="#sec-intro-15"><span class="header-section-number">16.1</span> Introducción</a></li>
+  <li><a href="#sec-interpretabilidad-modelo" id="toc-sec-interpretabilidad-modelo" class="nav-link" data-scroll-target="#sec-interpretabilidad-modelo"><span class="header-section-number">16.2</span> Modelo de Referencia</a></li>
+  <li><a href="#sec-importancia-variables" id="toc-sec-importancia-variables" class="nav-link" data-scroll-target="#sec-importancia-variables"><span class="header-section-number">16.3</span> Importancia de Variables</a>
+  <ul class="collapse">
+  <li><a href="#sec-importancia-impureza" id="toc-sec-importancia-impureza" class="nav-link" data-scroll-target="#sec-importancia-impureza"><span class="header-section-number">16.3.1</span> Importancia por Impureza</a></li>
+  <li><a href="#sec-importancia-permutacion" id="toc-sec-importancia-permutacion" class="nav-link" data-scroll-target="#sec-importancia-permutacion"><span class="header-section-number">16.3.2</span> Importancia por Permutación</a></li>
+  </ul></li>
+  <li><a href="#sec-dependencia-parcial" id="toc-sec-dependencia-parcial" class="nav-link" data-scroll-target="#sec-dependencia-parcial"><span class="header-section-number">16.4</span> Dependencia Parcial</a></li>
+  <li><a href="#sec-shapley" id="toc-sec-shapley" class="nav-link" data-scroll-target="#sec-shapley"><span class="header-section-number">16.5</span> Valores de Shapley</a>
+  <ul class="collapse">
+  <li><a href="#sec-shap" id="toc-sec-shap" class="nav-link" data-scroll-target="#sec-shap"><span class="header-section-number">16.5.1</span> La librería shap</a></li>
+  </ul></li>
+  <li><a href="#sec-resumen-interpretabilidad" id="toc-sec-resumen-interpretabilidad" class="nav-link" data-scroll-target="#sec-resumen-interpretabilidad"><span class="header-section-number">16.6</span> Resumen</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-interpretabilidad-equidad" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Interpretabilidad y Equidad</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Código</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Mostrar todo el código</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Ocultar todo el código</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">Ver el código fuente</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>El <strong>objetivo</strong> de la unidad es conocer y aplicar técnicas para interpretar las predicciones de un modelo, tanto de manera global como para una observación particular.</p>
+<section id="paquetes-usados" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
+<div id="71fb91eb" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> permutation_importance</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> PartialDependenceDisplay</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shap</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-intro-15" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="sec-intro-15"><span class="header-section-number">16.1</span> Introducción</h2>
+<p>El capítulo de ensambles (<a href="10Ensambles.html" class="quarto-xref"><span>Capítulo 11</span></a>) terminó con una observación incómoda: un bosque aleatorio predice mejor que un árbol de decisión, pero ya no se puede leer. Un árbol pequeño se entiende siguiendo sus reglas de la raíz a una hoja; un bosque de cientos de árboles, cada uno con miles de nodos, no. Es el dilema de Occam que describe <span class="citation" data-cites="breiman2001statistical">Breiman (<a href="18Referencias.html#ref-breiman2001statistical" role="doc-biblioref">2001b</a>)</span>: entre los modelos disponibles, los más exactos suelen ser los más difíciles de entender. El mismo autor señala además el <strong>efecto Rashomon</strong>: con frecuencia hay muchos modelos distintos, que usan las variables de maneras diferentes, con prácticamente el mismo rendimiento. Eso hace frágil cualquier interpretación que se apoye en un solo modelo, porque otro igual de bueno podría contar una historia diferente.</p>
+<p>En política pública la pregunta no es académica. Una regla de focalización decide qué hogares reciben un apoyo y cuáles no. Quien la opera debe poder explicar qué variables mueven la decisión, si esas variables son razonables y, ante el reclamo de un hogar concreto, por qué ese hogar quedó dentro o fuera del programa. Un modelo que no se puede explicar es difícil de auditar, de defender y de corregir.</p>
+<p>Conviene separar dos preguntas. La pregunta <strong>global</strong> es qué variables usa el modelo en general y cómo cambia su predicción cuando cambian; se responde con la importancia de variables y con la dependencia parcial. La pregunta <strong>local</strong> es por qué el modelo hizo una predicción particular; se responde con los valores de Shapley. Una alternativa a explicar un modelo opaco es usar uno interpretable por construcción, como un árbol pequeño (<a href="09Arboles.html" class="quarto-xref"><span>Capítulo 10</span></a>) o una regresión con pocas variables (<a href="03Regresion.html" class="quarto-xref"><span>Capítulo 3</span></a>); <span class="citation" data-cites="rudin2019stop">Rudin (<a href="18Referencias.html#ref-rudin2019stop" role="doc-biblioref">2019</a>)</span> recomienda preferirlos en decisiones de alto impacto cuando rinden parecido al modelo opaco. Una referencia general sobre el tema es <span class="citation" data-cites="molnar2022interpretable">Molnar (<a href="18Referencias.html#ref-molnar2022interpretable" role="doc-biblioref">2022</a>)</span>.</p>
+<p>La advertencia central del capítulo es que todas estas técnicas explican <strong>al modelo</strong>, no al mundo. Que una variable sea importante para predecir no significa que modificarla modifique el resultado. Es la misma distinción entre predecir e inferir que se discutió en <a href="01Intro.html#sec-prediccion-vs-causal" class="quarto-xref"><span>Sección 1.2</span></a> y al interpretar los coeficientes de una regresión en <a href="03Regresion.html#sec-coeficientes-regularizados" class="quarto-xref"><span>Sección 3.8</span></a>.</p>
+</section>
+<section id="sec-interpretabilidad-modelo" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="sec-interpretabilidad-modelo"><span class="header-section-number">16.2</span> Modelo de Referencia</h2>
+<p>Para tener un ejemplo concreto se usa el problema de focalización (<a href="20ConjuntosDatos.html#sec-datos-pobreza" class="quarto-xref"><span>Sección B.1.1</span></a>): predecir si un hogar es pobre por ingresos a partir de sus características, con un bosque aleatorio como el de <a href="10Ensambles.html" class="quarto-xref"><span>Capítulo 11</span></a>. La preparación de los datos cambia respecto a los capítulos anteriores. Ahí cada variable de texto se convertía en variables indicadoras, una columna por categoría; aquí cada variable de texto se sustituye por un código entero, de manera que cada variable original quede en <strong>una sola columna</strong> y la interpretación se haga por variable y no por categoría. Los árboles solo necesitan poder ordenar los valores de una variable para cortarla, por eso el código entero es suficiente; no sería adecuado para un modelo lineal, que interpretaría el código como una cantidad. La partición es la misma de antes: 20% de los hogares para prueba, estratificada por la clase y con <code>random_state=0</code>.</p>
+<div id="a368a522" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/enigh_pobreza.csv.gz'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pobreza.drop(columns<span class="op">=</span>[<span class="st">'pobre_ingresos'</span>, <span class="st">'factor'</span>])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>texto <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> X.columns</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>         <span class="cf">if</span> <span class="kw">not</span> pd.api.types.is_numeric_dtype(X[c])]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> texto:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    X[c] <span class="op">=</span> X[c].astype(<span class="st">'category'</span>).cat.codes</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> X.astype(<span class="bu">float</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> pobreza[<span class="st">'pobre_ingresos'</span>].to_numpy()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>, stratify<span class="op">=</span>y)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>bosque <span class="op">=</span> RandomForestClassifier(min_samples_split<span class="op">=</span><span class="dv">9</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                                random_state<span class="op">=</span><span class="dv">0</span>).fit(T, y_t)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> bosque.predict_proba(G)[:, <span class="dv">1</span>]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> bosque.predict(G)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> recall_score(y_g, hy, average<span class="op">=</span><span class="st">'macro'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El conjunto tiene <span class="math inline">\(89,988\)</span> hogares y <span class="math inline">\(42\)</span> variables predictoras, de las cuales <span class="math inline">\(16\)</span> son de texto y se convirtieron en códigos enteros. <code>T</code> y <code>G</code> son <code>DataFrame</code>, así que conservan los nombres de las variables, que se usan en todas las figuras del capítulo. La conversión <code>X.astype(float)</code> deja todas las columnas como números reales, que es lo que esperan algunas de las funciones de las secciones siguientes. El bosque tiene un macro-recall (<a href="02Rendimiento.html#sec-macro" class="quarto-xref"><span>Sección 2.3.6</span></a>) de <span class="math inline">\(0.7360\)</span> en el conjunto de prueba, prácticamente el mismo que se obtiene con variables indicadoras.</p>
+<p>Varias de las técnicas del capítulo vuelven a predecir el conjunto de prueba muchas veces con los datos modificados. Para que el costo de cómputo sea razonable, en las secciones siguientes se usa una muestra de 3,000 hogares de prueba.</p>
+<div id="0bd603dd" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>G_m <span class="op">=</span> G.sample(<span class="dv">3000</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y_m <span class="op">=</span> y_g[G.index.get_indexer(G_m.index)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-importancia-variables" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="sec-importancia-variables"><span class="header-section-number">16.3</span> Importancia de Variables</h2>
+<p>La primera pregunta global es cuánto pesa cada variable en las predicciones del modelo. Hay dos medidas usuales para un bosque: la que se obtiene de la estructura de los árboles, a partir de la reducción de impureza, y la que se obtiene midiendo cuánto empeora el rendimiento cuando se destruye la información de una variable, la importancia por permutación.</p>
+<section id="sec-importancia-impureza" class="level3" data-number="16.3.1">
+<h3 data-number="16.3.1" class="anchored" data-anchor-id="sec-importancia-impureza"><span class="header-section-number">16.3.1</span> Importancia por Impureza</h3>
+<p>En un árbol de decisión cada corte reduce la impureza de los nodos, medida con la entropía o con el índice de Gini (<a href="09Arboles.html" class="quarto-xref"><span>Capítulo 10</span></a>). La importancia de la variable <span class="math inline">\(j\)</span> en un árbol es la suma de las reducciones de impureza de los nodos donde se cortó con esa variable, ponderada por la fracción de ejemplos que llegan a cada nodo; en un bosque se promedia sobre los <span class="math inline">\(B\)</span> árboles y se normaliza para que la suma sobre las variables sea <span class="math inline">\(1\)</span>:</p>
+<p><span id="eq-importancia-impureza"><span class="math display">\[
+I_j \propto \frac{1}{B} \sum_{b=1}^B \sum_{t \in \mathcal T_b(j)} \frac{N_t}{N} \left[ H(t) - \frac{N_{t_\textsf{izq}}}{N_t} H(t_\textsf{izq}) - \frac{N_{t_\textsf{der}}}{N_t} H(t_\textsf{der}) \right],
+\tag{16.1}\]</span></span></p>
+<p>donde <span class="math inline">\(\mathcal T_b(j)\)</span> son los nodos del árbol <span class="math inline">\(b\)</span> que cortan con la variable <span class="math inline">\(j\)</span>, <span class="math inline">\(H\)</span> es la impureza, <span class="math inline">\(N_t\)</span> es el número de ejemplos que llegan al nodo <span class="math inline">\(t\)</span>, y <span class="math inline">\(t_\textsf{izq}\)</span> y <span class="math inline">\(t_\textsf{der}\)</span> son sus hijos. scikit-learn la calcula al entrenar y la guarda en el atributo <code>feature_importances_</code>.</p>
+<div id="487a606e" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>imp_impureza <span class="op">=</span> pd.Series(bosque.feature_importances_,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                         index<span class="op">=</span>X.columns)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Esta medida tiene dos limitaciones. La primera es que se calcula con el conjunto de entrenamiento, de manera que no dice nada sobre el rendimiento del modelo fuera de muestra: una variable con la que el bosque se sobreajusta puede aparecer como muy importante. La segunda es que favorece a las variables con muchos valores distintos, porque ofrecen más cortes posibles y alguno de ellos reducirá la impureza aunque sea por azar (<span class="citation" data-cites="strobl2007bias">Strobl et&nbsp;al. (<a href="18Referencias.html#ref-strobl2007bias" role="doc-biblioref">2007</a>)</span>).</p>
+</section>
+<section id="sec-importancia-permutacion" class="level3" data-number="16.3.2">
+<h3 data-number="16.3.2" class="anchored" data-anchor-id="sec-importancia-permutacion"><span class="header-section-number">16.3.2</span> Importancia por Permutación</h3>
+<p>La importancia por permutación, propuesta por <span class="citation" data-cites="breiman2001randomforest">Breiman (<a href="18Referencias.html#ref-breiman2001randomforest" role="doc-biblioref">2001a</a>)</span>, se mide en el conjunto de prueba. Se calcula el rendimiento del modelo, se permutan al azar los valores de una variable, lo que rompe su relación con la clase sin cambiar su distribución, y se vuelve a medir el rendimiento. Si el modelo depende de esa variable, el rendimiento cae; la caída es la importancia. Como la permutación es aleatoria, se repite <span class="math inline">\(R\)</span> veces y se promedia:</p>
+<p><span id="eq-importancia-permutacion"><span class="math display">\[
+I_j = s - \frac{1}{R}\sum_{r=1}^R s_{j,r},
+\tag{16.2}\]</span></span></p>
+<p>donde <span class="math inline">\(s\)</span> es el macro-recall original y <span class="math inline">\(s_{j,r}\)</span> es el macro-recall con la variable <span class="math inline">\(j\)</span> permutada en la repetición <span class="math inline">\(r\)</span>. El siguiente código hace una repetición a mano con la variable <code>integrantes</code>. <code>base</code> es el macro-recall en la muestra, <code>G_perm</code> es una copia de la muestra con la columna <code>integrantes</code> permutada y <code>caida</code> es la diferencia de rendimientos.</p>
+<div id="82eb5f4f" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">0</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> recall_score(y_m, bosque.predict(G_m), average<span class="op">=</span><span class="st">'macro'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>G_perm <span class="op">=</span> G_m.copy()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>G_perm[<span class="st">'integrantes'</span>] <span class="op">=</span> rng.permutation(G_m[<span class="st">'integrantes'</span>].to_numpy())</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>caida <span class="op">=</span> base <span class="op">-</span> recall_score(y_m, bosque.predict(G_perm),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                            average<span class="op">=</span><span class="st">'macro'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El macro-recall en la muestra es <span class="math inline">\(0.7371\)</span> y al permutar <code>integrantes</code> cae <span class="math inline">\(0.0180\)</span>. La función <code>permutation_importance</code> hace lo mismo para todas las variables, con <code>n_repeats</code> repeticiones cada una; el parámetro <code>scoring</code> indica la medida de rendimiento.</p>
+<div id="1c0a09fe" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>perm <span class="op">=</span> permutation_importance(bosque, G_m, y_m, n_repeats<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                              random_state<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                              scoring<span class="op">=</span><span class="st">'recall_macro'</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>imp_perm <span class="op">=</span> pd.Series(perm.importances_mean, index<span class="op">=</span>X.columns)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-fig-importancia-variables" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, (imp, titulo) <span class="kw">in</span> <span class="bu">enumerate</span>([(imp_impureza, <span class="st">'Impureza'</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                   (imp_perm, <span class="st">'Permutación'</span>)]):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    top <span class="op">=</span> imp.sort_values(ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    sns.barplot(x<span class="op">=</span>top.to_numpy(), y<span class="op">=</span>top.index, ax<span class="op">=</span>ax[k])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    ax[k].set_title(titulo)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-importancia-variables" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-importancia-variables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="15Interpretabilidad_files/figure-html/fig-importancia-variables-output-1.png" width="862" height="374" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-importancia-variables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;16.1: Las diez variables más importantes del bosque de focalización según la reducción de impureza (izquierda) y según la permutación en el conjunto de prueba (derecha).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La <a href="#fig-importancia-variables" class="quarto-xref">Figura&nbsp;<span>16.1</span></a> compara las dos medidas. Por reducción de impureza las cinco variables más importantes son <code>personas_por_cuarto</code>, <code>integrantes</code>, <code>menores_12</code>, <code>edad_jefe</code>, <code>entidad</code>; por permutación son <code>menores_12</code>, <code>integrantes</code>, <code>vehiculos</code>, <code>combustible_cocina</code>, <code>personas_por_cuarto</code>. Las listas coinciden en lo esencial, el tamaño y la composición del hogar, pero no en todo. La diferencia más clara es <code>edad_jefe</code>, que ocupa el lugar <span class="math inline">\(4\)</span> por impureza y el lugar <span class="math inline">\(40\)</span> por permutación; tiene <span class="math inline">\(94\)</span> valores distintos y, como se explicó, la impureza premia a ese tipo de variables aunque no ayuden a predecir fuera de muestra. Algo parecido, en menor grado, pasa con <code>entidad</code>, que tiene <span class="math inline">\(32\)</span> valores distintos y pasa del lugar <span class="math inline">\(5\)</span> por impureza al <span class="math inline">\(6\)</span> por permutación.</p>
+<p>La importancia por permutación también tiene limitaciones. Cuando dos variables están correlacionadas, como <code>integrantes</code>, <code>menores_12</code> y <code>personas_por_cuarto</code>, que miden casi lo mismo, al permutar una el modelo compensa con las otras y la importancia de cada una se subestima. Además, permutar una variable crea hogares que no existen, por ejemplo con pocos integrantes y muchos menores de 12 años, y el rendimiento se mide en esos hogares imposibles. Finalmente, <span class="math inline">\(11\)</span> variables tienen una importancia ligeramente negativa (la menor es <span class="math inline">\(-0.0026\)</span>): es ruido de la permutación y equivale a una importancia de cero.</p>
+</section>
+</section>
+<section id="sec-dependencia-parcial" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="sec-dependencia-parcial"><span class="header-section-number">16.4</span> Dependencia Parcial</h2>
+<p>La importancia dice cuánto pesa una variable, pero no en qué dirección mueve la predicción. La dependencia parcial (<span class="citation" data-cites="friedman2001greedy">Friedman (<a href="18Referencias.html#ref-friedman2001greedy" role="doc-biblioref">2001</a>)</span>) responde cómo cambia la predicción promedio cuando la variable <span class="math inline">\(j\)</span> toma el valor <span class="math inline">\(v\)</span> y las demás variables se quedan como están:</p>
+<p><span id="eq-dependencia-parcial"><span class="math display">\[
+\textsf{DP}_j(v) = \frac{1}{N}\sum_{i=1}^N f(x_i^{(j \leftarrow v)}),
+\tag{16.3}\]</span></span></p>
+<p>donde <span class="math inline">\(x_i^{(j \leftarrow v)}\)</span> es la observación <span class="math inline">\(i\)</span> con su variable <span class="math inline">\(j\)</span> sustituida por <span class="math inline">\(v\)</span> y <span class="math inline">\(f\)</span> es la probabilidad de la clase positiva, en este caso que el hogar sea pobre. El siguiente código la calcula a mano para la variable <code>integrantes</code> con valores de <span class="math inline">\(1\)</span> a <span class="math inline">\(10\)</span>: para cada valor <code>v</code> se asigna <code>v</code> a todos los hogares de la muestra y se promedia la probabilidad predicha.</p>
+<div id="9ad045f4" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>valores <span class="op">=</span> np.arange(<span class="dv">1</span>, <span class="dv">11</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dp <span class="op">=</span> []</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> v <span class="kw">in</span> valores:</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    G_v <span class="op">=</span> G_m.copy()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    G_v[<span class="st">'integrantes'</span>] <span class="op">=</span> <span class="bu">float</span>(v)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    dp.append(bosque.predict_proba(G_v)[:, <span class="dv">1</span>].mean())</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>dp <span class="op">=</span> np.array(dp)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La probabilidad promedio de pobreza pasa de <span class="math inline">\(0.2512\)</span> cuando todos los hogares tienen un integrante a <span class="math inline">\(0.4366\)</span> cuando tienen diez; con seis integrantes ya es <span class="math inline">\(0.4281\)</span>, de manera que la curva se aplana después de ese valor. La clase <code>PartialDependenceDisplay</code> hace el mismo cálculo y lo dibuja. Con <code>kind='both'</code> dibuja además una curva por hogar, la <strong>expectativa condicional individual</strong> (ICE, por sus siglas en inglés, <span class="citation" data-cites="goldstein2015peeking">Goldstein et&nbsp;al. (<a href="18Referencias.html#ref-goldstein2015peeking" role="doc-biblioref">2015</a>)</span>), que es la predicción de ese hogar cuando se mueve solo la variable <span class="math inline">\(j\)</span>; la dependencia parcial es el promedio de esas curvas. El parámetro <code>subsample=100</code> limita a 100 el número de curvas individuales que se dibujan.</p>
+<div id="cell-fig-dependencia-parcial" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="fl">3.5</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> PartialDependenceDisplay.from_estimator(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    bosque, G_m,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'integrantes'</span>, <span class="st">'personas_por_cuarto'</span>, <span class="st">'vehiculos'</span>],</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    kind<span class="op">=</span><span class="st">'both'</span>, subsample<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>, ax<span class="op">=</span>ax)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-dependencia-parcial" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dependencia-parcial-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="15Interpretabilidad_files/figure-html/fig-dependencia-parcial-output-1.png" width="810" height="318" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dependencia-parcial-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;16.2: Dependencia parcial (línea gruesa) y curvas individuales de 100 hogares (líneas delgadas) de la probabilidad de pobreza respecto a tres variables.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La <a href="#fig-dependencia-parcial" class="quarto-xref">Figura&nbsp;<span>16.2</span></a> muestra que, en el modelo, más integrantes y más personas por cuarto suben la probabilidad de pobreza, y tener vehículos la baja. Las curvas individuales no son paralelas: para algunos hogares la probabilidad casi no cambia y para otros cambia mucho. Eso indica que el efecto de una variable depende de los valores de las otras, es decir, que hay interacciones, y el promedio las oculta.</p>
+<p>La dependencia parcial tiene dos limitaciones importantes. La primera es que supone que se puede mover una variable dejando fijas las demás; cuando las variables están correlacionadas, eso evalúa al modelo en hogares que no existen, como un hogar de un integrante con cuatro personas por cuarto. La segunda es que describe al modelo y <strong>no</strong> es un efecto causal: que la probabilidad predicha baje con el número de vehículos no dice que regalar un vehículo saque a un hogar de la pobreza; el vehículo es una señal del ingreso del hogar, no su causa.</p>
+</section>
+<section id="sec-shapley" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="sec-shapley"><span class="header-section-number">16.5</span> Valores de Shapley</h2>
+<p>Las técnicas anteriores son globales. Los valores de Shapley dan una explicación <strong>local</strong>: para un hogar <span class="math inline">\(x\)</span>, reparten entre las <span class="math inline">\(d\)</span> variables la diferencia entre su predicción <span class="math inline">\(f(x)\)</span> y la predicción promedio. La idea viene de la teoría de juegos cooperativos (<span class="citation" data-cites="shapley1953value">Shapley (<a href="18Referencias.html#ref-shapley1953value" role="doc-biblioref">1953</a>)</span>), donde un grupo de jugadores obtiene una ganancia en conjunto y hay que repartirla de manera justa. Aquí las variables son los jugadores y la predicción es la ganancia; a cada jugador se le paga su contribución marginal, es decir, cuánto cambia la ganancia cuando entra, promediada sobre todos los órdenes en que los jugadores pueden entrar:</p>
+<p><span id="eq-shapley"><span class="math display">\[
+\phi_j(x) = \frac{1}{d!} \sum_{\pi} \left[ v(S_\pi^j \cup \{j\}) - v(S_\pi^j) \right],
+\tag{16.4}\]</span></span></p>
+<p>donde la suma recorre las <span class="math inline">\(d!\)</span> permutaciones <span class="math inline">\(\pi\)</span> de las variables, <span class="math inline">\(S_\pi^j\)</span> son las variables que aparecen antes de <span class="math inline">\(j\)</span> en <span class="math inline">\(\pi\)</span> y <span class="math inline">\(v(S)\)</span> es la predicción esperada cuando las variables de <span class="math inline">\(S\)</span> valen lo que valen en <span class="math inline">\(x\)</span> y las demás se toman de un hogar de referencia <span class="math inline">\(z\)</span> elegido de un conjunto de fondo. Los valores de Shapley cumplen la propiedad de <strong>eficiencia</strong>: suman exactamente la diferencia entre la predicción del hogar y la predicción promedio en el conjunto de fondo,</p>
+<p><span id="eq-shapley-eficiencia"><span class="math display">\[
+\sum_{j=1}^d \phi_j(x) = f(x) - \mathbb E[f(z)].
+\tag{16.5}\]</span></span></p>
+<p>Con <span class="math inline">\(d\)</span> variables hay <span class="math inline">\(d!\)</span> permutaciones, un número intratable aun para <span class="math inline">\(d\)</span> pequeña. La solución es aproximar la <a href="#eq-shapley" class="quarto-xref">Ecuación&nbsp;<span>16.4</span></a> por muestreo (<span class="citation" data-cites="strumbelj2014explaining">Štrumbelj y Kononenko (<a href="18Referencias.html#ref-strumbelj2014explaining" role="doc-biblioref">2014</a>)</span>): por cada hogar de fondo <span class="math inline">\(z\)</span> se sortea una permutación y se van cambiando, una por una y en ese orden, las variables de <span class="math inline">\(z\)</span> por las de <span class="math inline">\(x\)</span>, anotando cuánto cambia la predicción en cada paso. El cambio en el paso donde entra la variable <span class="math inline">\(j\)</span> es una muestra de su contribución marginal.</p>
+<div id="f0ae87e7" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> shapley(modelo, x, fondo, seed<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> x.shape[<span class="dv">0</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    phi <span class="op">=</span> np.zeros(d)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> z <span class="kw">in</span> fondo:</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        orden <span class="op">=</span> rng.permutation(d)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        z <span class="op">=</span> z.copy()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        filas <span class="op">=</span> np.empty((d <span class="op">+</span> <span class="dv">1</span>, d))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        filas[<span class="dv">0</span>] <span class="op">=</span> z</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> k, j <span class="kw">in</span> <span class="bu">enumerate</span>(orden):</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>            z[j] <span class="op">=</span> x[j]</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>            filas[k <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> z</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> modelo.predict_proba(filas)[:, <span class="dv">1</span>]</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        phi[orden] <span class="op">+=</span> np.diff(p)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> phi <span class="op">/</span> fondo.shape[<span class="dv">0</span>]</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> T.sample(<span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>).to_numpy()</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="bu">int</span>(np.argmax(prob))</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> G.iloc[i].to_numpy()</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> pd.Series(shapley(bosque, x, fondo), index<span class="op">=</span>X.columns)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>esperado <span class="op">=</span> bosque.predict_proba(fondo)[:, <span class="dv">1</span>].mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La función <code>shapley</code> recibe el modelo, el hogar <code>x</code> y el conjunto de fondo. Por cada hogar de fondo <code>z</code> sortea un orden de las variables (<code>orden</code>) y construye la matriz <code>filas</code> con los <span class="math inline">\(d+1\)</span> hogares intermedios: el primer renglón es <code>z</code> y cada renglón siguiente cambia una variable más de <code>z</code> por la de <code>x</code>, de manera que el último renglón es <code>x</code>. Las probabilidades <code>p</code> de esos renglones se predicen de una sola vez y <code>np.diff(p)</code> son las contribuciones marginales de las variables en el orden en que entraron; <code>phi[orden] +=</code> las acumula en la posición de cada variable. Al final se promedia sobre los hogares de fondo. El conjunto <code>fondo</code> son 100 hogares de entrenamiento, <code>x</code> es el hogar de prueba con mayor probabilidad predicha de ser pobre y <code>esperado</code> es la predicción promedio en el fondo.</p>
+<p>La probabilidad predicha para el hogar es <span class="math inline">\(0.9976\)</span> y la predicción promedio en el fondo es <span class="math inline">\(0.2911\)</span>. Los valores de Shapley suman <span class="math inline">\(0.7066\)</span>, de manera que el promedio más la suma es <span class="math inline">\(0.9976\)</span>, la predicción del hogar, como pide la <a href="#eq-shapley-eficiencia" class="quarto-xref">Ecuación&nbsp;<span>16.5</span></a>. Aquí la igualdad es exacta porque cada permutación recorre el camino completo de <code>z</code> a <code>x</code>, así que la suma de sus contribuciones marginales es <span class="math inline">\(f(x) - f(z)\)</span>.</p>
+<div id="cell-fig-shapley-hogar" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>top <span class="op">=</span> phi.reindex(phi.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:<span class="dv">10</span>])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>top.to_numpy(), y<span class="op">=</span>top.index, ax<span class="op">=</span>ax)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">phi_j</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-shapley-hogar" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-shapley-hogar-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="15Interpretabilidad_files/figure-html/fig-shapley-hogar-output-1.png" width="622" height="357" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shapley-hogar-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;16.3: Valores de Shapley de las diez variables que más contribuyen a la predicción del hogar con mayor probabilidad de pobreza.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La <a href="#fig-shapley-hogar" class="quarto-xref">Figura&nbsp;<span>16.3</span></a> muestra las diez variables con mayor contribución en valor absoluto. Para leerla conviene ver los valores que tiene el hogar en las variables más relevantes:</p>
+<div id="3608370b" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>G.iloc[i][phi.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:<span class="dv">5</span>]]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>menores_12             4.0
+integrantes            9.0
+combustible_cocina     4.0
+personas_por_cuarto    3.0
+estufas                0.0
+Name: 20347, dtype: float64</code></pre>
+</div>
+</div>
+<p>Las variables que más empujan la probabilidad de este hogar hacia arriba son <code>menores_12</code>, <code>integrantes</code>, <code>combustible_cocina</code>, <code>personas_por_cuarto</code>. Es decir, el modelo lo considera pobre por el tamaño y la composición del hogar y por sus condiciones de vivienda, lo que coincide con las variables más importantes de la <a href="#fig-importancia-variables" class="quarto-xref">Figura&nbsp;<span>16.1</span></a>. Una explicación así es la que se puede dar a quien pregunta por qué un hogar concreto quedó dentro del programa.</p>
+<section id="sec-shap" class="level3" data-number="16.5.1">
+<h3 data-number="16.5.1" class="anchored" data-anchor-id="sec-shap"><span class="header-section-number">16.5.1</span> La librería shap</h3>
+<p>La librería <code>shap</code> (<span class="citation" data-cites="lundberg2017unified">Lundberg y Lee (<a href="18Referencias.html#ref-lundberg2017unified" role="doc-biblioref">2017</a>)</span>) implementa los valores de Shapley para distintos tipos de modelos. Para árboles y ensambles de árboles tiene un algoritmo exacto, <code>TreeExplainer</code> (<span class="citation" data-cites="lundberg2020local">Lundberg et&nbsp;al. (<a href="18Referencias.html#ref-lundberg2020local" role="doc-biblioref">2020</a>)</span>), que recorre la estructura de los árboles y no necesita muestrear permutaciones. Con <code>feature_perturbation='interventional'</code> y el mismo conjunto de fondo estima la misma cantidad que la función <code>shapley</code>; <code>model_output='probability'</code> indica que se explica la probabilidad y no otra salida del modelo.</p>
+<div id="69ef9da0" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>explicador <span class="op">=</span> shap.TreeExplainer(bosque, data<span class="op">=</span>fondo,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                                model_output<span class="op">=</span><span class="st">'probability'</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                                feature_perturbation<span class="op">=</span><span class="st">'interventional'</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>phi_shap <span class="op">=</span> pd.Series(explicador(x.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)).values[<span class="dv">0</span>, :, <span class="dv">1</span>],</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                     index<span class="op">=</span>X.columns)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El resultado de <code>explicador</code> tiene un valor por hogar, por variable y por clase; el último índice, <code>1</code>, selecciona la clase «pobre».</p>
+<div class="cell" data-execution_count="21">
+<div id="tbl-shapley-comparacion" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-shapley-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;16.1: Valores de Shapley del mismo hogar calculados por muestreo de permutaciones y con la librería shap.
+</figcaption>
+<div aria-describedby="tbl-shapley-comparacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="21">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Muestreo</th>
+<th>shap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>menores_12</code></td>
+<td><span class="math inline">\(0.1270\)</span></td>
+<td><span class="math inline">\(0.1221\)</span></td>
+</tr>
+<tr class="even">
+<td><code>integrantes</code></td>
+<td><span class="math inline">\(0.0936\)</span></td>
+<td><span class="math inline">\(0.0979\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>combustible_cocina</code></td>
+<td><span class="math inline">\(0.0920\)</span></td>
+<td><span class="math inline">\(0.0896\)</span></td>
+</tr>
+<tr class="even">
+<td><code>personas_por_cuarto</code></td>
+<td><span class="math inline">\(0.0713\)</span></td>
+<td><span class="math inline">\(0.0771\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>vehiculos</code></td>
+<td><span class="math inline">\(0.0314\)</span></td>
+<td><span class="math inline">\(0.0351\)</span></td>
+</tr>
+<tr class="even">
+<td><code>estufas</code></td>
+<td><span class="math inline">\(0.0350\)</span></td>
+<td><span class="math inline">\(0.0321\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>lavadoras</code></td>
+<td><span class="math inline">\(0.0217\)</span></td>
+<td><span class="math inline">\(0.0224\)</span></td>
+</tr>
+<tr class="even">
+<td><code>microondas</code></td>
+<td><span class="math inline">\(0.0222\)</span></td>
+<td><span class="math inline">\(0.0203\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-shapley-comparacion" class="quarto-xref">Tabla&nbsp;<span>16.1</span></a> compara los valores de las ocho variables con mayor contribución según <code>shap</code>. Los dos vectores tienen una correlación de <span class="math inline">\(0.9966\)</span>; la diferencia entre ellos es el error de muestreo de la función <code>shapley</code>, que usa una sola permutación por cada hogar de fondo.</p>
+<p>Como <code>TreeExplainer</code> es rápido, se puede explicar a muchos hogares a la vez. El siguiente código calcula los valores de Shapley de 100 hogares de prueba (la opción <code>output: false</code> del chunk oculta la barra de progreso que imprime la librería).</p>
+<div id="90668a4c" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>G_s <span class="op">=</span> G.sample(<span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>valores_shap <span class="op">=</span> explicador(G_s.to_numpy())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-fig-shap-resumen" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>explicacion <span class="op">=</span> shap.Explanation(valores_shap.values[:, :, <span class="dv">1</span>],</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                               base_values<span class="op">=</span>valores_shap.base_values[:, <span class="dv">1</span>],</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                               data<span class="op">=</span>G_s.to_numpy(),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                               feature_names<span class="op">=</span><span class="bu">list</span>(X.columns))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>shap.plots.beeswarm(explicacion, max_display<span class="op">=</span><span class="dv">12</span>, show<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-shap-resumen" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-shap-resumen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="15Interpretabilidad_files/figure-html/fig-shap-resumen-output-1.png" width="803" height="535" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-resumen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;16.4: Valores de Shapley de 100 hogares de prueba. Cada punto es un hogar; el color indica si el valor de la variable es alto o bajo.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La <a href="#fig-shap-resumen" class="quarto-xref">Figura&nbsp;<span>16.4</span></a> tiene un renglón por variable, ordenadas por el promedio del valor absoluto de sus contribuciones, y un punto por hogar. La posición horizontal es la contribución de la variable a la probabilidad de ese hogar y el color es el valor que toma la variable en el hogar, de azul (bajo) a rojo (alto). La figura es a la vez local, porque cada punto es la explicación de un hogar, y global, porque el conjunto de puntos muestra cómo usa el modelo cada variable; por ejemplo, si los puntos rojos están a la derecha, valores altos de la variable aumentan la probabilidad de pobreza. El promedio del valor absoluto por variable es otra medida de importancia, que se puede comparar con las de la <a href="#fig-importancia-variables" class="quarto-xref">Figura&nbsp;<span>16.1</span></a>.</p>
+<p>Los valores de Shapley comparten las limitaciones de las técnicas anteriores. Dependen del conjunto de fondo: con otro conjunto de referencia, la predicción promedio y el reparto cambian. Cuando las variables están correlacionadas, el crédito se reparte entre ellas de una manera que depende del modelo y no de una relación real entre las variables y la pobreza. Y, otra vez, explican al modelo: la contribución de una variable no es el efecto de cambiarla en el mundo.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Actividad
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Repita el análisis del capítulo con el problema de tamizaje de diabetes (<a href="20ConjuntosDatos.html#sec-datos-salud" class="quarto-xref"><span>Sección B.1.3</span></a>), que se encuentra en el archivo <code>ensanut_salud.csv.gz</code> del release <code>datos-v1</code>. La variable objetivo es <code>diabetes</code> y hay que quitar la columna <code>factor</code> de las variables predictoras. Entrene un <code>RandomForestClassifier</code>, calcule la importancia por permutación usando el macro-recall en el conjunto de prueba y dibuje la dependencia parcial de las variables <code>edad</code> e <code>imc</code>. Discuta por qué <code>diagnostico_hipertension</code> puede ser una variable importante para predecir la diabetes sin que eso diga nada sobre qué causa la diabetes.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-resumen-interpretabilidad" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="sec-resumen-interpretabilidad"><span class="header-section-number">16.6</span> Resumen</h2>
+<p>En este capítulo se presentaron técnicas para interpretar un modelo que no se puede leer directamente. La importancia por reducción de impureza resume cuánto usa un bosque cada variable al construir sus árboles; es gratuita, pero se calcula con el conjunto de entrenamiento y favorece a las variables con muchos valores distintos. La importancia por permutación mide cuánto empeora el rendimiento en datos de prueba al destruir la información de una variable. La dependencia parcial y las curvas individuales muestran en qué dirección mueve una variable la predicción y si ese efecto cambia de un caso a otro. Los valores de Shapley reparten la predicción de una observación entre sus variables, se pueden aproximar por muestreo de permutaciones o calcular de manera exacta para árboles, y al juntar muchas observaciones dan también una visión global.</p>
+<p>Estas técnicas comparten limitaciones. Todas dependen de los datos con que se calculan, ya sea el conjunto de prueba, la muestra o el conjunto de fondo, y todas tienen dificultades cuando las variables están correlacionadas, porque reparten el crédito entre ellas o evalúan al modelo en observaciones que no existen. Sobre todo, interpretan al <strong>modelo</strong> y no al mundo: una variable importante para predecir no es necesariamente una causa del resultado, y modificarla no tiene por qué modificarlo. Para preguntas de ese tipo se necesitan las herramientas de la inferencia causal.</p>
+
+
+<!-- -->
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-breiman2001randomforest" class="csl-entry" role="listitem">
+Breiman, Leo. 2001a. <span>«Random Forests»</span>. <em>Machine Learning</em> 45: 5-32. <a href="https://doi.org/10.1214/ss/1009213726">https://doi.org/10.1214/ss/1009213726</a>.
+</div>
+<div id="ref-breiman2001statistical" class="csl-entry" role="listitem">
+Breiman, Leo. 2001b. <span>«Statistical modeling: The two cultures»</span>. <em>Statistical science</em> 16 (3): 199-231. <a href="https://doi.org/10.1214/ss/1009213726">https://doi.org/10.1214/ss/1009213726</a>.
+</div>
+<div id="ref-friedman2001greedy" class="csl-entry" role="listitem">
+Friedman, Jerome H. 2001. <span>«Greedy function approximation: A gradient boosting machine»</span>. <em>The Annals of Statistics</em> 29 (5): 1189-232. <a href="https://doi.org/10.1214/aos/1013203451">https://doi.org/10.1214/aos/1013203451</a>.
+</div>
+<div id="ref-goldstein2015peeking" class="csl-entry" role="listitem">
+Goldstein, Alex, Adam Kapelner, Justin Bleich, y Emil Pitkin. 2015. <span>«Peeking Inside the Black Box: Visualizing Statistical Learning With Plots of Individual Conditional Expectation»</span>. <em>Journal of Computational and Graphical Statistics</em> 24 (1): 44-65. <a href="https://doi.org/10.1080/10618600.2014.907095">https://doi.org/10.1080/10618600.2014.907095</a>.
+</div>
+<div id="ref-lundberg2020local" class="csl-entry" role="listitem">
+Lundberg, Scott M., Gabriel Erion, Hugh Chen, et&nbsp;al. 2020. <span>«From local explanations to global understanding with explainable AI for trees»</span>. <em>Nature Machine Intelligence</em> 2: 56-67. <a href="https://doi.org/10.1038/s42256-019-0138-9">https://doi.org/10.1038/s42256-019-0138-9</a>.
+</div>
+<div id="ref-lundberg2017unified" class="csl-entry" role="listitem">
+Lundberg, Scott M., y Su-In Lee. 2017. <span>«A Unified Approach to Interpreting Model Predictions»</span>. <em>Advances in Neural Information Processing Systems 30</em>. <a href="https://arxiv.org/abs/1705.07874">https://arxiv.org/abs/1705.07874</a>.
+</div>
+<div id="ref-molnar2022interpretable" class="csl-entry" role="listitem">
+Molnar, Christoph. 2022. <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>. 2.ª ed. <a href="https://christophm.github.io/interpretable-ml-book/">https://christophm.github.io/interpretable-ml-book/</a>.
+</div>
+<div id="ref-rudin2019stop" class="csl-entry" role="listitem">
+Rudin, Cynthia. 2019. <span>«Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead»</span>. <em>Nature Machine Intelligence</em> 1: 206-15. <a href="https://doi.org/10.1038/s42256-019-0048-x">https://doi.org/10.1038/s42256-019-0048-x</a>.
+</div>
+<div id="ref-shapley1953value" class="csl-entry" role="listitem">
+Shapley, Lloyd S. 1953. <span>«A Value for n-Person Games»</span>. En <em>Contributions to the Theory of Games II</em>, editado por Harold W. Kuhn y Albert W. Tucker. Annals of Mathematics Studies 28. Princeton University Press. <a href="https://doi.org/10.1515/9781400881970-018">https://doi.org/10.1515/9781400881970-018</a>.
+</div>
+<div id="ref-strobl2007bias" class="csl-entry" role="listitem">
+Strobl, Carolin, Anne-Laure Boulesteix, Achim Zeileis, y Torsten Hothorn. 2007. <span>«Bias in random forest variable importance measures: Illustrations, sources and a solution»</span>. <em>BMC Bioinformatics</em> 8: 25. <a href="https://doi.org/10.1186/1471-2105-8-25">https://doi.org/10.1186/1471-2105-8-25</a>.
+</div>
+<div id="ref-strumbelj2014explaining" class="csl-entry" role="listitem">
+Štrumbelj, Erik, y Igor Kononenko. 2014. <span>«Explaining prediction models and individual predictions with feature contributions»</span>. <em>Knowledge and Information Systems</em> 41: 647-65. <a href="https://doi.org/10.1007/s10115-013-0679-x">https://doi.org/10.1007/s10115-013-0679-x</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../capitulos/14Comparacion.html" class="pagination-link" aria-label="Comparación de Algoritmos">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../capitulos/18Referencias.html" class="pagination-link" aria-label="Referencias">
+        <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Interpretabilidad y Equidad {#sec-interpretabilidad-equidad}</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar técnicas para interpretar las predicciones de un modelo, tanto de manera global como para una observación particular.</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> permutation_importance</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> PartialDependenceDisplay</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> recall_score</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shap</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-15}</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>El capítulo de ensambles (@sec-ensambles) terminó con una observación incómoda: un bosque aleatorio predice mejor que un árbol de decisión, pero ya no se puede leer. Un árbol pequeño se entiende siguiendo sus reglas de la raíz a una hoja; un bosque de cientos de árboles, cada uno con miles de nodos, no. Es el dilema de Occam que describe @breiman2001statistical: entre los modelos disponibles, los más exactos suelen ser los más difíciles de entender. El mismo autor señala además el **efecto Rashomon**: con frecuencia hay muchos modelos distintos, que usan las variables de maneras diferentes, con prácticamente el mismo rendimiento. Eso hace frágil cualquier interpretación que se apoye en un solo modelo, porque otro igual de bueno podría contar una historia diferente.</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>En política pública la pregunta no es académica. Una regla de focalización decide qué hogares reciben un apoyo y cuáles no. Quien la opera debe poder explicar qué variables mueven la decisión, si esas variables son razonables y, ante el reclamo de un hogar concreto, por qué ese hogar quedó dentro o fuera del programa. Un modelo que no se puede explicar es difícil de auditar, de defender y de corregir.</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>Conviene separar dos preguntas. La pregunta **global** es qué variables usa el modelo en general y cómo cambia su predicción cuando cambian; se responde con la importancia de variables y con la dependencia parcial. La pregunta **local** es por qué el modelo hizo una predicción particular; se responde con los valores de Shapley. Una alternativa a explicar un modelo opaco es usar uno interpretable por construcción, como un árbol pequeño (@sec-arboles-decision) o una regresión con pocas variables (@sec-regresion-regularizacion); @rudin2019stop recomienda preferirlos en decisiones de alto impacto cuando rinden parecido al modelo opaco. Una referencia general sobre el tema es @molnar2022interpretable.</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>La advertencia central del capítulo es que todas estas técnicas explican **al modelo**, no al mundo. Que una variable sea importante para predecir no significa que modificarla modifique el resultado. Es la misma distinción entre predecir e inferir que se discutió en @sec-prediccion-vs-causal y al interpretar los coeficientes de una regresión en @sec-coeficientes-regularizados.</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelo de Referencia {#sec-interpretabilidad-modelo}</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>Para tener un ejemplo concreto se usa el problema de focalización (@sec-datos-pobreza): predecir si un hogar es pobre por ingresos a partir de sus características, con un bosque aleatorio como el de @sec-ensambles. La preparación de los datos cambia respecto a los capítulos anteriores. Ahí cada variable de texto se convertía en variables indicadoras, una columna por categoría; aquí cada variable de texto se sustituye por un código entero, de manera que cada variable original quede en **una sola columna** y la interpretación se haga por variable y no por categoría. Los árboles solo necesitan poder ordenar los valores de una variable para cortarla, por eso el código entero es suficiente; no sería adecuado para un modelo lineal, que interpretaría el código como una cantidad. La partición es la misma de antes: 20% de los hogares para prueba, estratificada por la clase y con <span class="in">`random_state=0`</span>.</span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>pobreza <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/enigh_pobreza.csv.gz'</span>)</span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pobreza.drop(columns<span class="op">=</span>[<span class="st">'pobre_ingresos'</span>, <span class="st">'factor'</span>])</span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>texto <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> X.columns</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>         <span class="cf">if</span> <span class="kw">not</span> pd.api.types.is_numeric_dtype(X[c])]</span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> texto:</span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>    X[c] <span class="op">=</span> X[c].astype(<span class="st">'category'</span>).cat.codes</span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> X.astype(<span class="bu">float</span>)</span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> pobreza[<span class="st">'pobre_ingresos'</span>].to_numpy()</span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>T, G, y_t, y_g <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>                                  random_state<span class="op">=</span><span class="dv">0</span>, stratify<span class="op">=</span>y)</span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>bosque <span class="op">=</span> RandomForestClassifier(min_samples_split<span class="op">=</span><span class="dv">9</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>                                random_state<span class="op">=</span><span class="dv">0</span>).fit(T, y_t)</span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> bosque.predict_proba(G)[:, <span class="dv">1</span>]</span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> bosque.predict(G)</span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> recall_score(y_g, hy, average<span class="op">=</span><span class="st">'macro'</span>)</span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>n_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>pobreza<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">$'</span>)</span>
+<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>d_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>X<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a>n_texto_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">len</span>(texto)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a>recall_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>recall<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a>El conjunto tiene <span class="in">`{python} n_f`</span> hogares y <span class="in">`{python} d_f`</span> variables predictoras, de las cuales <span class="in">`{python} n_texto_f`</span> son de texto y se convirtieron en códigos enteros. <span class="in">`T`</span> y <span class="in">`G`</span> son <span class="in">`DataFrame`</span>, así que conservan los nombres de las variables, que se usan en todas las figuras del capítulo. La conversión <span class="in">`X.astype(float)`</span> deja todas las columnas como números reales, que es lo que esperan algunas de las funciones de las secciones siguientes. El bosque tiene un macro-recall (@sec-macro) de <span class="in">`{python} recall_f`</span> en el conjunto de prueba, prácticamente el mismo que se obtiene con variables indicadoras.</span>
+<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a>Varias de las técnicas del capítulo vuelven a predecir el conjunto de prueba muchas veces con los datos modificados. Para que el costo de cómputo sea razonable, en las secciones siguientes se usa una muestra de 3,000 hogares de prueba.</span>
+<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>G_m <span class="op">=</span> G.sample(<span class="dv">3000</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a>y_m <span class="op">=</span> y_g[G.index.get_indexer(G_m.index)]</span>
+<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a><span class="fu">## Importancia de Variables {#sec-importancia-variables}</span></span>
+<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a>La primera pregunta global es cuánto pesa cada variable en las predicciones del modelo. Hay dos medidas usuales para un bosque: la que se obtiene de la estructura de los árboles, a partir de la reducción de impureza, y la que se obtiene midiendo cuánto empeora el rendimiento cuando se destruye la información de una variable, la importancia por permutación.</span>
+<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### Importancia por Impureza {#sec-importancia-impureza}</span></span>
+<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>En un árbol de decisión cada corte reduce la impureza de los nodos, medida con la entropía o con el índice de Gini (@sec-arboles-decision). La importancia de la variable $j$ en un árbol es la suma de las reducciones de impureza de los nodos donde se cortó con esa variable, ponderada por la fracción de ejemplos que llegan a cada nodo; en un bosque se promedia sobre los $B$ árboles y se normaliza para que la suma sobre las variables sea $1$:</span>
+<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a>I_j \propto \frac{1}{B} \sum_{b=1}^B \sum_{t \in \mathcal T_b(j)} \frac{N_t}{N} \left<span class="co">[</span><span class="ot"> H(t) - \frac{N_{t_\textsf{izq}}}{N_t} H(t_\textsf{izq}) - \frac{N_{t_\textsf{der}}}{N_t} H(t_\textsf{der}) \right</span><span class="co">]</span>,</span>
+<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a>$$ {#eq-importancia-impureza}</span>
+<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>donde $\mathcal T_b(j)$ son los nodos del árbol $b$ que cortan con la variable $j$, $H$ es la impureza, $N_t$ es el número de ejemplos que llegan al nodo $t$, y $t_\textsf{izq}$ y $t_\textsf{der}$ son sus hijos. scikit-learn la calcula al entrenar y la guarda en el atributo <span class="in">`feature_importances_`</span>.</span>
+<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a>imp_impureza <span class="op">=</span> pd.Series(bosque.feature_importances_,</span>
+<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a>                         index<span class="op">=</span>X.columns)</span>
+<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>Esta medida tiene dos limitaciones. La primera es que se calcula con el conjunto de entrenamiento, de manera que no dice nada sobre el rendimiento del modelo fuera de muestra: una variable con la que el bosque se sobreajusta puede aparecer como muy importante. La segunda es que favorece a las variables con muchos valores distintos, porque ofrecen más cortes posibles y alguno de ellos reducirá la impureza aunque sea por azar (@strobl2007bias).</span>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a><span class="fu">### Importancia por Permutación {#sec-importancia-permutacion}</span></span>
+<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a>La importancia por permutación, propuesta por @breiman2001randomforest, se mide en el conjunto de prueba. Se calcula el rendimiento del modelo, se permutan al azar los valores de una variable, lo que rompe su relación con la clase sin cambiar su distribución, y se vuelve a medir el rendimiento. Si el modelo depende de esa variable, el rendimiento cae; la caída es la importancia. Como la permutación es aleatoria, se repite $R$ veces y se promedia:</span>
+<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-118"><a href="#cb17-118" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-119"><a href="#cb17-119" aria-hidden="true" tabindex="-1"></a>I_j = s - \frac{1}{R}\sum_{r=1}^R s_{j,r},</span>
+<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a>$$ {#eq-importancia-permutacion}</span>
+<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a>donde $s$ es el macro-recall original y $s_{j,r}$ es el macro-recall con la variable $j$ permutada en la repetición $r$. El siguiente código hace una repetición a mano con la variable <span class="in">`integrantes`</span>. <span class="in">`base`</span> es el macro-recall en la muestra, <span class="in">`G_perm`</span> es una copia de la muestra con la columna <span class="in">`integrantes`</span> permutada y <span class="in">`caida`</span> es la diferencia de rendimientos.</span>
+<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-128"><a href="#cb17-128" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">0</span>)</span>
+<span id="cb17-129"><a href="#cb17-129" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> recall_score(y_m, bosque.predict(G_m), average<span class="op">=</span><span class="st">'macro'</span>)</span>
+<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a>G_perm <span class="op">=</span> G_m.copy()</span>
+<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a>G_perm[<span class="st">'integrantes'</span>] <span class="op">=</span> rng.permutation(G_m[<span class="st">'integrantes'</span>].to_numpy())</span>
+<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a>caida <span class="op">=</span> base <span class="op">-</span> recall_score(y_m, bosque.predict(G_perm),</span>
+<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a>                            average<span class="op">=</span><span class="st">'macro'</span>)</span>
+<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-139"><a href="#cb17-139" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-140"><a href="#cb17-140" aria-hidden="true" tabindex="-1"></a>base_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>base<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-141"><a href="#cb17-141" aria-hidden="true" tabindex="-1"></a>caida_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>caida<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-142"><a href="#cb17-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-143"><a href="#cb17-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-144"><a href="#cb17-144" aria-hidden="true" tabindex="-1"></a>El macro-recall en la muestra es <span class="in">`{python} base_f`</span> y al permutar <span class="in">`integrantes`</span> cae <span class="in">`{python} caida_f`</span>. La función <span class="in">`permutation_importance`</span> hace lo mismo para todas las variables, con <span class="in">`n_repeats`</span> repeticiones cada una; el parámetro <span class="in">`scoring`</span> indica la medida de rendimiento.</span>
+<span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a>perm <span class="op">=</span> permutation_importance(bosque, G_m, y_m, n_repeats<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a>                              random_state<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a>                              scoring<span class="op">=</span><span class="st">'recall_macro'</span>)</span>
+<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a>imp_perm <span class="op">=</span> pd.Series(perm.importances_mean, index<span class="op">=</span>X.columns)</span>
+<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-importancia-variables</span></span>
+<span id="cb17-161"><a href="#cb17-161" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Las diez variables más importantes del bosque de focalización según la reducción de impureza (izquierda) y según la permutación en el conjunto de prueba (derecha)."</span></span>
+<span id="cb17-162"><a href="#cb17-162" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, (imp, titulo) <span class="kw">in</span> <span class="bu">enumerate</span>([(imp_impureza, <span class="st">'Impureza'</span>),</span>
+<span id="cb17-164"><a href="#cb17-164" aria-hidden="true" tabindex="-1"></a>                                   (imp_perm, <span class="st">'Permutación'</span>)]):</span>
+<span id="cb17-165"><a href="#cb17-165" aria-hidden="true" tabindex="-1"></a>    top <span class="op">=</span> imp.sort_values(ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span>
+<span id="cb17-166"><a href="#cb17-166" aria-hidden="true" tabindex="-1"></a>    sns.barplot(x<span class="op">=</span>top.to_numpy(), y<span class="op">=</span>top.index, ax<span class="op">=</span>ax[k])</span>
+<span id="cb17-167"><a href="#cb17-167" aria-hidden="true" tabindex="-1"></a>    ax[k].set_title(titulo)</span>
+<span id="cb17-168"><a href="#cb17-168" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
+<span id="cb17-169"><a href="#cb17-169" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-170"><a href="#cb17-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-173"><a href="#cb17-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-174"><a href="#cb17-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-175"><a href="#cb17-175" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nombres(serie, k):</span>
+<span id="cb17-176"><a href="#cb17-176" aria-hidden="true" tabindex="-1"></a>    orden <span class="op">=</span> serie.sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:k]</span>
+<span id="cb17-177"><a href="#cb17-177" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Markdown(<span class="st">', '</span>.join(<span class="ss">f'`</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">`'</span> <span class="cf">for</span> v <span class="kw">in</span> orden))</span>
+<span id="cb17-178"><a href="#cb17-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-179"><a href="#cb17-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-180"><a href="#cb17-180" aria-hidden="true" tabindex="-1"></a>top_imp_f <span class="op">=</span> nombres(imp_impureza, <span class="dv">5</span>)</span>
+<span id="cb17-181"><a href="#cb17-181" aria-hidden="true" tabindex="-1"></a>top_perm_f <span class="op">=</span> nombres(imp_perm, <span class="dv">5</span>)</span>
+<span id="cb17-182"><a href="#cb17-182" aria-hidden="true" tabindex="-1"></a>rango <span class="op">=</span> imp_perm.rank(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-183"><a href="#cb17-183" aria-hidden="true" tabindex="-1"></a>rango_imp <span class="op">=</span> imp_impureza.rank(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-184"><a href="#cb17-184" aria-hidden="true" tabindex="-1"></a>edad_rango_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span><span class="bu">int</span>(rango[<span class="st">'edad_jefe'</span>])<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a>entidad_rango_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span><span class="bu">int</span>(rango[<span class="st">'entidad'</span>])<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a>edad_imp_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span><span class="bu">int</span>(rango_imp[<span class="st">'edad_jefe'</span>])<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a>entidad_imp_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span><span class="bu">int</span>(rango_imp[<span class="st">'entidad'</span>])<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a>nunicos <span class="op">=</span> X.nunique()</span>
+<span id="cb17-189"><a href="#cb17-189" aria-hidden="true" tabindex="-1"></a>edad_nunicos_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>nunicos[<span class="st">'edad_jefe'</span>]<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb17-190"><a href="#cb17-190" aria-hidden="true" tabindex="-1"></a>entidad_nunicos_f <span class="op">=</span> Markdown(<span class="ss">f"$</span><span class="sc">{</span>nunicos[<span class="st">'entidad'</span>]<span class="sc">}</span><span class="ss">$"</span>)</span>
+<span id="cb17-191"><a href="#cb17-191" aria-hidden="true" tabindex="-1"></a>negativas_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>(imp_perm <span class="op">&lt;</span> <span class="dv">0</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb17-192"><a href="#cb17-192" aria-hidden="true" tabindex="-1"></a>min_perm_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>imp_perm<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-193"><a href="#cb17-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-194"><a href="#cb17-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-195"><a href="#cb17-195" aria-hidden="true" tabindex="-1"></a>La @fig-importancia-variables compara las dos medidas. Por reducción de impureza las cinco variables más importantes son <span class="in">`{python} top_imp_f`</span>; por permutación son <span class="in">`{python} top_perm_f`</span>. Las listas coinciden en lo esencial, el tamaño y la composición del hogar, pero no en todo. La diferencia más clara es <span class="in">`edad_jefe`</span>, que ocupa el lugar <span class="in">`{python} edad_imp_f`</span> por impureza y el lugar <span class="in">`{python} edad_rango_f`</span> por permutación; tiene <span class="in">`{python} edad_nunicos_f`</span> valores distintos y, como se explicó, la impureza premia a ese tipo de variables aunque no ayuden a predecir fuera de muestra. Algo parecido, en menor grado, pasa con <span class="in">`entidad`</span>, que tiene <span class="in">`{python} entidad_nunicos_f`</span> valores distintos y pasa del lugar <span class="in">`{python} entidad_imp_f`</span> por impureza al <span class="in">`{python} entidad_rango_f`</span> por permutación.</span>
+<span id="cb17-196"><a href="#cb17-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a>La importancia por permutación también tiene limitaciones. Cuando dos variables están correlacionadas, como <span class="in">`integrantes`</span>, <span class="in">`menores_12`</span> y <span class="in">`personas_por_cuarto`</span>, que miden casi lo mismo, al permutar una el modelo compensa con las otras y la importancia de cada una se subestima. Además, permutar una variable crea hogares que no existen, por ejemplo con pocos integrantes y muchos menores de 12 años, y el rendimiento se mide en esos hogares imposibles. Finalmente, <span class="in">`{python} negativas_f`</span> variables tienen una importancia ligeramente negativa (la menor es <span class="in">`{python} min_perm_f`</span>): es ruido de la permutación y equivale a una importancia de cero.</span>
+<span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dependencia Parcial {#sec-dependencia-parcial}</span></span>
+<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a>La importancia dice cuánto pesa una variable, pero no en qué dirección mueve la predicción. La dependencia parcial (@friedman2001greedy) responde cómo cambia la predicción promedio cuando la variable $j$ toma el valor $v$ y las demás variables se quedan como están:</span>
+<span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-204"><a href="#cb17-204" aria-hidden="true" tabindex="-1"></a>\textsf{DP}_j(v) = \frac{1}{N}\sum_{i=1}^N f(x_i^{(j \leftarrow v)}),</span>
+<span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a>$$ {#eq-dependencia-parcial}</span>
+<span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a>donde $x_i^{(j \leftarrow v)}$ es la observación $i$ con su variable $j$ sustituida por $v$ y $f$ es la probabilidad de la clase positiva, en este caso que el hogar sea pobre. El siguiente código la calcula a mano para la variable <span class="in">`integrantes`</span> con valores de $1$ a $10$: para cada valor <span class="in">`v`</span> se asigna <span class="in">`v`</span> a todos los hogares de la muestra y se promedia la probabilidad predicha.</span>
+<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-211"><a href="#cb17-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a>valores <span class="op">=</span> np.arange(<span class="dv">1</span>, <span class="dv">11</span>)</span>
+<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a>dp <span class="op">=</span> []</span>
+<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> v <span class="kw">in</span> valores:</span>
+<span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a>    G_v <span class="op">=</span> G_m.copy()</span>
+<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>    G_v[<span class="st">'integrantes'</span>] <span class="op">=</span> <span class="bu">float</span>(v)</span>
+<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a>    dp.append(bosque.predict_proba(G_v)[:, <span class="dv">1</span>].mean())</span>
+<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a>dp <span class="op">=</span> np.array(dp)</span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a>dp_1_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>dp[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a>dp_10_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>dp[<span class="op">-</span><span class="dv">1</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a>dp_6_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>dp[<span class="dv">5</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-231"><a href="#cb17-231" aria-hidden="true" tabindex="-1"></a>La probabilidad promedio de pobreza pasa de <span class="in">`{python} dp_1_f`</span> cuando todos los hogares tienen un integrante a <span class="in">`{python} dp_10_f`</span> cuando tienen diez; con seis integrantes ya es <span class="in">`{python} dp_6_f`</span>, de manera que la curva se aplana después de ese valor. La clase <span class="in">`PartialDependenceDisplay`</span> hace el mismo cálculo y lo dibuja. Con <span class="in">`kind='both'`</span> dibuja además una curva por hogar, la **expectativa condicional individual** (ICE, por sus siglas en inglés, @goldstein2015peeking), que es la predicción de ese hogar cuando se mueve solo la variable $j$; la dependencia parcial es el promedio de esas curvas. El parámetro <span class="in">`subsample=100`</span> limita a 100 el número de curvas individuales que se dibujan.</span>
+<span id="cb17-232"><a href="#cb17-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-235"><a href="#cb17-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb17-237"><a href="#cb17-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-dependencia-parcial</span></span>
+<span id="cb17-238"><a href="#cb17-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Dependencia parcial (línea gruesa) y curvas individuales de 100 hogares (líneas delgadas) de la probabilidad de pobreza respecto a tres variables."</span></span>
+<span id="cb17-239"><a href="#cb17-239" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="fl">3.5</span>))</span>
+<span id="cb17-240"><a href="#cb17-240" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> PartialDependenceDisplay.from_estimator(</span>
+<span id="cb17-241"><a href="#cb17-241" aria-hidden="true" tabindex="-1"></a>    bosque, G_m,</span>
+<span id="cb17-242"><a href="#cb17-242" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'integrantes'</span>, <span class="st">'personas_por_cuarto'</span>, <span class="st">'vehiculos'</span>],</span>
+<span id="cb17-243"><a href="#cb17-243" aria-hidden="true" tabindex="-1"></a>    kind<span class="op">=</span><span class="st">'both'</span>, subsample<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb17-244"><a href="#cb17-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-245"><a href="#cb17-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-246"><a href="#cb17-246" aria-hidden="true" tabindex="-1"></a>La @fig-dependencia-parcial muestra que, en el modelo, más integrantes y más personas por cuarto suben la probabilidad de pobreza, y tener vehículos la baja. Las curvas individuales no son paralelas: para algunos hogares la probabilidad casi no cambia y para otros cambia mucho. Eso indica que el efecto de una variable depende de los valores de las otras, es decir, que hay interacciones, y el promedio las oculta.</span>
+<span id="cb17-247"><a href="#cb17-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-248"><a href="#cb17-248" aria-hidden="true" tabindex="-1"></a>La dependencia parcial tiene dos limitaciones importantes. La primera es que supone que se puede mover una variable dejando fijas las demás; cuando las variables están correlacionadas, eso evalúa al modelo en hogares que no existen, como un hogar de un integrante con cuatro personas por cuarto. La segunda es que describe al modelo y **no** es un efecto causal: que la probabilidad predicha baje con el número de vehículos no dice que regalar un vehículo saque a un hogar de la pobreza; el vehículo es una señal del ingreso del hogar, no su causa.</span>
+<span id="cb17-249"><a href="#cb17-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-250"><a href="#cb17-250" aria-hidden="true" tabindex="-1"></a><span class="fu">## Valores de Shapley {#sec-shapley}</span></span>
+<span id="cb17-251"><a href="#cb17-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-252"><a href="#cb17-252" aria-hidden="true" tabindex="-1"></a>Las técnicas anteriores son globales. Los valores de Shapley dan una explicación **local**: para un hogar $x$, reparten entre las $d$ variables la diferencia entre su predicción $f(x)$ y la predicción promedio. La idea viene de la teoría de juegos cooperativos (@shapley1953value), donde un grupo de jugadores obtiene una ganancia en conjunto y hay que repartirla de manera justa. Aquí las variables son los jugadores y la predicción es la ganancia; a cada jugador se le paga su contribución marginal, es decir, cuánto cambia la ganancia cuando entra, promediada sobre todos los órdenes en que los jugadores pueden entrar:</span>
+<span id="cb17-253"><a href="#cb17-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-254"><a href="#cb17-254" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-255"><a href="#cb17-255" aria-hidden="true" tabindex="-1"></a>\phi_j(x) = \frac{1}{d!} \sum_{\pi} \left<span class="co">[</span><span class="ot"> v(S_\pi^j \cup \{j\}) - v(S_\pi^j) \right</span><span class="co">]</span>,</span>
+<span id="cb17-256"><a href="#cb17-256" aria-hidden="true" tabindex="-1"></a>$$ {#eq-shapley}</span>
+<span id="cb17-257"><a href="#cb17-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-258"><a href="#cb17-258" aria-hidden="true" tabindex="-1"></a>donde la suma recorre las $d!$ permutaciones $\pi$ de las variables, $S_\pi^j$ son las variables que aparecen antes de $j$ en $\pi$ y $v(S)$ es la predicción esperada cuando las variables de $S$ valen lo que valen en $x$ y las demás se toman de un hogar de referencia $z$ elegido de un conjunto de fondo. Los valores de Shapley cumplen la propiedad de **eficiencia**: suman exactamente la diferencia entre la predicción del hogar y la predicción promedio en el conjunto de fondo,</span>
+<span id="cb17-259"><a href="#cb17-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-260"><a href="#cb17-260" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-261"><a href="#cb17-261" aria-hidden="true" tabindex="-1"></a>\sum_{j=1}^d \phi_j(x) = f(x) - \mathbb E<span class="co">[</span><span class="ot">f(z)</span><span class="co">]</span>.</span>
+<span id="cb17-262"><a href="#cb17-262" aria-hidden="true" tabindex="-1"></a>$$ {#eq-shapley-eficiencia}</span>
+<span id="cb17-263"><a href="#cb17-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-264"><a href="#cb17-264" aria-hidden="true" tabindex="-1"></a>Con $d$ variables hay $d!$ permutaciones, un número intratable aun para $d$ pequeña. La solución es aproximar la @eq-shapley por muestreo (@strumbelj2014explaining): por cada hogar de fondo $z$ se sortea una permutación y se van cambiando, una por una y en ese orden, las variables de $z$ por las de $x$, anotando cuánto cambia la predicción en cada paso. El cambio en el paso donde entra la variable $j$ es una muestra de su contribución marginal.</span>
+<span id="cb17-265"><a href="#cb17-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-268"><a href="#cb17-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-269"><a href="#cb17-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-270"><a href="#cb17-270" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> shapley(modelo, x, fondo, seed<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb17-271"><a href="#cb17-271" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
+<span id="cb17-272"><a href="#cb17-272" aria-hidden="true" tabindex="-1"></a>    d <span class="op">=</span> x.shape[<span class="dv">0</span>]</span>
+<span id="cb17-273"><a href="#cb17-273" aria-hidden="true" tabindex="-1"></a>    phi <span class="op">=</span> np.zeros(d)</span>
+<span id="cb17-274"><a href="#cb17-274" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> z <span class="kw">in</span> fondo:</span>
+<span id="cb17-275"><a href="#cb17-275" aria-hidden="true" tabindex="-1"></a>        orden <span class="op">=</span> rng.permutation(d)</span>
+<span id="cb17-276"><a href="#cb17-276" aria-hidden="true" tabindex="-1"></a>        z <span class="op">=</span> z.copy()</span>
+<span id="cb17-277"><a href="#cb17-277" aria-hidden="true" tabindex="-1"></a>        filas <span class="op">=</span> np.empty((d <span class="op">+</span> <span class="dv">1</span>, d))</span>
+<span id="cb17-278"><a href="#cb17-278" aria-hidden="true" tabindex="-1"></a>        filas[<span class="dv">0</span>] <span class="op">=</span> z</span>
+<span id="cb17-279"><a href="#cb17-279" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> k, j <span class="kw">in</span> <span class="bu">enumerate</span>(orden):</span>
+<span id="cb17-280"><a href="#cb17-280" aria-hidden="true" tabindex="-1"></a>            z[j] <span class="op">=</span> x[j]</span>
+<span id="cb17-281"><a href="#cb17-281" aria-hidden="true" tabindex="-1"></a>            filas[k <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> z</span>
+<span id="cb17-282"><a href="#cb17-282" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> modelo.predict_proba(filas)[:, <span class="dv">1</span>]</span>
+<span id="cb17-283"><a href="#cb17-283" aria-hidden="true" tabindex="-1"></a>        phi[orden] <span class="op">+=</span> np.diff(p)</span>
+<span id="cb17-284"><a href="#cb17-284" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> phi <span class="op">/</span> fondo.shape[<span class="dv">0</span>]</span>
+<span id="cb17-285"><a href="#cb17-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-286"><a href="#cb17-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-287"><a href="#cb17-287" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> T.sample(<span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>).to_numpy()</span>
+<span id="cb17-288"><a href="#cb17-288" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="bu">int</span>(np.argmax(prob))</span>
+<span id="cb17-289"><a href="#cb17-289" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> G.iloc[i].to_numpy()</span>
+<span id="cb17-290"><a href="#cb17-290" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> pd.Series(shapley(bosque, x, fondo), index<span class="op">=</span>X.columns)</span>
+<span id="cb17-291"><a href="#cb17-291" aria-hidden="true" tabindex="-1"></a>esperado <span class="op">=</span> bosque.predict_proba(fondo)[:, <span class="dv">1</span>].mean()</span>
+<span id="cb17-292"><a href="#cb17-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-293"><a href="#cb17-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-294"><a href="#cb17-294" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`shapley`</span> recibe el modelo, el hogar <span class="in">`x`</span> y el conjunto de fondo. Por cada hogar de fondo <span class="in">`z`</span> sortea un orden de las variables (<span class="in">`orden`</span>) y construye la matriz <span class="in">`filas`</span> con los $d+1$ hogares intermedios: el primer renglón es <span class="in">`z`</span> y cada renglón siguiente cambia una variable más de <span class="in">`z`</span> por la de <span class="in">`x`</span>, de manera que el último renglón es <span class="in">`x`</span>. Las probabilidades <span class="in">`p`</span> de esos renglones se predicen de una sola vez y <span class="in">`np.diff(p)`</span> son las contribuciones marginales de las variables en el orden en que entraron; <span class="in">`phi[orden] +=`</span> las acumula en la posición de cada variable. Al final se promedia sobre los hogares de fondo. El conjunto <span class="in">`fondo`</span> son 100 hogares de entrenamiento, <span class="in">`x`</span> es el hogar de prueba con mayor probabilidad predicha de ser pobre y <span class="in">`esperado`</span> es la predicción promedio en el fondo.</span>
+<span id="cb17-295"><a href="#cb17-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-298"><a href="#cb17-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-299"><a href="#cb17-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-300"><a href="#cb17-300" aria-hidden="true" tabindex="-1"></a>prob_x_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>prob[i]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-301"><a href="#cb17-301" aria-hidden="true" tabindex="-1"></a>esperado_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>esperado<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-302"><a href="#cb17-302" aria-hidden="true" tabindex="-1"></a>suma_phi_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>phi<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-303"><a href="#cb17-303" aria-hidden="true" tabindex="-1"></a>suma_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>esperado <span class="op">+</span> phi<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-304"><a href="#cb17-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-305"><a href="#cb17-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-306"><a href="#cb17-306" aria-hidden="true" tabindex="-1"></a>La probabilidad predicha para el hogar es <span class="in">`{python} prob_x_f`</span> y la predicción promedio en el fondo es <span class="in">`{python} esperado_f`</span>. Los valores de Shapley suman <span class="in">`{python} suma_phi_f`</span>, de manera que el promedio más la suma es <span class="in">`{python} suma_f`</span>, la predicción del hogar, como pide la @eq-shapley-eficiencia. Aquí la igualdad es exacta porque cada permutación recorre el camino completo de <span class="in">`z`</span> a <span class="in">`x`</span>, así que la suma de sus contribuciones marginales es $f(x) - f(z)$.</span>
+<span id="cb17-307"><a href="#cb17-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-310"><a href="#cb17-310" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-311"><a href="#cb17-311" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb17-312"><a href="#cb17-312" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-shapley-hogar</span></span>
+<span id="cb17-313"><a href="#cb17-313" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Valores de Shapley de las diez variables que más contribuyen a la predicción del hogar con mayor probabilidad de pobreza."</span></span>
+<span id="cb17-314"><a href="#cb17-314" aria-hidden="true" tabindex="-1"></a>top <span class="op">=</span> phi.reindex(phi.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:<span class="dv">10</span>])</span>
+<span id="cb17-315"><a href="#cb17-315" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb17-316"><a href="#cb17-316" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>top.to_numpy(), y<span class="op">=</span>top.index, ax<span class="op">=</span>ax)</span>
+<span id="cb17-317"><a href="#cb17-317" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">phi_j</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb17-318"><a href="#cb17-318" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-319"><a href="#cb17-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-320"><a href="#cb17-320" aria-hidden="true" tabindex="-1"></a>La @fig-shapley-hogar muestra las diez variables con mayor contribución en valor absoluto. Para leerla conviene ver los valores que tiene el hogar en las variables más relevantes:</span>
+<span id="cb17-321"><a href="#cb17-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-324"><a href="#cb17-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-325"><a href="#cb17-325" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-326"><a href="#cb17-326" aria-hidden="true" tabindex="-1"></a>G.iloc[i][phi.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:<span class="dv">5</span>]]</span>
+<span id="cb17-327"><a href="#cb17-327" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-328"><a href="#cb17-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-331"><a href="#cb17-331" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-332"><a href="#cb17-332" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-333"><a href="#cb17-333" aria-hidden="true" tabindex="-1"></a>top_phi_f <span class="op">=</span> nombres(phi, <span class="dv">4</span>)</span>
+<span id="cb17-334"><a href="#cb17-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-335"><a href="#cb17-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-336"><a href="#cb17-336" aria-hidden="true" tabindex="-1"></a>Las variables que más empujan la probabilidad de este hogar hacia arriba son <span class="in">`{python} top_phi_f`</span>. Es decir, el modelo lo considera pobre por el tamaño y la composición del hogar y por sus condiciones de vivienda, lo que coincide con las variables más importantes de la @fig-importancia-variables. Una explicación así es la que se puede dar a quien pregunta por qué un hogar concreto quedó dentro del programa.</span>
+<span id="cb17-337"><a href="#cb17-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-338"><a href="#cb17-338" aria-hidden="true" tabindex="-1"></a><span class="fu">### La librería shap {#sec-shap}</span></span>
+<span id="cb17-339"><a href="#cb17-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-340"><a href="#cb17-340" aria-hidden="true" tabindex="-1"></a>La librería <span class="in">`shap`</span> (@lundberg2017unified) implementa los valores de Shapley para distintos tipos de modelos. Para árboles y ensambles de árboles tiene un algoritmo exacto, <span class="in">`TreeExplainer`</span> (@lundberg2020local), que recorre la estructura de los árboles y no necesita muestrear permutaciones. Con <span class="in">`feature_perturbation='interventional'`</span> y el mismo conjunto de fondo estima la misma cantidad que la función <span class="in">`shapley`</span>; <span class="in">`model_output='probability'`</span> indica que se explica la probabilidad y no otra salida del modelo.</span>
+<span id="cb17-341"><a href="#cb17-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-344"><a href="#cb17-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-345"><a href="#cb17-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-346"><a href="#cb17-346" aria-hidden="true" tabindex="-1"></a>explicador <span class="op">=</span> shap.TreeExplainer(bosque, data<span class="op">=</span>fondo,</span>
+<span id="cb17-347"><a href="#cb17-347" aria-hidden="true" tabindex="-1"></a>                                model_output<span class="op">=</span><span class="st">'probability'</span>,</span>
+<span id="cb17-348"><a href="#cb17-348" aria-hidden="true" tabindex="-1"></a>                                feature_perturbation<span class="op">=</span><span class="st">'interventional'</span>)</span>
+<span id="cb17-349"><a href="#cb17-349" aria-hidden="true" tabindex="-1"></a>phi_shap <span class="op">=</span> pd.Series(explicador(x.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)).values[<span class="dv">0</span>, :, <span class="dv">1</span>],</span>
+<span id="cb17-350"><a href="#cb17-350" aria-hidden="true" tabindex="-1"></a>                     index<span class="op">=</span>X.columns)</span>
+<span id="cb17-351"><a href="#cb17-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-352"><a href="#cb17-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-353"><a href="#cb17-353" aria-hidden="true" tabindex="-1"></a>El resultado de <span class="in">`explicador`</span> tiene un valor por hogar, por variable y por clase; el último índice, <span class="in">`1`</span>, selecciona la clase «pobre».</span>
+<span id="cb17-354"><a href="#cb17-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-357"><a href="#cb17-357" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-358"><a href="#cb17-358" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-359"><a href="#cb17-359" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-shapley-comparacion</span></span>
+<span id="cb17-360"><a href="#cb17-360" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Valores de Shapley del mismo hogar calculados por muestreo de permutaciones y con la librería shap."</span></span>
+<span id="cb17-361"><a href="#cb17-361" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> np.corrcoef(phi, phi_shap)[<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb17-362"><a href="#cb17-362" aria-hidden="true" tabindex="-1"></a>corr_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>corr<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb17-363"><a href="#cb17-363" aria-hidden="true" tabindex="-1"></a>orden8 <span class="op">=</span> phi_shap.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index[:<span class="dv">8</span>]</span>
+<span id="cb17-364"><a href="#cb17-364" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>.join(<span class="ss">f'|`</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">`|$</span><span class="sc">{</span>phi[v]<span class="sc">:0.4f}</span><span class="ss">$|$</span><span class="sc">{</span>phi_shap[v]<span class="sc">:0.4f}</span><span class="ss">$|'</span></span>
+<span id="cb17-365"><a href="#cb17-365" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">for</span> v <span class="kw">in</span> orden8)</span>
+<span id="cb17-366"><a href="#cb17-366" aria-hidden="true" tabindex="-1"></a>Markdown(<span class="st">'|Variable|Muestreo|shap|</span><span class="ch">\n</span><span class="st">|---|---|---|</span><span class="ch">\n</span><span class="st">'</span> <span class="op">+</span> filas)</span>
+<span id="cb17-367"><a href="#cb17-367" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-368"><a href="#cb17-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-369"><a href="#cb17-369" aria-hidden="true" tabindex="-1"></a>La @tbl-shapley-comparacion compara los valores de las ocho variables con mayor contribución según <span class="in">`shap`</span>. Los dos vectores tienen una correlación de <span class="in">`{python} corr_f`</span>; la diferencia entre ellos es el error de muestreo de la función <span class="in">`shapley`</span>, que usa una sola permutación por cada hogar de fondo.</span>
+<span id="cb17-370"><a href="#cb17-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-371"><a href="#cb17-371" aria-hidden="true" tabindex="-1"></a>Como <span class="in">`TreeExplainer`</span> es rápido, se puede explicar a muchos hogares a la vez. El siguiente código calcula los valores de Shapley de 100 hogares de prueba (la opción <span class="in">`output: false`</span> del chunk oculta la barra de progreso que imprime la librería).</span>
+<span id="cb17-372"><a href="#cb17-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-375"><a href="#cb17-375" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-376"><a href="#cb17-376" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-377"><a href="#cb17-377" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb17-378"><a href="#cb17-378" aria-hidden="true" tabindex="-1"></a>G_s <span class="op">=</span> G.sample(<span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb17-379"><a href="#cb17-379" aria-hidden="true" tabindex="-1"></a>valores_shap <span class="op">=</span> explicador(G_s.to_numpy())</span>
+<span id="cb17-380"><a href="#cb17-380" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-381"><a href="#cb17-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-384"><a href="#cb17-384" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb17-385"><a href="#cb17-385" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb17-386"><a href="#cb17-386" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-shap-resumen</span></span>
+<span id="cb17-387"><a href="#cb17-387" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Valores de Shapley de 100 hogares de prueba. Cada punto es un hogar; el color indica si el valor de la variable es alto o bajo."</span></span>
+<span id="cb17-388"><a href="#cb17-388" aria-hidden="true" tabindex="-1"></a>explicacion <span class="op">=</span> shap.Explanation(valores_shap.values[:, :, <span class="dv">1</span>],</span>
+<span id="cb17-389"><a href="#cb17-389" aria-hidden="true" tabindex="-1"></a>                               base_values<span class="op">=</span>valores_shap.base_values[:, <span class="dv">1</span>],</span>
+<span id="cb17-390"><a href="#cb17-390" aria-hidden="true" tabindex="-1"></a>                               data<span class="op">=</span>G_s.to_numpy(),</span>
+<span id="cb17-391"><a href="#cb17-391" aria-hidden="true" tabindex="-1"></a>                               feature_names<span class="op">=</span><span class="bu">list</span>(X.columns))</span>
+<span id="cb17-392"><a href="#cb17-392" aria-hidden="true" tabindex="-1"></a>shap.plots.beeswarm(explicacion, max_display<span class="op">=</span><span class="dv">12</span>, show<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-393"><a href="#cb17-393" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-394"><a href="#cb17-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-395"><a href="#cb17-395" aria-hidden="true" tabindex="-1"></a>La @fig-shap-resumen tiene un renglón por variable, ordenadas por el promedio del valor absoluto de sus contribuciones, y un punto por hogar. La posición horizontal es la contribución de la variable a la probabilidad de ese hogar y el color es el valor que toma la variable en el hogar, de azul (bajo) a rojo (alto). La figura es a la vez local, porque cada punto es la explicación de un hogar, y global, porque el conjunto de puntos muestra cómo usa el modelo cada variable; por ejemplo, si los puntos rojos están a la derecha, valores altos de la variable aumentan la probabilidad de pobreza. El promedio del valor absoluto por variable es otra medida de importancia, que se puede comparar con las de la @fig-importancia-variables.</span>
+<span id="cb17-396"><a href="#cb17-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-397"><a href="#cb17-397" aria-hidden="true" tabindex="-1"></a>Los valores de Shapley comparten las limitaciones de las técnicas anteriores. Dependen del conjunto de fondo: con otro conjunto de referencia, la predicción promedio y el reparto cambian. Cuando las variables están correlacionadas, el crédito se reparte entre ellas de una manera que depende del modelo y no de una relación real entre las variables y la pobreza. Y, otra vez, explican al modelo: la contribución de una variable no es el efecto de cambiarla en el mundo.</span>
+<span id="cb17-398"><a href="#cb17-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-399"><a href="#cb17-399" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb17-400"><a href="#cb17-400" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb17-401"><a href="#cb17-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-402"><a href="#cb17-402" aria-hidden="true" tabindex="-1"></a>Repita el análisis del capítulo con el problema de tamizaje de diabetes (@sec-datos-salud), que se encuentra en el archivo <span class="in">`ensanut_salud.csv.gz`</span> del release <span class="in">`datos-v1`</span>. La variable objetivo es <span class="in">`diabetes`</span> y hay que quitar la columna <span class="in">`factor`</span> de las variables predictoras. Entrene un <span class="in">`RandomForestClassifier`</span>, calcule la importancia por permutación usando el macro-recall en el conjunto de prueba y dibuje la dependencia parcial de las variables <span class="in">`edad`</span> e <span class="in">`imc`</span>. Discuta por qué <span class="in">`diagnostico_hipertension`</span> puede ser una variable importante para predecir la diabetes sin que eso diga nada sobre qué causa la diabetes.</span>
+<span id="cb17-403"><a href="#cb17-403" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb17-404"><a href="#cb17-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-405"><a href="#cb17-405" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-interpretabilidad}</span></span>
+<span id="cb17-406"><a href="#cb17-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-407"><a href="#cb17-407" aria-hidden="true" tabindex="-1"></a>En este capítulo se presentaron técnicas para interpretar un modelo que no se puede leer directamente. La importancia por reducción de impureza resume cuánto usa un bosque cada variable al construir sus árboles; es gratuita, pero se calcula con el conjunto de entrenamiento y favorece a las variables con muchos valores distintos. La importancia por permutación mide cuánto empeora el rendimiento en datos de prueba al destruir la información de una variable. La dependencia parcial y las curvas individuales muestran en qué dirección mueve una variable la predicción y si ese efecto cambia de un caso a otro. Los valores de Shapley reparten la predicción de una observación entre sus variables, se pueden aproximar por muestreo de permutaciones o calcular de manera exacta para árboles, y al juntar muchas observaciones dan también una visión global.</span>
+<span id="cb17-408"><a href="#cb17-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-409"><a href="#cb17-409" aria-hidden="true" tabindex="-1"></a>Estas técnicas comparten limitaciones. Todas dependen de los datos con que se calculan, ya sea el conjunto de prueba, la muestra o el conjunto de fondo, y todas tienen dificultades cuando las variables están correlacionadas, porque reparten el crédito entre ellas o evalúan al modelo en observaciones que no existen. Sobre todo, interpretan al **modelo** y no al mundo: una variable importante para predecir no es necesariamente una causa del resultado, y modificarla no tiene por qué modificarlo. Para preguntas de ese tipo se necesitan las herramientas de la inferencia causal.</span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" class="img-fluid"></a> <br> Esta obra está bajo una <a href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
