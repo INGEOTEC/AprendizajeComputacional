@@ -1,6 +1,6 @@
 # Interpretabilidad y Equidad {#sec-interpretabilidad-equidad}
 
-El **objetivo** de la unidad es conocer y aplicar técnicas para interpretar las predicciones de un modelo, tanto de manera global como para una observación particular.
+El **objetivo** de la unidad es conocer y aplicar técnicas para interpretar las predicciones de un modelo y para medir si sus errores se reparten de manera equitativa entre grupos de la población.
 
 ## Paquetes usados {.unnumbered}
 
@@ -35,6 +35,8 @@ En política pública la pregunta no es académica. Una regla de focalización d
 Conviene separar dos preguntas. La pregunta **global** es qué variables usa el modelo en general y cómo cambia su predicción cuando cambian; se responde con la importancia de variables y con la dependencia parcial. La pregunta **local** es por qué el modelo hizo una predicción particular; se responde con los valores de Shapley. Una alternativa a explicar un modelo opaco es usar uno interpretable por construcción, como un árbol pequeño (@sec-arboles-decision) o una regresión con pocas variables (@sec-regresion-regularizacion); @rudin2019stop recomienda preferirlos en decisiones de alto impacto cuando rinden parecido al modelo opaco. Una referencia general sobre el tema es @molnar2022interpretable.
 
 La advertencia central del capítulo es que todas estas técnicas explican **al modelo**, no al mundo. Que una variable sea importante para predecir no significa que modificarla modifique el resultado. Es la misma distinción entre predecir e inferir que se discutió en @sec-prediccion-vs-causal y al interpretar los coeficientes de una regresión en @sec-coeficientes-regularizados.
+
+Interpretar el modelo responde qué variables usa. La segunda mitad del capítulo (@sec-equidad) responde una pregunta distinta: **a quién afectan sus errores**. Un modelo con buen rendimiento promedio puede equivocarse más con un grupo de la población que con otro, y en una decisión pública eso importa aunque el promedio sea bueno: los hogares pobres que el programa deja fuera no se reparten al azar. El capítulo presenta cómo medir esas diferencias, por qué no se corrigen quitando una variable, cómo se pueden reducir y por qué no se pueden eliminar todas a la vez. Una referencia general sobre equidad en aprendizaje computacional es @barocas2023fairness.
 
 ## Modelo de Referencia {#sec-interpretabilidad-modelo}
 
@@ -350,10 +352,287 @@ La @fig-shap-resumen tiene un renglón por variable, ordenadas por el promedio d
 
 Los valores de Shapley comparten las limitaciones de las técnicas anteriores. Dependen del conjunto de fondo: con otro conjunto de referencia, la predicción promedio y el reparto cambian. Cuando las variables están correlacionadas, el crédito se reparte entre ellas de una manera que depende del modelo y no de una relación real entre las variables y la pobreza. Y, otra vez, explican al modelo: la contribución de una variable no es el efecto de cambiarla en el mundo.
 
+## Equidad Algorítmica {#sec-equidad}
+
+En esta sección se mide la equidad del mismo bosque de focalización de @sec-interpretabilidad-modelo respecto a dos atributos del hogar: el ámbito, rural o urbano, y el sexo de la jefatura. Se llama **atributo protegido**, $\mathcal A$, a la variable que define los grupos que se quieren comparar. La regla de decisión es la misma que usa `predict`: incluir al hogar en el programa cuando la probabilidad predicha de ser pobre es mayor que $0.5$.
+
+### Criterios de Equidad {#sec-criterios-equidad}
+
+Sea $\hat y$ la decisión ($\hat y = 1$ significa incluir al hogar), $y$ la clase ($y = 1$ significa que el hogar es pobre) y $a$ y $b$ dos grupos del atributo protegido. El criterio más simple es la **paridad demográfica**: que la proporción de hogares incluidos sea la misma en cada grupo,
+
+$$
+\mathbb P(\hat y = 1 \mid \mathcal A = a) = \mathbb P(\hat y = 1 \mid \mathcal A = b).
+$$ {#eq-paridad-demografica}
+
+Este criterio no usa la clase, y por eso no es razonable exigirlo cuando la proporción de hogares pobres es distinta entre los grupos: un programa que incluyera la misma proporción de hogares rurales y urbanos dejaría fuera a hogares pobres del grupo con más pobreza o incluiría a hogares no pobres del grupo con menos.
+
+La **igualdad de oportunidades** (@hardt2016equality) pide que la cobertura (@sec-recall) sea la misma en cada grupo,
+
+$$
+\mathbb P(\hat y = 1 \mid y = 1, \mathcal A = a) = \mathbb P(\hat y = 1 \mid y = 1, \mathcal A = b),
+$$ {#eq-igualdad-oportunidades}
+
+es decir, que un hogar pobre tenga la misma probabilidad de ser incluido sin importar a qué grupo pertenece. Como la cobertura es el complemento de la tasa de error de exclusión, este criterio también pide que el error de exclusión sea el mismo en cada grupo. Las **probabilidades igualadas** (*equalized odds*) agregan a lo anterior que la tasa de filtración, $\mathbb P(\hat y = 1 \mid y = 0, \mathcal A)$, la proporción de hogares no pobres que el programa incluye, también sea la misma en cada grupo. Por último, la **paridad predictiva** pide que la precisión (@sec-precision), $\mathbb P(y = 1 \mid \hat y = 1, \mathcal A)$, sea la misma en cada grupo: que entre los hogares incluidos la proporción de pobres no dependa del grupo.
+
+Cada criterio protege contra un error distinto. La igualdad de oportunidades protege a los hogares pobres de quedar excluidos por pertenecer a un grupo; la igualdad de filtraciones protege el presupuesto del programa; la paridad predictiva hace que la inclusión signifique lo mismo en todos los grupos. Elegir cuál importa más no es una decisión técnica sino de política (@kleinberg2018algorithmic).
+
+### Medición por Grupo {#sec-equidad-medicion}
+
+Todas las medidas anteriores son promedios condicionales y se pueden calcular con unas cuantas líneas. La función `por_grupo` recibe la decisión `incluir`, un arreglo booleano con un elemento por hogar de prueba, y el nombre de la columna que define los grupos; regresa una tabla con un renglón por grupo. `grupos` son los renglones de `pobreza` que corresponden al conjunto de prueba, de manera que los grupos se definen con las columnas de texto originales (`'rural'`, `'urbano'`, `'hombre'`, `'mujer'`) y no con los códigos de `X`.
+
+```{python}
+#| echo: true
+grupos = pobreza.loc[G.index]
+
+
+def por_grupo(incluir, columna):
+    filas = []
+    for g in sorted(grupos[columna].unique()):
+        m = (grupos[columna] == g).to_numpy()
+        filas.append(dict(grupo=g, hogares=int(m.sum()),
+                          pobres=y_g[m].mean(),
+                          incluidos=incluir[m].mean(),
+                          cobertura=incluir[m & (y_g == 1)].mean(),
+                          filtracion=incluir[m & (y_g == 0)].mean(),
+                          precision=y_g[m & incluir].mean()))
+    return pd.DataFrame(filas).set_index('grupo')
+
+
+incluir = prob > 0.5
+eq_ambito = por_grupo(incluir, 'ambito')
+eq_sexo = por_grupo(incluir, 'sexo_jefe')
+```
+
+La columna `hogares` es el número de hogares de prueba del grupo y `pobres` la proporción de ellos que son pobres. Las otras cuatro columnas corresponden a los criterios: `incluidos` es la proporción de hogares incluidos, que compara la paridad demográfica (@eq-paridad-demografica); `cobertura` es la proporción de hogares pobres incluidos, que compara la igualdad de oportunidades (@eq-igualdad-oportunidades); `cobertura` junto con `filtracion`, la proporción de hogares no pobres incluidos, comparan las probabilidades igualadas; y `precision`, la proporción de pobres entre los incluidos, compara la paridad predictiva.
+
+```{python}
+#| echo: false
+def tabla_grupos(tabla):
+    filas = '\n'.join(f'|{g}|${int(r.hogares)}$|${r.pobres:0.4f}$|'
+                      f'${r.incluidos:0.4f}$|${r.cobertura:0.4f}$|'
+                      f'${r.filtracion:0.4f}$|${r.precision:0.4f}$|'
+                      for g, r in tabla.iterrows())
+    return Markdown('|Grupo|Hogares|Pobres|Incluidos|Cobertura|'
+                    'Filtración|Precisión|\n'
+                    '|---|---|---|---|---|---|---|\n' + filas)
+
+
+def compara(a, b, mayor='mayor', menor='menor'):
+    return Markdown(mayor if a > b else menor)
+
+
+def f4(x):
+    return Markdown(f'${x:0.4f}$')
+```
+
+```{python}
+#| echo: false
+#| label: tbl-equidad-ambito
+#| tbl-cap: "Medidas del bosque de focalización por ámbito del hogar en el conjunto de prueba, con umbral $0.5$."
+tabla_grupos(eq_ambito)
+```
+
+```{python}
+#| echo: false
+#| label: tbl-equidad-sexo
+#| tbl-cap: "Medidas del bosque de focalización por sexo de la jefatura del hogar en el conjunto de prueba, con umbral $0.5$."
+tabla_grupos(eq_sexo)
+```
+
+```{python}
+#| echo: false
+ru, ur = eq_ambito.loc['rural'], eq_ambito.loc['urbano']
+ho, mu = eq_sexo.loc['hombre'], eq_sexo.loc['mujer']
+inc_rural_f, inc_urbano_f = f4(ru.incluidos), f4(ur.incluidos)
+pob_rural_f, pob_urbano_f = f4(ru.pobres), f4(ur.pobres)
+cob_rural_f, cob_urbano_f = f4(ru.cobertura), f4(ur.cobertura)
+cob_hombre_f, cob_mujer_f = f4(ho.cobertura), f4(mu.cobertura)
+inc_ambito_cmp_f = compara(ru.incluidos, ur.incluidos)
+pob_ambito_cmp_f = compara(ru.pobres, ur.pobres, 'más', 'menos')
+cob_ambito_cmp_f = compara(ur.cobertura, ru.cobertura)
+cob_sexo_cmp_f = compara(mu.cobertura, ho.cobertura)
+dif_cob_ambito = abs(ru.cobertura - ur.cobertura)
+dif_cob_sexo = abs(ho.cobertura - mu.cobertura)
+dif_cob_ambito_f = f4(dif_cob_ambito)
+dif_cob_sexo_f = f4(dif_cob_sexo)
+fil_rural_f, fil_urbano_f = f4(ru.filtracion), f4(ur.filtracion)
+prec_rural_f, prec_urbano_f = f4(ru.precision), f4(ur.precision)
+```
+
+La @tbl-equidad-ambito muestra que el modelo incluye a `{python} inc_rural_f` de los hogares rurales y a `{python} inc_urbano_f` de los urbanos, una proporción `{python} inc_ambito_cmp_f` en el ámbito rural. Eso, por sí solo, no indica un trato injusto, porque en el ámbito rural hay `{python} pob_ambito_cmp_f` pobreza (`{python} pob_rural_f` contra `{python} pob_urbano_f`); es la razón por la que la paridad demográfica no es el criterio adecuado aquí. Lo relevante es la cobertura: es `{python} cob_rural_f` en los hogares rurales y `{python} cob_urbano_f` en los urbanos, es decir, `{python} cob_ambito_cmp_f` en el ámbito urbano por `{python} dif_cob_ambito_f`. La filtración (`{python} fil_rural_f` rural y `{python} fil_urbano_f` urbana) y la precisión (`{python} prec_rural_f` y `{python} prec_urbano_f`) tampoco coinciden. La @tbl-equidad-sexo muestra un patrón parecido con el sexo de la jefatura: la cobertura es `{python} cob_hombre_f` en los hogares con jefe y `{python} cob_mujer_f` en los hogares con jefa, `{python} cob_sexo_cmp_f` en los de jefatura femenina por `{python} dif_cob_sexo_f`. Un hogar pobre de un grupo con menor cobertura tiene menos probabilidad de recibir el apoyo que uno igual de pobre del otro grupo, aunque el modelo sea el mismo para todos.
+
+### Quitar la Variable no Basta {#sec-equidad-sin-variable}
+
+Una reacción común ante una diferencia entre grupos es eliminar el atributo protegido de las entradas del modelo, lo que se conoce como *fairness through unawareness*. @dwork2012fairness explican por qué no funciona: otras variables contienen la misma información. Para verlo se quitan `ambito` y `tam_localidad`, que lo determina, y se vuelve a entrenar el bosque con los mismos hiperparámetros y la misma partición; `X_sin.loc[T.index]` y `X_sin.loc[G.index]` seleccionan los mismos hogares de entrenamiento y de prueba que antes.
+
+```{python}
+#| echo: true
+X_sin = X.drop(columns=['ambito', 'tam_localidad'])
+bosque_sin = RandomForestClassifier(min_samples_split=9, n_jobs=-1,
+                                    random_state=0)
+bosque_sin.fit(X_sin.loc[T.index], y_t)
+incluir_sin = bosque_sin.predict(X_sin.loc[G.index]) == 1
+eq_sin = por_grupo(incluir_sin, 'ambito')
+recall_sin = recall_score(y_g, incluir_sin, average='macro')
+```
+
+```{python}
+#| echo: false
+#| label: tbl-equidad-sin-ambito
+#| tbl-cap: "Medidas por ámbito de un bosque entrenado sin las variables ámbito y tamaño de localidad."
+tabla_grupos(eq_sin)
+```
+
+```{python}
+#| echo: false
+rs, us = eq_sin.loc['rural'], eq_sin.loc['urbano']
+cob_rural_sin_f, cob_urbano_sin_f = f4(rs.cobertura), f4(us.cobertura)
+fil_rural_sin_f, fil_urbano_sin_f = f4(rs.filtracion), f4(us.filtracion)
+dif_cob_sin = abs(rs.cobertura - us.cobertura)
+dif_cob_sin_f = f4(dif_cob_sin)
+dif_sin_cmp_f = compara(dif_cob_sin, dif_cob_ambito, 'crece', 'disminuye')
+recall_sin_f = f4(recall_sin)
+recall_sin_cmp_f = compara(recall_sin, recall, 'sube', 'baja')
+```
+
+La @tbl-equidad-sin-ambito muestra el resultado. La cobertura es ahora `{python} cob_rural_sin_f` en los hogares rurales y `{python} cob_urbano_sin_f` en los urbanos, y la filtración `{python} fil_rural_sin_f` y `{python} fil_urbano_sin_f`, respectivamente. La diferencia de cobertura entre ámbitos `{python} dif_sin_cmp_f`, de `{python} dif_cob_ambito_f` a `{python} dif_cob_sin_f`, y el macro-recall `{python} recall_sin_cmp_f` de `{python} recall_f` a `{python} recall_sin_f`. Quitar la variable no hizo al modelo más equitativo.
+
+Hay dos razones. La primera es particular de este problema: la etiqueta misma depende del ámbito, porque la línea de pobreza por ingresos es distinta para los hogares rurales y los urbanos (@sec-datos-pobreza). Un hogar urbano necesita un ingreso mayor que uno rural para no ser pobre. Sin la variable, el modelo no puede usar una línea distinta para cada ámbito y aplica a todos una regla intermedia, que favorece a un grupo y perjudica al otro. La segunda es general: otras variables, como los materiales de la vivienda, el combustible para cocinar o la entidad, son sustitutas del atributo, y el modelo lo reconstruye a partir de ellas. La conclusión es que para medir y corregir una inequidad hay que **usar** el atributo protegido, no esconderlo.
+
+### Umbrales por Grupo {#sec-equidad-umbrales}
+
+Otra forma de corregir una diferencia es después del entrenamiento (@hardt2016equality): conservar el modelo y usar un umbral distinto para cada grupo, elegido para igualar el criterio de equidad que se quiere cumplir. El siguiente código conserva el umbral $0.5$ en los hogares rurales y busca, entre $81$ umbrales de $0.2$ a $0.6$, el umbral urbano cuya cobertura es la más cercana a la cobertura rural (`objetivo`). `rural` indica qué hogares de prueba son rurales, `cob_urbana` es la cobertura de los hogares urbanos con cada umbral e `incluir_eq` es la decisión con el umbral de cada grupo.
+
+```{python}
+#| echo: true
+rural = (grupos['ambito'] == 'rural').to_numpy()
+objetivo = incluir[rural & (y_g == 1)].mean()
+umbrales = np.linspace(0.2, 0.6, 81)
+cob_urbana = np.array([(prob[~rural & (y_g == 1)] > u).mean()
+                       for u in umbrales])
+u_urbano = umbrales[np.argmin(np.abs(cob_urbana - objetivo))]
+incluir_eq = np.where(rural, prob > 0.5, prob > u_urbano)
+eq_umbral = por_grupo(incluir_eq, 'ambito')
+```
+
+```{python}
+#| echo: false
+#| label: tbl-equidad-umbral
+#| tbl-cap: "Medidas por ámbito cuando el umbral de los hogares urbanos se elige para igualar la cobertura de los rurales."
+tabla_grupos(eq_umbral)
+```
+
+```{python}
+#| echo: false
+ru2, uu2 = eq_umbral.loc['rural'], eq_umbral.loc['urbano']
+u_urbano_f = Markdown(f'${u_urbano:0.3f}$')
+u_cmp_f = compara(u_urbano, 0.5, 'mayor', 'menor')
+cob_rural_eq_f, cob_urbano_eq_f = f4(ru2.cobertura), f4(uu2.cobertura)
+fil_urbano_eq_f = f4(uu2.filtracion)
+fil_eq_cmp_f = compara(uu2.filtracion, ur.filtracion, 'sube', 'baja')
+```
+
+El umbral urbano que iguala la cobertura es `{python} u_urbano_f`, `{python} u_cmp_f` que $0.5$. Con él, la @tbl-equidad-umbral muestra una cobertura de `{python} cob_rural_eq_f` en los hogares rurales y de `{python} cob_urbano_eq_f` en los urbanos, prácticamente la misma. A cambio, la filtración urbana `{python} fil_eq_cmp_f` de `{python} fil_urbano_f` a `{python} fil_urbano_eq_f`: la igualdad de oportunidades se consigue a costa de incluir a más hogares urbanos que no son pobres. Es el mismo intercambio entre error de inclusión y error de exclusión de @sec-costos-inclusion-exclusion, ahora por grupo, y equivale a usar en la @eq-umbral-costos una razón de costos distinta para cada grupo.
+
+El ajuste es técnicamente sencillo, pero su significado no lo es. Con umbrales por grupo, dos hogares con la misma probabilidad predicha pueden recibir decisiones distintas por pertenecer a grupos distintos. Si eso es aceptable, y para qué atributos, es una decisión normativa y jurídica que debe tomarse de manera explícita por quien es responsable del programa, no un ajuste que se hace en silencio al construir el modelo.
+
+### Los Criterios no se Pueden Cumplir Todos {#sec-equidad-incompatibilidad}
+
+En 2016 ProPublica (@angwin2016machine) analizó COMPAS, un instrumento que estima el riesgo de reincidencia y que se usa en tribunales de Estados Unidos, y mostró que la tasa de falsos positivos, acusados clasificados como de alto riesgo que no reincidieron, era mucho mayor para los acusados negros que para los blancos. La empresa respondió que el instrumento estaba calibrado: un mismo puntaje correspondía a la misma probabilidad de reincidir en ambos grupos. Las dos partes tenían razón. @chouldechova2017fair y @kleinberg2017inherent demostraron que cuando la prevalencia es distinta entre grupos, un clasificador que no es perfecto no puede tener a la vez la misma precisión y las mismas tasas de falsos positivos y de falsos negativos en todos los grupos.
+
+El problema de focalización tiene la misma estructura: la proporción de hogares pobres es distinta entre ámbitos (@tbl-equidad-ambito), así que no se pueden igualar a la vez la cobertura, la filtración y la precisión. Al igualar la cobertura con umbrales por grupo, la filtración se separó. La @fig-equidad-calibracion muestra la otra cara: agrupa a los hogares de prueba en cinco intervalos de probabilidad predicha y, en cada uno, calcula la proporción de hogares que son pobres en cada ámbito. Un modelo calibrado tiene esa proporción cerca de la probabilidad predicha, es decir, cerca de la diagonal.
+
+```{python}
+#| code-fold: true
+#| label: fig-equidad-calibracion
+#| fig-cap: "Proporción observada de hogares pobres en cada intervalo de probabilidad predicha, por ámbito. Si el modelo está calibrado en ambos grupos las dos líneas coinciden con la diagonal."
+intervalo = pd.cut(prob, np.linspace(0, 1, 6), include_lowest=True)
+df = pd.DataFrame(dict(intervalo=intervalo, pobre=y_g,
+                       ambito=grupos['ambito'].to_numpy()))
+df = df.groupby(['intervalo', 'ambito'], observed=True)['pobre'].mean()
+df = df.reset_index()
+df['probabilidad'] = df['intervalo'].apply(lambda x: x.mid).astype(float)
+fig, ax = plt.subplots(figsize=(5, 4))
+_ = sns.lineplot(df, x='probabilidad', y='pobre', hue='ambito',
+                 marker='o', ax=ax)
+_ = ax.plot([0, 1], [0, 1], color='gray', linestyle='--')
+_ = ax.set(xlabel='Probabilidad predicha',
+           ylabel='Proporción de hogares pobres')
+```
+
+```{python}
+#| echo: false
+calib = df.pivot(index='intervalo', columns='ambito', values='pobre')
+dif_calib_f = f4((calib['rural'] - calib['urbano']).abs().max())
+```
+
+En la @fig-equidad-calibracion las dos líneas van cerca una de la otra y de la diagonal; la mayor diferencia entre ámbitos en un mismo intervalo es `{python} dif_calib_f`. Es decir, el bosque está razonablemente calibrado en ambos grupos: una misma probabilidad predicha significa aproximadamente lo mismo para un hogar rural que para uno urbano. Aun así, la cobertura difiere entre ámbitos (@tbl-equidad-ambito). La calibración no implica igualdad de oportunidades, y lograr la segunda, como en @sec-equidad-umbrales, implica tratar distinto a hogares con la misma probabilidad.
+
+## Sesgo en los Datos {#sec-sesgo-datos}
+
+Las medidas de la sección anterior comparan las decisiones del modelo con la etiqueta. Pero un modelo aprende lo que los datos registran, y los datos administrativos y de encuestas registran al mundo de manera parcial. Antes de preguntar si un modelo es equitativo conviene preguntar qué tan bien representan los datos a la población sobre la que se va a decidir. Hay varios tipos de sesgo que vale la pena distinguir.
+
+El **sesgo en la etiqueta** aparece cuando lo que se predice es un sustituto de lo que interesa. En el conjunto Salud la etiqueta es el diagnóstico previo de diabetes y no la enfermedad: quien no tiene acceso a servicios de salud no tiene diagnóstico, aunque tenga diabetes (@sec-datos-salud). En el conjunto Seguridad, las denuncias registran solo una parte de los delitos (@sec-datos-seguridad). Un caso documentado es el de @obermeyer2019dissecting: un algoritmo usado en Estados Unidos para decidir qué pacientes recibían atención adicional predecía el gasto médico como sustituto de la necesidad de atención. Como en los pacientes negros se gastaba menos que en los blancos con la misma enfermedad, el algoritmo subestimaba de manera sistemática su necesidad.
+
+El **sesgo de representación** tiene que ver con quién aparece en los datos y con qué peso. Las encuestas del libro usan un diseño muestral en el que cada observación representa a un número distinto de hogares o personas, que es la columna `factor` que los ejemplos del libro no usan; un modelo entrenado sin esos factores aprende de la muestra y no de la población. Los registros administrativos tienen un problema más serio: solo contienen a quien ya tuvo contacto con el Estado, de manera que un modelo entrenado con el padrón de un programa no sabe nada de quien nunca se registró.
+
+El **sesgo de medición** aparece cuando una misma variable se mide con distinta calidad, o significa algo distinto, en grupos distintos. Por ejemplo, tener o no un vehículo o una computadora dice algo distinto sobre el ingreso de un hogar rural que sobre el de uno urbano, y el ingreso declarado puede ser más o menos preciso según el tipo de empleo.
+
+Los **ciclos de retroalimentación** aparecen cuando las decisiones tomadas con el modelo generan los datos del modelo siguiente. Si se envían más patrullas a donde el modelo predice más delitos, ahí se registrarán más delitos, y el siguiente modelo confirmará la predicción aunque la diferencia real sea menor. Ninguna de las medidas de @sec-equidad detecta un sesgo en la etiqueta, porque todas comparan las decisiones contra esa misma etiqueta; para encontrarlo hay que conocer cómo se generaron los datos.
+
+## Uso Responsable en Decisiones Públicas {#sec-uso-responsable}
+
+Las herramientas de este capítulo y de los anteriores no garantizan por sí solas un buen uso de un modelo. Lo que sí se puede hacer es formular las preguntas que debe poder responder quien usa un modelo en una decisión pública, antes de ponerlo en operación y mientras está en operación:
+
+1. ¿La decisión necesita una predicción o un efecto causal? Un modelo predictivo no dice qué pasa si se interviene (@sec-prediccion-vs-causal, @kleinberg2015prediction).
+2. ¿Qué cuesta cada error y quién lo paga? Los errores de inclusión y de exclusión no cuestan lo mismo ni los pagan las mismas personas (@sec-costos-inclusion-exclusion).
+3. ¿El rendimiento se midió fuera de muestra y con su incertidumbre? (@sec-rendimiento-cap, @sec-comparacion-algoritmos).
+4. ¿El rendimiento es parecido entre los grupos que importan? (@sec-equidad-medicion).
+5. ¿Un modelo más simple e interpretable rinde casi lo mismo? Si es así, conviene preferirlo (@rudin2019stop).
+6. ¿Se puede explicar a una persona por qué recibió esa decisión, y tiene cómo impugnarla? (@sec-shapley).
+7. ¿Hay una persona que revise los casos dudosos antes de que la decisión sea definitiva? (@sec-verificacion-campo).
+8. ¿Se vigila el modelo después de ponerlo en operación? La población cambia, y un modelo que funcionaba bien con los datos con que se entrenó puede dejar de hacerlo.
+
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
 Repita el análisis del capítulo con el problema de tamizaje de diabetes (@sec-datos-salud), que se encuentra en el archivo `ensanut_salud.csv.gz` del release `datos-v1`. La variable objetivo es `diabetes` y hay que quitar la columna `factor` de las variables predictoras. Entrene un `RandomForestClassifier`, calcule la importancia por permutación usando el macro-recall en el conjunto de prueba y dibuje la dependencia parcial de las variables `edad` e `imc`. Discuta por qué `diagnostico_hipertension` puede ser una variable importante para predecir la diabetes sin que eso diga nada sobre qué causa la diabetes.
+:::
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Con el conjunto Seguridad (@sec-datos-seguridad), que se encuentra en el archivo `envipe_seguridad.csv.gz` del release `datos-v1`, entrene un bosque aleatorio para predecir si una persona fue víctima de un delito (`victima_delito`), con la misma preparación de los datos de @sec-interpretabilidad-modelo (quitar la columna `factor`, sustituir las variables de texto por códigos enteros y usar la misma partición). Como las víctimas son una minoría, con el umbral $0.5$ el bosque casi no selecciona a nadie; use como umbral la proporción de víctimas en el conjunto de entrenamiento. Calcule las medidas de @sec-equidad-medicion por sexo y reproduzca la @tbl-actividad-equidad-seguridad. Discuta qué criterio de equidad sería el adecuado si la predicción se usara para dirigir una campaña de prevención del delito y qué sesgo puede tener la etiqueta, que proviene de lo que las personas declaran en una encuesta.
+
+```{python}
+#| echo: false
+#| label: tbl-actividad-equidad-seguridad
+#| tbl-cap: "Medidas por sexo de un bosque que predice la victimización, con umbral igual a la proporción de víctimas."
+seguridad = pd.read_csv(f'{URL_DATOS}/envipe_seguridad.csv.gz')
+X_s = seguridad.drop(columns=['victima_delito', 'factor'])
+for c in [c for c in X_s.columns
+          if not pd.api.types.is_numeric_dtype(X_s[c])]:
+    X_s[c] = X_s[c].astype('category').cat.codes
+X_s = X_s.astype(float)
+y_s = seguridad['victima_delito'].to_numpy()
+T_s, G_s2, ys_t, ys_g = train_test_split(X_s, y_s, test_size=0.2,
+                                         random_state=0, stratify=y_s)
+bosque_s = RandomForestClassifier(min_samples_split=9, n_jobs=-1,
+                                  random_state=0).fit(T_s, ys_t)
+incluir_s = bosque_s.predict_proba(G_s2)[:, 1] > ys_t.mean()
+sexo_s = seguridad.loc[G_s2.index, 'sexo'].to_numpy()
+filas_s = []
+for g in sorted(np.unique(sexo_s)):
+    m = sexo_s == g
+    filas_s.append(f'|{g}|${int(m.sum())}$|${ys_g[m].mean():0.4f}$|'
+                   f'${incluir_s[m].mean():0.4f}$|'
+                   f'${incluir_s[m & (ys_g == 1)].mean():0.4f}$|'
+                   f'${incluir_s[m & (ys_g == 0)].mean():0.4f}$|'
+                   f'${ys_g[m & incluir_s].mean():0.4f}$|')
+Markdown('|Sexo|Personas|Víctimas|Seleccionadas|Cobertura|'
+         'Filtración|Precisión|\n|---|---|---|---|---|---|---|\n'
+         + '\n'.join(filas_s))
+```
 :::
 
 ## Resumen {#sec-resumen-interpretabilidad}
@@ -361,3 +640,7 @@ Repita el análisis del capítulo con el problema de tamizaje de diabetes (@sec-
 En este capítulo se presentaron técnicas para interpretar un modelo que no se puede leer directamente. La importancia por reducción de impureza resume cuánto usa un bosque cada variable al construir sus árboles; es gratuita, pero se calcula con el conjunto de entrenamiento y favorece a las variables con muchos valores distintos. La importancia por permutación mide cuánto empeora el rendimiento en datos de prueba al destruir la información de una variable. La dependencia parcial y las curvas individuales muestran en qué dirección mueve una variable la predicción y si ese efecto cambia de un caso a otro. Los valores de Shapley reparten la predicción de una observación entre sus variables, se pueden aproximar por muestreo de permutaciones o calcular de manera exacta para árboles, y al juntar muchas observaciones dan también una visión global.
 
 Estas técnicas comparten limitaciones. Todas dependen de los datos con que se calculan, ya sea el conjunto de prueba, la muestra o el conjunto de fondo, y todas tienen dificultades cuando las variables están correlacionadas, porque reparten el crédito entre ellas o evalúan al modelo en observaciones que no existen. Sobre todo, interpretan al **modelo** y no al mundo: una variable importante para predecir no es necesariamente una causa del resultado, y modificarla no tiene por qué modificarlo. Para preguntas de ese tipo se necesitan las herramientas de la inferencia causal.
+
+La segunda mitad del capítulo trató a quién afectan los errores de un modelo. Los criterios de equidad, como la paridad demográfica, la igualdad de oportunidades, las probabilidades igualadas y la paridad predictiva, miden errores distintos, y cuando la prevalencia es distinta entre grupos no se pueden cumplir todos a la vez. Quitar el atributo protegido de las entradas no garantiza un modelo equitativo, porque otras variables lo sustituyen y porque la etiqueta misma puede depender de él; para medir y corregir una inequidad hay que usar el atributo. Los umbrales por grupo igualan un criterio a costa de otro, y tratar distinto a dos casos con la misma predicción es una decisión normativa que debe tomarse de manera explícita.
+
+Ninguna de estas medidas corrige una etiqueta sesgada, porque todas comparan contra ella, y por eso hay que conocer cómo se generaron los datos. La elección del criterio de equidad, como la de los costos de cada error, corresponde a quien decide la política y no a quien construye el modelo. Queda una pregunta que ninguna técnica de este capítulo responde: qué pasa cuando se interviene. Esa pregunta es el tema del capítulo *Aprendizaje Computacional e Inferencia Causal*, en preparación.
