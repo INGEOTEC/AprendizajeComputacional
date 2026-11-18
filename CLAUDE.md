@@ -16,6 +16,7 @@ python scripts/render.py capitulos/13Agrupamiento.qmd  # render one chapter (the
 python scripts/render.py --force capitulos/13Agrupamiento.qmd  # drop its frozen result and re-execute the code
 python scripts/render.py --verify-only                 # no render; just check _freeze/ is in sync with sources
 python scripts/check_visible.py capitulos/13Agrupamiento.qmd  # ejecuta solo el código visible de un capítulo (sin argumentos: todo el libro)
+python3 scripts/check_redaccion.py -v capitulos/13Agrupamiento.qmd  # mide dos puntos, punto y coma e inicios de párrafo tipo título (sin argumentos: todo el libro)
 quarto preview                                         # live preview while editing
 python3 scripts/test_sitio.py                          # pruebas de scripts/sitio.py (unittest, sin red ni Quarto)
 python3 scripts/test_nombres.py                        # ningún capítulo se llama como uno del MCDI (unittest, sin red ni Quarto)
@@ -58,10 +59,24 @@ Every chapter in `capitulos/` follows the same skeleton; new sections or chapter
 6. Pedagogical blocks: `::: {.callout-tip collapse="true"}` with `### Actividad` for exercises, `::: {.callout-note}` for asides.
 7. Todo lo que el lector ve debe poder ejecutarse por sí solo: toda variable usada en un chunk mostrado se define en un chunk mostrado anterior (los imports y constantes como `PALETTE` van en el chunk visible de `## Paquetes usados`). Los chunks `echo: false` son solo para `Markdown(...)`, estilos y cálculos que alimentan texto en línea. `scripts/check_visible.py` lo comprueba: extrae los chunks visibles, los concatena y los ejecuta (no forma parte de `test_command` ni de CI; correrlo a mano al editar un capítulo).
 8. Cross-references use `@sec-...` across chapters (58 distinct anchors exist, so renaming a `{#sec-...}` id requires grepping all of `capitulos/`). Citations are `@bibkey` from `references.bib`; the bibliography renders in `18Referencias.qmd`.
+9. La prosa sigue las reglas de la sección «Redacción» de este archivo; `scripts/check_redaccion.py` las mide.
 
 Chapter order and the appendix split live only in `_quarto.yml` (`book.chapters` / `book.appendices`). File numbers are deliberately sparse: 16, 17 and 21 are reserved for planned chapters (causal inference, text, etc.; `03Regresion.qmd` and `03SeleccionVariables.qmd` already exist and share the 03 prefix), so a gap in the numbering is intentional and does not affect Quarto, which numbers chapters by their position in `_quarto.yml`. The current edition is oriented to the METPOL course (CIDE), so the Introduction frames the book around public-policy problems. `capitulos/22Codigo.qmd` exists but is **not** listed there, so it is not rendered.
 
 Ningún capítulo de la edición vigente puede llamarse como uno de la edición MCDI (rama `mcdi`): las ligas viejas a `/capitulos/<capítulo MCDI>.html` deben caer en la página 404 (`ediciones/404.html`) y no mostrar sin aviso otro contenido. Por eso la Introducción y Redes Neuronales se llaman `01Intro.qmd` y `11Redes.qmd` (ex `01Introduccion.qmd` y `11RedesNeuronales.qmd`). `python3 scripts/test_nombres.py` lo comprueba con la lista fija de los 16 nombres del MCDI (no forma parte de `test_command` ni de CI; correrlo a mano al agregar o renombrar un capítulo).
+
+## Redacción
+
+Reglas del autor para toda la prosa del libro (capítulos, `index.qmd`, pies de figura y de tabla). Se cumplen al escribir, no solo al revisar: después de escribir o editar prosa en un capítulo, correr `python3 scripts/check_redaccion.py -v capitulos/<Capítulo>.qmd` y corregir hasta que diga `ok`.
+
+1. **Dos puntos solo para introducir.** Los dos puntos se usan al final de un párrafo para introducir una ecuación, un bloque de código o una lista, y nada más. No se usan a media oración para anunciar una explicación («una observación incómoda: un bosque…»), ni después de un término en negritas («el **efecto Rashomon**: con frecuencia…»), ni para dar una consecuencia («aunque el promedio sea bueno: los hogares…»). En su lugar la oración se une con palabras: «que», «porque», «es decir», «de manera que», «ya que», «esto es», «el cual», o se termina con punto y se empieza otra oración completa.
+2. **Punto y coma casi nunca.** Dos ideas se unen con una conjunción («y», «pero», «mientras que», «en cambio», «por lo que») o se separan con punto. El punto y coma solo se admite para separar los elementos de una enumeración cuando esos elementos ya llevan comas.
+3. **Nunca dos de esos signos en el mismo párrafo.** Un párrafo de prosa tiene a lo más uno (dos puntos a media oración o punto y coma), y en el capítulo completo no hay más de uno por cada diez párrafos.
+4. **El párrafo no empieza con un título disfrazado.** La primera oración de un párrafo no es un enunciado corto que el resto desarrolla («Conviene separar dos preguntas.», «Hay dos razones.», «Esta medida tiene dos limitaciones.», «En política pública la pregunta no es académica.»). La primera oración ya dice algo completo: se funde el enunciado corto con la oración que lo desarrolla («Esta medida tiene dos limitaciones. La primera es que…» pasa a «La primera limitación de esta medida es que…»). Como guía, la primera oración de un párrafo de varias oraciones tiene al menos diez palabras.
+5. **Tampoco frases de efecto.** No se cierra un párrafo con una oración corta y contundente que repite lo dicho, ni se usan contrastes del tipo «no es X, es Y» o «X, no Y» como recurso; se dice directamente qué es.
+6. **No se esquiva la regla cambiando el formato.** No se convierte prosa en listas, ni se sustituyen los dos puntos por rayas («—») o paréntesis, ni se parte una oración larga en muchas oraciones cortas. El estilo del libro es de párrafos con oraciones completas unidas por conectores, como en `capitulos/02Rendimiento.qmd` y `capitulos/07Lineal.qmd`.
+
+`scripts/check_redaccion.py` mide las reglas 1 a 4 (no forma parte de `test_command` ni de CI). Varios capítulos anteriores a la regla todavía no pasan; al editar la prosa de uno de ellos, dejarlo en `ok`.
 
 ## Spell checking
 
