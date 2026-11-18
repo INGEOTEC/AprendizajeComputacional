@@ -17,6 +17,7 @@ python scripts/render.py --force capitulos/13Agrupamiento.qmd  # drop its frozen
 python scripts/render.py --verify-only                 # no render; just check _freeze/ is in sync with sources
 python scripts/check_visible.py capitulos/13Agrupamiento.qmd  # ejecuta solo el código visible de un capítulo (sin argumentos: todo el libro)
 python3 scripts/check_redaccion.py -v capitulos/13Agrupamiento.qmd  # mide dos puntos, punto y coma e inicios de párrafo tipo título (sin argumentos: todo el libro)
+python3 scripts/test_redaccion.py                      # pruebas de scripts/check_redaccion.py (unittest, sin red ni Quarto)
 quarto preview                                         # live preview while editing
 python3 scripts/test_sitio.py                          # pruebas de scripts/sitio.py (unittest, sin red ni Quarto)
 python3 scripts/test_nombres.py                        # ningún capítulo se llama como uno del MCDI (unittest, sin red ni Quarto)

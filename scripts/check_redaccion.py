@@ -16,7 +16,13 @@ las tablas) y cuenta:
 2. Párrafos cargados: los que tienen dos o más de esos signos.
 3. Inicios cortos: párrafos de varias oraciones cuya primera oración tiene
    menos de MIN_PALABRAS palabras (un enunciado tipo título que el resto del
-   párrafo desarrolla).
+   párrafo desarrolla). No se cuentan los párrafos que empiezan con minúscula,
+   porque continúan la oración de la ecuación anterior («donde ...»).
+
+No son prosa los pies de tabla (líneas que empiezan con «: ») ni lo que está
+entre «$$», aunque la ecuación ocupe una sola línea con su etiqueta
+(«$$...$$ {#eq-x}»). Con -v se lista cada párrafo con signos y cada inicio
+corto, con su número de línea.
 
 Un capítulo pasa si no tiene párrafos cargados, si los signos no superan
 MAX_SIGNOS por párrafo y si los inicios cortos no superan MAX_INICIOS por
@@ -30,7 +36,7 @@ import sys
 MIN_PALABRAS = 10
 MAX_SIGNOS = 0.10
 MAX_INICIOS = 0.05
-NO_PROSA = ('#', ':::', '|', '<', '![', '-', '*', '+', '>', '```')
+NO_PROSA = ('#', ':::', ': ', '|', '<', '![', '-', '*', '+', '>', '```')
 
 
 def parrafos(ruta):
@@ -53,7 +59,7 @@ def parrafos(ruta):
         elif codigo:
             continue
         elif texto.startswith('$$'):
-            if not (len(texto) > 4 and texto.endswith('$$')):
+            if texto.count('$$') % 2:
                 ecuacion = not ecuacion
             texto = ''
         elif ecuacion:
@@ -81,8 +87,8 @@ def limpia(texto):
 
 
 def revisa(ruta):
-    """Regresa (número de párrafos, signos, cargados, inicios cortos)."""
-    signos, cargados, inicios = 0, [], []
+    """Regresa (número de párrafos, signos, cargados, inicios, sueltos)."""
+    signos, cargados, inicios, sueltos = 0, [], [], []
     lista = parrafos(ruta)
     for num, crudo in lista:
         texto = limpia(crudo)
@@ -91,10 +97,14 @@ def revisa(ruta):
         signos += cuenta
         if cuenta >= 2:
             cargados.append((num, cuenta, crudo))
+        elif cuenta == 1:
+            lugar = re.search(r':\s|;', cuerpo).start()
+            sueltos.append((num, cuerpo[max(0, lugar - 40):lugar + 25]))
         primera = re.match(r'(.+?\.)\s+[A-ZÁÉÍÓÚÑ¿¡@(]', texto)
-        if primera and len(primera.group(1).split()) < MIN_PALABRAS:
+        if (primera and not texto[0].islower()
+                and len(primera.group(1).split()) < MIN_PALABRAS):
             inicios.append((num, primera.group(1)))
-    return len(lista), signos, cargados, inicios
+    return len(lista), signos, cargados, inicios, sueltos
 
 
 def main(argv):
@@ -104,7 +114,7 @@ def main(argv):
         rutas = ['index.qmd'] + sorted(glob.glob('capitulos/*.qmd'))
     fallan = 0
     for ruta in rutas:
-        total, signos, cargados, inicios = revisa(ruta)
+        total, signos, cargados, inicios, sueltos = revisa(ruta)
         if total == 0:
             continue
         pasa = (not cargados and signos <= MAX_SIGNOS * total
@@ -117,6 +127,8 @@ def main(argv):
         if detalle:
             for num, cuenta, crudo in cargados:
                 print(f'    línea {num}: {cuenta} signos: {crudo[:90]}...')
+            for num, trozo in sueltos:
+                print(f'    línea {num}: 1 signo: ...{trozo}...')
             for num, oracion in inicios:
                 print(f'    línea {num}: inicio corto: {oracion}')
     return 1 if fallan else 0
