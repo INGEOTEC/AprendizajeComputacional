@@ -89,7 +89,7 @@ coinciden_f = Markdown(
     f'${len(set(seleccionadas) & set(columnas[lasso_cv.coef_ != 0]))}$')
 ```
 
-Las diez variables con mayor estadística $F$ son `{python} seleccionadas_f`. De ellas, `{python} coinciden_f` están entre las que conserva Lasso con el $\lambda$ elegido por validación cruzada.
+Las diez variables con mayor estadística $F$ son `{python} seleccionadas_f` y, de ellas, `{python} coinciden_f` están entre las que conserva Lasso con el $\lambda$ elegido por validación cruzada.
 
 ### Ventajas y Limitaciones
 
@@ -284,7 +284,7 @@ r2_comp.plot(comp_legend='Comparación', winner_legend='Mejor',
              alg_legend='Algoritmo', var_name='Rendimiento')
 ```
 
-Falta saber si los procedimientos eligen las mismas variables. La @tbl-seleccion-comparte cuenta, para cada par de procedimientos, cuántas variables comparten, de manera que la diagonal es el número de variables que selecciona cada uno.
+Para saber si los procedimientos eligen las mismas variables, la @tbl-seleccion-comparte cuenta, para cada par de procedimientos, cuántas variables comparten, de manera que la diagonal es el número de variables que selecciona cada uno.
 
 ```{python}
 #| echo: true
@@ -318,9 +318,9 @@ perdida_est_f = Markdown(f"${res.loc['Todas', 'r2'] - res.loc['Estadísticas', '
 
 Los subconjuntos de diez variables pierden rendimiento frente al modelo con todas. La selección basada en estadísticas pierde `{python} perdida_est_f` de $R^2$ y la selección hacia adelante `{python} perdida_ade_f`, y la @fig-seleccion-comparacion marca a ambas como diferentes del mejor. Con el mismo número de variables, la selección hacia adelante supera por `{python} dif_ade_est_f` a la basada en estadísticas porque evalúa el modelo y no cada variable por separado. En cambio, `SelectFromModel` y Lasso, que conservan más variables, igualan el rendimiento del modelo con todas. De las `{python} n_mod_f` variables que elige `SelectFromModel`, `{python} comp_mod_las_f` están entre las `{python} n_las_f` que conserva Lasso, pues ordena los coeficientes del mismo modelo.
 
-La @tbl-seleccion-comparte muestra que los procedimientos eligen subconjuntos distintos. La selección hacia adelante y la basada en estadísticas, ambas de diez variables, comparten solo `{python} comp_ade_est_f`, y las variables que eligen los cuatro procedimientos son `{python} todos_f`, un total de `{python} n_todos_f`. Es la misma lección del efecto Rashomon de @sec-coeficientes-regularizados, pues subconjuntos distintos pueden tener un rendimiento similar. Con muchos datos y pocas variables, como aquí, la ganancia de seleccionar es tener un modelo con menos variables que recabar y no un mejor $R^2$.
+La @tbl-seleccion-comparte muestra que los procedimientos eligen subconjuntos distintos, ya que la selección hacia adelante y la basada en estadísticas, ambas de diez variables, comparten solo `{python} comp_ade_est_f`, y las variables que eligen los cuatro procedimientos son `{python} todos_f`, un total de `{python} n_todos_f`. Es la misma lección del efecto Rashomon de @sec-coeficientes-regularizados, pues subconjuntos distintos pueden tener un rendimiento similar. Con muchos datos y pocas variables, como aquí, la ganancia de seleccionar es tener un modelo con menos variables que recabar y no un mejor $R^2$.
 
-Esa es la idea de la @sec-regresion-focalizacion. Cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política, y la @tbl-seleccion-comparacion muestra el precio de reducir el modelo a diez variables. Como el subconjunto seleccionado cambia con la muestra (@fig-lasso-estabilidad), conviene verificar que la conclusión no depende de una sola partición antes de pedir a un programa que recabe un conjunto específico de variables.
+Esa es la idea de la @sec-regresion-focalizacion, pues cuando cada variable que entra al modelo hay que recabarla, usar pocas variables deja de ser un asunto de rendimiento y se vuelve el objetivo de política, y la @tbl-seleccion-comparacion muestra el precio de reducir el modelo a diez variables. Como el subconjunto seleccionado cambia con la muestra (@fig-lasso-estabilidad), conviene verificar que la conclusión no depende de una sola partición antes de pedir a un programa que recabe un conjunto específico de variables.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad
@@ -338,4 +338,4 @@ Suponga que un programa de becas tiene que decidir qué información recabar en 
 
 Los procedimientos de selección de variables se agrupan en tres familias. Los filtros evalúan cada variable con una prueba estadística (@sec-seleccion-var-estadistica), los procedimientos voraces agregan o quitan una variable a la vez según el rendimiento del modelo (@sec-seleccion-adelante) y los basados en modelo aprovechan los coeficientes o la importancia que el propio modelo asigna (@sec-seleccion-por-modelo). Cada una tiene ventajas y limitaciones que se resumen en la @sec-seleccion-comparacion, donde además se comparan en el conjunto de prueba. Esa comparación muestra que los procedimientos eligen subconjuntos distintos con un rendimiento parecido, que es otra manifestación del efecto Rashomon de @sec-coeficientes-regularizados, y que reducir el número de variables cuesta poco rendimiento.
 
-Hasta aquí el problema era predecir un valor numérico. Cuando lo que se debe decidir es una acción y los errores no cuestan lo mismo, el problema cambia y el tema se retoma con la teoría de decisión en @sec-teoria-decision-bayesianas.
+Hasta aquí el problema era predecir un valor numérico, pero cuando lo que se debe decidir es una acción y los errores no cuestan lo mismo, el problema cambia y el tema se retoma con la teoría de decisión en @sec-teoria-decision-bayesianas.

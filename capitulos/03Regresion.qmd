@@ -62,7 +62,7 @@ y = educacion['tasa_abandono'].to_numpy()
 constantes_f = Markdown(', '.join(f'`{c}`' for c in constantes))
 ```
 
-Las columnas `{python} constantes_f` son constantes. Por otro lado, la regresión necesita números y varias de las variables son texto (la entidad, el sostenimiento, el tipo de servicio, el turno y la organización de los docentes). Cada categoría se convierte en una variable indicadora que vale uno cuando el plantel pertenece a esa categoría y cero en otro caso (*one-hot*, o variables *dummy* en econometría). Por cada variable se omite una categoría de referencia, pues de lo contrario la suma de las indicadoras sería idéntica a la constante del modelo y la matriz $X^\intercal X$ no tendría inversa.
+Las columnas `{python} constantes_f` son constantes y, por otro lado, la regresión necesita números y varias de las variables son texto (la entidad, el sostenimiento, el tipo de servicio, el turno y la organización de los docentes). Cada categoría se convierte en una variable indicadora que vale uno cuando el plantel pertenece a esa categoría y cero en otro caso (*one-hot*, o variables *dummy* en econometría). Por cada variable se omite una categoría de referencia, pues de lo contrario la suma de las indicadoras sería idéntica a la constante del modelo y la matriz $X^\intercal X$ no tendría inversa.
 
 ```{python}
 #| echo: true
@@ -249,9 +249,9 @@ $$ {#eq-sesgo-varianza}
 
 donde $f$ es la función verdadera, $\sigma^2$ es la varianza del ruido que ningún modelo puede eliminar y el valor esperado de $\hat f$ es sobre las muestras con las que se podría haber entrenado el modelo.
 
-Esta descomposición se deduce en varios pasos. El primero es entender de dónde viene la aleatoriedad. El modelo $\hat f$ se entrena con un conjunto $\mathcal T$ que es una muestra aleatoria. Con otra muestra se obtendría otro modelo, así que $\hat f(\mathbf x)$ es una variable aleatoria aun cuando $\mathbf x$ sea fijo, y $\mathbb E[\hat f(\mathbf x)]$ es la predicción promedio en $\mathbf x$ sobre todos los conjuntos de entrenamiento posibles. La simulación que se presenta más adelante aproxima ese promedio con las predicciones de los $100$ modelos ajustados. Por otro lado, la observación nueva tiene su propio ruido $\epsilon$. El valor esperado de la @eq-sesgo-varianza es, entonces, sobre las dos fuentes de aleatoriedad, el conjunto de entrenamiento $\mathcal T$ y el ruido $\epsilon$.
+Esta descomposición se deduce en varios pasos, y el primero es entender de dónde viene la aleatoriedad. El modelo $\hat f$ se entrena con un conjunto $\mathcal T$ que es una muestra aleatoria. Con otra muestra se obtendría otro modelo, así que $\hat f(\mathbf x)$ es una variable aleatoria aun cuando $\mathbf x$ sea fijo, y $\mathbb E[\hat f(\mathbf x)]$ es la predicción promedio en $\mathbf x$ sobre todos los conjuntos de entrenamiento posibles. La simulación que se presenta más adelante aproxima ese promedio con las predicciones de los $100$ modelos ajustados. Por otro lado, la observación nueva tiene su propio ruido $\epsilon$. El valor esperado de la @eq-sesgo-varianza es, entonces, sobre las dos fuentes de aleatoriedad, el conjunto de entrenamiento $\mathcal T$ y el ruido $\epsilon$.
 
-Los supuestos son los siguientes. La respuesta es $y = f(\mathbf x) + \epsilon$, con $\mathbb E[\epsilon]=0$ y $\mathbb V[\epsilon]=\sigma^2$. El ruido $\epsilon$ es independiente de $\hat f$, porque el ruido de la observación nueva no participó en el entrenamiento. Además, $f(\mathbf x)$ y $\mathbb E[\hat f(\mathbf x)]$ son números fijos y no variables aleatorias. Para abreviar se escribe $f$ y $\hat f$ en lugar de $f(\mathbf x)$ y $\hat f(\mathbf x)$.
+Se supone que la respuesta es $y = f(\mathbf x) + \epsilon$, con $\mathbb E[\epsilon]=0$ y $\mathbb V[\epsilon]=\sigma^2$. El ruido $\epsilon$ es independiente de $\hat f$, porque el ruido de la observación nueva no participó en el entrenamiento. Además, $f(\mathbf x)$ y $\mathbb E[\hat f(\mathbf x)]$ son números fijos y no variables aleatorias. Para abreviar se escribe $f$ y $\hat f$ en lugar de $f(\mathbf x)$ y $\hat f(\mathbf x)$.
 
 Se sustituye $y$ en el error de predicción y después se suma y se resta $\mathbb E[\hat f]$ para agrupar,
 
@@ -277,9 +277,9 @@ $$
 \end{split}
 $$
 
-Los tres términos cruzados valen cero. El primero, porque $\mathbb E[b] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$ El segundo, porque $\mathbb E[\epsilon]=0$ por el supuesto del modelo. En el tercero, la independencia entre el conjunto de entrenamiento y el ruido de la observación nueva implica que $\mathbb E[b\,\epsilon] = \mathbb E[b]\,\mathbb E[\epsilon]$, y por eso también es cero.
+Los tres términos cruzados valen cero, el primero porque $\mathbb E[b] = \mathbb E[\hat f] - \mathbb E[\hat f] = 0.$ El segundo, porque $\mathbb E[\epsilon]=0$ por el supuesto del modelo. En el tercero, la independencia entre el conjunto de entrenamiento y el ruido de la observación nueva implica que $\mathbb E[b\,\epsilon] = \mathbb E[b]\,\mathbb E[\epsilon]$, y por eso también es cero.
 
-Quedan tres términos. El primero es $a^2 = (\mathbb E[\hat f] - f)^2$, el sesgo al cuadrado. El segundo es $\mathbb E[b^2] = \mathbb E[(\hat f - \mathbb E[\hat f])^2]$, la varianza de $\hat f$, y el signo de $b$ no importa porque se eleva al cuadrado. El tercero es $\mathbb E[\epsilon^2] = \mathbb V[\epsilon] + \mathbb E[\epsilon]^2 = \sigma^2 + 0 = \sigma^2$, por la definición de varianza, y es el ruido. Con esto se obtiene la @eq-sesgo-varianza.
+De los tres términos que quedan, el primero es $a^2 = (\mathbb E[\hat f] - f)^2$, el sesgo al cuadrado. El segundo es $\mathbb E[b^2] = \mathbb E[(\hat f - \mathbb E[\hat f])^2]$, la varianza de $\hat f$, y el signo de $b$ no importa porque se eleva al cuadrado. El tercero es $\mathbb E[\epsilon^2] = \mathbb V[\epsilon] + \mathbb E[\epsilon]^2 = \sigma^2 + 0 = \sigma^2$, por la definición de varianza, y es el ruido. Con esto se obtiene la @eq-sesgo-varianza.
 
 En palabras, un modelo rígido se equivoca de manera parecida en todas las muestras (sesgo), mientras que un modelo flexible cambia mucho de una muestra a otra (varianza). Es el mismo fenómeno que muestran la @fig-sobre-aprendizaje y la @fig-sub-aprendizaje de la Introducción.
 
@@ -334,7 +334,7 @@ filas = '\n'.join(f'|{g}|${sesgo2[g]:0.4f}$|${varianza[g]:0.4f}$|'
 Markdown('|Grado|Sesgo$^2$|Varianza|\n|---|---|---|\n' + filas)
 ```
 
-El polinomio de grado $1$ es una recta. El promedio de sus predicciones está lejos de la función verdadera (sesgo alto) pero las rectas de las diferentes muestras se parecen entre sí (varianza baja). El polinomio de grado $12$ hace lo contrario. Puede seguir cada muestra, pero cada muestra produce una curva muy distinta y las curvas oscilan de manera violenta, sobre todo en los extremos, donde varias se salen de la figura (varianza altísima). Con una varianza tan grande, el promedio de las $100$ curvas todavía está dominado por unas pocas curvas extremas y por eso su sesgo estimado también es grande. El grado $3$ tiene el mejor equilibrio entre ambos, tal y como lo cuantifica la @tbl-sesgo-varianza, pues es el de menor suma de sesgo$^2$ y varianza. La regularización que se presenta a continuación es una manera de reducir la varianza a cambio de aceptar un poco de sesgo.
+El polinomio de grado $1$ es una recta, y el promedio de sus predicciones está lejos de la función verdadera (sesgo alto) pero las rectas de las diferentes muestras se parecen entre sí (varianza baja). El polinomio de grado $12$ hace lo contrario. Puede seguir cada muestra, pero cada muestra produce una curva muy distinta y las curvas oscilan de manera violenta, sobre todo en los extremos, donde varias se salen de la figura (varianza altísima). Con una varianza tan grande, el promedio de las $100$ curvas todavía está dominado por unas pocas curvas extremas y por eso su sesgo estimado también es grande. El grado $3$ tiene el mejor equilibrio entre ambos, tal y como lo cuantifica la @tbl-sesgo-varianza, pues es el de menor suma de sesgo$^2$ y varianza. La regularización que se presenta a continuación es una manera de reducir la varianza a cambio de aceptar un poco de sesgo.
 
 ## Regresión Ridge {#sec-ridge}
 
@@ -495,7 +495,7 @@ Este modelo, con $\lambda=0.5$ y $\rho=0.5$, tiene `{python} n_cero_enet_f` coef
 
 ## Selección de $\lambda$ por Validación Cruzada {#sec-seleccion-lambda}
 
-El parámetro $\lambda$ es un hiperparámetro. No se estima al minimizar el error de entrenamiento (siempre elegiría $\lambda=0$) y tampoco debe elegirse con el conjunto de prueba $\mathcal G$, pues este se reserva para medir el rendimiento final (@sec-validacion-cruzada). Se elige con $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation) dentro de $\mathcal T$. Para cada valor de $\lambda$ se entrena con $k-1$ partes, se predice la parte restante y se calcula el error cuadrático medio, y el valor elegido es el que lo minimiza. El siguiente código muestra el procedimiento a mano para Lasso.
+El parámetro $\lambda$ es un hiperparámetro, por lo que no se estima al minimizar el error de entrenamiento (siempre elegiría $\lambda=0$) y tampoco debe elegirse con el conjunto de prueba $\mathcal G$, pues este se reserva para medir el rendimiento final (@sec-validacion-cruzada). Se elige con $k$ iteraciones de validación cruzada (@sec-kfold-cross-validation) dentro de $\mathcal T$. Para cada valor de $\lambda$ se entrena con $k-1$ partes, se predice la parte restante y se calcula el error cuadrático medio, y el valor elegido es el que lo minimiza. El siguiente código muestra el procedimiento a mano para Lasso.
 
 ```{python}
 #| echo: true
