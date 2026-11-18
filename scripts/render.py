@@ -73,6 +73,7 @@ CHECK_MODULES = {
     "CompStats": "compstats",
     "jax": "jax",
     "optax": "optax",
+    "shap": "shap",
 }
 
 # quarto's freeze result file per format configured in _quarto.yml.
