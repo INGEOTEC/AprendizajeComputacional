@@ -33,7 +33,7 @@ Quien lee este capítulo ya conoce las herramientas de la inferencia causal, com
 
 La advertencia principal del capítulo es que el aprendizaje computacional no sustituye al diseño de investigación. Que la comparación entre tratados y no tratados sea válida depende de cómo se asignó el tratamiento, y ningún algoritmo corrige una asignación que favoreció a un grupo. Por eso el ejemplo del capítulo es un experimento, el de Progresa (@sec-datos-progresa), en el que la asignación fue al azar y la validez de la comparación no está en duda.
 
-El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y termina con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona. Después de los meta-aprendices se presentan los bosques causales (@sec-bosques-causales), que adaptan el bosque aleatorio para estimar efectos y dan intervalos de confianza, y el aprendizaje computacional doble (@sec-dml), que usa modelos flexibles para ajustar por variables de control cuando el tratamiento no se asignó al azar. El capítulo termina con los alcances y límites de estas herramientas (@sec-causal-limites).
+El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y continúa con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona. Después de los meta-aprendices se presentan los bosques causales (@sec-bosques-causales), que adaptan el bosque aleatorio para estimar efectos y dan intervalos de confianza, y el aprendizaje computacional doble (@sec-dml), que usa modelos flexibles para ajustar por variables de control cuando el tratamiento no se asignó al azar. El capítulo termina con los alcances y límites de estas herramientas (@sec-causal-limites).
 
 ## Resultados Potenciales {#sec-resultados-potenciales}
 
@@ -362,9 +362,16 @@ inf_frase_f = Markdown('menores' if max(inf.values()) < ate_g
                        else 'no siempre menores')
 n_cuartil_f = Markdown(f'${int(min(t.n.min() for t in ef_cuartil.values()))}$')
 n_loc_g_f = Markdown(f'${len(np.unique(loc[te]))}$')
+q_cuartil = {k: pd.qcut(v, 4, labels=False, duplicates='drop') + 1
+             for k, v in taus.items()}
+se_cuartil = [bootstrap_localidades(y_g[q == c], w_g[q == c],
+                                    loc[te][q == c]).std()
+              for q in q_cuartil.values() for c in np.unique(q)]
+se_cuartil_min_f = Markdown(f'${min(se_cuartil):0.4f}$')
+se_cuartil_max_f = Markdown(f'${max(se_cuartil):0.4f}$')
 ```
 
-La @tbl-causal-cuartiles muestra que en el cuartil de mayor efecto estimado el efecto medido es `{python} sup_f['S']`, `{python} sup_f['T']` y `{python} sup_f['X']` con el S-learner, el T-learner y el X-learner, respectivamente, que son `{python} sup_frase_f` que la diferencia de medias de todo el conjunto de prueba, y el menor de los tres equivale a `{python} veces_f` veces esa diferencia. En el cuartil de menor efecto estimado los efectos medidos son `{python} inf_f['S']`, `{python} inf_f['T']` y `{python} inf_f['X']`, que son `{python} inf_frase_f` que esa diferencia de medias. Cada cuartil tiene al menos `{python} n_cuartil_f` observaciones de las `{python} n_loc_g_f` localidades del conjunto de prueba, por lo que estas diferencias de medias tienen un error estándar del orden de dos o tres puntos porcentuales y no conviene leer las diferencias pequeñas entre métodos como evidencia de que uno ordena mejor que otro.
+La @tbl-causal-cuartiles muestra que en el cuartil de mayor efecto estimado el efecto medido es `{python} sup_f['S']`, `{python} sup_f['T']` y `{python} sup_f['X']` con el S-learner, el T-learner y el X-learner, respectivamente, que son `{python} sup_frase_f` que la diferencia de medias de todo el conjunto de prueba, y el menor de los tres equivale a `{python} veces_f` veces esa diferencia. En el cuartil de menor efecto estimado los efectos medidos son `{python} inf_f['S']`, `{python} inf_f['T']` y `{python} inf_f['X']`, que son `{python} inf_frase_f` que esa diferencia de medias. Cada cuartil tiene al menos `{python} n_cuartil_f` observaciones de las `{python} n_loc_g_f` localidades del conjunto de prueba, y el error estándar de estas diferencias de medias, calculado con el bootstrap por localidad, va de `{python} se_cuartil_min_f` a `{python} se_cuartil_max_f`, por lo que no conviene leer las diferencias pequeñas entre métodos como evidencia de que uno ordena mejor que otro.
 
 Otra forma de revisar los efectos estimados es compararlos contra una variable que la literatura identifica como decisiva, y @schultz2004school encontró que el efecto de Progresa en la inscripción se concentra en la transición de la primaria a la secundaria. La @fig-causal-grado compara, por último grado aprobado, el promedio del efecto estimado por cada meta-aprendiz con la diferencia de medias del experimento en el conjunto de prueba.
 
@@ -417,7 +424,7 @@ En la @fig-causal-grado, `{python} grado_max_frase_f`, `{python} transicion_f`, 
 
 ### Focalizar por Riesgo o por Efecto {#sec-focalizar-efecto}
 
-Con estos efectos estimados se puede regresar al problema de política que abrió la sección anterior. Con presupuesto para una cuarta parte de las niñas y niños (@sec-restriccion-presupuestal), se compara elegir a quienes tienen mayor riesgo predicho contra elegir a quienes tienen mayor efecto estimado, y en ambos casos se mide con el experimento el efecto entre los elegidos y entre los no elegidos, como se muestra en el siguiente código:
+Con estos efectos estimados se puede regresar al problema de política que se planteó en @sec-predecir-no-es-efecto. Con presupuesto para una cuarta parte de las niñas y niños (@sec-restriccion-presupuestal), se compara elegir a quienes tienen mayor riesgo predicho contra elegir a quienes tienen mayor efecto estimado, y en ambos casos se mide con el experimento el efecto entre los elegidos y entre los no elegidos, como se muestra en el siguiente código:
 
 ```{python}
 #| echo: true
@@ -533,6 +540,11 @@ perfil_sig_f = Markdown('no incluye al cero' if fila.inferior > 0
 n_sig = int((perfiles_ef['inferior'] > 0).sum())
 n_sig_f = Markdown(f'${n_sig}$')
 n_perfiles_f = Markdown(f'${len(perfiles_ef)}$')
+n_sig_frase_f = Markdown(
+    f'ninguno de los ${len(perfiles_ef)}$ perfiles tiene un intervalo que '
+    'quede completamente arriba de cero' if n_sig == 0 else
+    f'de los ${len(perfiles_ef)}$ perfiles hay ${n_sig}$ cuyo intervalo queda '
+    'completamente arriba de cero')
 ancho_f = Markdown(f'${(perfiles_ef.superior - perfiles_ef.inferior).mean():0.4f}$')
 coincide_f = Markdown(
     'coincide con los meta-aprendices en que el efecto se concentra alrededor '
@@ -544,7 +556,7 @@ imp_var_f = Markdown(f'`{imp.idxmax()}`')
 imp_val_f = Markdown(f'${imp.max():0.4f}$')
 ```
 
-La @fig-bosque-causal muestra que el perfil con mayor efecto estimado es `{python} perfil_sexo_f` con grado `{python} perfil_grado_f`, con un efecto de `{python} perfil_ef_f` y un intervalo de confianza de `{python} perfil_ic_f` que `{python} perfil_sig_f`, y que de los `{python} n_perfiles_f` perfiles hay `{python} n_sig_f` cuyo intervalo queda completamente arriba de cero. El bosque `{python} coincide_f`, y a la vez muestra que para un perfil individual la incertidumbre es grande, con intervalos de un ancho promedio de `{python} ancho_f`, algo que los meta-aprendices no dicen. El atributo `feature_importances_` indica qué variables usó el bosque para separar a las personas con efectos distintos, y la de mayor importancia es `{python} imp_var_f`, con `{python} imp_val_f`. Esta importancia se refiere a la heterogeneidad del efecto y no a la predicción de $y$, a diferencia de la importancia de variables de @sec-importancia-variables.
+La @fig-bosque-causal muestra que el perfil con mayor efecto estimado es `{python} perfil_sexo_f` con grado `{python} perfil_grado_f`, con un efecto de `{python} perfil_ef_f` y un intervalo de confianza de `{python} perfil_ic_f` que `{python} perfil_sig_f`, y que `{python} n_sig_frase_f`. El bosque `{python} coincide_f`, y a la vez muestra que para un perfil individual la incertidumbre es grande, con intervalos de un ancho promedio de `{python} ancho_f`, algo que los meta-aprendices no dicen. El atributo `feature_importances_` indica qué variables usó el bosque para separar a las personas con efectos distintos, y la de mayor importancia es `{python} imp_var_f`, con `{python} imp_val_f`. Esta importancia se refiere a la heterogeneidad del efecto y no a la predicción de $y$, a diferencia de la importancia de variables de @sec-importancia-variables.
 
 Los intervalos de `econml` suponen que las observaciones son independientes, y como aquí el sorteo fue por localidad, los intervalos correctos serían todavía más anchos. Además, examinar muchos perfiles y quedarse con los que resultan significativos es un problema de pruebas múltiples, que es justamente lo que estudian @lee2014multiple con estos mismos datos.
 
