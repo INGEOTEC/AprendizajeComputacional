@@ -40,9 +40,9 @@ Sin embargo, existen problemas cuyas características, como incertidumbre en la 
 
 ## Probabilidad {#sec-teoria-decision-probabilidad}
 
-En @sec-aprendizaje-supervisado se describió que el punto de inicio de aprendizaje supervisado es el conjunto $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada; este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar un método que capture la relación entre $x$ y $y$.
+En @sec-aprendizaje-supervisado se describió que el punto de inicio de aprendizaje supervisado es el conjunto $\mathcal D = \{ (x_1, y_1), \ldots, (x_N, y_N )\}$, donde $x_i \in \mathbb R^d$ corresponde a la  $i$-ésima entrada y $y_i$ es la salida asociada a esa entrada. Este conjunto tiene el objetivo de guiar un proceso de búsqueda para encontrar un método que capture la relación entre $x$ y $y$.
 
-Se pueden tratar las variables $x$ y $y$ de $\mathcal D$ como dos variables aleatorias $\mathcal X$ y $\mathcal Y$, respectivamente; en este dominio el problema de identificar la respuesta ($\mathcal Y$) dada la entrada ($\mathcal X$) se puede describir como encontrar la probabilidad de observar $\mathcal Y$ habiendo visto $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$.
+Se pueden tratar las variables $x$ y $y$ de $\mathcal D$ como dos variables aleatorias $\mathcal X$ y $\mathcal Y$, respectivamente. En este dominio el problema de identificar la respuesta ($\mathcal Y$) dada la entrada ($\mathcal X$) se puede describir como encontrar la probabilidad de observar $\mathcal Y$ habiendo visto $\mathcal X$, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$.
 
 ### Ejemplos
 
@@ -147,7 +147,7 @@ En esta sección se describe el primer ejemplo del paso 4 de la metodología gen
 
 Quitando la evidencia del Teorema de Bayes (@eq-teorema-bayes) se observa que $\mathbb P(\mathcal Y \mid \mathcal X) \propto \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$. En el ejemplo creado se observa que $\mathbb P(\mathcal Y=1) = \frac{1000}{3000},$ las otras probabilidades a priori tienen el mismo valor, es decir, $\mathbb P(\mathcal Y=2) = \mathbb P(\mathcal Y=3) = \frac{1}{3}.$ 
 
-La verosimilitud está definida en las variables `p1`, `p2` y `p3`; en particular en la función `pdf`, es decir, $\mathbb P(\mathcal X \mid \mathcal Y=1)$ es `p1.pdf`, $\mathbb P(\mathcal X \mid \mathcal Y=2)$ corresponde a `p2.pdf` y equivalentemente `p3.pdf` es la verosimilitud cuando $\mathcal Y=3.$
+La verosimilitud está definida en las variables `p1`, `p2` y `p3`, en particular en la función `pdf`, es decir, $\mathbb P(\mathcal X \mid \mathcal Y=1)$ es `p1.pdf`, $\mathbb P(\mathcal X \mid \mathcal Y=2)$ corresponde a `p2.pdf` y equivalentemente `p3.pdf` es la verosimilitud cuando $\mathcal Y=3.$
 
 Utilizando esta información $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$ se calcula de la siguiente manera.
 
@@ -173,7 +173,7 @@ Finalmente, $\mathbb P(\mathcal Y \mid \mathcal X)$ se obtiene normalizando $\ma
 posterior = posterior / np.atleast_2d(evidencia).T
 ```
 
-La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de $\mathbb P(\mathcal Y=1 \mid \mathcal X),$ $\mathbb P(\mathcal Y=2 \mid \mathcal X)$ y $\mathbb P(\mathcal Y=3 \mid \mathcal X)$; y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase. 
+La clase corresponde a la probabilidad máxima, en este caso se compara la probabilidad de $\mathbb P(\mathcal Y=1 \mid \mathcal X),$ $\mathbb P(\mathcal Y=2 \mid \mathcal X)$ y $\mathbb P(\mathcal Y=3 \mid \mathcal X)$, y la clase es aquella que tenga mayor probabilidad. El siguiente código muestra este procedimiento, donde el primer paso es crear un arreglo para mapear el índice a la clase. El segundo paso es seleccionar la probabilidad máxima y después transformar el índice de la probabilidad máxima a la clase. 
 
 ```{python}
 #| echo: true
@@ -213,7 +213,7 @@ Este ejemplo ayuda a ilustrar el caso donde, aun teniendo el modelo perfecto, es
 error_f = Markdown(f'${(y != prediccion).mean():0.4f}$')
 ```
 
-El ejemplo sirve también para ilustrar el quinto paso de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código; donde el `error` es `{python} error_f`.
+El ejemplo sirve también para ilustrar el quinto paso de la metodología general (ver @sec-metodologia-general) de los algoritmos de aprendizaje supervisado que corresponde a medir el rendimiento de un modelo. Primero se empieza por medir el error promedio utilizando el siguiente código, donde el `error` es `{python} error_f`.
 
 ```{python}
 #| echo: true
@@ -227,7 +227,7 @@ La siguiente pregunta es conocer cuánto varía este error si se vuelve a realiz
 se_formula_f = Markdown(f"${np.sqrt(error * (1 - error) / 3000):0.4f}$")
 ```
 
-El error estándar (ver @sec-error-estandar) está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde $\hat \theta$ es el valor estimado, en este caso el `error`. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores $1$ que indica que en ese ejemplo el clasificador se equivocó y $0$ cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, $p$, se estima como la media entonces el error estándar de $p$ corresponde al error estándar de la media (ver @sec-error-estandar-media), i.e., $\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$ dado que la varianza $\sigma^2$ de una distribución Bernoulli con parámetro $p$ es $p (1 - p)$. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción; teniendo un valor de `{python} se_formula_f`.
+El error estándar (ver @sec-error-estandar) está definido como $\sqrt{\mathbb V(\hat \theta)}$ donde $\hat \theta$ es el valor estimado, en este caso el `error`. El error es una variable aleatoria que sigue una distribución de Bernoulli, dado que para cada ejemplo tiene dos valores $1$ que indica que en ese ejemplo el clasificador se equivocó y $0$ cuando se predice la clase correcta. El parámetro de la distribución Bernoulli, $p$, se estima como la media entonces el error estándar de $p$ corresponde al error estándar de la media (ver @sec-error-estandar-media), i.e., $\sqrt{\mathbb V(\hat p)} = \sqrt{\frac{\hat p (1 - \hat p)}{N}},$ dado que la varianza $\sigma^2$ de una distribución Bernoulli con parámetro $p$ es $p (1 - p)$. Para el ejemplo analizado el error estándar se calcula con la siguiente instrucción, teniendo un valor de `{python} se_formula_f`.
 
 ```{python}
 #| echo: true
@@ -251,7 +251,7 @@ se_f = Markdown(f"${se:0.4f}$")
 
 El error estándar, `se`, calculado es `{python} se_f`. 
 
-El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés; mediante la técnica de muestreo bootstrap se simuló esta distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista `B`.
+El error estándar corresponde a la distribución que tiene la estimación del parámetro de interés. Mediante la técnica de muestreo bootstrap se simuló esta distribución y con el siguiente código se puede observar su histograma, donde los datos estimados se encuentran en la lista `B`.
 
 ```{python}
 #| label: fig-gaussian-3classes-distribucion
@@ -264,9 +264,9 @@ La @fig-gaussian-3classes-distribucion muestra el histograma de la estimación d
 
 ## Error Bayesiano {#sec-error-bayesiano}
 
-El ejemplo anterior deja una pregunta abierta, ¿por qué un modelo que conoce exactamente las distribuciones que generaron los datos (`p1`, `p2` y `p3`) comete errores al clasificar? La respuesta está en que el error no depende únicamente del método utilizado para clasificar, sino también de la superposición entre las distribuciones de las clases; esta sección formaliza esta idea mediante el concepto de **error bayesiano** y muestra que la regla utilizada en @sec-prediccion-normal, es decir, seleccionar la clase con mayor probabilidad *a posteriori*, es la que menor error comete entre todos los clasificadores posibles.
+El ejemplo anterior deja una pregunta abierta, ¿por qué un modelo que conoce exactamente las distribuciones que generaron los datos (`p1`, `p2` y `p3`) comete errores al clasificar? La respuesta está en que el error no depende únicamente del método utilizado para clasificar, sino también de la superposición entre las distribuciones de las clases. Esta sección formaliza esta idea mediante el concepto de **error bayesiano** y muestra que la regla utilizada en @sec-prediccion-normal, es decir, seleccionar la clase con mayor probabilidad *a posteriori*, es la que menor error comete entre todos los clasificadores posibles.
 
-Sea $f: \mathcal X \rightarrow \mathcal Y$ un clasificador, es decir, una función que asigna una clase $f(x)$ a cada entrada $x$; por ejemplo, la variable `prediccion` del ejemplo anterior corresponde a $f(x)$ evaluado en cada uno de los elementos de `X`. La probabilidad de que $f$ se equivoque, condicionada a una entrada $\mathcal X=x$, es
+Sea $f: \mathcal X \rightarrow \mathcal Y$ un clasificador, es decir, una función que asigna una clase $f(x)$ a cada entrada $x$. Por ejemplo, la variable `prediccion` del ejemplo anterior corresponde a $f(x)$ evaluado en cada uno de los elementos de `X`. La probabilidad de que $f$ se equivoque, condicionada a una entrada $\mathcal X=x$, es
 
 $$
 \mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \mathbb P(\mathcal Y = f(x) \mid \mathcal X=x),
@@ -286,7 +286,7 @@ $$
 \mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) = 1 - \underset{k}{\max}\ \mathbb P(\mathcal Y=k \mid \mathcal X=x).
 $$ {#eq-error-bayesiano}
 
-El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases; en el ejemplo de @sec-tres-normales el valor `{python} error_f` estimado no es producto de un método imperfecto -- `p1`, `p2` y `p3` son las distribuciones exactas -- sino que corresponde, salvo el error de estimación medido con `se_f`, al error bayesiano del problema, es decir, es un error irreducible.
+El error bayesiano no depende del algoritmo utilizado sino de qué tan traslapadas están las clases. En el ejemplo de @sec-tres-normales el valor `{python} error_f` estimado no es producto de un método imperfecto -- `p1`, `p2` y `p3` son las distribuciones exactas -- sino que corresponde, salvo el error de estimación medido con `se_f`, al error bayesiano del problema, es decir, es un error irreducible.
 
 Falta mostrar que $f^*$ es, de entre todos los clasificadores posibles, el que tiene el menor error esperado. Sea $f$ cualquier otro clasificador y, para simplificar la notación, sea $p_k(x) = \mathbb P(\mathcal Y=k \mid \mathcal X=x)$. Por definición de máximo, para toda entrada $x$ se cumple que
 
@@ -306,7 +306,7 @@ p_{f(x)}(x) &\leq \underset{k}{\max}\ p_k(x) \\
 \end{split}
 $$
 
-Finalmente se identifica cada lado de esta última desigualdad, el lado izquierdo, $1-p_{f(x)}(x) = 1 - \mathbb P(\mathcal Y=f(x) \mid \mathcal X=x)$, corresponde a $\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-condicional; el lado derecho, $1 - \underset{k}{\max}\ p_k(x)$, corresponde a $\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-bayesiano. Sustituyendo ambas identidades se obtiene
+Finalmente se identifica cada lado de esta última desigualdad, el lado izquierdo, $1-p_{f(x)}(x) = 1 - \mathbb P(\mathcal Y=f(x) \mid \mathcal X=x)$, corresponde a $\mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-condicional, y el lado derecho, $1 - \underset{k}{\max}\ p_k(x)$, corresponde a $\mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x)$ por la @eq-error-bayesiano. Sustituyendo ambas identidades se obtiene
 
 $$
 \mathbb P(f(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y \mid \mathcal X=x) \quad \text{para toda } x.
@@ -318,7 +318,7 @@ $$
 \mathbb P(f(\mathcal X) \neq \mathcal Y) \geq \mathbb P(f^*(\mathcal X) \neq \mathcal Y) \quad \text{para todo clasificador } f,
 $$
 
-es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes; esta propiedad se conoce como la **optimalidad del clasificador Bayesiano**. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo $0/1$ es equivalente a minimizar el error aquí definido.
+es decir, ningún clasificador puede tener un error esperado menor al de la regla de Bayes, y esta propiedad se conoce como la **optimalidad del clasificador Bayesiano**. En la siguiente sección se retoma esta idea desde la perspectiva del riesgo, donde se observará que minimizar el riesgo bajo un costo $0/1$ es equivalente a minimizar el error aquí definido.
 
 ## Riesgo {#sec-riesgo}
 
@@ -346,7 +346,7 @@ R(\alpha_i \mid x) &= \sum_k \lambda_{ik} \mathbb P(\mathcal Y=k \mid \mathcal X
 \end{split}
 $$ {#eq-riesgo-01}
 
-Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$. Por lo tanto en el caso de costo $0/1$ se puede observar que el mínimo riesgo corresponde a la clase más probable.
+Recordando que $\sum_k \mathbb P(\mathcal Y=k \mid \mathcal X=x) = 1$, en el caso de costo $0/1$ se puede observar que el mínimo riesgo corresponde a la clase más probable.
 
 ### Acción nula {#sec-accion-nula}
 
@@ -436,7 +436,7 @@ hy = np.array([m[i]
 error = (y != hy).mean()
 ```
 
-El error que se tiene corresponde a `{python} Markdown(f'{error:0.4f}')`. El siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuáles son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
+El error que se tiene corresponde a `{python} Markdown(f'{error:0.4f}')` y el siguiente paso es definir un riesgo para la clase nula, e.g. $\lambda = 0.2$ y utilizarlo para saber cuáles son los elementos que cumplen con la condición $\mathbb P(\mathcal Y=\hat y \mid \mathcal X=x) > 1 - \lambda.$ Estos elementos se guardan en la variable `valid` como muestra el siguiente código. 
 
 ```{python} 
 #| echo: true
@@ -543,7 +543,7 @@ Hasta aquí las distribuciones eran conocidas y los costos eran abstractos. En e
 
 ### Datos y probabilidades {#sec-decision-focalizacion-datos}
 
-La preparación de los datos y el modelo son los mismos que en @sec-regresion-focalizacion. Las variables categóricas se codifican, se separa el $20\%$ de los hogares como conjunto de prueba de manera estratificada, se estandariza con la media y la desviación estándar del conjunto de entrenamiento y se ajusta una regresión logística con penalización $L_1$ y `C=1`, es decir, con todas las variables. El modelo se describe en @sec-regresion-logistica; aquí es una caja negra cuyo método `predict_proba` regresa, en la segunda columna, la probabilidad $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$ de que el hogar sea pobre. No se usa el factor de expansión porque la decisión es por hogar.
+La preparación de los datos y el modelo son los mismos que en @sec-regresion-focalizacion. Las variables categóricas se codifican, se separa el $20\%$ de los hogares como conjunto de prueba de manera estratificada, se estandariza con la media y la desviación estándar del conjunto de entrenamiento y se ajusta una regresión logística con penalización $L_1$ y `C=1`, es decir, con todas las variables. El modelo se describe en @sec-regresion-logistica, y aquí es una caja negra cuyo método `predict_proba` regresa, en la segunda columna, la probabilidad $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$ de que el hogar sea pobre. No se usa el factor de expansión porque la decisión es por hogar.
 
 ```{python}
 #| echo: true
@@ -567,7 +567,7 @@ n_g_f = Markdown(f'${len(prob)}$')
 pobres_g_f = Markdown(f'${100 * yp_g.mean():0.1f}\\%$')
 ```
 
-El conjunto de prueba tiene `{python} n_g_f` hogares, de los cuales `{python} pobres_g_f` son pobres por ingresos. A diferencia del ejemplo de @sec-seleccion-accion-nula, `prob` no es la probabilidad verdadera sino una estimación; aun así, toda la teoría anterior se aplica sustituyendo $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$ por `prob`.
+El conjunto de prueba tiene `{python} n_g_f` hogares, de los cuales `{python} pobres_g_f` son pobres por ingresos. A diferencia del ejemplo de @sec-seleccion-accion-nula, `prob` no es la probabilidad verdadera sino una estimación, pero aun así toda la teoría anterior se aplica sustituyendo $\mathbb P(\mathcal Y=1 \mid \mathcal X=x)$ por `prob`.
 
 ### Costos de inclusión y exclusión {#sec-costos-inclusion-exclusion}
 
@@ -652,7 +652,7 @@ Markdown('|Regla|Cobertura|Precisión|Inclusión|Exclusión|Costo esperado|\n'
          '|---|---|---|---|---|---|\n' + filas)
 ```
 
-El umbral óptimo es `{python} umbral_f`. La @tbl-costos-umbral muestra el resultado. Con el umbral $0.5$ la cobertura es `{python} cob05_f`, la precisión `{python} prec05_f`, hay `{python} inc05_f` errores de inclusión y `{python} exc05_f` de exclusión, y el costo esperado es `{python} costo05_f`. Con el umbral óptimo la cobertura sube a `{python} cobopt_f` y la precisión baja a `{python} precopt_f`; los errores de exclusión bajan a `{python} excopt_f` a cambio de subir los de inclusión a `{python} incopt_f`, y el costo esperado baja a `{python} costoopt_f`. El modelo es el mismo en ambos casos; lo único que cambió es la decisión que se toma con sus probabilidades.
+El umbral óptimo es `{python} umbral_f` y la @tbl-costos-umbral muestra el resultado de las dos reglas. Con el umbral $0.5$ la cobertura es `{python} cob05_f`, la precisión `{python} prec05_f`, hay `{python} inc05_f` errores de inclusión y `{python} exc05_f` de exclusión, y el costo esperado es `{python} costo05_f`. Con el umbral óptimo la cobertura sube a `{python} cobopt_f` y la precisión baja a `{python} precopt_f`, mientras que los errores de exclusión bajan a `{python} excopt_f` a cambio de subir los de inclusión a `{python} incopt_f`, y el costo esperado baja a `{python} costoopt_f`. El modelo es el mismo en ambos casos y lo único que cambió es la decisión que se toma con sus probabilidades.
 
 ```{python}
 #| echo: false
@@ -662,7 +662,7 @@ umbral_emp_f = Markdown(f'${umbrales[np.argmin(costos)]:0.2f}$')
 costo_emp_f = Markdown(f'${min(costos):0.4f}$')
 ```
 
-La @fig-costo-umbral muestra el costo esperado en el conjunto de prueba para una malla de umbrales. El umbral con menor costo en la malla es `{python} umbral_emp_f`, con un costo de `{python} costo_emp_f`, y el umbral teórico es `{python} umbral_f`. Ambos coinciden aproximadamente porque las probabilidades que estima el modelo son razonables; si no lo fueran, el umbral de la @eq-umbral-costos aplicado a `prob` no sería el de menor costo. Además, la curva es plana cerca del mínimo, de manera que una diferencia pequeña en el umbral cambia poco el costo.
+La @fig-costo-umbral muestra el costo esperado en el conjunto de prueba para una malla de umbrales. El umbral con menor costo en la malla es `{python} umbral_emp_f`, con un costo de `{python} costo_emp_f`, y el umbral teórico es `{python} umbral_f`. Ambos coinciden aproximadamente porque las probabilidades que estima el modelo son razonables. Si no lo fueran, el umbral de la @eq-umbral-costos aplicado a `prob` no sería el de menor costo. Además, la curva es plana cerca del mínimo, de manera que una diferencia pequeña en el umbral cambia poco el costo.
 
 ```{python}
 #| label: fig-costo-umbral
@@ -679,7 +679,7 @@ _ = ax.set(xlabel='Umbral', ylabel='Costo esperado por hogar')
 
 ### Cobertura contra filtraciones {#sec-cobertura-filtraciones}
 
-Cada umbral define un programa distinto. Para quien diseña el programa, las dos cifras que importan son la **cobertura** (*recall*), la proporción de hogares pobres que el programa alcanza, y las **filtraciones**, $1-$ precisión, la proporción de beneficiarios que no son pobres. La función `precision_recall_curve` calcula ambas para todos los umbrales posibles, y la @fig-cobertura-filtraciones las grafica una contra la otra, marcando las dos reglas de la @tbl-costos-umbral.
+Cada umbral define un programa distinto y, para quien diseña el programa, las dos cifras que importan son la **cobertura** (*recall*), la proporción de hogares pobres que el programa alcanza, y las **filtraciones**, $1-$ precisión, la proporción de beneficiarios que no son pobres. La función `precision_recall_curve` calcula ambas para todos los umbrales posibles, y la @fig-cobertura-filtraciones las grafica una contra la otra, marcando las dos reglas de la @tbl-costos-umbral.
 
 ```{python}
 #| label: fig-cobertura-filtraciones
@@ -694,7 +694,7 @@ ax.legend()
 _ = ax.set(xlabel='Filtraciones ($1-$ precisión)', ylabel='Cobertura')
 ```
 
-Cada punto de la curva es un programa posible, y la curva es el menú de opciones de quien diseña el programa. Bajar el umbral sube la cobertura y las filtraciones a la vez, y no hay un umbral que mejore ambas; la única manera de mover la curva hacia arriba y a la izquierda es con un mejor modelo o con mejores variables. La matriz de costos es la que elige un punto del menú. La curva ROC de @sec-roc-curve es la misma idea con la tasa de falsos positivos (la proporción de hogares no pobres que el programa incluye) en lugar de las filtraciones; aquí se prefieren las filtraciones porque es la cifra que ve directamente quien administra el padrón de beneficiarios.
+Cada punto de la curva es un programa posible, y la curva es el menú de opciones de quien diseña el programa. Bajar el umbral sube la cobertura y las filtraciones a la vez, y no hay un umbral que mejore ambas, de manera que la única forma de mover la curva hacia arriba y a la izquierda es con un mejor modelo o con mejores variables. La matriz de costos es la que elige un punto del menú. La curva ROC de @sec-roc-curve es la misma idea con la tasa de falsos positivos (la proporción de hogares no pobres que el programa incluye) en lugar de las filtraciones, y aquí se prefieren las filtraciones porque es la cifra que ve directamente quien administra el padrón de beneficiarios.
 
 ### Restricción presupuestal {#sec-restriccion-presupuestal}
 
@@ -723,7 +723,7 @@ comparacion_f = Markdown('más' if n_costos > k else 'menos')
 l_excl_impl_f = Markdown(f'${L_INCL * (1 - umbral_cupo) / umbral_cupo:0.4f}$')
 ```
 
-El cupo es de `{python} k_f` hogares y el umbral implícito es `{python} umbral_cupo_f`; la cobertura es `{python} cob_cupo_f` y las filtraciones `{python} filt_cupo_f`. La regla de costos de @sec-costos-inclusion-exclusion incluiría a `{python} n_costos_f` hogares, `{python} comparacion_f` de los que caben. Con un cupo fijo lo que importa es el **orden** de las probabilidades y no su valor, pues cualquier transformación creciente de `prob` selecciona a los mismos hogares. Cuando la regla de costos incluye a más hogares de los que caben, el presupuesto manda, y el costo de exclusión que se acepta de manera implícita se lee del umbral implícito despejando $\lambda_{\text{excl}}$ de la @eq-umbral-costos, $\lambda_{\text{excl}} = \lambda_{\text{incl}}\,(1 - u)/u$, donde $u$ es el umbral. Con $\lambda_{\text{incl}} = 1$ el resultado es `{python} l_excl_impl_f`; es decir, el presupuesto actúa como si excluir a un hogar pobre costara eso y no $3$. Hacer explícita esa cifra es una manera de discutir si el presupuesto es suficiente.
+El cupo es de `{python} k_f` hogares y el umbral implícito es `{python} umbral_cupo_f`, con una cobertura de `{python} cob_cupo_f` y filtraciones de `{python} filt_cupo_f`. La regla de costos de @sec-costos-inclusion-exclusion incluiría a `{python} n_costos_f` hogares, `{python} comparacion_f` de los que caben. Con un cupo fijo lo que importa es el **orden** de las probabilidades y no su valor, pues cualquier transformación creciente de `prob` selecciona a los mismos hogares. Cuando la regla de costos incluye a más hogares de los que caben, el presupuesto manda, y el costo de exclusión que se acepta de manera implícita se lee del umbral implícito despejando $\lambda_{\text{excl}}$ de la @eq-umbral-costos, $\lambda_{\text{excl}} = \lambda_{\text{incl}}\,(1 - u)/u$, donde $u$ es el umbral. Con $\lambda_{\text{incl}} = 1$ el resultado es `{python} l_excl_impl_f`, es decir, el presupuesto actúa como si excluir a un hogar pobre costara eso y no $3$. Hacer explícita esa cifra es una manera de discutir si el presupuesto es suficiente.
 
 ### Verificación en campo {#sec-verificacion-campo}
 
@@ -781,7 +781,7 @@ ax.legend()
 _ = ax.set(xlabel='$p$', ylabel='Riesgo', ylim=(0, 1.5))
 ```
 
-La banda de verificación es la zona de incertidumbre del modelo, donde las probabilidades no son ni suficientemente altas para incluir ni suficientemente bajas para excluir. Su anchura depende de $\lambda_{\text{ver}}$, pues una visita más barata ensancha la banda y una más cara la angosta hasta desaparecer cuando $\lambda_{\text{ver}} \geq \lambda_{\text{incl}}\lambda_{\text{excl}}/(\lambda_{\text{incl}} + \lambda_{\text{excl}})$. Fijarla es, entonces, una decisión de presupuesto operativo. En la práctica las visitas también se equivocan y tienen costos que dependen del lugar del hogar, lo que vuelve más estrecha la ventaja de verificar; aquí se supuso una visita perfecta para mantener la equivalencia con la acción nula.
+La banda de verificación es la zona de incertidumbre del modelo, donde las probabilidades no son ni suficientemente altas para incluir ni suficientemente bajas para excluir. Su anchura depende de $\lambda_{\text{ver}}$, pues una visita más barata ensancha la banda y una más cara la angosta hasta desaparecer cuando $\lambda_{\text{ver}} \geq \lambda_{\text{incl}}\lambda_{\text{excl}}/(\lambda_{\text{incl}} + \lambda_{\text{excl}})$. Fijarla es, entonces, una decisión de presupuesto operativo. En la práctica las visitas también se equivocan y tienen costos que dependen del lugar del hogar, lo que vuelve más estrecha la ventaja de verificar, y aquí se supuso una visita perfecta para mantener la equivalencia con la acción nula.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad

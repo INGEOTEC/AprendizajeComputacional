@@ -34,7 +34,7 @@ sns.set_style('whitegrid')
 
 Existen diferentes modelos de clasificación y regresión donde no es posible encontrar una solución analítica para estimar los parámetros, por ejemplo en Regresión Logística (@sec-regresion-logistica). Es en este escenario donde se voltea a métodos de optimización iterativos para calcular los parámetros. 
 
-En esta unidad se describe posiblemente el método de optimización más conocido que es **Descenso de Gradiente**. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal; se describirá cómo se puede calcular el gradiente utilizando un método gráfico y cómo este método naturalmente realiza **Propagación hacia Atrás**.
+En esta unidad se describe posiblemente el método de optimización más conocido que es **Descenso de Gradiente**. Este método como su nombre lo indica utiliza el gradiente como su ingrediente principal, y se describirá cómo se puede calcular el gradiente utilizando un método gráfico y cómo este método naturalmente realiza **Propagación hacia Atrás**.
 
 ## Descenso por Gradiente {#sec-descenso-gradiente}
 
@@ -62,11 +62,11 @@ $$
 
 ### Ejemplo - Regresión Lineal {#sec-regresion-lineal-manual}
 
-Suponiendo que se quieren estimar los parámetros de la siguiente ecuación lineal: $f(x) = a x + b,$ para lo cual se tiene un conjunto de entrenamiento en el intervalo $x=[-10, 10],$ generado con los parámetros $a=2.3$ y $b=-3.$ Importante no olvidar que los parámetros $a=2.3$ y $b=-3$ son desconocidos y se quieren estimar usando **Descenso por Gradiente** y también es importante mencionar que para este problema en particular es posible tener una solución analítica para estimar los parámetros. 
+Suponiendo que se quieren estimar los parámetros de la ecuación lineal $f(x) = a x + b,$ para lo cual se tiene un conjunto de entrenamiento en el intervalo $x=[-10, 10],$ generado con los parámetros $a=2.3$ y $b=-3.$ Importante no olvidar que los parámetros $a=2.3$ y $b=-3$ son desconocidos y se quieren estimar usando **Descenso por Gradiente** y también es importante mencionar que para este problema en particular es posible tener una solución analítica para estimar los parámetros. 
 
-El primer paso es definir la función de error $E(a, b \mid \mathcal D),$ en problemas de regresión una función de error viable es: $E(a, b \mid \mathcal D) = \sum_{(x, y) \in \mathcal D} (y - f(x))^2.$
+El primer paso es definir la función de error $E(a, b \mid \mathcal D),$ en problemas de regresión una función de error viable es $E(a, b \mid \mathcal D) = \sum_{(x, y) \in \mathcal D} (y - f(x))^2.$
 
-La regla para actualizar los valores iniciales es: $w = w - \eta \nabla_w E$; por lo que se procede a calcular $\nabla_w E$ donde $w$ corresponde a los parámetros $a$ y $b$. 
+La regla para actualizar los valores iniciales es $w = w - \eta \nabla_w E$, por lo que se procede a calcular $\nabla_w E$ donde $w$ corresponde a los parámetros $a$ y $b$. 
 
 $$
 \begin{split}
@@ -133,13 +133,13 @@ _ = plt.tight_layout()
 
 ## Diferenciación Automática {#sec-diferenciacion-automatica}
 
-No en todos los casos es posible encontrar una ecuación cerrada para actualizar los parámetros; también el trabajo manual que se requiere para encontrar la solución analítica es considerable y depende de la complejidad de la función objetivo que se quiere derivar. Observando el procedimiento para actualizar los parámetros, i.e., $\mathbf w^{t+1} = w^{t-1} - \eta \nabla_{\mathbf w} E$, se concluye que se requiere evaluar $\nabla_{\mathbf w} E$ en un punto en particular, entonces, para solucionar el problema, es suficiente contar con un procedimiento que permita conocer el valor de $\nabla_{\mathbf w} E$ en cualquier punto deseado, y en particular no es necesario conocer la solución analítica de $\nabla_{\mathbf w} E.$ Al procedimiento que encuentra el valor de la derivada de cualquier función en un punto de manera automática se le conoce como diferenciación automática.
+No en todos los casos es posible encontrar una ecuación cerrada para actualizar los parámetros, y además el trabajo manual que se requiere para encontrar la solución analítica es considerable y depende de la complejidad de la función objetivo que se quiere derivar. Observando el procedimiento para actualizar los parámetros, i.e., $\mathbf w^{t+1} = w^{t-1} - \eta \nabla_{\mathbf w} E$, se concluye que se requiere evaluar $\nabla_{\mathbf w} E$ en un punto en particular, entonces, para solucionar el problema, es suficiente contar con un procedimiento que permita conocer el valor de $\nabla_{\mathbf w} E$ en cualquier punto deseado, y en particular no es necesario conocer la solución analítica de $\nabla_{\mathbf w} E.$ Al procedimiento que encuentra el valor de la derivada de cualquier función en un punto de manera automática se le conoce como diferenciación automática.
 
 ### Una Variable
 
 Se puede entender el proceso de diferenciación automática siguiendo un par de ejemplos. Sea $f(x) = x^2,$ en este caso $f'(x) = 2x.$ Ahora considerando que se quiere evaluar $f'(2.5)$, se sabe que $f'(2.5)=5,$  pero también se puede generar un programa donde en la primera fase se calcule $f(2.5)=(2.5)^2$ y al momento de calcular $f$ se guarde en un espacio asociado a $f$ el valor de $f'(2.5).$ Es decir $5$. Se puede observar que este procedimiento soluciona este problema simple para cualquier función de una variable. 
 
-La librería [JAX](https://jax.readthedocs.io) permite hacer diferenciación automática en Python. Siguiendo el ejemplo anterior, se genera la función $f(x) = x^2$ con el siguiente código
+La librería [JAX](https://jax.readthedocs.io) permite hacer diferenciación automática en Python y, siguiendo el ejemplo anterior, se genera la función $f(x) = x^2$ con el siguiente código
 
 ```{python}
 #| echo: true
@@ -147,7 +147,7 @@ def sq(x):
     return x**2
 ```
 
-Esta función se puede evaluar como `sq(2.5)`; lo interesante es que `sq` se puede componer con la función `grad` para calcular la derivada de la siguiente manera. 
+Esta función se puede evaluar como `sq(2.5)`, y lo interesante es que `sq` se puede componer con la función `grad` para calcular la derivada de la siguiente manera. 
 
 ```{python}
 #| echo: true
@@ -336,7 +336,7 @@ params_lr_f = Markdown(f'[{_}]')
 error_f = Markdown(f'${error[-1]:0.4f}$')
 ```
 
-Los parámetros son `{python} params_lr_f`. El error en el conjunto de entrenamiento se puede calcular utilizando el siguiente código.
+Los parámetros son `{python} params_lr_f` y el error en el conjunto de entrenamiento se puede calcular utilizando el siguiente código.
 
 ```{python}
 _ = jnp.array([lr.coef_[0, 0], lr.coef_[0, 1], lr.intercept_[0]])
