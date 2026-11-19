@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.20">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>17&nbsp; Aprendizaje Computacional e Inferencia Causal – Aprendizaje Computacional</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../capitulos/18Referencias.html" rel="next">
+<link href="../capitulos/15Interpretabilidad.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-17888a1159294d3eb470f19f6f52f5a5.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-d3f7f8e73c8d287b30bcf59c2b563615.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Aprendizaje Computacional</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ediciones" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ediciones</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-ediciones">    
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/">
+ <span class="dropdown-text">Vigente</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/mcdi/">
+ <span class="dropdown-text">MCDI (histórica)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://ingeotec.github.io/AprendizajeComputacional/dev/">
+ <span class="dropdown-text">Borrador</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/INGEOTEC/AprendizajeComputacional" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Aprendizaje-Computacional.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/16Causal.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Aprendizaje Computacional e Inferencia Causal</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/01Intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/02Rendimiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Rendimiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03Regresion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regresión y Regularización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/03SeleccionVariables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Selección de Variables</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/04Teoria_Decision.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Teoría de Decisión Bayesiana</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/05Parametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Métodos Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/06NoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Métodos No Paramétricos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/07Lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Discriminantes Lineales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/08Optimizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Optimización</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/09Arboles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Árboles de Decisión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/10Ensambles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ensambles</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/11Redes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Redes Neuronales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/12ReduccionDim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Reducción de Dimensión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/13Agrupamiento.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Agrupamiento</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/14Comparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Comparación de Algoritmos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/15Interpretabilidad.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Interpretabilidad y Equidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/16Causal.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Aprendizaje Computacional e Inferencia Causal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/18Referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/19Estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Estadística</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../capitulos/20ConjuntosDatos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Conjunto de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
+  <li><a href="#sec-intro-16" id="toc-sec-intro-16" class="nav-link" data-scroll-target="#sec-intro-16"><span class="header-section-number">17.1</span> Introducción</a></li>
+  <li><a href="#sec-resultados-potenciales" id="toc-sec-resultados-potenciales" class="nav-link" data-scroll-target="#sec-resultados-potenciales"><span class="header-section-number">17.2</span> Resultados Potenciales</a></li>
+  <li><a href="#sec-causal-experimento" id="toc-sec-causal-experimento" class="nav-link" data-scroll-target="#sec-causal-experimento"><span class="header-section-number">17.3</span> El Experimento de Progresa</a></li>
+  <li><a href="#sec-predecir-no-es-efecto" id="toc-sec-predecir-no-es-efecto" class="nav-link" data-scroll-target="#sec-predecir-no-es-efecto"><span class="header-section-number">17.4</span> Predecir no es Estimar un Efecto</a></li>
+  <li><a href="#sec-meta-aprendices" id="toc-sec-meta-aprendices" class="nav-link" data-scroll-target="#sec-meta-aprendices"><span class="header-section-number">17.5</span> Meta-aprendices</a>
+  <ul class="collapse">
+  <li><a href="#sec-s-learner" id="toc-sec-s-learner" class="nav-link" data-scroll-target="#sec-s-learner"><span class="header-section-number">17.5.1</span> S-learner</a></li>
+  <li><a href="#sec-t-learner" id="toc-sec-t-learner" class="nav-link" data-scroll-target="#sec-t-learner"><span class="header-section-number">17.5.2</span> T-learner</a></li>
+  <li><a href="#sec-x-learner" id="toc-sec-x-learner" class="nav-link" data-scroll-target="#sec-x-learner"><span class="header-section-number">17.5.3</span> X-learner</a></li>
+  <li><a href="#sec-causal-evaluacion" id="toc-sec-causal-evaluacion" class="nav-link" data-scroll-target="#sec-causal-evaluacion"><span class="header-section-number">17.5.4</span> Evaluación sin Observar el Efecto</a></li>
+  <li><a href="#sec-focalizar-efecto" id="toc-sec-focalizar-efecto" class="nav-link" data-scroll-target="#sec-focalizar-efecto"><span class="header-section-number">17.5.5</span> Focalizar por Riesgo o por Efecto</a></li>
+  </ul></li>
+  <li><a href="#sec-resumen-causal" id="toc-sec-resumen-causal" class="nav-link" data-scroll-target="#sec-resumen-causal"><span class="header-section-number">17.6</span> Resumen</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-inferencia-causal" class="quarto-section-identifier"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Aprendizaje Computacional e Inferencia Causal</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Código</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Mostrar todo el código</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Ocultar todo el código</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">Ver el código fuente</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>El <strong>objetivo</strong> de la unidad es conocer y aplicar modelos de aprendizaje computacional para estimar el efecto de una intervención y la manera en que ese efecto cambia entre personas.</p>
+<section id="paquetes-usados" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
+<div id="3ed91a0b" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GroupShuffleSplit</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-intro-16" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="sec-intro-16"><span class="header-section-number">17.1</span> Introducción</h2>
+<p>Hasta aquí el libro trató problemas de predicción, en los que interesa la predicción <span class="math inline">\(\hat y\)</span> y qué tan cerca está del valor observado. Este capítulo regresa a la otra pregunta que se planteó en <a href="01Intro.html#sec-prediccion-vs-causal" class="quarto-xref"><span>Sección 1.2</span></a>, que es qué pasa con el resultado cuando se interviene, y que es la pregunta de la evaluación de programas. El capítulo de interpretabilidad (<a href="15Interpretabilidad.html" class="quarto-xref"><span>Capítulo 16</span></a>) terminó señalando que ninguna técnica para interpretar un modelo la responde, porque esas técnicas describen lo que el modelo aprendió y no lo que ocurre cuando se cambia una variable.</p>
+<p>Quien lee este capítulo ya conoce las herramientas de la inferencia causal, como los experimentos, el emparejamiento o las diferencias en diferencias, y el capítulo no las repite. Lo que agrega el aprendizaje computacional es flexibilidad en dos lugares, que son estimar cómo cambia el efecto de una persona a otra sin fijar de antemano los subgrupos y ajustar por muchas variables de control sin escoger a mano la forma funcional. <span class="citation" data-cites="athey2019machine">Athey y Imbens (<a href="18Referencias.html#ref-athey2019machine" role="doc-biblioref">2019</a>)</span> y <span class="citation" data-cites="athey2019impact">Athey (<a href="18Referencias.html#ref-athey2019impact" role="doc-biblioref">2019</a>)</span> presentan este programa de trabajo y su relación con la econometría.</p>
+<p>La advertencia principal del capítulo es que el aprendizaje computacional no sustituye al diseño de investigación. Que la comparación entre tratados y no tratados sea válida depende de cómo se asignó el tratamiento, y ningún algoritmo corrige una asignación que favoreció a un grupo. Por eso el ejemplo del capítulo es un experimento, el de Progresa (<a href="20ConjuntosDatos.html#sec-datos-progresa" class="quarto-xref"><span>Sección B.1.6</span></a>), en el que la asignación fue al azar y la validez de la comparación no está en duda.</p>
+<p>El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y termina con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona.</p>
+</section>
+<section id="sec-resultados-potenciales" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="sec-resultados-potenciales"><span class="header-section-number">17.2</span> Resultados Potenciales</h2>
+<p>En el marco de resultados potenciales cada persona tiene dos resultados, <span class="math inline">\(y(1)\)</span> si recibe el tratamiento y <span class="math inline">\(y(0)\)</span> si no lo recibe <span class="citation" data-cites="rubin1974estimating">(<a href="18Referencias.html#ref-rubin1974estimating" role="doc-biblioref">Rubin 1974</a>)</span>, y <span class="citation" data-cites="imbens2015causal">Imbens y Rubin (<a href="18Referencias.html#ref-imbens2015causal" role="doc-biblioref">2015</a>)</span> es la referencia general de este marco. En Progresa el tratamiento es vivir en una localidad que recibió el programa en 1998 y el resultado es estar inscrito en la escuela en el otoño de ese año. El indicador de tratamiento se denota con <span class="math inline">\(w \in \{0, 1\}\)</span>, que en este capítulo no tiene relación con los coeficientes <span class="math inline">\(\mathbf w\)</span> de un modelo lineal usados en los capítulos anteriores. El efecto del tratamiento en la persona <span class="math inline">\(i\)</span> es</p>
+<p><span id="eq-efecto-individual"><span class="math display">\[
+\tau_i = y_i(1) - y_i(0).
+\tag{17.1}\]</span></span></p>
+<p>De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,</p>
+<p><span id="eq-resultado-observado"><span class="math display">\[
+y_i = w_i\, y_i(1) + (1 - w_i)\, y_i(0),
+\tag{17.2}\]</span></span></p>
+<p>de manera que <span class="math inline">\(\tau_i\)</span> nunca se observa, y <span class="citation" data-cites="holland1986statistics">Holland (<a href="18Referencias.html#ref-holland1986statistics" role="doc-biblioref">1986</a>)</span> lo llama el problema fundamental de la inferencia causal. La consecuencia para el aprendizaje computacional es directa, porque en predicción cada observación trae su respuesta <span class="math inline">\(y\)</span> y el error del modelo se mide en un conjunto de prueba, mientras que aquí ninguna observación trae su <span class="math inline">\(\tau_i\)</span> y por lo tanto no existe un conjunto de prueba con la respuesta correcta.</p>
+<p>Lo que sí se puede estimar con los datos son promedios de los efectos individuales. El efecto promedio del tratamiento es</p>
+<p><span id="eq-ate"><span class="math display">\[
+\tau = \mathbb E[y(1) - y(0)],
+\tag{17.3}\]</span></span></p>
+<p>y el efecto promedio condicional, que es el objeto central del capítulo, es</p>
+<p><span id="eq-cate"><span class="math display">\[
+\tau(x) = \mathbb E[y(1) - y(0) \mid x].
+\tag{17.4}\]</span></span></p>
+<p>El efecto condicional <span class="math inline">\(\tau(x)\)</span> dice cuánto cambia en promedio el resultado de las personas con características <span class="math inline">\(x\)</span>, y cuando <span class="math inline">\(\tau(x)\)</span> no es constante se dice que el efecto es heterogéneo.</p>
+<p>El primero de los dos supuestos que se necesitan para estimar estos efectos es que, entre personas con las mismas características, el tratamiento no dependa de los resultados potenciales, lo que se conoce como independencia condicional y se escribe <span class="math inline">\((y(1), y(0)) \perp w \mid x\)</span>. El segundo es que toda persona tenga probabilidad positiva de recibir y de no recibir el tratamiento, lo que se conoce como traslape y se escribe <span class="math inline">\(0 &lt; e(x) &lt; 1\)</span>, donde <span class="math inline">\(e(x) = \mathbb P(w = 1 \mid x)\)</span> es la probabilidad de tratamiento (<em>propensity score</em>). En un experimento ambos supuestos se cumplen por diseño, porque el sorteo decide <span class="math inline">\(w\)</span> sin mirar a las personas, mientras que en datos observacionales son supuestos que no se pueden verificar con los datos.</p>
+<p>Bajo esos supuestos, y llamando <span class="math inline">\(\mu_w(x) = \mathbb E[y \mid x, w]\)</span> a la función de regresión del grupo <span class="math inline">\(w\)</span>, el efecto condicional es la diferencia de dos funciones de regresión, como se muestra a continuación:</p>
+<p><span id="eq-cate-regresion"><span class="math display">\[
+\tau(x) = \mu_1(x) - \mu_0(x).
+\tag{17.5}\]</span></span></p>
+<p>Las funciones <span class="math inline">\(\mu_1\)</span> y <span class="math inline">\(\mu_0\)</span> son funciones de regresión como las de todos los capítulos anteriores y se pueden estimar con cualquier algoritmo. La dificultad es que un algoritmo que predice bien <span class="math inline">\(\mu_1\)</span> y <span class="math inline">\(\mu_0\)</span> por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (<a href="#sec-meta-aprendices" class="quarto-xref"><span>Sección 17.5</span></a>).</p>
+</section>
+<section id="sec-causal-experimento" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="sec-causal-experimento"><span class="header-section-number">17.3</span> El Experimento de Progresa</h2>
+<p>Progresa daba becas a los hogares pobres de localidades rurales a cambio de que sus hijas e hijos asistieran a la escuela, y el orden en que las localidades de la evaluación entraron al programa se sorteó, de manera que unas lo recibieron en 1998 y las de control hasta finales de 1999 (<a href="20ConjuntosDatos.html#sec-datos-progresa" class="quarto-xref"><span>Sección B.1.6</span></a>, <span class="citation" data-cites="schultz2004school">Schultz (<a href="18Referencias.html#ref-schultz2004school" role="doc-biblioref">2004</a>)</span>). Las características de cada niña o niño son las medidas en 1997, antes del programa, y son el sexo, la edad, el último grado aprobado y la inscripción en ese año, como se muestra en el siguiente código:</p>
+<div id="54924797" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>progresa <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/progresa_inscripcion.csv'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>VARS <span class="op">=</span> [<span class="st">'mujer'</span>, <span class="st">'edad'</span>, <span class="st">'grado'</span>, <span class="st">'inscrito_1997'</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> progresa[VARS].astype(<span class="bu">float</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> progresa[<span class="st">'progresa'</span>].to_numpy()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> progresa[<span class="st">'inscrito_1998'</span>].to_numpy().astype(<span class="bu">float</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>loc <span class="op">=</span> progresa[<span class="st">'localidad'</span>].to_numpy()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El conjunto tiene <span class="math inline">\(14,996\)</span> niñas y niños de <span class="math inline">\(491\)</span> localidades, de las cuales <span class="math inline">\(308\)</span> recibieron el programa en 1998 y <span class="math inline">\(183\)</span> son de control, de manera que la proporción de niñas y niños en localidades tratadas es <span class="math inline">\(0.6260\)</span>.</p>
+<p>Si el sorteo funcionó, las características previas al programa deben ser parecidas en los dos grupos, porque el azar no tiene preferencia por ningún tipo de localidad. La <a href="#tbl-causal-balance" class="quarto-xref">Tabla&nbsp;<span>17.1</span></a> muestra la media de cada característica en las localidades de control y en las que recibieron Progresa.</p>
+<div class="cell" data-execution_count="5">
+<div id="tbl-causal-balance" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causal-balance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;17.1: Media de las características medidas en 1997 en las localidades de control y en las que recibieron Progresa.
+</figcaption>
+<div aria-describedby="tbl-causal-balance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="5">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>Control</th>
+<th>Progresa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mujer</td>
+<td><span class="math inline">\(0.4923\)</span></td>
+<td><span class="math inline">\(0.4788\)</span></td>
+</tr>
+<tr class="even">
+<td>Edad</td>
+<td><span class="math inline">\(10.3525\)</span></td>
+<td><span class="math inline">\(10.3296\)</span></td>
+</tr>
+<tr class="odd">
+<td>Último grado aprobado</td>
+<td><span class="math inline">\(3.4137\)</span></td>
+<td><span class="math inline">\(3.4407\)</span></td>
+</tr>
+<tr class="even">
+<td>Inscripción en 1997</td>
+<td><span class="math inline">\(0.8561\)</span></td>
+<td><span class="math inline">\(0.8572\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>En un experimento el efecto promedio (<a href="#eq-ate" class="quarto-xref">Ecuación&nbsp;<span>17.3</span></a>) se estima con la diferencia entre la media del resultado de los tratados y la de los controles, donde <span class="math inline">\(N_1\)</span> y <span class="math inline">\(N_0\)</span> son el número de tratados y de controles, es decir,</p>
+<p><span id="eq-dif-medias"><span class="math display">\[
+\hat \tau = \frac{1}{N_1} \sum_{i: w_i = 1} y_i - \frac{1}{N_0} \sum_{i: w_i = 0} y_i,
+\tag{17.6}\]</span></span></p>
+<p>que se calcula con el siguiente código:</p>
+<div id="b3a05e1e" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dif_medias(y, w):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y[w <span class="op">==</span> <span class="dv">1</span>].mean() <span class="op">-</span> y[w <span class="op">==</span> <span class="dv">0</span>].mean()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ate <span class="op">=</span> dif_medias(y, w)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El sorteo fue por localidad, así que las niñas y niños de una misma localidad no son observaciones independientes y el error estándar debe calcularse remuestreando localidades completas y no personas. Se usa el bootstrap (<a href="19Estadistica.html#sec-bootstrap" class="quarto-xref"><span>Sección A.2</span></a>) en el que cada muestra se forma eligiendo localidades con reemplazo y conservando a todas las personas de cada localidad elegida, como se muestra a continuación:</p>
+<div id="873525b1" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bootstrap_localidades(y, w, loc, B<span class="op">=</span><span class="dv">500</span>, seed<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    claves <span class="op">=</span> np.unique(loc)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> [np.flatnonzero(loc <span class="op">==</span> c) <span class="cf">for</span> c <span class="kw">in</span> claves]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    salida <span class="op">=</span> np.empty(B)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> b <span class="kw">in</span> <span class="bu">range</span>(B):</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        sel <span class="op">=</span> rng.integers(<span class="dv">0</span>, <span class="bu">len</span>(claves), <span class="bu">len</span>(claves))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> np.concatenate([indices[s] <span class="cf">for</span> s <span class="kw">in</span> sel])</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        salida[b] <span class="op">=</span> dif_medias(y[i], w[i])</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> salida</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>ate_b <span class="op">=</span> bootstrap_localidades(y, w, loc)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>ate_se <span class="op">=</span> ate_b.std()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>ate_ic <span class="op">=</span> np.percentile(ate_b, [<span class="fl">2.5</span>, <span class="fl">97.5</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La proporción inscrita en las localidades de control es <span class="math inline">\(0.8137\)</span> y la diferencia de medias estima que el programa la cambia en <span class="math inline">\(0.0317\)</span>, con un error estándar de <span class="math inline">\(0.0116\)</span> y un intervalo de confianza del 95% de <span class="math inline">\([0.0110, 0.0555]\)</span>. El error estándar que supone que las personas son observaciones independientes sería <span class="math inline">\(0.0064\)</span>, por lo que el error estándar por conglomerados es <span class="math inline">\(1.8\)</span> veces el ingenuo y la incertidumbre es mayor de lo que sugeriría tratar a cada persona como un sorteo propio.</p>
+<p>Un efecto promedio como éste esconde diferencias grandes entre personas, porque en los primeros grados de primaria casi todos están inscritos con o sin programa y el efecto no puede ser grande ahí. La pregunta del resto del capítulo es para quién es mayor el efecto del programa.</p>
+</section>
+<section id="sec-predecir-no-es-efecto" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="sec-predecir-no-es-efecto"><span class="header-section-number">17.4</span> Predecir no es Estimar un Efecto</h2>
+<p>Una reacción natural ante un presupuesto limitado es dirigir el programa a quienes tienen mayor riesgo de no inscribirse, lo que convierte la focalización en un problema de predicción como los de <a href="03Regresion.html#sec-regresion-focalizacion" class="quarto-xref"><span>Sección 3.9</span></a> y <a href="04Teoria_Decision.html#sec-decision-focalizacion" class="quarto-xref"><span>Sección 5.8</span></a>. Para revisar si esa idea funciona, los datos se dividen en un conjunto de entrenamiento y uno de prueba (<a href="02Rendimiento.html#sec-conjunto-entre-prueba" class="quarto-xref"><span>Sección 2.2</span></a>), pero la partición se hace por localidad, de manera que todas las niñas y niños de una localidad quedan en el mismo conjunto, por la misma razón que el bootstrap se hizo por localidad. El siguiente código hace la partición:</p>
+<div id="ab53c474" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>particion <span class="op">=</span> GroupShuffleSplit(n_splits<span class="op">=</span><span class="dv">1</span>, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tr, te <span class="op">=</span> <span class="bu">next</span>(particion.split(X, y, groups<span class="op">=</span>loc))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>T, G <span class="op">=</span> X.iloc[tr], X.iloc[te]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y_t, y_g, w_t, w_g <span class="op">=</span> y[tr], y[te], w[tr], w[te]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El modelo de riesgo es un bosque aleatorio (<a href="10Ensambles.html#sec-bagging" class="quarto-xref"><span>Sección 11.4</span></a>) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima <span class="math inline">\(\mu_0(x)\)</span>. Se usa un bosque de regresión sobre la variable 0/1, cuya predicción es la proporción de inscritos entre observaciones parecidas, y la función <code>bosque</code> fija los hiperparámetros que se usan en todo el capítulo, como se muestra en el siguiente código:</p>
+<div id="e362fde4" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bosque():</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">200</span>, min_samples_leaf<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                 n_jobs<span class="op">=-</span><span class="dv">1</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>m0 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">0</span>], y_t[w_t <span class="op">==</span> <span class="dv">0</span>])</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> m0.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Como el conjunto de prueba viene de un experimento, se puede medir el efecto del programa dentro de cualquier grupo de personas con la diferencia de medias de ese grupo. La función <code>efecto_por_grupo</code> lo hace, y se aplica a los quintiles del riesgo predicho en el conjunto de prueba:</p>
+<div id="88d91bdf" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> efecto_por_grupo(grupo, y, w):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    filas <span class="op">=</span> []</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> g <span class="kw">in</span> np.unique(grupo):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> grupo <span class="op">==</span> g</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        filas.append(<span class="bu">dict</span>(grupo<span class="op">=</span>g, n<span class="op">=</span><span class="bu">int</span>(m.<span class="bu">sum</span>()),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                          control<span class="op">=</span>y[m <span class="op">&amp;</span> (w <span class="op">==</span> <span class="dv">0</span>)].mean(),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                          efecto<span class="op">=</span>dif_medias(y[m], w[m])))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(filas).set_index(<span class="st">'grupo'</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>q_riesgo <span class="op">=</span> pd.qcut(riesgo, <span class="dv">5</span>, labels<span class="op">=</span><span class="va">False</span>, duplicates<span class="op">=</span><span class="st">'drop'</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ef_riesgo <span class="op">=</span> efecto_por_grupo(q_riesgo, y_g, w_g)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-execution_count="12">
+<div id="tbl-causal-riesgo" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causal-riesgo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;17.2: Inscripción en las localidades de control y efecto de Progresa en el conjunto de prueba, por quintil del riesgo predicho de no inscribirse (el quintil 5 es el de mayor riesgo).
+</figcaption>
+<div aria-describedby="tbl-causal-riesgo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="12">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Quintil de riesgo</th>
+<th>Niñas y niños</th>
+<th>Inscripción en control</th>
+<th>Efecto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><span class="math inline">\(952\)</span></td>
+<td><span class="math inline">\(0.9943\)</span></td>
+<td><span class="math inline">\(0.0057\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><span class="math inline">\(876\)</span></td>
+<td><span class="math inline">\(0.9916\)</span></td>
+<td><span class="math inline">\(0.0007\)</span></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><span class="math inline">\(915\)</span></td>
+<td><span class="math inline">\(0.9828\)</span></td>
+<td><span class="math inline">\(-0.0004\)</span></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><span class="math inline">\(966\)</span></td>
+<td><span class="math inline">\(0.8367\)</span></td>
+<td><span class="math inline">\(0.0413\)</span></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><span class="math inline">\(859\)</span></td>
+<td><span class="math inline">\(0.2849\)</span></td>
+<td><span class="math inline">\(0.0394\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-causal-riesgo" class="quarto-xref">Tabla&nbsp;<span>17.2</span></a> muestra que el modelo de riesgo ordena bien a las personas, porque la inscripción en las localidades de control cae hasta <span class="math inline">\(0.2849\)</span> en el quintil de mayor riesgo, pero el efecto mayor no está ahí sino en el quintil 4, con un efecto de <span class="math inline">\(0.0413\)</span> contra <span class="math inline">\(0.0394\)</span> del quintil de mayor riesgo. En los quintiles de bajo riesgo casi todos se inscriben sin el programa y no hay nada que mejorar, mientras que en el de mayor riesgo están muchos jóvenes que ya habían dejado la escuela y a quienes una beca difícilmente regresa, de manera que el efecto tiende a concentrarse en quienes están por decidir si continúan. En términos de la notación, el riesgo es <span class="math inline">\(1 - \mu_0(x)\)</span> y el efecto es <span class="math inline">\(\mu_1(x) - \mu_0(x)\)</span>, que son dos funciones distintas de <span class="math inline">\(x\)</span>, y por eso <span class="citation" data-cites="kleinberg2015prediction">Kleinberg et&nbsp;al. (<a href="18Referencias.html#ref-kleinberg2015prediction" role="doc-biblioref">2015</a>)</span> distinguen los problemas de política que se resuelven con una predicción de los que requieren estimar un efecto causal.</p>
+</section>
+<section id="sec-meta-aprendices" class="level2" data-number="17.5">
+<h2 data-number="17.5" class="anchored" data-anchor-id="sec-meta-aprendices"><span class="header-section-number">17.5</span> Meta-aprendices</h2>
+<p>Se llama meta-aprendiz a un procedimiento que toma un algoritmo de regresión cualquiera, llamado aprendiz base, y lo usa para estimar el efecto condicional <span class="math inline">\(\tau(x)\)</span> <span class="citation" data-cites="kunzel2019metalearners">(<a href="18Referencias.html#ref-kunzel2019metalearners" role="doc-biblioref">Künzel et&nbsp;al. 2019</a>)</span>. En este capítulo el aprendiz base es siempre el bosque de la función <code>bosque</code>, y los tres meta-aprendices que se presentan se entrenan en el conjunto de entrenamiento <span class="math inline">\(\mathcal T\)</span> y se evalúan en el conjunto de prueba <span class="math inline">\(\mathcal G\)</span>.</p>
+<section id="sec-s-learner" class="level3" data-number="17.5.1">
+<h3 data-number="17.5.1" class="anchored" data-anchor-id="sec-s-learner"><span class="header-section-number">17.5.1</span> S-learner</h3>
+<p>El S-learner usa un solo modelo (<em>single</em>) <span class="math inline">\(\mu(x, w)\)</span> que recibe el tratamiento como una variable más, y el efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,</p>
+<p><span id="eq-s-learner"><span class="math display">\[
+\hat\tau_S(x) = \hat\mu(x, 1) - \hat\mu(x, 0).
+\tag{17.7}\]</span></span></p>
+<p>La debilidad de este método es que el tratamiento es una variable entre varias y, si predice poco comparado con las demás, el algoritmo la usa poco o la ignora, de manera que el efecto estimado se sesga hacia cero. El siguiente código entrena el S-learner y estima el efecto en el conjunto de prueba:</p>
+<div id="224a5dab" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>T_w <span class="op">=</span> T.assign(progresa<span class="op">=</span>w_t)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>s_modelo <span class="op">=</span> bosque().fit(T_w, y_t)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>tau_s <span class="op">=</span> (s_modelo.predict(G.assign(progresa<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>         <span class="op">-</span> s_modelo.predict(G.assign(progresa<span class="op">=</span><span class="dv">0</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-t-learner" class="level3" data-number="17.5.2">
+<h3 data-number="17.5.2" class="anchored" data-anchor-id="sec-t-learner"><span class="header-section-number">17.5.2</span> T-learner</h3>
+<p>El T-learner usa dos modelos (<em>two</em>), <span class="math inline">\(\hat\mu_1\)</span> entrenado con los tratados y <span class="math inline">\(\hat\mu_0\)</span> entrenado con los controles, y estima el efecto con</p>
+<p><span id="eq-t-learner"><span class="math display">\[
+\hat\tau_T(x) = \hat\mu_1(x) - \hat\mu_0(x),
+\tag{17.8}\]</span></span></p>
+<p>que es la <a href="#eq-cate-regresion" class="quarto-xref">Ecuación&nbsp;<span>17.5</span></a> con las funciones estimadas. El modelo <span class="math inline">\(\hat\mu_0\)</span> es el modelo <code>m0</code> que ya se entrenó para el riesgo. La debilidad de este método es que cada modelo se ajusta para predecir bien su propio grupo, con su propio error, y la diferencia de dos predicciones ruidosas es más ruidosa que cada una, por lo que puede encontrar heterogeneidad donde solo hay ruido. El siguiente código completa el T-learner:</p>
+<div id="d9626198" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">1</span>], y_t[w_t <span class="op">==</span> <span class="dv">1</span>])</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tau_t <span class="op">=</span> m1.predict(G) <span class="op">-</span> m0.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-x-learner" class="level3" data-number="17.5.3">
+<h3 data-number="17.5.3" class="anchored" data-anchor-id="sec-x-learner"><span class="header-section-number">17.5.3</span> X-learner</h3>
+<p>El X-learner empieza igual que el T-learner, entrenando <span class="math inline">\(\hat\mu_0\)</span> y <span class="math inline">\(\hat\mu_1\)</span>, y después imputa a cada persona el resultado potencial que no se observó para calcular con él un efecto individual, que para los tratados y para los controles es</p>
+<p><span id="eq-x-learner-imputado"><span class="math display">\[
+d_i^1 = y_i - \hat\mu_0(x_i), \qquad d_i^0 = \hat\mu_1(x_i) - y_i.
+\tag{17.9}\]</span></span></p>
+<p>Con esos efectos imputados se entrena un modelo <span class="math inline">\(\hat\tau_1\)</span> sobre <span class="math inline">\(d^1\)</span> con los tratados y otro <span class="math inline">\(\hat\tau_0\)</span> sobre <span class="math inline">\(d^0\)</span> con los controles, y por último los dos se combinan con</p>
+<p><span id="eq-x-learner"><span class="math display">\[
+\hat\tau_X(x) = e\,\hat\tau_0(x) + (1 - e)\,\hat\tau_1(x),
+\tag{17.10}\]</span></span></p>
+<p>donde <span class="math inline">\(e\)</span> es la proporción de tratados. La ventaja de este método es que los modelos de la segunda etapa aprenden directamente el efecto y no un resultado, y que aprovecha mejor los datos cuando un grupo es mucho mayor que el otro. El siguiente código implementa el X-learner:</p>
+<div id="2fb80299" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>d1 <span class="op">=</span> y_t[w_t <span class="op">==</span> <span class="dv">1</span>] <span class="op">-</span> m0.predict(T[w_t <span class="op">==</span> <span class="dv">1</span>])</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>d0 <span class="op">=</span> m1.predict(T[w_t <span class="op">==</span> <span class="dv">0</span>]) <span class="op">-</span> y_t[w_t <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>tau1 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">1</span>], d1)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>tau0 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">0</span>], d0)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> w_t.mean()</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>tau_x <span class="op">=</span> e <span class="op">*</span> tau0.predict(G) <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> e) <span class="op">*</span> tau1.predict(G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Los efectos estimados por los tres meta-aprendices se guardan en un diccionario para analizarlos juntos:</p>
+<div id="77e71e6a" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>taus <span class="op">=</span> <span class="bu">dict</span>(S<span class="op">=</span>tau_s, T<span class="op">=</span>tau_t, X<span class="op">=</span>tau_x)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>El promedio de los efectos estimados en el conjunto de prueba es <span class="math inline">\(0.0315\)</span> con el S-learner, <span class="math inline">\(0.0340\)</span> con el T-learner y <span class="math inline">\(0.0334\)</span> con el X-learner, y la diferencia de medias del experimento en ese mismo conjunto es <span class="math inline">\(0.0238\)</span>. El promedio de los efectos individuales estimados debe parecerse al efecto promedio, porque el efecto promedio es el promedio de <span class="math inline">\(\tau(x)\)</span> sobre la población. La desviación estándar de los efectos estimados es <span class="math inline">\(0.0602\)</span>, <span class="math inline">\(0.0733\)</span> y <span class="math inline">\(0.0600\)</span>, respectivamente, e indica cuánta heterogeneidad encuentra cada método.</p>
+</section>
+<section id="sec-causal-evaluacion" class="level3" data-number="17.5.4">
+<h3 data-number="17.5.4" class="anchored" data-anchor-id="sec-causal-evaluacion"><span class="header-section-number">17.5.4</span> Evaluación sin Observar el Efecto</h3>
+<p>Con un meta-aprendiz no se puede calcular un error como en el capítulo de rendimiento (<a href="02Rendimiento.html" class="quarto-xref"><span>Capítulo 2</span></a>), porque el efecto individual <span class="math inline">\(\tau_i\)</span> no se observa. Lo que sí permite el experimento es comprobar si el ordenamiento es correcto, formando grupos según el efecto estimado y midiendo en cada grupo el efecto con la diferencia de medias, de manera que si el meta-aprendiz ordena bien el efecto medido crece de un grupo al siguiente. El siguiente código lo hace con los cuartiles del efecto estimado por cada meta-aprendiz:</p>
+<div id="449818a2" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ef_cuartil <span class="op">=</span> {k: efecto_por_grupo(pd.qcut(v, <span class="dv">4</span>, labels<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                          duplicates<span class="op">=</span><span class="st">'drop'</span>) <span class="op">+</span> <span class="dv">1</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                  y_g, w_g)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>              <span class="cf">for</span> k, v <span class="kw">in</span> taus.items()}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-execution_count="20">
+<div id="tbl-causal-cuartiles" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="20">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causal-cuartiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;17.3: Efecto de Progresa medido en el conjunto de prueba dentro de cada cuartil del efecto estimado por los tres meta-aprendices (el cuartil 4 es el de mayor efecto estimado).
+</figcaption>
+<div aria-describedby="tbl-causal-cuartiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="20">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Cuartil del efecto estimado</th>
+<th>S-learner</th>
+<th>T-learner</th>
+<th>X-learner</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><span class="math inline">\(-0.0324\)</span></td>
+<td><span class="math inline">\(-0.0301\)</span></td>
+<td><span class="math inline">\(-0.0320\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><span class="math inline">\(0.0116\)</span></td>
+<td><span class="math inline">\(-0.0076\)</span></td>
+<td><span class="math inline">\(0.0249\)</span></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><span class="math inline">\(0.0333\)</span></td>
+<td><span class="math inline">\(0.0377\)</span></td>
+<td><span class="math inline">\(0.0251\)</span></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><span class="math inline">\(0.0729\)</span></td>
+<td><span class="math inline">\(0.0828\)</span></td>
+<td><span class="math inline">\(0.0777\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-causal-cuartiles" class="quarto-xref">Tabla&nbsp;<span>17.3</span></a> muestra que en el cuartil de mayor efecto estimado el efecto medido es <span class="math inline">\(0.0729\)</span>, <span class="math inline">\(0.0828\)</span> y <span class="math inline">\(0.0777\)</span> con el S-learner, el T-learner y el X-learner, respectivamente, que son mayores que la diferencia de medias de todo el conjunto de prueba, y el menor de los tres equivale a <span class="math inline">\(3.1\)</span> veces esa diferencia. En el cuartil de menor efecto estimado los efectos medidos son <span class="math inline">\(-0.0324\)</span>, <span class="math inline">\(-0.0301\)</span> y <span class="math inline">\(-0.0320\)</span>, que son menores que esa diferencia de medias. Cada cuartil tiene al menos <span class="math inline">\(1102\)</span> observaciones de las <span class="math inline">\(148\)</span> localidades del conjunto de prueba, por lo que estas diferencias de medias tienen un error estándar del orden de dos o tres puntos porcentuales y no conviene leer las diferencias pequeñas entre métodos como evidencia de que uno ordena mejor que otro.</p>
+<p>Otra forma de revisar los efectos estimados es compararlos contra una variable que la literatura identifica como decisiva, y <span class="citation" data-cites="schultz2004school">Schultz (<a href="18Referencias.html#ref-schultz2004school" role="doc-biblioref">2004</a>)</span> encontró que el efecto de Progresa en la inscripción se concentra en la transición de la primaria a la secundaria. La <a href="#fig-causal-grado" class="quarto-xref">Figura&nbsp;<span>17.1</span></a> compara, por último grado aprobado, el promedio del efecto estimado por cada meta-aprendiz con la diferencia de medias del experimento en el conjunto de prueba.</p>
+<div id="cell-fig-causal-grado" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(taus).assign(grado<span class="op">=</span>G[<span class="st">'grado'</span>].to_numpy())</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.groupby(<span class="st">'grado'</span>).mean()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Experimento'</span>] <span class="op">=</span> efecto_por_grupo(G[<span class="st">'grado'</span>].to_numpy(), y_g, w_g)[<span class="st">'efecto'</span>]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.reset_index().melt(id_vars<span class="op">=</span><span class="st">'grado'</span>, var_name<span class="op">=</span><span class="st">'Estimación'</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                           value_name<span class="op">=</span><span class="st">'efecto'</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.lineplot(df, x<span class="op">=</span><span class="st">'grado'</span>, y<span class="op">=</span><span class="st">'efecto'</span>, hue<span class="op">=</span><span class="st">'Estimación'</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                 style<span class="op">=</span><span class="st">'Estimación'</span>, markers<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, linewidth<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Último grado aprobado en 1997'</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>           ylabel<span class="op">=</span><span class="st">'Efecto en la inscripción'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-causal-grado" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-causal-grado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16Causal_files/figure-html/fig-causal-grado-output-1.png" width="528" height="358" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-causal-grado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;17.1: Efecto de Progresa en la inscripción por último grado aprobado en 1997, en el conjunto de prueba. Promedio del efecto estimado por cada meta-aprendiz y diferencia de medias del experimento.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>En la <a href="#fig-causal-grado" class="quarto-xref">Figura&nbsp;<span>17.1</span></a>, los tres meta-aprendices tienen su mayor efecto estimado en quienes habían aprobado el grado 5, es decir, quienes en 1998 debían decidir si terminaban la primaria o entraban a la secundaria, con un efecto promedio estimado de hasta <span class="math inline">\(0.1021\)</span>, mientras que en los grados 0 a 4 el promedio del efecto estimado no pasa de <span class="math inline">\(0.0234\)</span>. Los meta-aprendices encuentran ese patrón sin que se les indique dónde buscar, y la diferencia de medias del experimento en el grado <span class="math inline">\(5\)</span> es <span class="math inline">\(0.1210\)</span>. La línea del experimento es más errática que las de los modelos porque cada punto es una diferencia de medias calculada con pocas observaciones, en particular en los grados 7 a 9, que tienen a lo más <span class="math inline">\(176\)</span> niñas y niños cada uno, mientras que los modelos comparten información entre grados vecinos y suavizan el efecto.</p>
+</section>
+<section id="sec-focalizar-efecto" class="level3" data-number="17.5.5">
+<h3 data-number="17.5.5" class="anchored" data-anchor-id="sec-focalizar-efecto"><span class="header-section-number">17.5.5</span> Focalizar por Riesgo o por Efecto</h3>
+<p>Con estos efectos estimados se puede regresar al problema de política que abrió la sección anterior. Con presupuesto para una cuarta parte de las niñas y niños (<a href="04Teoria_Decision.html#sec-restriccion-presupuestal" class="quarto-xref"><span>Sección 5.8.4</span></a>), se compara elegir a quienes tienen mayor riesgo predicho contra elegir a quienes tienen mayor efecto estimado, y en ambos casos se mide con el experimento el efecto entre los elegidos y entre los no elegidos, como se muestra en el siguiente código:</p>
+<div id="0378b02d" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> efecto_seleccion(puntaje, y, w, proporcion<span class="op">=</span><span class="fl">0.25</span>):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    sel <span class="op">=</span> puntaje <span class="op">&gt;=</span> np.quantile(puntaje, <span class="dv">1</span> <span class="op">-</span> proporcion)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dif_medias(y[sel], w[sel]), dif_medias(y[<span class="op">~</span>sel], w[<span class="op">~</span>sel])</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>ef_sel <span class="op">=</span> {k: efecto_seleccion(v, y_g, w_g)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">dict</span>(Riesgo<span class="op">=</span>riesgo, <span class="op">**</span>taus).items()}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-execution_count="25">
+<div id="tbl-causal-focalizacion" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-causal-focalizacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;17.4: Efecto de Progresa medido en el conjunto de prueba entre la cuarta parte elegida con cada criterio y entre el resto.
+</figcaption>
+<div aria-describedby="tbl-causal-focalizacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="25">
+<table class="cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>Criterio de selección</th>
+<th>Efecto en los elegidos</th>
+<th>Efecto en el resto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mayor riesgo predicho</td>
+<td><span class="math inline">\(0.0332\)</span></td>
+<td><span class="math inline">\(0.0143\)</span></td>
+</tr>
+<tr class="even">
+<td>Mayor efecto, S-learner</td>
+<td><span class="math inline">\(0.0769\)</span></td>
+<td><span class="math inline">\(0.0058\)</span></td>
+</tr>
+<tr class="odd">
+<td>Mayor efecto, T-learner</td>
+<td><span class="math inline">\(0.0861\)</span></td>
+<td><span class="math inline">\(0.0026\)</span></td>
+</tr>
+<tr class="even">
+<td>Mayor efecto, X-learner</td>
+<td><span class="math inline">\(0.0719\)</span></td>
+<td><span class="math inline">\(0.0059\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>La <a href="#tbl-causal-focalizacion" class="quarto-xref">Tabla&nbsp;<span>17.4</span></a> muestra que entre los elegidos por el efecto estimado con el X-learner el programa cambia la inscripción en <span class="math inline">\(0.0719\)</span>, que es mayor que el <span class="math inline">\(0.0332\)</span> de los elegidos por riesgo, con una razón de <span class="math inline">\(2.2\)</span> entre ambos. La correlación entre el riesgo predicho y el efecto estimado con el X-learner es <span class="math inline">\(0.3901\)</span>, de manera que los dos criterios eligen a grupos de personas en buena parte distintos y, con el mismo presupuesto, el criterio cambia cuántas inscripciones adicionales logra el programa.</p>
+<p>Elegir por efecto estimado maximiza el resultado medido del programa, pero ese no es el único objetivo legítimo de una política pública. Un programa puede querer atender a quienes están peor aunque el efecto en ellos sea menor, y esa es una decisión de quien define la política, igual que la de los costos de cada error en <a href="04Teoria_Decision.html#sec-decision-focalizacion" class="quarto-xref"><span>Sección 5.8</span></a>. Además, estos efectos se refieren a un solo resultado, la inscripción en 1998, y un programa de transferencias tiene otros resultados, como la salud, la nutrición o el consumo de los hogares, en los que el orden de las personas podría ser diferente.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Actividad
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Repetir el análisis de <a href="#sec-meta-aprendices" class="quarto-xref"><span>Sección 17.5</span></a> con <code>inscrito_1999</code> como resultado, que mide la inscripción un año y medio después del inicio del programa. Calcular el efecto promedio con su error estándar por conglomerados, entrenar el T-learner y el X-learner y dibujar el promedio del efecto estimado por grado aprobado en 1997. Discutir si los grados con mayor efecto son los mismos que en 1998 y por qué podrían recorrerse, considerando que las mismas personas son un año mayores.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-resumen-causal" class="level2" data-number="17.6">
+<h2 data-number="17.6" class="anchored" data-anchor-id="sec-resumen-causal"><span class="header-section-number">17.6</span> Resumen</h2>
+<p>Los resultados potenciales definen el efecto individual de un tratamiento como la diferencia entre el resultado con tratamiento y sin él, y como de cada persona solo se observa uno de los dos, el efecto individual nunca se observa y lo que se estima son promedios, que son el efecto promedio y el efecto condicional <span class="math inline">\(\tau(x)\)</span>. En un experimento el efecto promedio se estima con una diferencia de medias, y su error estándar debe respetar la unidad que se sorteó, que en Progresa fue la localidad y no la persona.</p>
+<p>Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de <span class="math inline">\(\mu_0(x)\)</span> y el efecto de la diferencia <span class="math inline">\(\mu_1(x) - \mu_0(x)\)</span>. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.</p>
+<p>Los meta-aprendices convierten un algoritmo de regresión en un estimador de <span class="math inline">\(\tau(x)\)</span>. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.</p>
+
+
+<!-- -->
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-athey2019impact" class="csl-entry" role="listitem">
+Athey, Susan. 2019. <span>«The Impact of Machine Learning on Economics»</span>. En <em>The Economics of Artificial Intelligence: An Agenda</em>, editado por Ajay Agrawal, Joshua Gans, y Avi Goldfarb. University of Chicago Press. <a href="https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/impact-machine-learning-economics">https://www.nber.org/books-and-chapters/economics-artificial-intelligence-agenda/impact-machine-learning-economics</a>.
+</div>
+<div id="ref-athey2019machine" class="csl-entry" role="listitem">
+Athey, Susan, y Guido W. Imbens. 2019. <span>«Machine Learning Methods That Economists Should Know About»</span>. <em>Annual Review of Economics</em> 11: 685-725. <a href="https://doi.org/10.1146/annurev-economics-080217-053433">https://doi.org/10.1146/annurev-economics-080217-053433</a>.
+</div>
+<div id="ref-holland1986statistics" class="csl-entry" role="listitem">
+Holland, Paul W. 1986. <span>«Statistics and Causal Inference»</span>. <em>Journal of the American Statistical Association</em> 81 (396): 945-60. <a href="https://doi.org/10.1080/01621459.1986.10478354">https://doi.org/10.1080/01621459.1986.10478354</a>.
+</div>
+<div id="ref-imbens2015causal" class="csl-entry" role="listitem">
+Imbens, Guido W., y Donald B. Rubin. 2015. <em>Causal Inference for Statistics, Social, and Biomedical Sciences: An Introduction</em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9781139025751">https://doi.org/10.1017/CBO9781139025751</a>.
+</div>
+<div id="ref-kleinberg2015prediction" class="csl-entry" role="listitem">
+Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, y Ziad Obermeyer. 2015. <span>«Prediction Policy Problems»</span>. <em>American Economic Review: Papers &amp; Proceedings</em> 105 (5): 491-95. <a href="https://doi.org/10.1257/aer.p20151023">https://doi.org/10.1257/aer.p20151023</a>.
+</div>
+<div id="ref-kunzel2019metalearners" class="csl-entry" role="listitem">
+Künzel, Sören R., Jasjeet S. Sekhon, Peter J. Bickel, y Bin Yu. 2019. <span>«Metalearners for estimating heterogeneous treatment effects using machine learning»</span>. <em>Proceedings of the National Academy of Sciences</em> 116 (10): 4156-65. <a href="https://doi.org/10.1073/pnas.1804597116">https://doi.org/10.1073/pnas.1804597116</a>.
+</div>
+<div id="ref-rubin1974estimating" class="csl-entry" role="listitem">
+Rubin, Donald B. 1974. <span>«Estimating causal effects of treatments in randomized and nonrandomized studies»</span>. <em>Journal of Educational Psychology</em> 66 (5): 688-701. <a href="https://doi.org/10.1037/h0037350">https://doi.org/10.1037/h0037350</a>.
+</div>
+<div id="ref-schultz2004school" class="csl-entry" role="listitem">
+Schultz, T. Paul. 2004. <span>«School subsidies for the poor: evaluating the <span>Mexican</span> <span>Progresa</span> poverty program»</span>. <em>Journal of Development Economics</em> 74 (1): 199-250. <a href="https://doi.org/10.1016/j.jdeveco.2003.12.009">https://doi.org/10.1016/j.jdeveco.2003.12.009</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ingeotec\.github\.io\/AprendizajeComputacional");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../capitulos/15Interpretabilidad.html" class="pagination-link" aria-label="Interpretabilidad y Equidad">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Interpretabilidad y Equidad</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../capitulos/18Referencias.html" class="pagination-link" aria-label="Referencias">
+        <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Aprendizaje Computacional e Inferencia Causal {#sec-inferencia-causal}</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es conocer y aplicar modelos de aprendizaje computacional para estimar el efecto de una intervención y la manera en que ese efecto cambia entre personas.</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GroupShuffleSplit</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> (<span class="st">'https://github.com/INGEOTEC/AprendizajeComputacional/'</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">'releases/download/datos-v1'</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción {#sec-intro-16}</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>Hasta aquí el libro trató problemas de predicción, en los que interesa la predicción $\hat y$ y qué tan cerca está del valor observado. Este capítulo regresa a la otra pregunta que se planteó en @sec-prediccion-vs-causal, que es qué pasa con el resultado cuando se interviene, y que es la pregunta de la evaluación de programas. El capítulo de interpretabilidad (@sec-interpretabilidad-equidad) terminó señalando que ninguna técnica para interpretar un modelo la responde, porque esas técnicas describen lo que el modelo aprendió y no lo que ocurre cuando se cambia una variable.</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>Quien lee este capítulo ya conoce las herramientas de la inferencia causal, como los experimentos, el emparejamiento o las diferencias en diferencias, y el capítulo no las repite. Lo que agrega el aprendizaje computacional es flexibilidad en dos lugares, que son estimar cómo cambia el efecto de una persona a otra sin fijar de antemano los subgrupos y ajustar por muchas variables de control sin escoger a mano la forma funcional. @athey2019machine y @athey2019impact presentan este programa de trabajo y su relación con la econometría.</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>La advertencia principal del capítulo es que el aprendizaje computacional no sustituye al diseño de investigación. Que la comparación entre tratados y no tratados sea válida depende de cómo se asignó el tratamiento, y ningún algoritmo corrige una asignación que favoreció a un grupo. Por eso el ejemplo del capítulo es un experimento, el de Progresa (@sec-datos-progresa), en el que la asignación fue al azar y la validez de la comparación no está en duda.</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y termina con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona.</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resultados Potenciales {#sec-resultados-potenciales}</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>En el marco de resultados potenciales cada persona tiene dos resultados, $y(1)$ si recibe el tratamiento y $y(0)$ si no lo recibe <span class="co">[</span><span class="ot">@rubin1974estimating</span><span class="co">]</span>, y @imbens2015causal es la referencia general de este marco. En Progresa el tratamiento es vivir en una localidad que recibió el programa en 1998 y el resultado es estar inscrito en la escuela en el otoño de ese año. El indicador de tratamiento se denota con $w \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$, que en este capítulo no tiene relación con los coeficientes $\mathbf w$ de un modelo lineal usados en los capítulos anteriores. El efecto del tratamiento en la persona $i$ es</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>\tau_i = y_i(1) - y_i(0).</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>$$ {#eq-efecto-individual}</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,</span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>y_i = w_i\, y_i(1) + (1 - w_i)\, y_i(0),</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>$$ {#eq-resultado-observado}</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>de manera que $\tau_i$ nunca se observa, y @holland1986statistics lo llama el problema fundamental de la inferencia causal. La consecuencia para el aprendizaje computacional es directa, porque en predicción cada observación trae su respuesta $y$ y el error del modelo se mide en un conjunto de prueba, mientras que aquí ninguna observación trae su $\tau_i$ y por lo tanto no existe un conjunto de prueba con la respuesta correcta.</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>Lo que sí se puede estimar con los datos son promedios de los efectos individuales. El efecto promedio del tratamiento es</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>\tau = \mathbb E<span class="co">[</span><span class="ot">y(1) - y(0)</span><span class="co">]</span>,</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>$$ {#eq-ate}</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>y el efecto promedio condicional, que es el objeto central del capítulo, es</span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>\tau(x) = \mathbb E<span class="co">[</span><span class="ot">y(1) - y(0) \mid x</span><span class="co">]</span>.</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>$$ {#eq-cate}</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>El efecto condicional $\tau(x)$ dice cuánto cambia en promedio el resultado de las personas con características $x$, y cuando $\tau(x)$ no es constante se dice que el efecto es heterogéneo.</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>El primero de los dos supuestos que se necesitan para estimar estos efectos es que, entre personas con las mismas características, el tratamiento no dependa de los resultados potenciales, lo que se conoce como independencia condicional y se escribe $(y(1), y(0)) \perp w \mid x$. El segundo es que toda persona tenga probabilidad positiva de recibir y de no recibir el tratamiento, lo que se conoce como traslape y se escribe $0 &lt; e(x) &lt; 1$, donde $e(x) = \mathbb P(w = 1 \mid x)$ es la probabilidad de tratamiento (*propensity score*). En un experimento ambos supuestos se cumplen por diseño, porque el sorteo decide $w$ sin mirar a las personas, mientras que en datos observacionales son supuestos que no se pueden verificar con los datos.</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>Bajo esos supuestos, y llamando $\mu_w(x) = \mathbb E<span class="co">[</span><span class="ot">y \mid x, w</span><span class="co">]</span>$ a la función de regresión del grupo $w$, el efecto condicional es la diferencia de dos funciones de regresión, como se muestra a continuación:</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>\tau(x) = \mu_1(x) - \mu_0(x).</span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>$$ {#eq-cate-regresion}</span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>Las funciones $\mu_1$ y $\mu_0$ son funciones de regresión como las de todos los capítulos anteriores y se pueden estimar con cualquier algoritmo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).</span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## El Experimento de Progresa {#sec-causal-experimento}</span></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>Progresa daba becas a los hogares pobres de localidades rurales a cambio de que sus hijas e hijos asistieran a la escuela, y el orden en que las localidades de la evaluación entraron al programa se sorteó, de manera que unas lo recibieron en 1998 y las de control hasta finales de 1999 (@sec-datos-progresa, @schultz2004school). Las características de cada niña o niño son las medidas en 1997, antes del programa, y son el sexo, la edad, el último grado aprobado y la inscripción en ese año, como se muestra en el siguiente código:</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>progresa <span class="op">=</span> pd.read_csv(<span class="ss">f'</span><span class="sc">{</span>URL_DATOS<span class="sc">}</span><span class="ss">/progresa_inscripcion.csv'</span>)</span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>VARS <span class="op">=</span> [<span class="st">'mujer'</span>, <span class="st">'edad'</span>, <span class="st">'grado'</span>, <span class="st">'inscrito_1997'</span>]</span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> progresa[VARS].astype(<span class="bu">float</span>)</span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> progresa[<span class="st">'progresa'</span>].to_numpy()</span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> progresa[<span class="st">'inscrito_1998'</span>].to_numpy().astype(<span class="bu">float</span>)</span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>loc <span class="op">=</span> progresa[<span class="st">'localidad'</span>].to_numpy()</span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>n_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">len</span>(y)<span class="sc">:,}</span><span class="ss">$'</span>)</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>por_loc <span class="op">=</span> progresa.groupby(<span class="st">'localidad'</span>)[<span class="st">'progresa'</span>].first()</span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>n_loc_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">len</span>(por_loc)<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>n_loc_t_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>((por_loc <span class="op">==</span> <span class="dv">1</span>).<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>n_loc_c_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>((por_loc <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>prop_t_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>w<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>El conjunto tiene <span class="in">`{python} n_f`</span> niñas y niños de <span class="in">`{python} n_loc_f`</span> localidades, de las cuales <span class="in">`{python} n_loc_t_f`</span> recibieron el programa en 1998 y <span class="in">`{python} n_loc_c_f`</span> son de control, de manera que la proporción de niñas y niños en localidades tratadas es <span class="in">`{python} prop_t_f`</span>.</span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>Si el sorteo funcionó, las características previas al programa deben ser parecidas en los dos grupos, porque el azar no tiene preferencia por ningún tipo de localidad. La @tbl-causal-balance muestra la media de cada característica en las localidades de control y en las que recibieron Progresa.</span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-causal-balance</span></span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Media de las características medidas en 1997 en las localidades de control y en las que recibieron Progresa."</span></span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>NOMBRES <span class="op">=</span> <span class="bu">dict</span>(mujer<span class="op">=</span><span class="st">'Mujer'</span>, edad<span class="op">=</span><span class="st">'Edad'</span>, grado<span class="op">=</span><span class="st">'Último grado aprobado'</span>,</span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>               inscrito_1997<span class="op">=</span><span class="st">'Inscripción en 1997'</span>)</span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>bal <span class="op">=</span> progresa.groupby(<span class="st">'progresa'</span>)[VARS].mean()</span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'| Característica | Control | Progresa |</span><span class="ch">\n</span><span class="st">|---|---|---|</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> VARS:</span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">+=</span> <span class="ss">f'| </span><span class="sc">{</span>NOMBRES[c]<span class="sc">}</span><span class="ss"> | $</span><span class="sc">{</span>bal<span class="sc">.</span>loc[<span class="dv">0</span>, c]<span class="sc">:0.4f}</span><span class="ss">$ | $</span><span class="sc">{</span>bal<span class="sc">.</span>loc[<span class="dv">1</span>, c]<span class="sc">:0.4f}</span><span class="ss">$ |</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>Markdown(txt)</span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>En un experimento el efecto promedio (@eq-ate) se estima con la diferencia entre la media del resultado de los tratados y la de los controles, donde $N_1$ y $N_0$ son el número de tratados y de controles, es decir,</span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>\hat \tau = \frac{1}{N_1} \sum_{i: w_i = 1} y_i - \frac{1}{N_0} \sum_{i: w_i = 0} y_i,</span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>$$ {#eq-dif-medias}</span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a>que se calcula con el siguiente código:</span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dif_medias(y, w):</span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y[w <span class="op">==</span> <span class="dv">1</span>].mean() <span class="op">-</span> y[w <span class="op">==</span> <span class="dv">0</span>].mean()</span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a>ate <span class="op">=</span> dif_medias(y, w)</span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a>El sorteo fue por localidad, así que las niñas y niños de una misma localidad no son observaciones independientes y el error estándar debe calcularse remuestreando localidades completas y no personas. Se usa el bootstrap (@sec-bootstrap) en el que cada muestra se forma eligiendo localidades con reemplazo y conservando a todas las personas de cada localidad elegida, como se muestra a continuación:</span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bootstrap_localidades(y, w, loc, B<span class="op">=</span><span class="dv">500</span>, seed<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(seed)</span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a>    claves <span class="op">=</span> np.unique(loc)</span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> [np.flatnonzero(loc <span class="op">==</span> c) <span class="cf">for</span> c <span class="kw">in</span> claves]</span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a>    salida <span class="op">=</span> np.empty(B)</span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> b <span class="kw">in</span> <span class="bu">range</span>(B):</span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>        sel <span class="op">=</span> rng.integers(<span class="dv">0</span>, <span class="bu">len</span>(claves), <span class="bu">len</span>(claves))</span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>        i <span class="op">=</span> np.concatenate([indices[s] <span class="cf">for</span> s <span class="kw">in</span> sel])</span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a>        salida[b] <span class="op">=</span> dif_medias(y[i], w[i])</span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> salida</span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a>ate_b <span class="op">=</span> bootstrap_localidades(y, w, loc)</span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a>ate_se <span class="op">=</span> ate_b.std()</span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a>ate_ic <span class="op">=</span> np.percentile(ate_b, [<span class="fl">2.5</span>, <span class="fl">97.5</span>])</span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a>ate_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ate<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a>ate_se_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ate_se<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a>ate_ic_f <span class="op">=</span> Markdown(<span class="ss">f'$[</span><span class="sc">{</span>ate_ic[<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">, </span><span class="sc">{</span>ate_ic[<span class="dv">1</span>]<span class="sc">:0.4f}</span><span class="ss">]$'</span>)</span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a>se_ing <span class="op">=</span> np.sqrt(y[w <span class="op">==</span> <span class="dv">1</span>].var(ddof<span class="op">=</span><span class="dv">1</span>) <span class="op">/</span> (w <span class="op">==</span> <span class="dv">1</span>).<span class="bu">sum</span>()</span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a>                 <span class="op">+</span> y[w <span class="op">==</span> <span class="dv">0</span>].var(ddof<span class="op">=</span><span class="dv">1</span>) <span class="op">/</span> (w <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())</span>
+<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a>se_ing_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>se_ing<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a>razon_se_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ate_se <span class="op">/</span> se_ing<span class="sc">:0.1f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a>comp_se_f <span class="op">=</span> Markdown(<span class="st">'mayor'</span> <span class="cf">if</span> ate_se <span class="op">&gt;</span> se_ing <span class="cf">else</span> <span class="st">'menor'</span>)</span>
+<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a>control_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>y[w <span class="op">==</span> <span class="dv">0</span>]<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a>La proporción inscrita en las localidades de control es <span class="in">`{python} control_f`</span> y la diferencia de medias estima que el programa la cambia en <span class="in">`{python} ate_f`</span>, con un error estándar de <span class="in">`{python} ate_se_f`</span> y un intervalo de confianza del 95% de <span class="in">`{python} ate_ic_f`</span>. El error estándar que supone que las personas son observaciones independientes sería <span class="in">`{python} se_ing_f`</span>, por lo que el error estándar por conglomerados es <span class="in">`{python} razon_se_f`</span> veces el ingenuo y la incertidumbre es <span class="in">`{python} comp_se_f`</span> de lo que sugeriría tratar a cada persona como un sorteo propio.</span>
+<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a>Un efecto promedio como éste esconde diferencias grandes entre personas, porque en los primeros grados de primaria casi todos están inscritos con o sin programa y el efecto no puede ser grande ahí. La pregunta del resto del capítulo es para quién es mayor el efecto del programa.</span>
+<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## Predecir no es Estimar un Efecto {#sec-predecir-no-es-efecto}</span></span>
+<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-189"><a href="#cb15-189" aria-hidden="true" tabindex="-1"></a>Una reacción natural ante un presupuesto limitado es dirigir el programa a quienes tienen mayor riesgo de no inscribirse, lo que convierte la focalización en un problema de predicción como los de @sec-regresion-focalizacion y @sec-decision-focalizacion. Para revisar si esa idea funciona, los datos se dividen en un conjunto de entrenamiento y uno de prueba (@sec-conjunto-entre-prueba), pero la partición se hace por localidad, de manera que todas las niñas y niños de una localidad quedan en el mismo conjunto, por la misma razón que el bootstrap se hizo por localidad. El siguiente código hace la partición:</span>
+<span id="cb15-190"><a href="#cb15-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>particion <span class="op">=</span> GroupShuffleSplit(n_splits<span class="op">=</span><span class="dv">1</span>, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>tr, te <span class="op">=</span> <span class="bu">next</span>(particion.split(X, y, groups<span class="op">=</span>loc))</span>
+<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a>T, G <span class="op">=</span> X.iloc[tr], X.iloc[te]</span>
+<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a>y_t, y_g, w_t, w_g <span class="op">=</span> y[tr], y[te], w[tr], w[te]</span>
+<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a>El modelo de riesgo es un bosque aleatorio (@sec-bagging) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima $\mu_0(x)$. Se usa un bosque de regresión sobre la variable 0/1, cuya predicción es la proporción de inscritos entre observaciones parecidas, y la función <span class="in">`bosque`</span> fija los hiperparámetros que se usan en todo el capítulo, como se muestra en el siguiente código:</span>
+<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-205"><a href="#cb15-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bosque():</span>
+<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">200</span>, min_samples_leaf<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a>                                 n_jobs<span class="op">=-</span><span class="dv">1</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a>m0 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">0</span>], y_t[w_t <span class="op">==</span> <span class="dv">0</span>])</span>
+<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a>riesgo <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> m0.predict(G)</span>
+<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-216"><a href="#cb15-216" aria-hidden="true" tabindex="-1"></a>Como el conjunto de prueba viene de un experimento, se puede medir el efecto del programa dentro de cualquier grupo de personas con la diferencia de medias de ese grupo. La función <span class="in">`efecto_por_grupo`</span> lo hace, y se aplica a los quintiles del riesgo predicho en el conjunto de prueba:</span>
+<span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> efecto_por_grupo(grupo, y, w):</span>
+<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a>    filas <span class="op">=</span> []</span>
+<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> g <span class="kw">in</span> np.unique(grupo):</span>
+<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> grupo <span class="op">==</span> g</span>
+<span id="cb15-226"><a href="#cb15-226" aria-hidden="true" tabindex="-1"></a>        filas.append(<span class="bu">dict</span>(grupo<span class="op">=</span>g, n<span class="op">=</span><span class="bu">int</span>(m.<span class="bu">sum</span>()),</span>
+<span id="cb15-227"><a href="#cb15-227" aria-hidden="true" tabindex="-1"></a>                          control<span class="op">=</span>y[m <span class="op">&amp;</span> (w <span class="op">==</span> <span class="dv">0</span>)].mean(),</span>
+<span id="cb15-228"><a href="#cb15-228" aria-hidden="true" tabindex="-1"></a>                          efecto<span class="op">=</span>dif_medias(y[m], w[m])))</span>
+<span id="cb15-229"><a href="#cb15-229" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(filas).set_index(<span class="st">'grupo'</span>)</span>
+<span id="cb15-230"><a href="#cb15-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-231"><a href="#cb15-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-232"><a href="#cb15-232" aria-hidden="true" tabindex="-1"></a>q_riesgo <span class="op">=</span> pd.qcut(riesgo, <span class="dv">5</span>, labels<span class="op">=</span><span class="va">False</span>, duplicates<span class="op">=</span><span class="st">'drop'</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb15-233"><a href="#cb15-233" aria-hidden="true" tabindex="-1"></a>ef_riesgo <span class="op">=</span> efecto_por_grupo(q_riesgo, y_g, w_g)</span>
+<span id="cb15-234"><a href="#cb15-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-235"><a href="#cb15-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-238"><a href="#cb15-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-239"><a href="#cb15-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-240"><a href="#cb15-240" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-causal-riesgo</span></span>
+<span id="cb15-241"><a href="#cb15-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Inscripción en las localidades de control y efecto de Progresa en el conjunto de prueba, por quintil del riesgo predicho de no inscribirse (el quintil 5 es el de mayor riesgo)."</span></span>
+<span id="cb15-242"><a href="#cb15-242" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'| Quintil de riesgo | Niñas y niños | Inscripción en control | Efecto |</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-243"><a href="#cb15-243" aria-hidden="true" tabindex="-1"></a>txt <span class="op">+=</span> <span class="st">'|---|---|---|---|</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-244"><a href="#cb15-244" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> g, r <span class="kw">in</span> ef_riesgo.iterrows():</span>
+<span id="cb15-245"><a href="#cb15-245" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">+=</span> <span class="ss">f'| </span><span class="sc">{</span>g<span class="sc">}</span><span class="ss"> | $</span><span class="sc">{</span><span class="bu">int</span>(r.n)<span class="sc">}</span><span class="ss">$ | $</span><span class="sc">{</span>r<span class="sc">.</span>control<span class="sc">:0.4f}</span><span class="ss">$ | $</span><span class="sc">{</span>r<span class="sc">.</span>efecto<span class="sc">:0.4f}</span><span class="ss">$ |</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb15-246"><a href="#cb15-246" aria-hidden="true" tabindex="-1"></a>Markdown(txt)</span>
+<span id="cb15-247"><a href="#cb15-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-248"><a href="#cb15-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-251"><a href="#cb15-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-252"><a href="#cb15-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-253"><a href="#cb15-253" aria-hidden="true" tabindex="-1"></a>q_max <span class="op">=</span> ef_riesgo[<span class="st">'efecto'</span>].idxmax()</span>
+<span id="cb15-254"><a href="#cb15-254" aria-hidden="true" tabindex="-1"></a>q_ult <span class="op">=</span> ef_riesgo.index.<span class="bu">max</span>()</span>
+<span id="cb15-255"><a href="#cb15-255" aria-hidden="true" tabindex="-1"></a>q_max_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>q_max<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-256"><a href="#cb15-256" aria-hidden="true" tabindex="-1"></a>ef_q_max_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_riesgo<span class="sc">.</span>loc[q_max, <span class="st">"efecto"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-257"><a href="#cb15-257" aria-hidden="true" tabindex="-1"></a>ef_q_ult_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_riesgo<span class="sc">.</span>loc[q_ult, <span class="st">"efecto"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-258"><a href="#cb15-258" aria-hidden="true" tabindex="-1"></a>ctrl_q_ult_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_riesgo<span class="sc">.</span>loc[q_ult, <span class="st">"control"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-259"><a href="#cb15-259" aria-hidden="true" tabindex="-1"></a>ctrl_q_max_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_riesgo<span class="sc">.</span>loc[q_max, <span class="st">"control"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-260"><a href="#cb15-260" aria-hidden="true" tabindex="-1"></a>riesgo_frase_f <span class="op">=</span> Markdown(<span class="st">'y es también el quintil donde el efecto es mayor'</span></span>
+<span id="cb15-261"><a href="#cb15-261" aria-hidden="true" tabindex="-1"></a>                          <span class="cf">if</span> q_max <span class="op">==</span> q_ult <span class="cf">else</span></span>
+<span id="cb15-262"><a href="#cb15-262" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'pero el efecto mayor no está ahí sino en el quintil '</span></span>
+<span id="cb15-263"><a href="#cb15-263" aria-hidden="true" tabindex="-1"></a>                          <span class="ss">f'</span><span class="sc">{</span>q_max<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb15-264"><a href="#cb15-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-265"><a href="#cb15-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-266"><a href="#cb15-266" aria-hidden="true" tabindex="-1"></a>La @tbl-causal-riesgo muestra que el modelo de riesgo ordena bien a las personas, porque la inscripción en las localidades de control cae hasta <span class="in">`{python} ctrl_q_ult_f`</span> en el quintil de mayor riesgo, <span class="in">`{python} riesgo_frase_f`</span>, con un efecto de <span class="in">`{python} ef_q_max_f`</span> contra <span class="in">`{python} ef_q_ult_f`</span> del quintil de mayor riesgo. En los quintiles de bajo riesgo casi todos se inscriben sin el programa y no hay nada que mejorar, mientras que en el de mayor riesgo están muchos jóvenes que ya habían dejado la escuela y a quienes una beca difícilmente regresa, de manera que el efecto tiende a concentrarse en quienes están por decidir si continúan. En términos de la notación, el riesgo es $1 - \mu_0(x)$ y el efecto es $\mu_1(x) - \mu_0(x)$, que son dos funciones distintas de $x$, y por eso @kleinberg2015prediction distinguen los problemas de política que se resuelven con una predicción de los que requieren estimar un efecto causal.</span>
+<span id="cb15-267"><a href="#cb15-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-268"><a href="#cb15-268" aria-hidden="true" tabindex="-1"></a><span class="fu">## Meta-aprendices {#sec-meta-aprendices}</span></span>
+<span id="cb15-269"><a href="#cb15-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-270"><a href="#cb15-270" aria-hidden="true" tabindex="-1"></a>Se llama meta-aprendiz a un procedimiento que toma un algoritmo de regresión cualquiera, llamado aprendiz base, y lo usa para estimar el efecto condicional $\tau(x)$ <span class="co">[</span><span class="ot">@kunzel2019metalearners</span><span class="co">]</span>. En este capítulo el aprendiz base es siempre el bosque de la función <span class="in">`bosque`</span>, y los tres meta-aprendices que se presentan se entrenan en el conjunto de entrenamiento $\mathcal T$ y se evalúan en el conjunto de prueba $\mathcal G$.</span>
+<span id="cb15-271"><a href="#cb15-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-272"><a href="#cb15-272" aria-hidden="true" tabindex="-1"></a><span class="fu">### S-learner {#sec-s-learner}</span></span>
+<span id="cb15-273"><a href="#cb15-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-274"><a href="#cb15-274" aria-hidden="true" tabindex="-1"></a>El S-learner usa un solo modelo (*single*) $\mu(x, w)$ que recibe el tratamiento como una variable más, y el efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,</span>
+<span id="cb15-275"><a href="#cb15-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-276"><a href="#cb15-276" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-277"><a href="#cb15-277" aria-hidden="true" tabindex="-1"></a>\hat\tau_S(x) = \hat\mu(x, 1) - \hat\mu(x, 0).</span>
+<span id="cb15-278"><a href="#cb15-278" aria-hidden="true" tabindex="-1"></a>$$ {#eq-s-learner}</span>
+<span id="cb15-279"><a href="#cb15-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-280"><a href="#cb15-280" aria-hidden="true" tabindex="-1"></a>La debilidad de este método es que el tratamiento es una variable entre varias y, si predice poco comparado con las demás, el algoritmo la usa poco o la ignora, de manera que el efecto estimado se sesga hacia cero. El siguiente código entrena el S-learner y estima el efecto en el conjunto de prueba:</span>
+<span id="cb15-281"><a href="#cb15-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-284"><a href="#cb15-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-285"><a href="#cb15-285" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-286"><a href="#cb15-286" aria-hidden="true" tabindex="-1"></a>T_w <span class="op">=</span> T.assign(progresa<span class="op">=</span>w_t)</span>
+<span id="cb15-287"><a href="#cb15-287" aria-hidden="true" tabindex="-1"></a>s_modelo <span class="op">=</span> bosque().fit(T_w, y_t)</span>
+<span id="cb15-288"><a href="#cb15-288" aria-hidden="true" tabindex="-1"></a>tau_s <span class="op">=</span> (s_modelo.predict(G.assign(progresa<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb15-289"><a href="#cb15-289" aria-hidden="true" tabindex="-1"></a>         <span class="op">-</span> s_modelo.predict(G.assign(progresa<span class="op">=</span><span class="dv">0</span>)))</span>
+<span id="cb15-290"><a href="#cb15-290" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-291"><a href="#cb15-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-292"><a href="#cb15-292" aria-hidden="true" tabindex="-1"></a><span class="fu">### T-learner {#sec-t-learner}</span></span>
+<span id="cb15-293"><a href="#cb15-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-294"><a href="#cb15-294" aria-hidden="true" tabindex="-1"></a>El T-learner usa dos modelos (*two*), $\hat\mu_1$ entrenado con los tratados y $\hat\mu_0$ entrenado con los controles, y estima el efecto con</span>
+<span id="cb15-295"><a href="#cb15-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-296"><a href="#cb15-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-297"><a href="#cb15-297" aria-hidden="true" tabindex="-1"></a>\hat\tau_T(x) = \hat\mu_1(x) - \hat\mu_0(x),</span>
+<span id="cb15-298"><a href="#cb15-298" aria-hidden="true" tabindex="-1"></a>$$ {#eq-t-learner}</span>
+<span id="cb15-299"><a href="#cb15-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-300"><a href="#cb15-300" aria-hidden="true" tabindex="-1"></a>que es la @eq-cate-regresion con las funciones estimadas. El modelo $\hat\mu_0$ es el modelo <span class="in">`m0`</span> que ya se entrenó para el riesgo. La debilidad de este método es que cada modelo se ajusta para predecir bien su propio grupo, con su propio error, y la diferencia de dos predicciones ruidosas es más ruidosa que cada una, por lo que puede encontrar heterogeneidad donde solo hay ruido. El siguiente código completa el T-learner:</span>
+<span id="cb15-301"><a href="#cb15-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-304"><a href="#cb15-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-305"><a href="#cb15-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-306"><a href="#cb15-306" aria-hidden="true" tabindex="-1"></a>m1 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">1</span>], y_t[w_t <span class="op">==</span> <span class="dv">1</span>])</span>
+<span id="cb15-307"><a href="#cb15-307" aria-hidden="true" tabindex="-1"></a>tau_t <span class="op">=</span> m1.predict(G) <span class="op">-</span> m0.predict(G)</span>
+<span id="cb15-308"><a href="#cb15-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-309"><a href="#cb15-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-310"><a href="#cb15-310" aria-hidden="true" tabindex="-1"></a><span class="fu">### X-learner {#sec-x-learner}</span></span>
+<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a>El X-learner empieza igual que el T-learner, entrenando $\hat\mu_0$ y $\hat\mu_1$, y después imputa a cada persona el resultado potencial que no se observó para calcular con él un efecto individual, que para los tratados y para los controles es</span>
+<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-314"><a href="#cb15-314" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-315"><a href="#cb15-315" aria-hidden="true" tabindex="-1"></a>d_i^1 = y_i - \hat\mu_0(x_i), \qquad d_i^0 = \hat\mu_1(x_i) - y_i.</span>
+<span id="cb15-316"><a href="#cb15-316" aria-hidden="true" tabindex="-1"></a>$$ {#eq-x-learner-imputado}</span>
+<span id="cb15-317"><a href="#cb15-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-318"><a href="#cb15-318" aria-hidden="true" tabindex="-1"></a>Con esos efectos imputados se entrena un modelo $\hat\tau_1$ sobre $d^1$ con los tratados y otro $\hat\tau_0$ sobre $d^0$ con los controles, y por último los dos se combinan con</span>
+<span id="cb15-319"><a href="#cb15-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-320"><a href="#cb15-320" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb15-321"><a href="#cb15-321" aria-hidden="true" tabindex="-1"></a>\hat\tau_X(x) = e\,\hat\tau_0(x) + (1 - e)\,\hat\tau_1(x),</span>
+<span id="cb15-322"><a href="#cb15-322" aria-hidden="true" tabindex="-1"></a>$$ {#eq-x-learner}</span>
+<span id="cb15-323"><a href="#cb15-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-324"><a href="#cb15-324" aria-hidden="true" tabindex="-1"></a>donde $e$ es la proporción de tratados. La ventaja de este método es que los modelos de la segunda etapa aprenden directamente el efecto y no un resultado, y que aprovecha mejor los datos cuando un grupo es mucho mayor que el otro. El siguiente código implementa el X-learner:</span>
+<span id="cb15-325"><a href="#cb15-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-328"><a href="#cb15-328" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-329"><a href="#cb15-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-330"><a href="#cb15-330" aria-hidden="true" tabindex="-1"></a>d1 <span class="op">=</span> y_t[w_t <span class="op">==</span> <span class="dv">1</span>] <span class="op">-</span> m0.predict(T[w_t <span class="op">==</span> <span class="dv">1</span>])</span>
+<span id="cb15-331"><a href="#cb15-331" aria-hidden="true" tabindex="-1"></a>d0 <span class="op">=</span> m1.predict(T[w_t <span class="op">==</span> <span class="dv">0</span>]) <span class="op">-</span> y_t[w_t <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb15-332"><a href="#cb15-332" aria-hidden="true" tabindex="-1"></a>tau1 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">1</span>], d1)</span>
+<span id="cb15-333"><a href="#cb15-333" aria-hidden="true" tabindex="-1"></a>tau0 <span class="op">=</span> bosque().fit(T[w_t <span class="op">==</span> <span class="dv">0</span>], d0)</span>
+<span id="cb15-334"><a href="#cb15-334" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> w_t.mean()</span>
+<span id="cb15-335"><a href="#cb15-335" aria-hidden="true" tabindex="-1"></a>tau_x <span class="op">=</span> e <span class="op">*</span> tau0.predict(G) <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> e) <span class="op">*</span> tau1.predict(G)</span>
+<span id="cb15-336"><a href="#cb15-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-337"><a href="#cb15-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-338"><a href="#cb15-338" aria-hidden="true" tabindex="-1"></a>Los efectos estimados por los tres meta-aprendices se guardan en un diccionario para analizarlos juntos:</span>
+<span id="cb15-339"><a href="#cb15-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-342"><a href="#cb15-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-343"><a href="#cb15-343" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-344"><a href="#cb15-344" aria-hidden="true" tabindex="-1"></a>taus <span class="op">=</span> <span class="bu">dict</span>(S<span class="op">=</span>tau_s, T<span class="op">=</span>tau_t, X<span class="op">=</span>tau_x)</span>
+<span id="cb15-345"><a href="#cb15-345" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-346"><a href="#cb15-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-349"><a href="#cb15-349" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-350"><a href="#cb15-350" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-351"><a href="#cb15-351" aria-hidden="true" tabindex="-1"></a>media_f <span class="op">=</span> {k: Markdown(<span class="ss">f'$</span><span class="sc">{</span>v<span class="sc">.</span>mean()<span class="sc">:0.4f}</span><span class="ss">$'</span>) <span class="cf">for</span> k, v <span class="kw">in</span> taus.items()}</span>
+<span id="cb15-352"><a href="#cb15-352" aria-hidden="true" tabindex="-1"></a>sd_f <span class="op">=</span> {k: Markdown(<span class="ss">f'$</span><span class="sc">{</span>v<span class="sc">.</span>std()<span class="sc">:0.4f}</span><span class="ss">$'</span>) <span class="cf">for</span> k, v <span class="kw">in</span> taus.items()}</span>
+<span id="cb15-353"><a href="#cb15-353" aria-hidden="true" tabindex="-1"></a>ate_g_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>dif_medias(y_g, w_g)<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-354"><a href="#cb15-354" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-355"><a href="#cb15-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-356"><a href="#cb15-356" aria-hidden="true" tabindex="-1"></a>El promedio de los efectos estimados en el conjunto de prueba es <span class="in">`{python} media_f['S']`</span> con el S-learner, <span class="in">`{python} media_f['T']`</span> con el T-learner y <span class="in">`{python} media_f['X']`</span> con el X-learner, y la diferencia de medias del experimento en ese mismo conjunto es <span class="in">`{python} ate_g_f`</span>. El promedio de los efectos individuales estimados debe parecerse al efecto promedio, porque el efecto promedio es el promedio de $\tau(x)$ sobre la población. La desviación estándar de los efectos estimados es <span class="in">`{python} sd_f['S']`</span>, <span class="in">`{python} sd_f['T']`</span> y <span class="in">`{python} sd_f['X']`</span>, respectivamente, e indica cuánta heterogeneidad encuentra cada método.</span>
+<span id="cb15-357"><a href="#cb15-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-358"><a href="#cb15-358" aria-hidden="true" tabindex="-1"></a><span class="fu">### Evaluación sin Observar el Efecto {#sec-causal-evaluacion}</span></span>
+<span id="cb15-359"><a href="#cb15-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-360"><a href="#cb15-360" aria-hidden="true" tabindex="-1"></a>Con un meta-aprendiz no se puede calcular un error como en el capítulo de rendimiento (@sec-rendimiento-cap), porque el efecto individual $\tau_i$ no se observa. Lo que sí permite el experimento es comprobar si el ordenamiento es correcto, formando grupos según el efecto estimado y midiendo en cada grupo el efecto con la diferencia de medias, de manera que si el meta-aprendiz ordena bien el efecto medido crece de un grupo al siguiente. El siguiente código lo hace con los cuartiles del efecto estimado por cada meta-aprendiz:</span>
+<span id="cb15-361"><a href="#cb15-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-364"><a href="#cb15-364" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-365"><a href="#cb15-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-366"><a href="#cb15-366" aria-hidden="true" tabindex="-1"></a>ef_cuartil <span class="op">=</span> {k: efecto_por_grupo(pd.qcut(v, <span class="dv">4</span>, labels<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb15-367"><a href="#cb15-367" aria-hidden="true" tabindex="-1"></a>                                          duplicates<span class="op">=</span><span class="st">'drop'</span>) <span class="op">+</span> <span class="dv">1</span>,</span>
+<span id="cb15-368"><a href="#cb15-368" aria-hidden="true" tabindex="-1"></a>                                  y_g, w_g)</span>
+<span id="cb15-369"><a href="#cb15-369" aria-hidden="true" tabindex="-1"></a>              <span class="cf">for</span> k, v <span class="kw">in</span> taus.items()}</span>
+<span id="cb15-370"><a href="#cb15-370" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-371"><a href="#cb15-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-374"><a href="#cb15-374" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-375"><a href="#cb15-375" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-376"><a href="#cb15-376" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-causal-cuartiles</span></span>
+<span id="cb15-377"><a href="#cb15-377" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Efecto de Progresa medido en el conjunto de prueba dentro de cada cuartil del efecto estimado por los tres meta-aprendices (el cuartil 4 es el de mayor efecto estimado)."</span></span>
+<span id="cb15-378"><a href="#cb15-378" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'| Cuartil del efecto estimado | S-learner | T-learner | X-learner |</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-379"><a href="#cb15-379" aria-hidden="true" tabindex="-1"></a>txt <span class="op">+=</span> <span class="st">'|---|---|---|---|</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-380"><a href="#cb15-380" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> q <span class="kw">in</span> ef_cuartil[<span class="st">'S'</span>].index:</span>
+<span id="cb15-381"><a href="#cb15-381" aria-hidden="true" tabindex="-1"></a>    fila <span class="op">=</span> <span class="st">' | '</span>.join(<span class="ss">f'$</span><span class="sc">{</span>ef_cuartil[k]<span class="sc">.</span>loc[q, <span class="st">"efecto"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span></span>
+<span id="cb15-382"><a href="#cb15-382" aria-hidden="true" tabindex="-1"></a>                      <span class="cf">if</span> q <span class="kw">in</span> ef_cuartil[k].index <span class="cf">else</span> <span class="st">' '</span></span>
+<span id="cb15-383"><a href="#cb15-383" aria-hidden="true" tabindex="-1"></a>                      <span class="cf">for</span> k <span class="kw">in</span> [<span class="st">'S'</span>, <span class="st">'T'</span>, <span class="st">'X'</span>])</span>
+<span id="cb15-384"><a href="#cb15-384" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">+=</span> <span class="ss">f'| </span><span class="sc">{</span>q<span class="sc">}</span><span class="ss"> | </span><span class="sc">{</span>fila<span class="sc">}</span><span class="ss"> |</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb15-385"><a href="#cb15-385" aria-hidden="true" tabindex="-1"></a>Markdown(txt)</span>
+<span id="cb15-386"><a href="#cb15-386" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-387"><a href="#cb15-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-390"><a href="#cb15-390" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-391"><a href="#cb15-391" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-392"><a href="#cb15-392" aria-hidden="true" tabindex="-1"></a>ate_g <span class="op">=</span> dif_medias(y_g, w_g)</span>
+<span id="cb15-393"><a href="#cb15-393" aria-hidden="true" tabindex="-1"></a>sup <span class="op">=</span> {k: ef_cuartil[k][<span class="st">'efecto'</span>].iloc[<span class="op">-</span><span class="dv">1</span>] <span class="cf">for</span> k <span class="kw">in</span> taus}</span>
+<span id="cb15-394"><a href="#cb15-394" aria-hidden="true" tabindex="-1"></a>inf <span class="op">=</span> {k: ef_cuartil[k][<span class="st">'efecto'</span>].iloc[<span class="dv">0</span>] <span class="cf">for</span> k <span class="kw">in</span> taus}</span>
+<span id="cb15-395"><a href="#cb15-395" aria-hidden="true" tabindex="-1"></a>sup_f <span class="op">=</span> {k: Markdown(<span class="ss">f'$</span><span class="sc">{</span>v<span class="sc">:0.4f}</span><span class="ss">$'</span>) <span class="cf">for</span> k, v <span class="kw">in</span> sup.items()}</span>
+<span id="cb15-396"><a href="#cb15-396" aria-hidden="true" tabindex="-1"></a>inf_f <span class="op">=</span> {k: Markdown(<span class="ss">f'$</span><span class="sc">{</span>v<span class="sc">:0.4f}</span><span class="ss">$'</span>) <span class="cf">for</span> k, v <span class="kw">in</span> inf.items()}</span>
+<span id="cb15-397"><a href="#cb15-397" aria-hidden="true" tabindex="-1"></a>veces_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">min</span>(sup.values()) <span class="op">/</span> ate_g<span class="sc">:0.1f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-398"><a href="#cb15-398" aria-hidden="true" tabindex="-1"></a>sup_frase_f <span class="op">=</span> Markdown(<span class="st">'mayores'</span> <span class="cf">if</span> <span class="bu">min</span>(sup.values()) <span class="op">&gt;</span> ate_g</span>
+<span id="cb15-399"><a href="#cb15-399" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">else</span> <span class="st">'no siempre mayores'</span>)</span>
+<span id="cb15-400"><a href="#cb15-400" aria-hidden="true" tabindex="-1"></a>inf_frase_f <span class="op">=</span> Markdown(<span class="st">'menores'</span> <span class="cf">if</span> <span class="bu">max</span>(inf.values()) <span class="op">&lt;</span> ate_g</span>
+<span id="cb15-401"><a href="#cb15-401" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">else</span> <span class="st">'no siempre menores'</span>)</span>
+<span id="cb15-402"><a href="#cb15-402" aria-hidden="true" tabindex="-1"></a>n_cuartil_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(<span class="bu">min</span>(t.n.<span class="bu">min</span>() <span class="cf">for</span> t <span class="kw">in</span> ef_cuartil.values()))<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-403"><a href="#cb15-403" aria-hidden="true" tabindex="-1"></a>n_loc_g_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">len</span>(np.unique(loc[te]))<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-404"><a href="#cb15-404" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-405"><a href="#cb15-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-406"><a href="#cb15-406" aria-hidden="true" tabindex="-1"></a>La @tbl-causal-cuartiles muestra que en el cuartil de mayor efecto estimado el efecto medido es <span class="in">`{python} sup_f['S']`</span>, <span class="in">`{python} sup_f['T']`</span> y <span class="in">`{python} sup_f['X']`</span> con el S-learner, el T-learner y el X-learner, respectivamente, que son <span class="in">`{python} sup_frase_f`</span> que la diferencia de medias de todo el conjunto de prueba, y el menor de los tres equivale a <span class="in">`{python} veces_f`</span> veces esa diferencia. En el cuartil de menor efecto estimado los efectos medidos son <span class="in">`{python} inf_f['S']`</span>, <span class="in">`{python} inf_f['T']`</span> y <span class="in">`{python} inf_f['X']`</span>, que son <span class="in">`{python} inf_frase_f`</span> que esa diferencia de medias. Cada cuartil tiene al menos <span class="in">`{python} n_cuartil_f`</span> observaciones de las <span class="in">`{python} n_loc_g_f`</span> localidades del conjunto de prueba, por lo que estas diferencias de medias tienen un error estándar del orden de dos o tres puntos porcentuales y no conviene leer las diferencias pequeñas entre métodos como evidencia de que uno ordena mejor que otro.</span>
+<span id="cb15-407"><a href="#cb15-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-408"><a href="#cb15-408" aria-hidden="true" tabindex="-1"></a>Otra forma de revisar los efectos estimados es compararlos contra una variable que la literatura identifica como decisiva, y @schultz2004school encontró que el efecto de Progresa en la inscripción se concentra en la transición de la primaria a la secundaria. La @fig-causal-grado compara, por último grado aprobado, el promedio del efecto estimado por cada meta-aprendiz con la diferencia de medias del experimento en el conjunto de prueba.</span>
+<span id="cb15-409"><a href="#cb15-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-412"><a href="#cb15-412" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-413"><a href="#cb15-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb15-414"><a href="#cb15-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-causal-grado</span></span>
+<span id="cb15-415"><a href="#cb15-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Efecto de Progresa en la inscripción por último grado aprobado en 1997, en el conjunto de prueba. Promedio del efecto estimado por cada meta-aprendiz y diferencia de medias del experimento."</span></span>
+<span id="cb15-416"><a href="#cb15-416" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(taus).assign(grado<span class="op">=</span>G[<span class="st">'grado'</span>].to_numpy())</span>
+<span id="cb15-417"><a href="#cb15-417" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.groupby(<span class="st">'grado'</span>).mean()</span>
+<span id="cb15-418"><a href="#cb15-418" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Experimento'</span>] <span class="op">=</span> efecto_por_grupo(G[<span class="st">'grado'</span>].to_numpy(), y_g, w_g)[<span class="st">'efecto'</span>]</span>
+<span id="cb15-419"><a href="#cb15-419" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.reset_index().melt(id_vars<span class="op">=</span><span class="st">'grado'</span>, var_name<span class="op">=</span><span class="st">'Estimación'</span>,</span>
+<span id="cb15-420"><a href="#cb15-420" aria-hidden="true" tabindex="-1"></a>                           value_name<span class="op">=</span><span class="st">'efecto'</span>)</span>
+<span id="cb15-421"><a href="#cb15-421" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb15-422"><a href="#cb15-422" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sns.lineplot(df, x<span class="op">=</span><span class="st">'grado'</span>, y<span class="op">=</span><span class="st">'efecto'</span>, hue<span class="op">=</span><span class="st">'Estimación'</span>,</span>
+<span id="cb15-423"><a href="#cb15-423" aria-hidden="true" tabindex="-1"></a>                 style<span class="op">=</span><span class="st">'Estimación'</span>, markers<span class="op">=</span><span class="va">True</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb15-424"><a href="#cb15-424" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, linewidth<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb15-425"><a href="#cb15-425" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ax.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">'Último grado aprobado en 1997'</span>,</span>
+<span id="cb15-426"><a href="#cb15-426" aria-hidden="true" tabindex="-1"></a>           ylabel<span class="op">=</span><span class="st">'Efecto en la inscripción'</span>)</span>
+<span id="cb15-427"><a href="#cb15-427" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-428"><a href="#cb15-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-431"><a href="#cb15-431" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-432"><a href="#cb15-432" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-433"><a href="#cb15-433" aria-hidden="true" tabindex="-1"></a>por_grado <span class="op">=</span> pd.DataFrame(taus).assign(grado<span class="op">=</span>G[<span class="st">'grado'</span>].to_numpy()).groupby(<span class="st">'grado'</span>).mean()</span>
+<span id="cb15-434"><a href="#cb15-434" aria-hidden="true" tabindex="-1"></a>grado_max <span class="op">=</span> {k: <span class="bu">int</span>(por_grado[k].idxmax()) <span class="cf">for</span> k <span class="kw">in</span> taus}</span>
+<span id="cb15-435"><a href="#cb15-435" aria-hidden="true" tabindex="-1"></a>gmax <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">set</span>(grado_max.values()))</span>
+<span id="cb15-436"><a href="#cb15-436" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(gmax) <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb15-437"><a href="#cb15-437" aria-hidden="true" tabindex="-1"></a>    grado_max_frase <span class="op">=</span> (<span class="ss">f'los tres meta-aprendices tienen su mayor efecto '</span></span>
+<span id="cb15-438"><a href="#cb15-438" aria-hidden="true" tabindex="-1"></a>                       <span class="ss">f'estimado en quienes habían aprobado el grado </span><span class="sc">{</span>gmax[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb15-439"><a href="#cb15-439" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb15-440"><a href="#cb15-440" aria-hidden="true" tabindex="-1"></a>    grado_max_frase <span class="op">=</span> (<span class="st">'el mayor efecto estimado de los meta-aprendices está '</span></span>
+<span id="cb15-441"><a href="#cb15-441" aria-hidden="true" tabindex="-1"></a>                       <span class="st">'en quienes habían aprobado alguno de los grados '</span></span>
+<span id="cb15-442"><a href="#cb15-442" aria-hidden="true" tabindex="-1"></a>                       <span class="op">+</span> <span class="st">', '</span>.join(<span class="bu">str</span>(g) <span class="cf">for</span> g <span class="kw">in</span> gmax[:<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb15-443"><a href="#cb15-443" aria-hidden="true" tabindex="-1"></a>                       <span class="op">+</span> <span class="ss">f' o </span><span class="sc">{</span>gmax[<span class="op">-</span><span class="dv">1</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb15-444"><a href="#cb15-444" aria-hidden="true" tabindex="-1"></a>grado_max_frase_f <span class="op">=</span> Markdown(grado_max_frase)</span>
+<span id="cb15-445"><a href="#cb15-445" aria-hidden="true" tabindex="-1"></a>ef_gmax_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">max</span>(por_grado.loc[g, k] <span class="cf">for</span> k, g <span class="kw">in</span> grado_max.items())<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-446"><a href="#cb15-446" aria-hidden="true" tabindex="-1"></a>ef_bajos <span class="op">=</span> por_grado.loc[por_grado.index <span class="op">&lt;=</span> <span class="dv">4</span>]</span>
+<span id="cb15-447"><a href="#cb15-447" aria-hidden="true" tabindex="-1"></a>ef_bajos_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_bajos<span class="sc">.</span>to_numpy()<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-448"><a href="#cb15-448" aria-hidden="true" tabindex="-1"></a>exp_grado <span class="op">=</span> efecto_por_grupo(G[<span class="st">'grado'</span>].to_numpy(), y_g, w_g)</span>
+<span id="cb15-449"><a href="#cb15-449" aria-hidden="true" tabindex="-1"></a>exp_gmax_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>exp_grado<span class="sc">.</span>loc[gmax[<span class="dv">0</span>], <span class="st">"efecto"</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-450"><a href="#cb15-450" aria-hidden="true" tabindex="-1"></a>gmax_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>gmax[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-451"><a href="#cb15-451" aria-hidden="true" tabindex="-1"></a>transicion_f <span class="op">=</span> Markdown(</span>
+<span id="cb15-452"><a href="#cb15-452" aria-hidden="true" tabindex="-1"></a>    <span class="st">'es decir, quienes en 1998 debían decidir si terminaban la primaria o '</span></span>
+<span id="cb15-453"><a href="#cb15-453" aria-hidden="true" tabindex="-1"></a>    <span class="st">'entraban a la secundaria'</span> <span class="cf">if</span> <span class="bu">set</span>(gmax) <span class="op">&lt;=</span> {<span class="dv">5</span>, <span class="dv">6</span>} <span class="cf">else</span></span>
+<span id="cb15-454"><a href="#cb15-454" aria-hidden="true" tabindex="-1"></a>    <span class="st">'que no coincide exactamente con la transición de la primaria a la '</span></span>
+<span id="cb15-455"><a href="#cb15-455" aria-hidden="true" tabindex="-1"></a>    <span class="st">'secundaria'</span>)</span>
+<span id="cb15-456"><a href="#cb15-456" aria-hidden="true" tabindex="-1"></a>n_exp_alto_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span><span class="bu">int</span>(exp_grado.loc[exp_grado.index <span class="op">&gt;=</span> <span class="dv">7</span>, <span class="st">"n"</span>].<span class="bu">max</span>())<span class="sc">}</span><span class="ss">$'</span>)</span>
+<span id="cb15-457"><a href="#cb15-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-458"><a href="#cb15-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-459"><a href="#cb15-459" aria-hidden="true" tabindex="-1"></a>En la @fig-causal-grado, <span class="in">`{python} grado_max_frase_f`</span>, <span class="in">`{python} transicion_f`</span>, con un efecto promedio estimado de hasta <span class="in">`{python} ef_gmax_f`</span>, mientras que en los grados 0 a 4 el promedio del efecto estimado no pasa de <span class="in">`{python} ef_bajos_f`</span>. Los meta-aprendices encuentran ese patrón sin que se les indique dónde buscar, y la diferencia de medias del experimento en el grado <span class="in">`{python} gmax_f`</span> es <span class="in">`{python} exp_gmax_f`</span>. La línea del experimento es más errática que las de los modelos porque cada punto es una diferencia de medias calculada con pocas observaciones, en particular en los grados 7 a 9, que tienen a lo más <span class="in">`{python} n_exp_alto_f`</span> niñas y niños cada uno, mientras que los modelos comparten información entre grados vecinos y suavizan el efecto.</span>
+<span id="cb15-460"><a href="#cb15-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-461"><a href="#cb15-461" aria-hidden="true" tabindex="-1"></a><span class="fu">### Focalizar por Riesgo o por Efecto {#sec-focalizar-efecto}</span></span>
+<span id="cb15-462"><a href="#cb15-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-463"><a href="#cb15-463" aria-hidden="true" tabindex="-1"></a>Con estos efectos estimados se puede regresar al problema de política que abrió la sección anterior. Con presupuesto para una cuarta parte de las niñas y niños (@sec-restriccion-presupuestal), se compara elegir a quienes tienen mayor riesgo predicho contra elegir a quienes tienen mayor efecto estimado, y en ambos casos se mide con el experimento el efecto entre los elegidos y entre los no elegidos, como se muestra en el siguiente código:</span>
+<span id="cb15-464"><a href="#cb15-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-467"><a href="#cb15-467" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-468"><a href="#cb15-468" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb15-469"><a href="#cb15-469" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> efecto_seleccion(puntaje, y, w, proporcion<span class="op">=</span><span class="fl">0.25</span>):</span>
+<span id="cb15-470"><a href="#cb15-470" aria-hidden="true" tabindex="-1"></a>    sel <span class="op">=</span> puntaje <span class="op">&gt;=</span> np.quantile(puntaje, <span class="dv">1</span> <span class="op">-</span> proporcion)</span>
+<span id="cb15-471"><a href="#cb15-471" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dif_medias(y[sel], w[sel]), dif_medias(y[<span class="op">~</span>sel], w[<span class="op">~</span>sel])</span>
+<span id="cb15-472"><a href="#cb15-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-473"><a href="#cb15-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-474"><a href="#cb15-474" aria-hidden="true" tabindex="-1"></a>ef_sel <span class="op">=</span> {k: efecto_seleccion(v, y_g, w_g)</span>
+<span id="cb15-475"><a href="#cb15-475" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">dict</span>(Riesgo<span class="op">=</span>riesgo, <span class="op">**</span>taus).items()}</span>
+<span id="cb15-476"><a href="#cb15-476" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-477"><a href="#cb15-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-480"><a href="#cb15-480" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-481"><a href="#cb15-481" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-482"><a href="#cb15-482" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-causal-focalizacion</span></span>
+<span id="cb15-483"><a href="#cb15-483" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Efecto de Progresa medido en el conjunto de prueba entre la cuarta parte elegida con cada criterio y entre el resto."</span></span>
+<span id="cb15-484"><a href="#cb15-484" aria-hidden="true" tabindex="-1"></a>ETIQUETA <span class="op">=</span> <span class="bu">dict</span>(Riesgo<span class="op">=</span><span class="st">'Mayor riesgo predicho'</span>, S<span class="op">=</span><span class="st">'Mayor efecto, S-learner'</span>,</span>
+<span id="cb15-485"><a href="#cb15-485" aria-hidden="true" tabindex="-1"></a>                T<span class="op">=</span><span class="st">'Mayor efecto, T-learner'</span>, X<span class="op">=</span><span class="st">'Mayor efecto, X-learner'</span>)</span>
+<span id="cb15-486"><a href="#cb15-486" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'| Criterio de selección | Efecto en los elegidos | Efecto en el resto |</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-487"><a href="#cb15-487" aria-hidden="true" tabindex="-1"></a>txt <span class="op">+=</span> <span class="st">'|---|---|---|</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb15-488"><a href="#cb15-488" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, (a, b) <span class="kw">in</span> ef_sel.items():</span>
+<span id="cb15-489"><a href="#cb15-489" aria-hidden="true" tabindex="-1"></a>    txt <span class="op">+=</span> <span class="ss">f'| </span><span class="sc">{</span>ETIQUETA[k]<span class="sc">}</span><span class="ss"> | $</span><span class="sc">{</span>a<span class="sc">:0.4f}</span><span class="ss">$ | $</span><span class="sc">{</span>b<span class="sc">:0.4f}</span><span class="ss">$ |</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb15-490"><a href="#cb15-490" aria-hidden="true" tabindex="-1"></a>Markdown(txt)</span>
+<span id="cb15-491"><a href="#cb15-491" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-492"><a href="#cb15-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-495"><a href="#cb15-495" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb15-496"><a href="#cb15-496" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb15-497"><a href="#cb15-497" aria-hidden="true" tabindex="-1"></a>ef_riesgo_sel_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_sel[<span class="st">"Riesgo"</span>][<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-498"><a href="#cb15-498" aria-hidden="true" tabindex="-1"></a>ef_x_sel_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_sel[<span class="st">"X"</span>][<span class="dv">0</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-499"><a href="#cb15-499" aria-hidden="true" tabindex="-1"></a>razon_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>ef_sel[<span class="st">"X"</span>][<span class="dv">0</span>] <span class="op">/</span> ef_sel[<span class="st">"Riesgo"</span>][<span class="dv">0</span>]<span class="sc">:0.1f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-500"><a href="#cb15-500" aria-hidden="true" tabindex="-1"></a>corr_f <span class="op">=</span> Markdown(<span class="ss">f'$</span><span class="sc">{</span>np<span class="sc">.</span>corrcoef(riesgo, tau_x)[<span class="dv">0</span>, <span class="dv">1</span>]<span class="sc">:0.4f}</span><span class="ss">$'</span>)</span>
+<span id="cb15-501"><a href="#cb15-501" aria-hidden="true" tabindex="-1"></a>comp_sel_f <span class="op">=</span> Markdown(<span class="st">'mayor'</span> <span class="cf">if</span> ef_sel[<span class="st">'X'</span>][<span class="dv">0</span>] <span class="op">&gt;</span> ef_sel[<span class="st">'Riesgo'</span>][<span class="dv">0</span>]</span>
+<span id="cb15-502"><a href="#cb15-502" aria-hidden="true" tabindex="-1"></a>                      <span class="cf">else</span> <span class="st">'menor'</span>)</span>
+<span id="cb15-503"><a href="#cb15-503" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-504"><a href="#cb15-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-505"><a href="#cb15-505" aria-hidden="true" tabindex="-1"></a>La @tbl-causal-focalizacion muestra que entre los elegidos por el efecto estimado con el X-learner el programa cambia la inscripción en <span class="in">`{python} ef_x_sel_f`</span>, que es <span class="in">`{python} comp_sel_f`</span> que el <span class="in">`{python} ef_riesgo_sel_f`</span> de los elegidos por riesgo, con una razón de <span class="in">`{python} razon_f`</span> entre ambos. La correlación entre el riesgo predicho y el efecto estimado con el X-learner es <span class="in">`{python} corr_f`</span>, de manera que los dos criterios eligen a grupos de personas en buena parte distintos y, con el mismo presupuesto, el criterio cambia cuántas inscripciones adicionales logra el programa.</span>
+<span id="cb15-506"><a href="#cb15-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-507"><a href="#cb15-507" aria-hidden="true" tabindex="-1"></a>Elegir por efecto estimado maximiza el resultado medido del programa, pero ese no es el único objetivo legítimo de una política pública. Un programa puede querer atender a quienes están peor aunque el efecto en ellos sea menor, y esa es una decisión de quien define la política, igual que la de los costos de cada error en @sec-decision-focalizacion. Además, estos efectos se refieren a un solo resultado, la inscripción en 1998, y un programa de transferencias tiene otros resultados, como la salud, la nutrición o el consumo de los hogares, en los que el orden de las personas podría ser diferente.</span>
+<span id="cb15-508"><a href="#cb15-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-509"><a href="#cb15-509" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb15-510"><a href="#cb15-510" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb15-511"><a href="#cb15-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-512"><a href="#cb15-512" aria-hidden="true" tabindex="-1"></a>Repetir el análisis de @sec-meta-aprendices con <span class="in">`inscrito_1999`</span> como resultado, que mide la inscripción un año y medio después del inicio del programa. Calcular el efecto promedio con su error estándar por conglomerados, entrenar el T-learner y el X-learner y dibujar el promedio del efecto estimado por grado aprobado en 1997. Discutir si los grados con mayor efecto son los mismos que en 1998 y por qué podrían recorrerse, considerando que las mismas personas son un año mayores.</span>
+<span id="cb15-513"><a href="#cb15-513" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-514"><a href="#cb15-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-515"><a href="#cb15-515" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen {#sec-resumen-causal}</span></span>
+<span id="cb15-516"><a href="#cb15-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-517"><a href="#cb15-517" aria-hidden="true" tabindex="-1"></a>Los resultados potenciales definen el efecto individual de un tratamiento como la diferencia entre el resultado con tratamiento y sin él, y como de cada persona solo se observa uno de los dos, el efecto individual nunca se observa y lo que se estima son promedios, que son el efecto promedio y el efecto condicional $\tau(x)$. En un experimento el efecto promedio se estima con una diferencia de medias, y su error estándar debe respetar la unidad que se sorteó, que en Progresa fue la localidad y no la persona.</span>
+<span id="cb15-518"><a href="#cb15-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-519"><a href="#cb15-519" aria-hidden="true" tabindex="-1"></a>Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de $\mu_0(x)$ y el efecto de la diferencia $\mu_1(x) - \mu_0(x)$. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.</span>
+<span id="cb15-520"><a href="#cb15-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-521"><a href="#cb15-521" aria-hidden="true" tabindex="-1"></a>Los meta-aprendices convierten un algoritmo de regresión en un estimador de $\tau(x)$. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.</span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" class="img-fluid"></a> <br> Esta obra está bajo una <a href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

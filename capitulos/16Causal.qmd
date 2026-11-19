@@ -1,0 +1,469 @@
+# Aprendizaje Computacional e Inferencia Causal {#sec-inferencia-causal}
+
+El **objetivo** de la unidad es conocer y aplicar modelos de aprendizaje computacional para estimar el efecto de una intervención y la manera en que ese efecto cambia entre personas.
+
+## Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+from sklearn.model_selection import GroupShuffleSplit
+from sklearn.ensemble import RandomForestRegressor
+from matplotlib import pylab as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
+             'releases/download/datos-v1')
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+sns.set_style('whitegrid')
+```
+
+## Introducción {#sec-intro-16}
+
+Hasta aquí el libro trató problemas de predicción, en los que interesa la predicción $\hat y$ y qué tan cerca está del valor observado. Este capítulo regresa a la otra pregunta que se planteó en @sec-prediccion-vs-causal, que es qué pasa con el resultado cuando se interviene, y que es la pregunta de la evaluación de programas. El capítulo de interpretabilidad (@sec-interpretabilidad-equidad) terminó señalando que ninguna técnica para interpretar un modelo la responde, porque esas técnicas describen lo que el modelo aprendió y no lo que ocurre cuando se cambia una variable.
+
+Quien lee este capítulo ya conoce las herramientas de la inferencia causal, como los experimentos, el emparejamiento o las diferencias en diferencias, y el capítulo no las repite. Lo que agrega el aprendizaje computacional es flexibilidad en dos lugares, que son estimar cómo cambia el efecto de una persona a otra sin fijar de antemano los subgrupos y ajustar por muchas variables de control sin escoger a mano la forma funcional. @athey2019machine y @athey2019impact presentan este programa de trabajo y su relación con la econometría.
+
+La advertencia principal del capítulo es que el aprendizaje computacional no sustituye al diseño de investigación. Que la comparación entre tratados y no tratados sea válida depende de cómo se asignó el tratamiento, y ningún algoritmo corrige una asignación que favoreció a un grupo. Por eso el ejemplo del capítulo es un experimento, el de Progresa (@sec-datos-progresa), en el que la asignación fue al azar y la validez de la comparación no está en duda.
+
+El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y termina con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona.
+
+## Resultados Potenciales {#sec-resultados-potenciales}
+
+En el marco de resultados potenciales cada persona tiene dos resultados, $y(1)$ si recibe el tratamiento y $y(0)$ si no lo recibe [@rubin1974estimating], y @imbens2015causal es la referencia general de este marco. En Progresa el tratamiento es vivir en una localidad que recibió el programa en 1998 y el resultado es estar inscrito en la escuela en el otoño de ese año. El indicador de tratamiento se denota con $w \in \{0, 1\}$, que en este capítulo no tiene relación con los coeficientes $\mathbf w$ de un modelo lineal usados en los capítulos anteriores. El efecto del tratamiento en la persona $i$ es
+
+$$
+\tau_i = y_i(1) - y_i(0).
+$$ {#eq-efecto-individual}
+
+De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,
+
+$$
+y_i = w_i\, y_i(1) + (1 - w_i)\, y_i(0),
+$$ {#eq-resultado-observado}
+
+de manera que $\tau_i$ nunca se observa, y @holland1986statistics lo llama el problema fundamental de la inferencia causal. La consecuencia para el aprendizaje computacional es directa, porque en predicción cada observación trae su respuesta $y$ y el error del modelo se mide en un conjunto de prueba, mientras que aquí ninguna observación trae su $\tau_i$ y por lo tanto no existe un conjunto de prueba con la respuesta correcta.
+
+Lo que sí se puede estimar con los datos son promedios de los efectos individuales. El efecto promedio del tratamiento es
+
+$$
+\tau = \mathbb E[y(1) - y(0)],
+$$ {#eq-ate}
+
+y el efecto promedio condicional, que es el objeto central del capítulo, es
+
+$$
+\tau(x) = \mathbb E[y(1) - y(0) \mid x].
+$$ {#eq-cate}
+
+El efecto condicional $\tau(x)$ dice cuánto cambia en promedio el resultado de las personas con características $x$, y cuando $\tau(x)$ no es constante se dice que el efecto es heterogéneo.
+
+El primero de los dos supuestos que se necesitan para estimar estos efectos es que, entre personas con las mismas características, el tratamiento no dependa de los resultados potenciales, lo que se conoce como independencia condicional y se escribe $(y(1), y(0)) \perp w \mid x$. El segundo es que toda persona tenga probabilidad positiva de recibir y de no recibir el tratamiento, lo que se conoce como traslape y se escribe $0 < e(x) < 1$, donde $e(x) = \mathbb P(w = 1 \mid x)$ es la probabilidad de tratamiento (*propensity score*). En un experimento ambos supuestos se cumplen por diseño, porque el sorteo decide $w$ sin mirar a las personas, mientras que en datos observacionales son supuestos que no se pueden verificar con los datos.
+
+Bajo esos supuestos, y llamando $\mu_w(x) = \mathbb E[y \mid x, w]$ a la función de regresión del grupo $w$, el efecto condicional es la diferencia de dos funciones de regresión, como se muestra a continuación:
+
+$$
+\tau(x) = \mu_1(x) - \mu_0(x).
+$$ {#eq-cate-regresion}
+
+Las funciones $\mu_1$ y $\mu_0$ son funciones de regresión como las de todos los capítulos anteriores y se pueden estimar con cualquier algoritmo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
+
+## El Experimento de Progresa {#sec-causal-experimento}
+
+Progresa daba becas a los hogares pobres de localidades rurales a cambio de que sus hijas e hijos asistieran a la escuela, y el orden en que las localidades de la evaluación entraron al programa se sorteó, de manera que unas lo recibieron en 1998 y las de control hasta finales de 1999 (@sec-datos-progresa, @schultz2004school). Las características de cada niña o niño son las medidas en 1997, antes del programa, y son el sexo, la edad, el último grado aprobado y la inscripción en ese año, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+progresa = pd.read_csv(f'{URL_DATOS}/progresa_inscripcion.csv')
+VARS = ['mujer', 'edad', 'grado', 'inscrito_1997']
+X = progresa[VARS].astype(float)
+w = progresa['progresa'].to_numpy()
+y = progresa['inscrito_1998'].to_numpy().astype(float)
+loc = progresa['localidad'].to_numpy()
+```
+
+```{python}
+#| echo: false
+n_f = Markdown(f'${len(y):,}$')
+por_loc = progresa.groupby('localidad')['progresa'].first()
+n_loc_f = Markdown(f'${len(por_loc)}$')
+n_loc_t_f = Markdown(f'${int((por_loc == 1).sum())}$')
+n_loc_c_f = Markdown(f'${int((por_loc == 0).sum())}$')
+prop_t_f = Markdown(f'${w.mean():0.4f}$')
+```
+
+El conjunto tiene `{python} n_f` niñas y niños de `{python} n_loc_f` localidades, de las cuales `{python} n_loc_t_f` recibieron el programa en 1998 y `{python} n_loc_c_f` son de control, de manera que la proporción de niñas y niños en localidades tratadas es `{python} prop_t_f`.
+
+Si el sorteo funcionó, las características previas al programa deben ser parecidas en los dos grupos, porque el azar no tiene preferencia por ningún tipo de localidad. La @tbl-causal-balance muestra la media de cada característica en las localidades de control y en las que recibieron Progresa.
+
+```{python}
+#| echo: false
+#| label: tbl-causal-balance
+#| tbl-cap: "Media de las características medidas en 1997 en las localidades de control y en las que recibieron Progresa."
+NOMBRES = dict(mujer='Mujer', edad='Edad', grado='Último grado aprobado',
+               inscrito_1997='Inscripción en 1997')
+bal = progresa.groupby('progresa')[VARS].mean()
+txt = '| Característica | Control | Progresa |\n|---|---|---|\n'
+for c in VARS:
+    txt += f'| {NOMBRES[c]} | ${bal.loc[0, c]:0.4f}$ | ${bal.loc[1, c]:0.4f}$ |\n'
+Markdown(txt)
+```
+
+En un experimento el efecto promedio (@eq-ate) se estima con la diferencia entre la media del resultado de los tratados y la de los controles, donde $N_1$ y $N_0$ son el número de tratados y de controles, es decir,
+
+$$
+\hat \tau = \frac{1}{N_1} \sum_{i: w_i = 1} y_i - \frac{1}{N_0} \sum_{i: w_i = 0} y_i,
+$$ {#eq-dif-medias}
+
+que se calcula con el siguiente código:
+
+```{python}
+#| echo: true
+def dif_medias(y, w):
+    return y[w == 1].mean() - y[w == 0].mean()
+
+
+ate = dif_medias(y, w)
+```
+
+El sorteo fue por localidad, así que las niñas y niños de una misma localidad no son observaciones independientes y el error estándar debe calcularse remuestreando localidades completas y no personas. Se usa el bootstrap (@sec-bootstrap) en el que cada muestra se forma eligiendo localidades con reemplazo y conservando a todas las personas de cada localidad elegida, como se muestra a continuación:
+
+```{python}
+#| echo: true
+def bootstrap_localidades(y, w, loc, B=500, seed=0):
+    rng = np.random.default_rng(seed)
+    claves = np.unique(loc)
+    indices = [np.flatnonzero(loc == c) for c in claves]
+    salida = np.empty(B)
+    for b in range(B):
+        sel = rng.integers(0, len(claves), len(claves))
+        i = np.concatenate([indices[s] for s in sel])
+        salida[b] = dif_medias(y[i], w[i])
+    return salida
+
+
+ate_b = bootstrap_localidades(y, w, loc)
+ate_se = ate_b.std()
+ate_ic = np.percentile(ate_b, [2.5, 97.5])
+```
+
+```{python}
+#| echo: false
+ate_f = Markdown(f'${ate:0.4f}$')
+ate_se_f = Markdown(f'${ate_se:0.4f}$')
+ate_ic_f = Markdown(f'$[{ate_ic[0]:0.4f}, {ate_ic[1]:0.4f}]$')
+se_ing = np.sqrt(y[w == 1].var(ddof=1) / (w == 1).sum()
+                 + y[w == 0].var(ddof=1) / (w == 0).sum())
+se_ing_f = Markdown(f'${se_ing:0.4f}$')
+razon_se_f = Markdown(f'${ate_se / se_ing:0.1f}$')
+comp_se_f = Markdown('mayor' if ate_se > se_ing else 'menor')
+control_f = Markdown(f'${y[w == 0].mean():0.4f}$')
+```
+
+La proporción inscrita en las localidades de control es `{python} control_f` y la diferencia de medias estima que el programa la cambia en `{python} ate_f`, con un error estándar de `{python} ate_se_f` y un intervalo de confianza del 95% de `{python} ate_ic_f`. El error estándar que supone que las personas son observaciones independientes sería `{python} se_ing_f`, por lo que el error estándar por conglomerados es `{python} razon_se_f` veces el ingenuo y la incertidumbre es `{python} comp_se_f` de lo que sugeriría tratar a cada persona como un sorteo propio.
+
+Un efecto promedio como éste esconde diferencias grandes entre personas, porque en los primeros grados de primaria casi todos están inscritos con o sin programa y el efecto no puede ser grande ahí. La pregunta del resto del capítulo es para quién es mayor el efecto del programa.
+
+## Predecir no es Estimar un Efecto {#sec-predecir-no-es-efecto}
+
+Una reacción natural ante un presupuesto limitado es dirigir el programa a quienes tienen mayor riesgo de no inscribirse, lo que convierte la focalización en un problema de predicción como los de @sec-regresion-focalizacion y @sec-decision-focalizacion. Para revisar si esa idea funciona, los datos se dividen en un conjunto de entrenamiento y uno de prueba (@sec-conjunto-entre-prueba), pero la partición se hace por localidad, de manera que todas las niñas y niños de una localidad quedan en el mismo conjunto, por la misma razón que el bootstrap se hizo por localidad. El siguiente código hace la partición:
+
+```{python}
+#| echo: true
+particion = GroupShuffleSplit(n_splits=1, test_size=0.3, random_state=0)
+tr, te = next(particion.split(X, y, groups=loc))
+T, G = X.iloc[tr], X.iloc[te]
+y_t, y_g, w_t, w_g = y[tr], y[te], w[tr], w[te]
+```
+
+El modelo de riesgo es un bosque aleatorio (@sec-bagging) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima $\mu_0(x)$. Se usa un bosque de regresión sobre la variable 0/1, cuya predicción es la proporción de inscritos entre observaciones parecidas, y la función `bosque` fija los hiperparámetros que se usan en todo el capítulo, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+def bosque():
+    return RandomForestRegressor(n_estimators=200, min_samples_leaf=20,
+                                 n_jobs=-1, random_state=0)
+
+
+m0 = bosque().fit(T[w_t == 0], y_t[w_t == 0])
+riesgo = 1 - m0.predict(G)
+```
+
+Como el conjunto de prueba viene de un experimento, se puede medir el efecto del programa dentro de cualquier grupo de personas con la diferencia de medias de ese grupo. La función `efecto_por_grupo` lo hace, y se aplica a los quintiles del riesgo predicho en el conjunto de prueba:
+
+```{python}
+#| echo: true
+def efecto_por_grupo(grupo, y, w):
+    filas = []
+    for g in np.unique(grupo):
+        m = grupo == g
+        filas.append(dict(grupo=g, n=int(m.sum()),
+                          control=y[m & (w == 0)].mean(),
+                          efecto=dif_medias(y[m], w[m])))
+    return pd.DataFrame(filas).set_index('grupo')
+
+
+q_riesgo = pd.qcut(riesgo, 5, labels=False, duplicates='drop') + 1
+ef_riesgo = efecto_por_grupo(q_riesgo, y_g, w_g)
+```
+
+```{python}
+#| echo: false
+#| label: tbl-causal-riesgo
+#| tbl-cap: "Inscripción en las localidades de control y efecto de Progresa en el conjunto de prueba, por quintil del riesgo predicho de no inscribirse (el quintil 5 es el de mayor riesgo)."
+txt = '| Quintil de riesgo | Niñas y niños | Inscripción en control | Efecto |\n'
+txt += '|---|---|---|---|\n'
+for g, r in ef_riesgo.iterrows():
+    txt += f'| {g} | ${int(r.n)}$ | ${r.control:0.4f}$ | ${r.efecto:0.4f}$ |\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+q_max = ef_riesgo['efecto'].idxmax()
+q_ult = ef_riesgo.index.max()
+q_max_f = Markdown(f'${q_max}$')
+ef_q_max_f = Markdown(f'${ef_riesgo.loc[q_max, "efecto"]:0.4f}$')
+ef_q_ult_f = Markdown(f'${ef_riesgo.loc[q_ult, "efecto"]:0.4f}$')
+ctrl_q_ult_f = Markdown(f'${ef_riesgo.loc[q_ult, "control"]:0.4f}$')
+ctrl_q_max_f = Markdown(f'${ef_riesgo.loc[q_max, "control"]:0.4f}$')
+riesgo_frase_f = Markdown('y es también el quintil donde el efecto es mayor'
+                          if q_max == q_ult else
+                          'pero el efecto mayor no está ahí sino en el quintil '
+                          f'{q_max}')
+```
+
+La @tbl-causal-riesgo muestra que el modelo de riesgo ordena bien a las personas, porque la inscripción en las localidades de control cae hasta `{python} ctrl_q_ult_f` en el quintil de mayor riesgo, `{python} riesgo_frase_f`, con un efecto de `{python} ef_q_max_f` contra `{python} ef_q_ult_f` del quintil de mayor riesgo. En los quintiles de bajo riesgo casi todos se inscriben sin el programa y no hay nada que mejorar, mientras que en el de mayor riesgo están muchos jóvenes que ya habían dejado la escuela y a quienes una beca difícilmente regresa, de manera que el efecto tiende a concentrarse en quienes están por decidir si continúan. En términos de la notación, el riesgo es $1 - \mu_0(x)$ y el efecto es $\mu_1(x) - \mu_0(x)$, que son dos funciones distintas de $x$, y por eso @kleinberg2015prediction distinguen los problemas de política que se resuelven con una predicción de los que requieren estimar un efecto causal.
+
+## Meta-aprendices {#sec-meta-aprendices}
+
+Se llama meta-aprendiz a un procedimiento que toma un algoritmo de regresión cualquiera, llamado aprendiz base, y lo usa para estimar el efecto condicional $\tau(x)$ [@kunzel2019metalearners]. En este capítulo el aprendiz base es siempre el bosque de la función `bosque`, y los tres meta-aprendices que se presentan se entrenan en el conjunto de entrenamiento $\mathcal T$ y se evalúan en el conjunto de prueba $\mathcal G$.
+
+### S-learner {#sec-s-learner}
+
+El S-learner usa un solo modelo (*single*) $\mu(x, w)$ que recibe el tratamiento como una variable más, y el efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,
+
+$$
+\hat\tau_S(x) = \hat\mu(x, 1) - \hat\mu(x, 0).
+$$ {#eq-s-learner}
+
+La debilidad de este método es que el tratamiento es una variable entre varias y, si predice poco comparado con las demás, el algoritmo la usa poco o la ignora, de manera que el efecto estimado se sesga hacia cero. El siguiente código entrena el S-learner y estima el efecto en el conjunto de prueba:
+
+```{python}
+#| echo: true
+T_w = T.assign(progresa=w_t)
+s_modelo = bosque().fit(T_w, y_t)
+tau_s = (s_modelo.predict(G.assign(progresa=1))
+         - s_modelo.predict(G.assign(progresa=0)))
+```
+
+### T-learner {#sec-t-learner}
+
+El T-learner usa dos modelos (*two*), $\hat\mu_1$ entrenado con los tratados y $\hat\mu_0$ entrenado con los controles, y estima el efecto con
+
+$$
+\hat\tau_T(x) = \hat\mu_1(x) - \hat\mu_0(x),
+$$ {#eq-t-learner}
+
+que es la @eq-cate-regresion con las funciones estimadas. El modelo $\hat\mu_0$ es el modelo `m0` que ya se entrenó para el riesgo. La debilidad de este método es que cada modelo se ajusta para predecir bien su propio grupo, con su propio error, y la diferencia de dos predicciones ruidosas es más ruidosa que cada una, por lo que puede encontrar heterogeneidad donde solo hay ruido. El siguiente código completa el T-learner:
+
+```{python}
+#| echo: true
+m1 = bosque().fit(T[w_t == 1], y_t[w_t == 1])
+tau_t = m1.predict(G) - m0.predict(G)
+```
+
+### X-learner {#sec-x-learner}
+
+El X-learner empieza igual que el T-learner, entrenando $\hat\mu_0$ y $\hat\mu_1$, y después imputa a cada persona el resultado potencial que no se observó para calcular con él un efecto individual, que para los tratados y para los controles es
+
+$$
+d_i^1 = y_i - \hat\mu_0(x_i), \qquad d_i^0 = \hat\mu_1(x_i) - y_i.
+$$ {#eq-x-learner-imputado}
+
+Con esos efectos imputados se entrena un modelo $\hat\tau_1$ sobre $d^1$ con los tratados y otro $\hat\tau_0$ sobre $d^0$ con los controles, y por último los dos se combinan con
+
+$$
+\hat\tau_X(x) = e\,\hat\tau_0(x) + (1 - e)\,\hat\tau_1(x),
+$$ {#eq-x-learner}
+
+donde $e$ es la proporción de tratados. La ventaja de este método es que los modelos de la segunda etapa aprenden directamente el efecto y no un resultado, y que aprovecha mejor los datos cuando un grupo es mucho mayor que el otro. El siguiente código implementa el X-learner:
+
+```{python}
+#| echo: true
+d1 = y_t[w_t == 1] - m0.predict(T[w_t == 1])
+d0 = m1.predict(T[w_t == 0]) - y_t[w_t == 0]
+tau1 = bosque().fit(T[w_t == 1], d1)
+tau0 = bosque().fit(T[w_t == 0], d0)
+e = w_t.mean()
+tau_x = e * tau0.predict(G) + (1 - e) * tau1.predict(G)
+```
+
+Los efectos estimados por los tres meta-aprendices se guardan en un diccionario para analizarlos juntos:
+
+```{python}
+#| echo: true
+taus = dict(S=tau_s, T=tau_t, X=tau_x)
+```
+
+```{python}
+#| echo: false
+media_f = {k: Markdown(f'${v.mean():0.4f}$') for k, v in taus.items()}
+sd_f = {k: Markdown(f'${v.std():0.4f}$') for k, v in taus.items()}
+ate_g_f = Markdown(f'${dif_medias(y_g, w_g):0.4f}$')
+```
+
+El promedio de los efectos estimados en el conjunto de prueba es `{python} media_f['S']` con el S-learner, `{python} media_f['T']` con el T-learner y `{python} media_f['X']` con el X-learner, y la diferencia de medias del experimento en ese mismo conjunto es `{python} ate_g_f`. El promedio de los efectos individuales estimados debe parecerse al efecto promedio, porque el efecto promedio es el promedio de $\tau(x)$ sobre la población. La desviación estándar de los efectos estimados es `{python} sd_f['S']`, `{python} sd_f['T']` y `{python} sd_f['X']`, respectivamente, e indica cuánta heterogeneidad encuentra cada método.
+
+### Evaluación sin Observar el Efecto {#sec-causal-evaluacion}
+
+Con un meta-aprendiz no se puede calcular un error como en el capítulo de rendimiento (@sec-rendimiento-cap), porque el efecto individual $\tau_i$ no se observa. Lo que sí permite el experimento es comprobar si el ordenamiento es correcto, formando grupos según el efecto estimado y midiendo en cada grupo el efecto con la diferencia de medias, de manera que si el meta-aprendiz ordena bien el efecto medido crece de un grupo al siguiente. El siguiente código lo hace con los cuartiles del efecto estimado por cada meta-aprendiz:
+
+```{python}
+#| echo: true
+ef_cuartil = {k: efecto_por_grupo(pd.qcut(v, 4, labels=False,
+                                          duplicates='drop') + 1,
+                                  y_g, w_g)
+              for k, v in taus.items()}
+```
+
+```{python}
+#| echo: false
+#| label: tbl-causal-cuartiles
+#| tbl-cap: "Efecto de Progresa medido en el conjunto de prueba dentro de cada cuartil del efecto estimado por los tres meta-aprendices (el cuartil 4 es el de mayor efecto estimado)."
+txt = '| Cuartil del efecto estimado | S-learner | T-learner | X-learner |\n'
+txt += '|---|---|---|---|\n'
+for q in ef_cuartil['S'].index:
+    fila = ' | '.join(f'${ef_cuartil[k].loc[q, "efecto"]:0.4f}$'
+                      if q in ef_cuartil[k].index else ' '
+                      for k in ['S', 'T', 'X'])
+    txt += f'| {q} | {fila} |\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+ate_g = dif_medias(y_g, w_g)
+sup = {k: ef_cuartil[k]['efecto'].iloc[-1] for k in taus}
+inf = {k: ef_cuartil[k]['efecto'].iloc[0] for k in taus}
+sup_f = {k: Markdown(f'${v:0.4f}$') for k, v in sup.items()}
+inf_f = {k: Markdown(f'${v:0.4f}$') for k, v in inf.items()}
+veces_f = Markdown(f'${min(sup.values()) / ate_g:0.1f}$')
+sup_frase_f = Markdown('mayores' if min(sup.values()) > ate_g
+                       else 'no siempre mayores')
+inf_frase_f = Markdown('menores' if max(inf.values()) < ate_g
+                       else 'no siempre menores')
+n_cuartil_f = Markdown(f'${int(min(t.n.min() for t in ef_cuartil.values()))}$')
+n_loc_g_f = Markdown(f'${len(np.unique(loc[te]))}$')
+```
+
+La @tbl-causal-cuartiles muestra que en el cuartil de mayor efecto estimado el efecto medido es `{python} sup_f['S']`, `{python} sup_f['T']` y `{python} sup_f['X']` con el S-learner, el T-learner y el X-learner, respectivamente, que son `{python} sup_frase_f` que la diferencia de medias de todo el conjunto de prueba, y el menor de los tres equivale a `{python} veces_f` veces esa diferencia. En el cuartil de menor efecto estimado los efectos medidos son `{python} inf_f['S']`, `{python} inf_f['T']` y `{python} inf_f['X']`, que son `{python} inf_frase_f` que esa diferencia de medias. Cada cuartil tiene al menos `{python} n_cuartil_f` observaciones de las `{python} n_loc_g_f` localidades del conjunto de prueba, por lo que estas diferencias de medias tienen un error estándar del orden de dos o tres puntos porcentuales y no conviene leer las diferencias pequeñas entre métodos como evidencia de que uno ordena mejor que otro.
+
+Otra forma de revisar los efectos estimados es compararlos contra una variable que la literatura identifica como decisiva, y @schultz2004school encontró que el efecto de Progresa en la inscripción se concentra en la transición de la primaria a la secundaria. La @fig-causal-grado compara, por último grado aprobado, el promedio del efecto estimado por cada meta-aprendiz con la diferencia de medias del experimento en el conjunto de prueba.
+
+```{python}
+#| code-fold: true
+#| label: fig-causal-grado
+#| fig-cap: "Efecto de Progresa en la inscripción por último grado aprobado en 1997, en el conjunto de prueba. Promedio del efecto estimado por cada meta-aprendiz y diferencia de medias del experimento."
+df = pd.DataFrame(taus).assign(grado=G['grado'].to_numpy())
+df = df.groupby('grado').mean()
+df['Experimento'] = efecto_por_grupo(G['grado'].to_numpy(), y_g, w_g)['efecto']
+df = df.reset_index().melt(id_vars='grado', var_name='Estimación',
+                           value_name='efecto')
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.lineplot(df, x='grado', y='efecto', hue='Estimación',
+                 style='Estimación', markers=True, ax=ax)
+_ = ax.axhline(0, color='gray', linewidth=0.8)
+_ = ax.set(xlabel='Último grado aprobado en 1997',
+           ylabel='Efecto en la inscripción')
+```
+
+```{python}
+#| echo: false
+por_grado = pd.DataFrame(taus).assign(grado=G['grado'].to_numpy()).groupby('grado').mean()
+grado_max = {k: int(por_grado[k].idxmax()) for k in taus}
+gmax = sorted(set(grado_max.values()))
+if len(gmax) == 1:
+    grado_max_frase = (f'los tres meta-aprendices tienen su mayor efecto '
+                       f'estimado en quienes habían aprobado el grado {gmax[0]}')
+else:
+    grado_max_frase = ('el mayor efecto estimado de los meta-aprendices está '
+                       'en quienes habían aprobado alguno de los grados '
+                       + ', '.join(str(g) for g in gmax[:-1])
+                       + f' o {gmax[-1]}')
+grado_max_frase_f = Markdown(grado_max_frase)
+ef_gmax_f = Markdown(f'${max(por_grado.loc[g, k] for k, g in grado_max.items()):0.4f}$')
+ef_bajos = por_grado.loc[por_grado.index <= 4]
+ef_bajos_f = Markdown(f'${ef_bajos.to_numpy().max():0.4f}$')
+exp_grado = efecto_por_grupo(G['grado'].to_numpy(), y_g, w_g)
+exp_gmax_f = Markdown(f'${exp_grado.loc[gmax[0], "efecto"]:0.4f}$')
+gmax_f = Markdown(f'${gmax[0]}$')
+transicion_f = Markdown(
+    'es decir, quienes en 1998 debían decidir si terminaban la primaria o '
+    'entraban a la secundaria' if set(gmax) <= {5, 6} else
+    'que no coincide exactamente con la transición de la primaria a la '
+    'secundaria')
+n_exp_alto_f = Markdown(f'${int(exp_grado.loc[exp_grado.index >= 7, "n"].max())}$')
+```
+
+En la @fig-causal-grado, `{python} grado_max_frase_f`, `{python} transicion_f`, con un efecto promedio estimado de hasta `{python} ef_gmax_f`, mientras que en los grados 0 a 4 el promedio del efecto estimado no pasa de `{python} ef_bajos_f`. Los meta-aprendices encuentran ese patrón sin que se les indique dónde buscar, y la diferencia de medias del experimento en el grado `{python} gmax_f` es `{python} exp_gmax_f`. La línea del experimento es más errática que las de los modelos porque cada punto es una diferencia de medias calculada con pocas observaciones, en particular en los grados 7 a 9, que tienen a lo más `{python} n_exp_alto_f` niñas y niños cada uno, mientras que los modelos comparten información entre grados vecinos y suavizan el efecto.
+
+### Focalizar por Riesgo o por Efecto {#sec-focalizar-efecto}
+
+Con estos efectos estimados se puede regresar al problema de política que abrió la sección anterior. Con presupuesto para una cuarta parte de las niñas y niños (@sec-restriccion-presupuestal), se compara elegir a quienes tienen mayor riesgo predicho contra elegir a quienes tienen mayor efecto estimado, y en ambos casos se mide con el experimento el efecto entre los elegidos y entre los no elegidos, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+def efecto_seleccion(puntaje, y, w, proporcion=0.25):
+    sel = puntaje >= np.quantile(puntaje, 1 - proporcion)
+    return dif_medias(y[sel], w[sel]), dif_medias(y[~sel], w[~sel])
+
+
+ef_sel = {k: efecto_seleccion(v, y_g, w_g)
+          for k, v in dict(Riesgo=riesgo, **taus).items()}
+```
+
+```{python}
+#| echo: false
+#| label: tbl-causal-focalizacion
+#| tbl-cap: "Efecto de Progresa medido en el conjunto de prueba entre la cuarta parte elegida con cada criterio y entre el resto."
+ETIQUETA = dict(Riesgo='Mayor riesgo predicho', S='Mayor efecto, S-learner',
+                T='Mayor efecto, T-learner', X='Mayor efecto, X-learner')
+txt = '| Criterio de selección | Efecto en los elegidos | Efecto en el resto |\n'
+txt += '|---|---|---|\n'
+for k, (a, b) in ef_sel.items():
+    txt += f'| {ETIQUETA[k]} | ${a:0.4f}$ | ${b:0.4f}$ |\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+ef_riesgo_sel_f = Markdown(f'${ef_sel["Riesgo"][0]:0.4f}$')
+ef_x_sel_f = Markdown(f'${ef_sel["X"][0]:0.4f}$')
+razon_f = Markdown(f'${ef_sel["X"][0] / ef_sel["Riesgo"][0]:0.1f}$')
+corr_f = Markdown(f'${np.corrcoef(riesgo, tau_x)[0, 1]:0.4f}$')
+comp_sel_f = Markdown('mayor' if ef_sel['X'][0] > ef_sel['Riesgo'][0]
+                      else 'menor')
+```
+
+La @tbl-causal-focalizacion muestra que entre los elegidos por el efecto estimado con el X-learner el programa cambia la inscripción en `{python} ef_x_sel_f`, que es `{python} comp_sel_f` que el `{python} ef_riesgo_sel_f` de los elegidos por riesgo, con una razón de `{python} razon_f` entre ambos. La correlación entre el riesgo predicho y el efecto estimado con el X-learner es `{python} corr_f`, de manera que los dos criterios eligen a grupos de personas en buena parte distintos y, con el mismo presupuesto, el criterio cambia cuántas inscripciones adicionales logra el programa.
+
+Elegir por efecto estimado maximiza el resultado medido del programa, pero ese no es el único objetivo legítimo de una política pública. Un programa puede querer atender a quienes están peor aunque el efecto en ellos sea menor, y esa es una decisión de quien define la política, igual que la de los costos de cada error en @sec-decision-focalizacion. Además, estos efectos se refieren a un solo resultado, la inscripción en 1998, y un programa de transferencias tiene otros resultados, como la salud, la nutrición o el consumo de los hogares, en los que el orden de las personas podría ser diferente.
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Repetir el análisis de @sec-meta-aprendices con `inscrito_1999` como resultado, que mide la inscripción un año y medio después del inicio del programa. Calcular el efecto promedio con su error estándar por conglomerados, entrenar el T-learner y el X-learner y dibujar el promedio del efecto estimado por grado aprobado en 1997. Discutir si los grados con mayor efecto son los mismos que en 1998 y por qué podrían recorrerse, considerando que las mismas personas son un año mayores.
+:::
+
+## Resumen {#sec-resumen-causal}
+
+Los resultados potenciales definen el efecto individual de un tratamiento como la diferencia entre el resultado con tratamiento y sin él, y como de cada persona solo se observa uno de los dos, el efecto individual nunca se observa y lo que se estima son promedios, que son el efecto promedio y el efecto condicional $\tau(x)$. En un experimento el efecto promedio se estima con una diferencia de medias, y su error estándar debe respetar la unidad que se sorteó, que en Progresa fue la localidad y no la persona.
+
+Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de $\mu_0(x)$ y el efecto de la diferencia $\mu_1(x) - \mu_0(x)$. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.
+
+Los meta-aprendices convierten un algoritmo de regresión en un estimador de $\tau(x)$. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.
