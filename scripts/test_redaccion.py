@@ -4,6 +4,7 @@
 Uso:
     python3 scripts/test_redaccion.py
 """
+import glob
 import os
 import sys
 import tempfile
@@ -74,6 +75,18 @@ class TestRedaccion(unittest.TestCase):
             'donde $a$ es el número de elementos. Es importante notar que '
             'este valor no depende del orden de los datos.\n')
         self.assertEqual(inicios, [])
+
+    def test_libro_completo_pasa(self):
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        rutas = [os.path.join(raiz, 'index.qmd')]
+        rutas += sorted(glob.glob(os.path.join(raiz, 'capitulos', '*.qmd')))
+        for ruta in rutas:
+            total, signos, cargados, inicios, sueltos = check_redaccion.revisa(ruta)
+            with self.subTest(ruta=ruta):
+                self.assertEqual(cargados, [])
+                self.assertLessEqual(signos, check_redaccion.MAX_SIGNOS * total)
+                self.assertLessEqual(len(inicios),
+                                     check_redaccion.MAX_INICIOS * total)
 
 
 if __name__ == '__main__':

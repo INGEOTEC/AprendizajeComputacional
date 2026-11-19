@@ -25,7 +25,7 @@ python3 scripts/sitio.py <render> <checkout_gh_pages> <raiz|dev|mcdi>  # desplie
 quarto render --profile borrador --to html --output-dir "$TMPDIR/borrador"  # probar el perfil del borrador fuera de _book/
 ```
 
-`python3 scripts/render.py` is also the `test_command` in `.issue-pilot.json`; a run is "green" when it exits 0. Rendering the full book executes every chapter (model fits, UMAP, etc.) and takes several minutes.
+`python3 scripts/render.py` is also the `test_command` in `.issue-pilot.json`; a run is "green" when it exits 0. Rendering the full book executes every chapter (model fits, UMAP, etc.) and takes several minutes. Before rendering it runs `scripts/check_redaccion.py` and exits 1 without rendering if any file breaks the writing rules (see «Redacción»).
 
 ## Build / publish model: the freeze cache is load-bearing
 
@@ -77,7 +77,7 @@ Reglas del autor para toda la prosa del libro (capítulos, `index.qmd`, pies de 
 5. **Tampoco frases de efecto.** No se cierra un párrafo con una oración corta y contundente que repite lo dicho, ni se usan contrastes del tipo «no es X, es Y» o «X, no Y» como recurso; se dice directamente qué es.
 6. **No se esquiva la regla cambiando el formato.** No se convierte prosa en listas, ni se sustituyen los dos puntos por rayas («—») o paréntesis, ni se parte una oración larga en muchas oraciones cortas. El estilo del libro es de párrafos con oraciones completas unidas por conectores, como en `capitulos/02Rendimiento.qmd` y `capitulos/07Lineal.qmd`.
 
-`scripts/check_redaccion.py` mide las reglas 1 a 4 (no forma parte de `test_command` ni de CI). Varios capítulos anteriores a la regla todavía no pasan; al editar la prosa de uno de ellos, dejarlo en `ok`.
+`scripts/check_redaccion.py` mide las reglas 1 a 4 y es obligatorio: `scripts/render.py` (el `test_command`) lo corre antes de renderizar y termina con código 1, sin renderizar, si algún archivo no pasa. Todos los archivos del libro pasan y deben seguir pasando. Las reglas 5 y 6 no se miden y se cuidan al escribir. `scripts/test_redaccion.py` prueba el script.
 
 ## Spell checking
 
