@@ -1,6 +1,6 @@
 # Conjunto de Datos
 
-El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; después, la matriz de similitud entre instrumentos jurídicos federales, que no tiene variable respuesta; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
+El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva. Después se presenta la matriz de similitud entre instrumentos jurídicos federales, que no tiene variable respuesta, y al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
 
 ## Paquetes usados {.unnumbered}
 
@@ -123,7 +123,7 @@ El siguiente código lee el archivo.
 pobreza = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz')
 ```
 
-En el conjunto, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`; si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
+En el conjunto, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`, y si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
 
 ```{python}
 #| code-fold: true
@@ -239,7 +239,7 @@ _ = ax.legend(title='IMC')
 
 ### Educación {#sec-datos-educacion}
 
-El abandono escolar es uno de los principales obstáculos para que la educación cumpla su papel como mecanismo de movilidad social, y la transición de la primaria a la secundaria y de la secundaria a la educación media superior es un momento crítico. Los programas de becas, de tutoría y de reinserción tienen recursos limitados y deben decidir qué planteles apoyar primero. La tarea de este conjunto es predecir, para cada secundaria, la tasa de abandono escolar a partir de las características del plantel; como la variable objetivo es numérica, se trata de un problema de regresión.
+El abandono escolar es uno de los principales obstáculos para que la educación cumpla su papel como mecanismo de movilidad social, y la transición de la primaria a la secundaria y de la secundaria a la educación media superior es un momento crítico. Los programas de becas, de tutoría y de reinserción tienen recursos limitados y deben decidir qué planteles apoyar primero. La tarea de este conjunto es predecir, para cada secundaria, la tasa de abandono escolar a partir de las características del plantel y, como la variable objetivo es numérica, se trata de un problema de regresión.
 
 ```{python}
 #| echo: false
@@ -271,7 +271,7 @@ El siguiente código lee el archivo.
 educacion = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/sep_f911_educacion.csv.gz')
 ```
 
-La tasa de abandono tiene media `{python} media_abandono_f` y mediana `{python} mediana_abandono_f`; el $10\%$ de los planteles con más abandono tiene al menos `{python} p90_abandono_f`, y `{python} sin_abandono_f` de los planteles tienen una tasa de cero (incluye los casos acotados). La @fig-datos-educacion muestra la distribución de la tasa de abandono.
+La tasa de abandono tiene media `{python} media_abandono_f` y mediana `{python} mediana_abandono_f`, el $10\%$ de los planteles con más abandono tiene al menos `{python} p90_abandono_f`, y `{python} sin_abandono_f` de los planteles tienen una tasa de cero (incluye los casos acotados). La @fig-datos-educacion muestra la distribución de la tasa de abandono.
 
 ```{python}
 #| code-fold: true
@@ -301,11 +301,11 @@ prop_prioridad_f = [Markdown(f'${100 * (prioridad == k).mean():0.1f}\\%$')
                     for k in range(3)]
 ```
 
-El corte es una tasa de abandono de `{python} corte_f`. La clase baja (`prioridad == 0`) tiene `{python} prop_prioridad_f[0]` de los planteles, la media (`prioridad == 1`) `{python} prop_prioridad_f[1]` y la alta (`prioridad == 2`) `{python} prop_prioridad_f[2]`. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con `stratify=prioridad`.
+Con un corte en una tasa de abandono de `{python} corte_f`, la clase baja (`prioridad == 0`) tiene `{python} prop_prioridad_f[0]` de los planteles, la media (`prioridad == 1`) `{python} prop_prioridad_f[1]` y la alta (`prioridad == 2`) `{python} prop_prioridad_f[2]`. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con `stratify=prioridad`.
 
 ### Territorio {#sec-datos-territorio}
 
-Los censos son la mejor fuente de condiciones sociales a escala de barrio, pero se levantan cada diez años; entre un censo y otro, la planeación urbana y la focalización territorial de programas necesitan aproximaciones con información más reciente. El Directorio Estadístico Nacional de Unidades Económicas (DENUE) se actualiza con frecuencia y dice qué negocios hay en cada zona. La tarea de este conjunto es predecir un indicador censal, el grado promedio de escolaridad, a partir de la composición de establecimientos del DENUE de cada AGEB urbana (área geoestadística básica) del estado de Aguascalientes.
+Los censos son la mejor fuente de condiciones sociales a escala de barrio, pero se levantan cada diez años, por lo que entre un censo y otro la planeación urbana y la focalización territorial de programas necesitan aproximaciones con información más reciente. El Directorio Estadístico Nacional de Unidades Económicas (DENUE) se actualiza con frecuencia y dice qué negocios hay en cada zona. La tarea de este conjunto es predecir un indicador censal, el grado promedio de escolaridad, a partir de la composición de establecimientos del DENUE de cada AGEB urbana (área geoestadística básica) del estado de Aguascalientes.
 
 ```{python}
 #| echo: false
@@ -600,7 +600,7 @@ _ = fig.set(xlabel=None, ylabel=None)
 
 #### Iris {#sec-iris} 
 
-Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por @iris; este problema se descarga con la siguiente instrucción. La @fig-conjunto-datos-iris muestra una visualización de estos datos mediante PCA. 
+Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por @iris, el cual se descarga con la siguiente instrucción. La @fig-conjunto-datos-iris muestra una visualización de estos datos mediante PCA. 
 
 ```{python}
 #| echo: true
@@ -630,7 +630,7 @@ _ = fig.set(xlabel=None, ylabel=None)
 
 #### Dígitos {#sec-digitos}
 
-El conjunto de Dígitos (ver @digits) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando la siguiente instrucción. La @fig-conjunto-datos-digits muestra una proyección de estos datos utilizando UMAP con ocho vecinos. 
+El conjunto de Dígitos (ver @digits) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen. Este conjunto de datos se descarga utilizando la siguiente instrucción. La @fig-conjunto-datos-digits muestra una proyección de estos datos utilizando UMAP con ocho vecinos. 
 
 ```{python}
 #| echo: true

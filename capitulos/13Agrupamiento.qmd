@@ -65,7 +65,7 @@ d_f = Markdown(f'${D.shape[1]}$')
 
 ### $\mu_i$
 
-Como se describió, $\mu_i$ es la media de los elementos que corresponden al grupo $G_i$. Asumiendo que el grupo $1$ ($G_1$) tiene $10$ elementos seleccionados de manera aleatoria de $\mathcal D$ como se muestra a continuación; se fija la semilla del generador de números aleatorios para que la selección sea siempre la misma.
+Como se describió, $\mu_i$ es la media de los elementos que corresponden al grupo $G_i$. Asumiendo que el grupo $1$ ($G_1$) tiene $10$ elementos seleccionados de manera aleatoria de $\mathcal D$ como se muestra a continuación, donde se fija la semilla del generador de números aleatorios para que la selección sea siempre la misma.
 
 ```{python}
 #| echo: true
@@ -134,7 +134,7 @@ donde se puede observar que el ciclo itera por cada una de las medias, i.e., `mu
 G = dis.argmin(axis=1)
 ```
 
-La @fig-k-means-g muestra los grupos formados, el primer grupo `G_1` se encuentra en azul y el segundo en naranja, también muestra los elementos que fueron usados como medias de cada grupo; estos elementos se observan en color verde. 
+La @fig-k-means-g muestra los grupos formados, el primer grupo `G_1` se encuentra en azul y el segundo en naranja, también muestra los elementos que fueron usados como medias de cada grupo, los cuales se observan en color verde. 
 
 
 ```{python}
@@ -195,7 +195,7 @@ $$
 \ell_c(\Theta) = \sum_{x \in \mathcal D} \sum_{i=1}^K \mathbb 1(z=i) \log(\pi_i f_{\theta_i}(x)).
 $$ {#eq-em-log-verosimilitud-completa}
 
-Maximizar la @eq-em-log-verosimilitud-completa sería sencillo, sin embargo no se puede calcular porque $z,$ y por lo tanto $\mathbb 1(z=i),$ no se observa. La idea de EM es sustituir el indicador $\mathbb 1(z=i)$ por su valor esperado dado lo que sí se observa, es decir, dado $x$ y los parámetros actuales $\Theta^{(t)}$; esta esperanza es
+Maximizar la @eq-em-log-verosimilitud-completa sería sencillo, sin embargo no se puede calcular porque $z,$ y por lo tanto $\mathbb 1(z=i),$ no se observa. La idea de EM es sustituir el indicador $\mathbb 1(z=i)$ por su valor esperado dado lo que sí se observa, es decir, dado $x$ y los parámetros actuales $\Theta^{(t)}$, y esta esperanza es
 
 $$
 \mathbb E[\mathbb 1(z=i) \mid x, \Theta^{(t)}] = \mathbb P(z=i \mid x, \Theta^{(t)}) = \gamma_i(x),
@@ -207,9 +207,9 @@ $$
 Q(\Theta, \Theta^{(t)}) = \mathbb E_{z \mid x, \Theta^{(t)}}[\ell_c(\Theta)] = \sum_{x \in \mathcal D} \sum_{i=1}^K \gamma_i(x) \log(\pi_i f_{\theta_i}(x)).
 $$ {#eq-em-q-funcion}
 
-En la @eq-em-q-funcion se puede notar que $Q$ tiene dos argumentos, $\Theta$ y $\Theta^{(t)}$, con roles distintos. $\Theta^{(t)}$ son los parámetros de la iteración anterior, que ya se conocen; mientras que $\Theta$ es la variable sobre la que se maximiza. Dado que $\gamma_i(x)$ (@eq-em-esperanza-indicador) depende únicamente de $x$ y $\Theta^{(t)}$, y no de $\Theta$, al resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$ cada $\gamma_i(x)$ se comporta como una constante, es decir, un peso fijo que ya no cambia durante la maximización; los únicos términos de la @eq-em-q-funcion que dependen de $\Theta$ son $\pi_i$ y $f_{\theta_i}(x)$, dentro del logaritmo. 
+En la @eq-em-q-funcion se puede notar que $Q$ tiene dos argumentos, $\Theta$ y $\Theta^{(t)}$, con roles distintos. $\Theta^{(t)}$ son los parámetros de la iteración anterior, que ya se conocen, mientras que $\Theta$ es la variable sobre la que se maximiza. Dado que $\gamma_i(x)$ (@eq-em-esperanza-indicador) depende únicamente de $x$ y $\Theta^{(t)}$, y no de $\Theta$, al resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$ cada $\gamma_i(x)$ se comporta como una constante, es decir, un peso fijo que ya no cambia durante la maximización. Los únicos términos de la @eq-em-q-funcion que dependen de $\Theta$ son $\pi_i$ y $f_{\theta_i}(x)$, dentro del logaritmo. 
 
-Calcular $\gamma_i(x)$ (@eq-em-esperanza-indicador), es necesario para resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$; y este se calcula en el **Paso E**, de ahí su nombre, Expectativa. El **Paso M** completa el procedimiento encontrando $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),$ es decir, maximizando la esperanza; de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.
+Calcular $\gamma_i(x)$ (@eq-em-esperanza-indicador), es necesario para resolver $\arg\max_\Theta Q(\Theta, \Theta^{(t)})$, y este se calcula en el **Paso E**, de ahí su nombre, Expectativa. El **Paso M** completa el procedimiento encontrando $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)}),$ es decir, maximizando la esperanza, de ahí que se llame Maximización. A continuación se presentan ambos pasos de manera explícita.
 
 **Paso E**. Dados los parámetros actuales $\Theta^{(t)} = \{\pi_i^{(t)}, \theta_i^{(t)}\}$, se calcula $\gamma_i(x)$ (@eq-em-esperanza-indicador) para cada $x \in \mathcal D$ y cada grupo $i,$ lo cual, sustituyendo $\mathbb P(z=i \mid x, \Theta^{(t)})$ con el Teorema de Bayes, corresponde a
 
@@ -217,7 +217,7 @@ $$
 \gamma_i(x) = \mathbb P(z=i \mid x, \Theta^{(t)}) = \frac{\pi_i^{(t)} f_{\theta_i^{(t)}}(x)}{\sum_{j=1}^K \pi_j^{(t)} f_{\theta_j^{(t)}}(x)}.
 $$ {#eq-em-paso-e}
 
-$\gamma_i(x)$ es la responsabilidad de $G_i$ en el elemento $x$; a diferencia del paso 2 de K-medias (@sec-agrupamiento-k-medias) donde $x$ se asigna completamente a un grupo, en EM $x$ se asigna de manera fraccionaria a los $K$ grupos, dado que $\gamma_i(x) \in [0, 1]$ y $\sum_{i=1}^K \gamma_i(x) = 1.$
+$\gamma_i(x)$ es la responsabilidad de $G_i$ en el elemento $x$, y a diferencia del paso 2 de K-medias (@sec-agrupamiento-k-medias) donde $x$ se asigna completamente a un grupo, en EM $x$ se asigna de manera fraccionaria a los $K$ grupos, dado que $\gamma_i(x) \in [0, 1]$ y $\sum_{i=1}^K \gamma_i(x) = 1.$
 
 **Paso M**. Con las responsabilidades del paso anterior se actualizan los parámetros $\Theta^{(t+1)} = \arg\max_\Theta Q(\Theta, \Theta^{(t)})$ (@eq-em-q-funcion). La probabilidad a priori se actualiza con
 
@@ -239,9 +239,9 @@ Los pasos E (@eq-em-paso-e) y M (@eq-em-paso-m-pi, @eq-em-paso-m-mu y @eq-em-pas
 
 ### K-medias como caso particular de EM
 
-K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos; la segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$
+K-medias corresponde a EM cuando se hacen dos suposiciones sobre el modelo. La primera es que las $K$ distribuciones son Gaussianas con la misma matriz de covarianza y esta es proporcional a la identidad, es decir, $f_{\theta_i} = \mathcal N(\mu_i, \sigma^2 I)$ para todo $i,$ con $\sigma^2$ fija y compartida por los $K$ grupos. La segunda es que todos los grupos son igualmente probables a priori, i.e., $\pi_i = \frac{1}{K}$ para todo $i.$
 
-Para observar el efecto de estas suposiciones en el **Paso E** (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$; para $x \in \mathbb R^d$ esta densidad es
+Para observar el efecto de estas suposiciones en el **Paso E** (@eq-em-paso-e) se requiere la función de densidad de una Gaussiana multivariada con media $\mu_i$ y matriz de covarianza esférica $\sigma^2 I$, y para $x \in \mathbb R^d$ esta densidad es
 
 $$
 f_{\theta_i}(x) = \mathcal N(x \mid \mu_i, \sigma^2 I) = \frac{1}{(2\pi\sigma^2)^{d/2}} \exp\left(-\frac{1}{2\sigma^2} \mid\mid x - \mu_i \mid\mid^2\right),
@@ -271,7 +271,7 @@ $$
 \gamma_i(x) = \frac{\exp\left(-\frac{1}{2\sigma^2} (d_i - d_{i^*})\right)}{\displaystyle\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right)}.
 $$ {#eq-em-gamma-diferencias}
 
-En la @eq-em-gamma-diferencias cada exponente está escrito en términos de $d_j - d_{i^*} \geq 0$, dado que $d_{i^*}$ es el mínimo; en particular, para $j = i^*$ el exponente es $0$ y por lo tanto ese término de la suma es $\exp(0) = 1$, sin importar el valor de $\sigma^2$. Para cualquier otro grupo $j \neq i^*$ se tiene $d_j - d_{i^*} > 0$, entonces al tomar el límite $\sigma^2 \to 0$ el exponente $-\frac{1}{2\sigma^2}(d_j - d_{i^*}) \to -\infty$ y en consecuencia ese término tiende a $\exp(-\infty) = 0$. Esto significa que en el límite la suma del denominador de la @eq-em-gamma-diferencias se reduce únicamente al término $j=i^*$, es decir, $\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right) \to 1,$ de donde se dice que este término domina la suma: todos los demás términos se desprecian frente a él conforme $\sigma^2 \to 0$.
+En la @eq-em-gamma-diferencias cada exponente está escrito en términos de $d_j - d_{i^*} \geq 0$, dado que $d_{i^*}$ es el mínimo. En particular, para $j = i^*$ el exponente es $0$ y por lo tanto ese término de la suma es $\exp(0) = 1$, sin importar el valor de $\sigma^2$. Para cualquier otro grupo $j \neq i^*$ se tiene $d_j - d_{i^*} > 0$, entonces al tomar el límite $\sigma^2 \to 0$ el exponente $-\frac{1}{2\sigma^2}(d_j - d_{i^*}) \to -\infty$ y en consecuencia ese término tiende a $\exp(-\infty) = 0$. Esto significa que en el límite la suma del denominador de la @eq-em-gamma-diferencias se reduce únicamente al término $j=i^*$, es decir, $\sum_{j=1}^K \exp\left(-\frac{1}{2\sigma^2} (d_j - d_{i^*})\right) \to 1,$ de donde se dice que este término domina la suma, porque todos los demás términos se desprecian frente a él conforme $\sigma^2 \to 0$.
 
 Con esta asignación completa, i.e., $\gamma_i(x) \in \{0, 1\}$, la actualización de $\mu_i$ del **Paso M** (@eq-em-paso-m-mu) se reduce a la media de los elementos de $G_i,$ que corresponde al paso 3 de K-medias. Por lo tanto, K-medias es el algoritmo EM aplicado a una mezcla de Gaussianas con matriz de covarianza esférica compartida, en el límite en que $\sigma^2 \to 0$ y sustituyendo la responsabilidad $\gamma_i(x)$ por la asignación completa al grupo más cercano.
 
@@ -384,19 +384,19 @@ pg = {g: dict(n=fmt(r.AGEB, 0), est=fmt(r.establecimientos, 0),
 g_est_f, g_num_f, g_otro_f = [Markdown(f'$G_{g[-1]}$') for g in (g_est, g_num, g_otro)]
 ```
 
-La @tbl-perfil-grupos-territorio muestra el perfil de los grupos. El grupo `{python} g_est_f` reúne `{python} pg[g_est]['n']` AGEB con `{python} pg[g_est]['est']` establecimientos en promedio, y es también el de mayor escolaridad (`{python} pg[g_est]['esc']` años) y el de más viviendas con internet (`{python} pg[g_est]['inter']`), por lo que corresponde a las zonas con más actividad económica y más escolaridad, aunque no es el de menor porcentaje de población sin servicio de salud. El grupo más numeroso, `{python} g_num_f`, tiene `{python} pg[g_num]['n']` AGEB con sólo `{python} pg[g_num]['est']` establecimientos en promedio, es decir, zonas sobre todo habitacionales. El grupo `{python} g_otro_f` tiene `{python} pg[g_otro]['est']` establecimientos y `{python} pg[g_otro]['pob']` habitantes en promedio, más población que los otros dos, con una escolaridad (`{python} pg[g_otro]['esc']` años) parecida a la de `{python} g_num_f` (`{python} pg[g_num]['esc']` años). La tipología separa a los AGEB por su actividad económica y los indicadores censales muestran que esa separación se asocia con diferencias en las condiciones sociales, sobre todo entre el grupo con más establecimientos y el resto. Hay que recordar que estas medias describen a los grupos y no a cada AGEB, y que la tipología depende de las variables elegidas y del número de grupos.
+En la @tbl-perfil-grupos-territorio, que muestra el perfil de los grupos, el grupo `{python} g_est_f` reúne `{python} pg[g_est]['n']` AGEB con `{python} pg[g_est]['est']` establecimientos en promedio, y es también el de mayor escolaridad (`{python} pg[g_est]['esc']` años) y el de más viviendas con internet (`{python} pg[g_est]['inter']`), por lo que corresponde a las zonas con más actividad económica y más escolaridad, aunque no es el de menor porcentaje de población sin servicio de salud. El grupo más numeroso, `{python} g_num_f`, tiene `{python} pg[g_num]['n']` AGEB con sólo `{python} pg[g_num]['est']` establecimientos en promedio, es decir, zonas sobre todo habitacionales. El grupo `{python} g_otro_f` tiene `{python} pg[g_otro]['est']` establecimientos y `{python} pg[g_otro]['pob']` habitantes en promedio, más población que los otros dos, con una escolaridad (`{python} pg[g_otro]['esc']` años) parecida a la de `{python} g_num_f` (`{python} pg[g_num]['esc']` años). La tipología separa a los AGEB por su actividad económica y los indicadores censales muestran que esa separación se asocia con diferencias en las condiciones sociales, sobre todo entre el grupo con más establecimientos y el resto. Hay que recordar que estas medias describen a los grupos y no a cada AGEB, y que la tipología depende de las variables elegidas y del número de grupos.
 
 ## Rendimiento {#sec-agrupamiento-rendimiento}
 
 Recordando que en aprendizaje no supervisado no se tiene una variable dependiente que predecir, en general no se cuenta con la composición de los grupos, es más, se desconocen cuántos grupos modela el problema. Es el caso de los AGEB, donde no existe una tipología correcta con la cual comparar. Para estas ocasiones es imposible medir la exactitud o cualquier otra medida de agrupamiento que requiera la composición real de los grupos. 
 
-Una medida que no requiere conocer los grupos es el **Silhouette Coefficient**; el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:
+Una medida que no requiere conocer los grupos es el **Silhouette Coefficient**, el cual mide la calidad de los grupos, mientras mayor sea el valor significa una mejor calidad en los grupos. Este coeficiente se basa en la siguiente función:
 
 $$
 s = \frac{b - a}{\max(a, b)},
 $$
 
-donde $a$ corresponde a la distancia media entre un elemento y todos los objetos del mismo grupo; y $b$ es la distancia media entre la muestra y todos los elementos del grupo más cercano.
+donde $a$ corresponde a la distancia media entre un elemento y todos los objetos del mismo grupo, y $b$ es la distancia media entre la muestra y todos los elementos del grupo más cercano.
 
 ```{python}
 #| echo: false
@@ -457,7 +457,7 @@ perm = np.r_[sorted(perfs, key=lambda x: x[0])[-1][1]]
 perm_f = Markdown('$(' + ', '.join(str(v) for v in perm) + ')$')
 ```
 
-La variable `perm` contiene `{python} perm_f`. Utilizando `perm` se calcula la exactitud (@sec-accuracy) con la siguiente instrucción.
+La variable `perm` contiene `{python} perm_f` y con ella se calcula la exactitud (@sec-accuracy) con la siguiente instrucción.
 
 ```{python}
 #| echo: true
@@ -527,7 +527,7 @@ sil_k_f = Markdown(f'${max(S1):0.4f}$')
 sil_3_f = Markdown(f'${S1[1]:0.4f}$')
 ```
 
-Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k. En color azul se observa el coeficiente de Silhouette, cuyo mejor resultado es con `{python} k_sil_f` (`{python} sil_k_f`, contra `{python} sil_3_f` con tres grupos). En color naranja se muestra el índice de Calinski-Harabasz, cuyo mejor resultado se tiene con `{python} k_ch_f`. Ambas medidas favorecen los agrupamientos con pocos grupos, lo que es consistente con la @tbl-perfil-grupos-territorio, donde la diferencia más marcada es la del grupo de AGEB con mucha actividad económica frente al resto. Esto no quiere decir que haya un número correcto de tipos de barrio. Las medidas dicen qué partición es más compacta y separada con estas variables, y el número de grupos que se use en una política depende también de cuántos tipos de intervención se pueden diseñar y de que cada grupo se pueda interpretar.
+Estas dos estadísticas se pueden observar en la @fig-k-means-performance-k, donde en color azul se observa el coeficiente de Silhouette, cuyo mejor resultado es con `{python} k_sil_f` (`{python} sil_k_f`, contra `{python} sil_3_f` con tres grupos). En color naranja se muestra el índice de Calinski-Harabasz, cuyo mejor resultado se tiene con `{python} k_ch_f`. Ambas medidas favorecen los agrupamientos con pocos grupos, lo que es consistente con la @tbl-perfil-grupos-territorio, donde la diferencia más marcada es la del grupo de AGEB con mucha actividad económica frente al resto. Esto no quiere decir que haya un número correcto de tipos de barrio. Las medidas dicen qué partición es más compacta y separada con estas variables, y el número de grupos que se use en una política depende también de cuántos tipos de intervención se pueden diseñar y de que cada grupo se pueda interpretar.
 
 ```{python}
 #| code-fold: true
@@ -550,6 +550,6 @@ Repite la exploración del número de grupos de la @fig-k-means-performance-k co
 
 ## Resumen {#sec-resumen-agrupamiento}
 
-El agrupamiento busca estructura en datos sin variable respuesta. El algoritmo k-medias (@sec-agrupamiento-k-medias) alterna entre asignar cada observación al centro más cercano y recalcular los centros, y la maximización de la expectativa (@sec-agrupamiento-em) generaliza esa idea a mezclas de distribuciones, con k-medias como un caso particular. Los grupos se interpretan con variables que no entraron al agrupamiento, como en la tipología de AGEB de la @tbl-perfil-grupos-territorio. Como no hay respuesta que predecir, el rendimiento se mide con índices propios del agrupamiento, y esos mismos índices sirven para elegir el número de grupos, como se muestra en la @fig-k-means-performance-k. Ese número no es un dato del problema sino una decisión que se apoya en un criterio. Cuando existe una etiqueta de referencia, como la colección de los instrumentos jurídicos, se puede comparar con los grupos, pero una coincidencia baja puede indicar que la etiqueta y la estructura de los datos describen cosas distintas.
+Para buscar estructura en datos sin variable respuesta, que es el propósito del agrupamiento, el algoritmo k-medias (@sec-agrupamiento-k-medias) alterna entre asignar cada observación al centro más cercano y recalcular los centros, y la maximización de la expectativa (@sec-agrupamiento-em) generaliza esa idea a mezclas de distribuciones, con k-medias como un caso particular. Los grupos se interpretan con variables que no entraron al agrupamiento, como en la tipología de AGEB de la @tbl-perfil-grupos-territorio. Como no hay respuesta que predecir, el rendimiento se mide con índices propios del agrupamiento, y esos mismos índices sirven para elegir el número de grupos, como se muestra en la @fig-k-means-performance-k. Ese número no es un dato del problema sino una decisión que se apoya en un criterio. Cuando existe una etiqueta de referencia, como la colección de los instrumentos jurídicos, se puede comparar con los grupos, pero una coincidencia baja puede indicar que la etiqueta y la estructura de los datos describen cosas distintas.
 
 A lo largo del libro se han presentado muchos algoritmos, y para decidir cuál es mejor en un problema hace falta una comparación que tome en cuenta la incertidumbre de las medidas. Ese es el tema de @sec-comparacion-algoritmos.
