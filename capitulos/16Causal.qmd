@@ -6,8 +6,11 @@ El **objetivo** de la unidad es conocer y aplicar modelos de aprendizaje computa
 
 ```{python}
 #| echo: true
-from sklearn.model_selection import GroupShuffleSplit
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GroupShuffleSplit, GroupKFold, KFold
+from sklearn.model_selection import cross_val_predict
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.linear_model import LinearRegression
+from econml.dml import CausalForestDML, LinearDML
 from matplotlib import pylab as plt
 import numpy as np
 import pandas as pd
@@ -30,7 +33,7 @@ Quien lee este capítulo ya conoce las herramientas de la inferencia causal, com
 
 La advertencia principal del capítulo es que el aprendizaje computacional no sustituye al diseño de investigación. Que la comparación entre tratados y no tratados sea válida depende de cómo se asignó el tratamiento, y ningún algoritmo corrige una asignación que favoreció a un grupo. Por eso el ejemplo del capítulo es un experimento, el de Progresa (@sec-datos-progresa), en el que la asignación fue al azar y la validez de la comparación no está en duda.
 
-El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y termina con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona.
+El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y termina con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona. Después de los meta-aprendices se presentan los bosques causales (@sec-bosques-causales), que adaptan el bosque aleatorio para estimar efectos y dan intervalos de confianza, y el aprendizaje computacional doble (@sec-dml), que usa modelos flexibles para ajustar por variables de control cuando el tratamiento no se asignó al azar. El capítulo termina con los alcances y límites de estas herramientas (@sec-causal-limites).
 
 ## Resultados Potenciales {#sec-resultados-potenciales}
 
@@ -454,10 +457,280 @@ La @tbl-causal-focalizacion muestra que entre los elegidos por el efecto estimad
 
 Elegir por efecto estimado maximiza el resultado medido del programa, pero ese no es el único objetivo legítimo de una política pública. Un programa puede querer atender a quienes están peor aunque el efecto en ellos sea menor, y esa es una decisión de quien define la política, igual que la de los costos de cada error en @sec-decision-focalizacion. Además, estos efectos se refieren a un solo resultado, la inscripción en 1998, y un programa de transferencias tiene otros resultados, como la salud, la nutrición o el consumo de los hogares, en los que el orden de las personas podría ser diferente.
 
+## Bosques Causales {#sec-bosques-causales}
+
+Los meta-aprendices usan algoritmos diseñados para predecir $y$, y un árbol de decisión (@sec-arboles-decision) elige sus cortes para que las hojas sean homogéneas en el resultado. Un **árbol causal** [@athey2016recursive] elige los cortes para que las hojas sean lo más distintas posible en el efecto del tratamiento, y en cada hoja estima el efecto con la diferencia de medias entre los tratados y los controles que caen en ella.
+
+Se dice que un árbol causal es **honesto** cuando usa una parte de los datos para decidir los cortes y otra parte distinta para estimar el efecto dentro de las hojas. Si se usaran los mismos datos, el árbol buscaría las hojas donde por azar la diferencia de medias es grande y la estimación quedaría sesgada, de la misma manera que el error medido en el conjunto de entrenamiento es optimista. La honestidad es lo que permite construir intervalos de confianza para el efecto estimado.
+
+Un **bosque causal** [@wager2018estimation] promedia muchos árboles causales honestos construidos con submuestras, como un bosque aleatorio promedia árboles de decisión (@sec-bagging, @breiman2001randomforest). El bosque se puede leer como un método de vecinos cercanos (@sec-metodos-no-parametricos), porque para estimar $\tau(x)$ pondera a las observaciones según cuántas veces caen en la misma hoja que $x$, de manera que son los datos los que deciden en qué características deben parecerse dos personas para considerarse vecinas. El emparejamiento tradicional fija esa distancia de antemano y se deteriora cuando hay muchas características. @athey2019generalized generalizan la idea, y esa versión es la que implementa la librería `econml` [@battocchi2019econml].
+
+La clase `CausalForestDML` de `econml` primero descuenta de $y$ y de $w$ lo que se predice con $x$, usando los modelos `model_y` y `model_t` (la idea se explica en @sec-dml), y después construye el bosque causal. Los parámetros `cv=GroupKFold(5)` y `groups=loc` hacen que esas predicciones se calculen sin usar a la propia localidad, y el bosque se entrena con todos los datos porque la honestidad ya separa internamente los datos de cada árbol, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+def bosque_c():
+    return RandomForestClassifier(n_estimators=200, min_samples_leaf=20,
+                                  n_jobs=-1, random_state=0)
+
+
+causal = CausalForestDML(model_y=bosque(), model_t=bosque_c(),
+                         discrete_treatment=True, cv=GroupKFold(5),
+                         n_estimators=1000, min_samples_leaf=20,
+                         random_state=0)
+_ = causal.fit(y, w, X=X, groups=loc)
+tau_bc = causal.effect(X)
+```
+
+```{python}
+#| echo: false
+bc_media_f = Markdown(f'${tau_bc.mean():0.4f}$')
+bc_sd_f = Markdown(f'${tau_bc.std():0.4f}$')
+bc_corr_x_f = Markdown(f'${np.corrcoef(tau_bc[te], tau_x)[0, 1]:0.4f}$')
+bc_corr_t_f = Markdown(f'${np.corrcoef(tau_bc[te], tau_t)[0, 1]:0.4f}$')
+ate_f2 = Markdown(f'${ate:0.4f}$')
+bc_dif_f = Markdown(f'${abs(tau_bc.mean() - ate):0.4f}$')
+```
+
+El promedio de los efectos estimados por el bosque causal es `{python} bc_media_f`, que difiere en `{python} bc_dif_f` del efecto promedio de `{python} ate_f2` estimado con la diferencia de medias, y su desviación estándar es `{python} bc_sd_f`. En el conjunto de prueba la correlación de los efectos del bosque con los del X-learner es `{python} bc_corr_x_f` y con los del T-learner es `{python} bc_corr_t_f`, lo que indica qué tanto se parece su ordenamiento de las personas al de los meta-aprendices, aunque en esta comparación hay que tener presente que el bosque causal se entrenó también con las observaciones de $\mathcal G$.
+
+La ventaja del bosque causal sobre los meta-aprendices es que da un intervalo de confianza para el efecto condicional $\tau(x)$ de un perfil de persona. Para verlo se construyen perfiles de una niña y un niño por cada grado de 0 a 8, con la edad típica de ese grado e inscritos en 1997, y se calcula el intervalo de cada uno con el siguiente código:
+
+```{python}
+#| echo: true
+perfiles = pd.DataFrame([dict(mujer=m, edad=g + 7, grado=g, inscrito_1997=1)
+                         for m in (0, 1) for g in range(9)]).astype(float)
+inf = causal.effect_inference(perfiles).summary_frame(alpha=0.05)
+perfiles_ef = perfiles.assign(efecto=inf['point_estimate'].to_numpy(),
+                              inferior=inf['ci_lower'].to_numpy(),
+                              superior=inf['ci_upper'].to_numpy())
+```
+
+```{python}
+#| code-fold: true
+#| label: fig-bosque-causal
+#| fig-cap: "Efecto de Progresa en la inscripción estimado por el bosque causal para una niña y un niño inscritos en 1997, según el último grado aprobado, con su intervalo de confianza del 95%."
+fig, ax = plt.subplots(figsize=(6, 4))
+for m, nombre in [(0, 'Niños'), (1, 'Niñas')]:
+    p = perfiles_ef[perfiles_ef.mujer == m]
+    _ = ax.plot(p.grado, p.efecto, marker='o', label=nombre)
+    _ = ax.fill_between(p.grado, p.inferior, p.superior, alpha=0.2)
+_ = ax.axhline(0, color='gray', linewidth=0.8)
+_ = ax.legend()
+_ = ax.set(xlabel='Último grado aprobado en 1997',
+           ylabel='Efecto en la inscripción')
+```
+
+```{python}
+#| echo: false
+fila = perfiles_ef.loc[perfiles_ef['efecto'].idxmax()]
+perfil_sexo_f = Markdown('una niña' if fila.mujer == 1 else 'un niño')
+perfil_grado_f = Markdown(f'${int(fila.grado)}$')
+perfil_ef_f = Markdown(f'${fila.efecto:0.4f}$')
+perfil_ic_f = Markdown(f'$[{fila.inferior:0.4f}, {fila.superior:0.4f}]$')
+perfil_sig_f = Markdown('no incluye al cero' if fila.inferior > 0
+                        else 'incluye al cero')
+n_sig = int((perfiles_ef['inferior'] > 0).sum())
+n_sig_f = Markdown(f'${n_sig}$')
+n_perfiles_f = Markdown(f'${len(perfiles_ef)}$')
+ancho_f = Markdown(f'${(perfiles_ef.superior - perfiles_ef.inferior).mean():0.4f}$')
+coincide_f = Markdown(
+    'coincide con los meta-aprendices en que el efecto se concentra alrededor '
+    'del final de la primaria' if int(fila.grado) in (5, 6) else
+    'ubica el mayor efecto en un grado distinto del final de la primaria, '
+    'donde lo encontraron los meta-aprendices')
+imp = pd.Series(causal.feature_importances_, index=VARS)
+imp_var_f = Markdown(f'`{imp.idxmax()}`')
+imp_val_f = Markdown(f'${imp.max():0.4f}$')
+```
+
+La @fig-bosque-causal muestra que el perfil con mayor efecto estimado es `{python} perfil_sexo_f` con grado `{python} perfil_grado_f`, con un efecto de `{python} perfil_ef_f` y un intervalo de confianza de `{python} perfil_ic_f` que `{python} perfil_sig_f`, y que de los `{python} n_perfiles_f` perfiles hay `{python} n_sig_f` cuyo intervalo queda completamente arriba de cero. El bosque `{python} coincide_f`, y a la vez muestra que para un perfil individual la incertidumbre es grande, con intervalos de un ancho promedio de `{python} ancho_f`, algo que los meta-aprendices no dicen. El atributo `feature_importances_` indica qué variables usó el bosque para separar a las personas con efectos distintos, y la de mayor importancia es `{python} imp_var_f`, con `{python} imp_val_f`. Esta importancia se refiere a la heterogeneidad del efecto y no a la predicción de $y$, a diferencia de la importancia de variables de @sec-importancia-variables.
+
+Los intervalos de `econml` suponen que las observaciones son independientes, y como aquí el sorteo fue por localidad, los intervalos correctos serían todavía más anchos. Además, examinar muchos perfiles y quedarse con los que resultan significativos es un problema de pruebas múltiples, que es justamente lo que estudian @lee2014multiple con estos mismos datos.
+
+## Aprendizaje Computacional Doble (*Double Machine Learning*) {#sec-dml}
+
+Hasta aquí el tratamiento se asignó al azar, pero cuando no es así los tratados y los no tratados difieren en características que también afectan el resultado y hay que ajustar por ellas. En econometría el ajuste se hace agregando controles a una regresión (@sec-regresion-ols), lo que obliga a escoger qué controles se incluyen y con qué forma funcional. El aprendizaje computacional doble (*double/debiased machine learning*, DML) de @chernozhukov2018double deja esa tarea a un algoritmo flexible sin perder la inferencia sobre el efecto.
+
+### Modelo Parcialmente Lineal {#sec-dml-modelo}
+
+El aprendizaje computacional doble parte del modelo parcialmente lineal, que se escribe como
+
+$$
+y = \theta w + g(x) + \epsilon, \qquad w = m(x) + \nu,
+$$ {#eq-dml-modelo}
+
+donde $\theta$ es el efecto del tratamiento, $g$ y $m$ son funciones desconocidas de los controles, $\mathbb E[\epsilon \mid x, w] = 0$ y $\mathbb E[\nu \mid x] = 0$. La función $m(x)$ es la probabilidad de tratamiento $e(x)$ de @sec-resultados-potenciales, y hay confusión cuando una misma característica aparece en $g$ y en $m$, porque entonces mueve al mismo tiempo el tratamiento y el resultado.
+
+@robinson1988root mostró que, si se toma la esperanza condicional en $x$ de la primera ecuación y se resta, con $\ell(x) = \mathbb E[y \mid x]$, se obtiene
+
+$$
+y - \ell(x) = \theta \, (w - m(x)) + \epsilon,
+$$ {#eq-dml-residuos}
+
+de manera que $\theta$ es el coeficiente de una regresión del residuo de $y$ contra el residuo de $w$, es decir,
+
+$$
+\hat\theta = \frac{\sum_i \hat r^w_i \, \hat r^y_i}{\sum_i (\hat r^w_i)^2}, \qquad \hat r^y_i = y_i - \hat\ell(x_i), \quad \hat r^w_i = w_i - \hat m(x_i).
+$$ {#eq-dml-theta}
+
+Quien estudió econometría reconocerá en este resultado el teorema de Frisch-Waugh-Lovell, según el cual en una regresión lineal el coeficiente de $w$ se obtiene igual si primero se quita de $y$ y de $w$ lo que explican los controles. El aprendizaje computacional doble sigue esa misma receta, en la que $\hat\ell$ y $\hat m$ son modelos de aprendizaje computacional en lugar de regresiones lineales. De ahí viene el nombre doble, porque se resuelven dos problemas de predicción, que son predecir $y$ con $x$ y predecir $w$ con $x$, y en esas tareas los algoritmos del libro son buenos.
+
+Ajustar un solo modelo no es suficiente, porque si solo se ajustara $y$ con un modelo flexible que incluye a $w$, como el S-learner (@sec-s-learner), la regularización que evita el sobreajuste sesgaría $\hat\theta$. Es el mismo problema que tiene elegir controles con un solo Lasso (@sec-coeficientes-regularizados), para el que @belloni2014high propusieron seleccionar los controles que predicen $y$ y también los que predicen $w$. La @eq-dml-theta tiene la propiedad de que un error pequeño en $\hat\ell$ o en $\hat m$ afecta poco a $\hat\theta$, porque lo que entra en el sesgo es el producto de los dos errores.
+
+### Sobreajuste Cruzado {#sec-sobreajuste-cruzado}
+
+El segundo ingrediente del método es que el residuo de cada observación se calcule con modelos que no la vieron al entrenarse, porque un modelo flexible predice demasiado bien sus propios datos de entrenamiento y sus residuos serían artificialmente pequeños. Se usa validación cruzada de $K$ iteraciones (@sec-kfold-cross-validation), en la que los datos se dividen en $K$ partes y la predicción de cada parte se hace con modelos entrenados en las otras, y a esto se le llama sobreajuste cruzado (*cross-fitting*). El error estándar de $\hat\theta$ se calcula con $\psi_i = \hat r^w_i (\hat r^y_i - \hat\theta \hat r^w_i)$ como
+
+$$
+\text{se}(\hat\theta) = \frac{\sqrt{\sum_i \psi_i^2}}{\sum_i (\hat r^w_i)^2},
+$$ {#eq-dml-se}
+
+y cuando hay conglomerados las $\psi_i$ se suman primero dentro de cada conglomerado y la partición se hace por conglomerado. La función `dml` implementa el procedimiento con el bosque de la función `bosque`, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+def dml(X, w, y, grupos=None, K=5):
+    if grupos is None:
+        cv = list(KFold(K, shuffle=True, random_state=0).split(X))
+    else:
+        cv = list(GroupKFold(K).split(X, groups=grupos))
+    r_y = y - cross_val_predict(bosque(), X, y, cv=cv)
+    r_w = w - cross_val_predict(bosque(), X, w, cv=cv)
+    theta = (r_w * r_y).sum() / (r_w ** 2).sum()
+    psi = r_w * (r_y - theta * r_w)
+    if grupos is not None:
+        psi = pd.Series(psi).groupby(grupos).sum().to_numpy()
+    se = np.sqrt((psi ** 2).sum()) / (r_w ** 2).sum()
+    return theta, se
+```
+
+### Ejercicio Semi-sintético {#sec-dml-semisintetico}
+
+Para ver qué corrige el aprendizaje computacional doble se necesita un caso con confusión y con el efecto verdadero conocido, y eso solo existe en una simulación. Por eso se construye un ejercicio semi-sintético en el que las personas y sus características son las de las localidades de control de Progresa, donde nadie recibió el programa, y sobre ellas se simulan un tratamiento ficticio y sus dos resultados potenciales. El resultado sin tratamiento, $y(0)$, es la inscripción observada en 1998, y el resultado con tratamiento, $y(1)$, es igual salvo que el 30% de quienes no se inscribieron, elegidos al azar, sí lo hacen. Como aquí se conocen los dos resultados potenciales de cada persona, el efecto promedio verdadero se calcula directamente. El tratamiento no se sortea por igual, porque lo recibe con probabilidad $0.8$ quien no estaba inscrito en 1997, con probabilidad $0.6$ quien había aprobado quinto o sexto y con probabilidad $0.2$ el resto, como haría un programa que busca a quienes tienen más riesgo. El siguiente código construye el ejercicio:
+
+```{python}
+#| echo: true
+control = progresa[progresa['progresa'] == 0].reset_index(drop=True)
+X_c = control[VARS].astype(float)
+rng = np.random.default_rng(0)
+y0 = control['inscrito_1998'].to_numpy().astype(float)
+y1 = np.where((y0 == 0) & (rng.random(len(y0)) < 0.3), 1.0, y0)
+p = np.where(control['inscrito_1997'] == 0, 0.8,
+             np.where(control['grado'].between(5, 6), 0.6, 0.2))
+w_s = (rng.random(len(y0)) < p).astype(float)
+y_s = np.where(w_s == 1, y1, y0)
+efecto_real = (y1 - y0).mean()
+```
+
+Se comparan tres estimadores del efecto promedio, que son la diferencia de medias, una regresión lineal del resultado en el tratamiento y los controles, y el aprendizaje computacional doble, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+ingenuo = dif_medias(y_s, w_s)
+lineal = LinearRegression().fit(np.c_[w_s, X_c], y_s).coef_[0]
+theta_s, se_s = dml(X_c, w_s, y_s)
+```
+
+```{python}
+#| echo: false
+#| label: tbl-dml-semisintetico
+#| tbl-cap: "Efecto promedio verdadero del ejercicio semi-sintético y su estimación con tres procedimientos."
+txt = '| Procedimiento | Efecto estimado |\n|---|---|\n'
+for nombre, v in [('Efecto verdadero', efecto_real),
+                  ('Diferencia de medias', ingenuo),
+                  ('Regresión lineal con controles', lineal),
+                  ('Aprendizaje computacional doble', theta_s)]:
+    txt += f'| {nombre} | ${v:0.4f}$ |\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+real_f = Markdown(f'${efecto_real:0.4f}$')
+ingenuo_f = Markdown(f'${ingenuo:0.4f}$')
+lineal_f = Markdown(f'${lineal:0.4f}$')
+theta_s_f = Markdown(f'${theta_s:0.4f}$')
+se_s_f = Markdown(f'${se_s:0.4f}$')
+prop_s_f = Markdown(f'${w_s.mean():0.4f}$')
+signo_f = Markdown('de signo contrario al verdadero'
+                   if ingenuo * efecto_real < 0 else 'lejos del verdadero')
+dist_dml = abs(theta_s - efecto_real)
+dist_lin = abs(lineal - efecto_real)
+cerca_f = Markdown('más cerca' if dist_dml < dist_lin else 'más lejos')
+dentro_f = Markdown('queda dentro' if dist_dml < 1.96 * se_s
+                    else 'queda fuera')
+```
+
+La @tbl-dml-semisintetico muestra que, con una proporción de tratados de `{python} prop_s_f`, la diferencia de medias es `{python} ingenuo_f`, `{python} signo_f`, porque los tratados se eligieron entre quienes tenían más riesgo y se inscriben menos con o sin tratamiento. La regresión lineal con controles da `{python} lineal_f`, ya que corrige parte de la confusión pero supone que los controles entran de forma lineal, mientras que aquí la inscripción depende del grado y de la edad de manera no lineal. El aprendizaje computacional doble da `{python} theta_s_f` con error estándar `{python} se_s_f`, `{python} cerca_f` del valor verdadero `{python} real_f` que la regresión lineal, y el valor verdadero `{python} dentro_f` de su intervalo de confianza del 95%. Cuando el efecto no es igual para todos, como en este ejercicio, el modelo parcialmente lineal estima un promedio ponderado de los efectos que no coincide exactamente con el efecto promedio, y esa es otra razón de la diferencia que queda.
+
+El ejercicio funciona porque todas las características que determinan el tratamiento ficticio están entre los controles. Con datos reales esa condición es un supuesto, la independencia condicional de @sec-resultados-potenciales, y el aprendizaje computacional doble no lo vuelve cierto, de manera que si falta un confusor el método estima con mucha precisión una cantidad equivocada.
+
+### Progresa {#sec-dml-progresa}
+
+Al aplicar la función `dml` al experimento real no hay confusión que corregir, así que el resultado debe parecerse a la diferencia de medias, y ajustar por las características previas puede además reducir el error estándar porque explican buena parte de la variación de la inscripción. Se pasa `grupos=loc` para respetar el sorteo por localidad, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+theta, se = dml(X, w.astype(float), y, grupos=loc)
+```
+
+La librería `econml` implementa el mismo estimador en la clase `LinearDML`, en la que los controles se pasan en el parámetro `W` y `X=None` indica que se busca un efecto constante, como se muestra a continuación:
+
+```{python}
+#| echo: true
+lineal_dml = LinearDML(model_y=bosque(), model_t=bosque_c(),
+                       discrete_treatment=True, cv=GroupKFold(5),
+                       random_state=0)
+_ = lineal_dml.fit(y, w, X=None, W=X, groups=loc)
+theta_e = lineal_dml.ate()
+ic_e = lineal_dml.ate_interval(alpha=0.05)
+```
+
+```{python}
+#| echo: false
+#| label: tbl-dml-progresa
+#| tbl-cap: "Efecto promedio de Progresa en la inscripción de 1998 estimado con la diferencia de medias, con la función `dml` y con `LinearDML` de la librería econml."
+se_e = (ic_e[1] - ic_e[0]) / (2 * 1.96)
+txt = '| Procedimiento | Efecto | Error estándar |\n|---|---|---|\n'
+txt += f'| Diferencia de medias (bootstrap por localidad) | ${ate:0.4f}$ | ${ate_se:0.4f}$ |\n'
+txt += f'| Función `dml` (por localidad) | ${theta:0.4f}$ | ${se:0.4f}$ |\n'
+txt += f'| `LinearDML` de econml | ${float(theta_e):0.4f}$ | ${float(se_e):0.4f}$ |\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+estimaciones = [ate, theta, float(theta_e)]
+dif_dml_f = Markdown(f'${max(estimaciones) - min(estimaciones):0.4f}$')
+se_comp_f = Markdown('menor' if se < ate_se else 'mayor')
+se_e_frase_f = Markdown('el más pequeño de los tres'
+                        if float(se_e) < min(se, ate_se) else
+                        'mayor que alguno de los otros dos')
+```
+
+Las tres estimaciones del efecto en la @tbl-dml-progresa difieren entre sí en a lo más `{python} dif_dml_f`, como debe ocurrir en un experimento, en el que ajustar por características previas no cambia lo que se estima. El error estándar de la función `dml` es `{python} se_comp_f` que el de la diferencia de medias, y el de `LinearDML` es `{python} se_e_frase_f`, pero ese valor no toma en cuenta que el sorteo fue por localidad, porque la librería supone observaciones independientes, que es la misma advertencia que se hizo con los intervalos del bosque causal.
+
+## Alcances y Límites {#sec-causal-limites}
+
+Las herramientas de este capítulo sirven para estimar un efecto una vez que el diseño permite identificarlo, y la validez de la comparación viene del diseño, que puede ser un sorteo o un supuesto como la independencia condicional. Un modelo más flexible describe mejor los datos, pero no convierte una correlación en un efecto, y @imbens2015causal es la referencia para discutir esos supuestos.
+
+El supuesto de traslape importa más con modelos flexibles, porque donde casi todos o casi nadie recibe el tratamiento no hay con quién comparar y un bosque extrapola sin avisar. Por eso conviene revisar la distribución de la probabilidad de tratamiento estimada antes de leer cualquier efecto.
+
+Buscar subgrupos con efectos grandes equivale a examinar muchas hipótesis a la vez. Los meta-aprendices y los bosques hacen esa búsqueda de manera disciplinada, pero un subgrupo encontrado así debe confirmarse en datos que no se usaron para encontrarlo, como se hizo con el conjunto de prueba en @sec-causal-evaluacion, o corregirse por pruebas múltiples [@lee2014multiple].
+
+Los errores estándar deben respetar la manera en que se asignó el tratamiento. En este capítulo el sorteo fue por localidad y el error estándar por conglomerados fue `{python} razon_se_f` veces el que supone independencia, y las librerías no hacen ese ajuste por omisión. En un documento de política pública (*policy paper*) reportar el diseño, los supuestos y la incertidumbre forma parte de la estimación, porque es lo que permite a quien decide saber cuánto confiar en el efecto.
+
 ::: {.callout-tip collapse="true"}
 ### Actividad
 
 Repetir el análisis de @sec-meta-aprendices con `inscrito_1999` como resultado, que mide la inscripción un año y medio después del inicio del programa. Calcular el efecto promedio con su error estándar por conglomerados, entrenar el T-learner y el X-learner y dibujar el promedio del efecto estimado por grado aprobado en 1997. Discutir si los grados con mayor efecto son los mismos que en 1998 y por qué podrían recorrerse, considerando que las mismas personas son un año mayores.
+:::
+
+::: {.callout-tip collapse="true"}
+### Actividad
+
+Con `inscrito_1999` como resultado, estimar el efecto promedio con la función `dml` usando `grupos=loc` y compararlo con la diferencia de medias. Entrenar un `CausalForestDML` con ese resultado, dibujar la figura de perfiles por grado y discutir si los intervalos de confianza permiten afirmar que el efecto es distinto entre niñas y niños.
 :::
 
 ## Resumen {#sec-resumen-causal}
@@ -467,3 +740,9 @@ Los resultados potenciales definen el efecto individual de un tratamiento como l
 Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de $\mu_0(x)$ y el efecto de la diferencia $\mu_1(x) - \mu_0(x)$. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.
 
 Los meta-aprendices convierten un algoritmo de regresión en un estimador de $\tau(x)$. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.
+
+El bosque causal construye árboles honestos que separan a las personas según su efecto en lugar de según su resultado, y se puede leer como un método de vecinos cercanos con una distancia aprendida de los datos. A diferencia de los meta-aprendices, da intervalos de confianza para el efecto de un perfil, y esos intervalos suelen ser anchos.
+
+El aprendizaje computacional doble estima el efecto de un tratamiento ajustando por controles con modelos flexibles. Predice el resultado y el tratamiento con los controles, calcula los residuos con sobreajuste cruzado y hace una regresión de residuo contra residuo, de manera que corrige el sesgo de una regresión mal especificada, pero no el de un confusor que falta.
+
+Ninguna de estas herramientas sustituye al diseño de investigación, porque el aprendizaje computacional aporta flexibilidad para describir cómo cambia un efecto y para ajustar por controles, mientras que la credibilidad de la estimación sigue viniendo de cómo se asignó el tratamiento. Con este capítulo el libro cierra el recorrido que se planteó en @sec-prediccion-vs-causal, de la predicción de un resultado a la pregunta de qué pasa cuando se interviene.

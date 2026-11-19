@@ -74,6 +74,7 @@ CHECK_MODULES = {
     "jax": "jax",
     "optax": "optax",
     "shap": "shap",
+    "econml": "econml",
 }
 
 # quarto's freeze result file per format configured in _quarto.yml.
