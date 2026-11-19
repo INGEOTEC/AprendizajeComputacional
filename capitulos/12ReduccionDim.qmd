@@ -37,19 +37,19 @@ sns.set_style('whitegrid')
 
 Existen ocasiones donde las variables que describen al problema no contribuyen dentro de la solución, o su aporte está dado por otras componentes de la descripción. Esto trae como consecuencia, en el mejor de los casos, que el algoritmo tenga un mayor costo computacional o, en un caso menos afortunado, que tenga un rendimiento menor al que se hubiera obtenido con una mejor representación. Es pertinente mencionar que el caso contrario, el incremento del número de variables, es también un escenario factible y se abordará en otra ocasión.
 
-Reducir la dimensión de un problema es transformar la representación original $x \in \mathbb R^d$ a una representación $\hat x \in \mathbb R^m$ donde $m < d$. Tiene dos usos: mejorar el aprendizaje, pues el objetivo es que la nueva representación $\hat x$ contenga la información necesaria para realizar la tarea de clasificación o regresión; y visualizar los datos, reduciendo a $\mathbb R^2$ o $\mathbb R^3$, donde el objetivo es que se mantengan en la reducción las características de los datos en $\mathbb R^d$.
+Reducir la dimensión de un problema es transformar la representación original $x \in \mathbb R^d$ a una representación $\hat x \in \mathbb R^m$ donde $m < d$. Su primer uso es mejorar el aprendizaje, pues el objetivo es que la nueva representación $\hat x$ contenga la información necesaria para realizar la tarea de clasificación o regresión, y el segundo es visualizar los datos, reduciendo a $\mathbb R^2$ o $\mathbb R^3$, donde el objetivo es que se mantengan en la reducción las características de los datos en $\mathbb R^d$.
 
-La **selección** de variables, que escoge un subconjunto de las variables originales sin transformarlas, se trató en la @sec-seleccion-variables. Este capítulo trata las **proyecciones**, que construyen variables nuevas a partir de las originales: Análisis de Componentes Principales (PCA) y UMAP.
+La **selección** de variables, que escoge un subconjunto de las variables originales sin transformarlas, se trató en la @sec-seleccion-variables. Este capítulo trata las **proyecciones**, que construyen variables nuevas a partir de las originales, en particular Análisis de Componentes Principales (PCA) y UMAP.
 
 ## Análisis de Componentes Principales {#sec-pca}
 
-Los métodos de selección de variables (@sec-seleccion-variables) requieren un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma: $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m < d$
+Los métodos de selección de variables (@sec-seleccion-variables) requieren un conjunto de entrenamiento de aprendizaje supervisado, por lo que no podrían ser utilizados en problemas de aprendizaje no-supervisado. En esta sección se revisará el uso de Análisis de Componentes Principales (Principal Components Analysis - PCA) para la reducción de dimensión. PCA tiene la firma $f: \mathbb R^d \rightarrow \mathbb R^m$ donde $m < d$
 
-La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = \{x_i\}$ sean transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación; esto se puede lograr de la siguiente manera.
+La idea de PCA es buscar una matriz de proyección $W^\intercal \in \mathbb R^{m \times d}$ tal que los elementos de $\mathcal D = \{x_i\}$ sean transformados utilizando $z = W^\intercal x$ donde $z \in \mathbb R^m$. El objetivo es que la muestra $z_1$ tenga la mayor variación posible. Es decir, se quiere observar en la primera característica de los elementos transformados la mayor variación, lo cual se puede lograr de la siguiente manera.
 
 Si suponemos que $\mathbf x \sim \mathcal N_d(\mu, \Sigma)$ y $\mathbf w \in \mathbb R^d$ entonces $\mathbf w \cdot \mathbf x \sim \mathcal N(\mathbf w \cdot \mu, \mathbf w^\intercal \Sigma \mathbf w)$ y por lo tanto $\textsf{Var} (\mathbf w \cdot \mathbf x) = \mathbf w^\intercal \Sigma \mathbf w.$
 
-Utilizando esta información se puede describir el problema como encontrar $\mathbf w_1$ tal que $\textsf{Var}(\mathbf z_1)$ sea máxima, donde $\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$ Dado que en este problema de optimización tiene múltiples soluciones, se busca además maximizar bajo la restricción de $\mid\mid \mathbf w_1 \mid\mid = 1.$ Escribiéndolo como un problema de Lagrange quedaría como: $\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$ Derivando con respecto a $\mathbf w_1$ se tiene que la solución es: $\Sigma \mathbf w_i = \alpha \mathbf w_i$ donde esto se cumple solo si $\mathbf w_1$ es un vector propio de $\Sigma$ y $\alpha$ es el valor propio correspondiente. Para encontrar $\mathbf w_2$ se requiere $\mid\mid \mathbf w_2 \mid\mid = 1$ y que los vectores sean ortogonales, es decir, $\mathbf w_2 \cdot \mathbf w_1 = 0.$ Realizando las operaciones necesarias se encuentra que $\mathbf w_2$ corresponde al segundo vector propio y así sucesivamente.
+Utilizando esta información se puede describir el problema como encontrar $\mathbf w_1$ tal que $\textsf{Var}(\mathbf z_1)$ sea máxima, donde $\textsf{Var}(\mathbf z_1) = \mathbf w_1^\intercal \Sigma \mathbf w_1.$ Dado que en este problema de optimización tiene múltiples soluciones, se busca además maximizar bajo la restricción de $\mid\mid \mathbf w_1 \mid\mid = 1.$ Escribiéndolo como un problema de Lagrange quedaría como $\max_{\mathbf w_1} \mathbf w_1^\intercal \Sigma \mathbf w_1 - \alpha (\mathbf w_1 \cdot \mathbf w_1 - 1).$ Derivando con respecto a $\mathbf w_1$ se tiene que la solución es $\Sigma \mathbf w_i = \alpha \mathbf w_i$ donde esto se cumple solo si $\mathbf w_1$ es un vector propio de $\Sigma$ y $\alpha$ es el valor propio correspondiente. Para encontrar $\mathbf w_2$ se requiere $\mid\mid \mathbf w_2 \mid\mid = 1$ y que los vectores sean ortogonales, es decir, $\mathbf w_2 \cdot \mathbf w_1 = 0.$ Realizando las operaciones necesarias se encuentra que $\mathbf w_2$ corresponde al segundo vector propio y así sucesivamente.
 
 ### Ejemplo - Un índice de condiciones sociales {#sec-pca-indice-territorio}
 
@@ -66,7 +66,7 @@ datos = territorio.dropna(subset=INDICADORES)
 D = StandardScaler().fit_transform(datos[INDICADORES])
 ```
 
-El siguiente paso es ajustar PCA. Como hay cuatro indicadores se pueden calcular hasta cuatro componentes, y el atributo `explained_variance_ratio_` contiene la proporción de la varianza que explica cada una.
+El siguiente paso es ajustar PCA, donde se pueden calcular hasta cuatro componentes porque hay cuatro indicadores, y el atributo `explained_variance_ratio_` contiene la proporción de la varianza que explica cada una.
 
 ```{python}
 #| echo: true
@@ -262,7 +262,7 @@ fig.tick_params(bottom=False, top=False,
 fig.set(xlabel=None, ylabel=None)
 ```
 
-El mapa debe leerse con cuidado. Que dos instrumentos estén cerca dice que tienen textos parecidos, no que estén emparentados jurídicamente, pues la matriz es una heurística (@sec-datos-instrumentos-matriz). Además, UMAP preserva las vecindades, pero no las distancias entre grupos lejanos, por lo que la separación entre dos regiones distantes del mapa no se interpreta. Finalmente, como lo muestra la @fig-umap-instrumentos-k, el dibujo cambia con $K$ aunque los datos sean los mismos.
+El mapa debe leerse con cuidado, ya que dos instrumentos cercanos tienen textos parecidos, lo que no significa que estén emparentados jurídicamente, pues la matriz es una heurística (@sec-datos-instrumentos-matriz). Además, UMAP preserva las vecindades, pero no las distancias entre grupos lejanos, por lo que la separación entre dos regiones distantes del mapa no se interpreta. Finalmente, como lo muestra la @fig-umap-instrumentos-k, el dibujo cambia con $K$ aunque los datos sean los mismos.
 
 ::: {.callout-tip collapse="true"}
 ### Actividad

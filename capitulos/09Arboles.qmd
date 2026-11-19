@@ -35,11 +35,11 @@ sns.set_style('whitegrid')
 
 Los árboles de decisión son una estructura de datos jerárquica, la cual se construye utilizando una estrategia de divide y vencerás. Los árboles son un método no paramétrico diseñado para problemas de regresión y clasificación. 
 
-El árbol se camina desde la raíz hacia las hojas; en cada nodo se tiene una regla que muestra el camino de acuerdo a la entrada y la hoja indica la clase o respuesta que corresponde a la entrada.
+El árbol se camina desde la raíz hacia las hojas, donde en cada nodo se tiene una regla que muestra el camino de acuerdo a la entrada y la hoja indica la clase o respuesta que corresponde a la entrada.
 
 ## Clasificación { #sec-arboles-clasificacion }
 
-Utilizando el procedimiento para generar tres Distribuciones Gaussianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$; utilizando las matrices de covarianza originales.
+Utilizando el procedimiento para generar tres Distribuciones Gaussianas (@sec-tres-normales) se generan las siguientes poblaciones (@fig-arboles-tres-distribuciones) con medias $\mu_1=[5, 5]^\intercal$, $\mu_2=[-5, -10]^\intercal$ y $\mu_3=[15, -6]^\intercal$, utilizando las matrices de covarianza originales.
 
 ```{python}
 #| code-fold: true
@@ -155,7 +155,7 @@ def H(arr):
     return - (b * np.log2(b, where=b != 0)).sum()
 ```
 
-La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento `corte_var`. Este procedimiento asume que las etiquetas (`labels`) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable `mejor` para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función `np.diff`; dado que esta quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calcula el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. 
+La función que optimiza $L(x_i, a),$ para encontrar $a$ se implementa en el procedimiento `corte_var`. Este procedimiento asume que las etiquetas (`labels`) están ordenadas por la variable $x_i$, es decir la primera etiqueta corresponde al valor mínimo de $x_i$ y la última al valor máximo. Considerando esto, el valor de $a$ es el índice con el menor costo. En la primera línea se inicializa la variable `mejor` para guardar el valor de $a$ con mejor costo. La segunda línea corresponde a $\mid \mathcal D_m \mid$, en la tercera línea se identifican los diferentes valores de $a$ que se tiene que probar, solo se tienen que probar aquellos puntos donde cuando la clase cambia con respecto al elemento adyacente, esto se calcula con la función `np.diff`, y dado que esta quita el primer elemento entonces es necesario incrementar $1.$ El ciclo es por todos los puntos de corte, se calcula el costo para los elementos que están a la izquierda y derecha del corte y se compara el resultado con el costo con menor valor encontrado hasta el momento. La última línea regresa el costo mejor así como el índice donde se encontró. 
 
 
 ```{python}
@@ -182,14 +182,14 @@ perf_f = Markdown(f'${perf:0.4}$')
 index_f = Markdown(f'${index}$')
 ```
 
-En el siguiente ejemplo se usa la función `corte_var`; la función regresa un costo de `{python} perf_f` y el punto de corte es el elemento `{python} index_f`, se puede observar que es el mejor punto de corte en el arreglo dado. 
+En el siguiente ejemplo se usa la función `corte_var`, la cual regresa un costo de `{python} perf_f` y el punto de corte es el elemento `{python} index_f`, se puede observar que es el mejor punto de corte en el arreglo dado. 
 
 ```{python}
 #| echo: true
 costo, indice = corte_var(np.array([0, 0, 1, 0, 0, 0]))
 ```
 
-Con la función `corte_var` se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento `corte` encuentra el mínimo con respecto de $x_i$, esta función recibe los índices (`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $0$ al número de elementos del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función `corte_var` donde se observa cómo las etiquetas van ordenadas de acuerdo a la variable que se está analizando; la función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. Finalmente, se regresa `mejor` y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  
+Con la función `corte_var` se optimiza el valor $a$ de $L(x_i, a)$, ahora es el turno de optimizar $x_i$ con respecto a la función de costo. El procedimiento `corte` encuentra el mínimo con respecto de $x_i$, esta función recibe los índices (`idx`) donde se buscará estos valores, en un inicio `idx` es un arreglo de $0$ al número de elementos del conjunto $\mathcal D$ menos uno. La primera línea define la variable donde se guarda el menor costo, en la segunda línea se ordenan las variables, la tercera línea se obtienen las etiquetas involucradas. El ciclo va por todas las variables $x_i$. Dentro del ciclo se llama a la función `corte_var` donde se observa cómo las etiquetas van ordenadas de acuerdo a la variable que se está analizando. La función regresa el corte con menor costo y se compara con el menor costo obtenido hasta el momento, si es menor se guarda en `mejor`. Finalmente, se regresa `mejor` y los índices ordenados para poder identificar los elementos del hijo izquierdo y derecho.  
 
 ```{python}
 #| echo: true
@@ -286,7 +286,7 @@ Un dato interesante, considerando los parámetros con los que se inicializó el 
 
 ## Regresión
 
-Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético; el cual corresponde a la suma de un seno y un coseno como se muestra a continuación. 
+Los árboles de decisión aplicados a problemas de regresión siguen una idea equivalente a los desarrollados en problemas de clasificación. Para ejemplificar las diferencias se utiliza el siguiente problema sintético, el cual corresponde a la suma de un seno y un coseno como se muestra a continuación. 
 
 ```{python}
 #| echo: true
