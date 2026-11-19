@@ -70,13 +70,15 @@ def _bajar_como_navegador(url: str, parcial: Path) -> None:
 
 def descargar(url: str, nombre: str | None = None, datos: dict | None = None,
               navegador: bool = False, intentos: int = 5,
-              espera: float = 15.0) -> Path:
+              espera: float = 15.0, agente: str | None = AGENTE) -> Path:
     """Descarga ``url`` al caché y regresa la ruta del archivo.
 
     Es idempotente: si el archivo ya existe en el caché no vuelve a bajarlo.
     ``datos`` hace la petición con POST (formulario). ``navegador`` usa
     ``curl_cffi`` (ver el encabezado del módulo). Se reintenta con espera
-    creciente ante errores de red o del servidor.
+    creciente ante errores de red o del servidor. ``agente=None`` no manda
+    agente de navegador; lo necesitan los servidores que responden a los
+    navegadores con una página de verificación.
     """
     destino = cache_dir() / (nombre or url.rstrip("/").rsplit("/", 1)[-1])
     if destino.exists() and destino.stat().st_size > 0:
@@ -95,8 +97,9 @@ def descargar(url: str, nombre: str | None = None, datos: dict | None = None,
             if navegador:
                 _bajar_como_navegador(url, parcial)
             else:
-                peticion = urllib.request.Request(url, data=cuerpo,
-                                                  headers={"User-Agent": AGENTE})
+                peticion = urllib.request.Request(
+                    url, data=cuerpo,
+                    headers=({"User-Agent": agente} if agente else {}))
                 with urllib.request.urlopen(peticion, timeout=120) as resp, \
                         open(parcial, "wb") as fout:
                     shutil.copyfileobj(resp, fout, length=1 << 20)

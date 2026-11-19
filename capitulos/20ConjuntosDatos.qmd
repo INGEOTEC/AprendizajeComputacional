@@ -30,7 +30,7 @@ sns.set_style('whitegrid')
 
 ## Problemas de Política Pública {#sec-datos-politica-publica}
 
-Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta, como a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela o cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente. Los archivos procesados están en el release `datos-v1` del repositorio del libro y el código de cada subsección los lee directamente de ahí. La @tbl-conjunto-datos-politica-publica resume los cinco conjuntos. En ella, el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores.
+Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta, como a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela, cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente o a quiénes beneficia más un programa de transferencias. Los archivos procesados están en el release `datos-v1` del repositorio del libro y el código de cada subsección los lee directamente de ahí. La @tbl-conjunto-datos-politica-publica resume los seis conjuntos. En ella, el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores. En el conjunto Progresa la columna de tratamiento se cuenta aparte, porque no es una predictora sino la intervención cuyo efecto se quiere estimar.
 
 ```{python}
 #| echo: false
@@ -51,7 +51,10 @@ CONJUNTOS = {
                        objetivo='grado_promedio_escolaridad',
                        aparte=['clave_ageb', 'municipio', 'pct_viv_internet',
                                'pct_sin_servicio_salud',
-                               'pct_jefatura_femenina'])}
+                               'pct_jefatura_femenina']),
+    'progresa': dict(archivo='progresa_inscripcion.csv',
+                     objetivo='inscrito_1998',
+                     aparte=['localidad', 'progresa', 'inscrito_1999'])}
 URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
              'releases/download/datos-v1')
 DATOS_PP = {k: pd.read_csv(f'{URL_DATOS}/{v["archivo"]}')
@@ -76,7 +79,9 @@ FILAS = [
     ('Educación', 'educacion', 'Secundaria', 'Regresión y clasificación (3 clases)', '2023-2025',
      'Formato 911, SEP'),
     ('Territorio', 'territorio', 'AGEB urbana', 'Regresión', '2020 y 2026',
-     'Censo y DENUE, INEGI')]
+     'Censo y DENUE, INEGI'),
+    ('Progresa', 'progresa', 'Niña o niño', 'Efecto de un tratamiento', '1997-1999',
+     'Evaluación de Progresa')]
 txt = '|Nombre | Unidad | Tamaño ($N$) | Dimensión ($d$) | Tarea | Año | Fuente |\n'
 txt += '|-------|--------|--------------|-----------------|-------|-----|--------|\n'
 for nombre, clave, unidad, tarea, anio, fuente in FILAS:
@@ -356,6 +361,60 @@ _ = sns.scatterplot(df, x='establecimientos_por_mil',
                     color=PALETTE(1))
 _ = ax.set(xlabel='Establecimientos por cada mil habitantes',
            ylabel='Grado promedio de escolaridad')
+```
+
+### Progresa {#sec-datos-progresa}
+
+Progresa fue un programa de transferencias condicionadas que empezó en 1997 y daba becas a los hogares pobres de localidades rurales a cambio de que sus hijas e hijos asistieran a la escuela. Como no se podía incorporar a todas las localidades al mismo tiempo, el orden de entrada se sorteó entre las localidades de la evaluación, de manera que unas recibieron el programa en 1998 y otras, las de control, hasta finales de 1999. Ese sorteo lo convierte en un experimento aleatorizado, y la tarea de este conjunto ya no es predecir un resultado sino estimar cuánto cambió la inscripción escolar por el programa y para quiénes cambió más [@schultz2004school]. Se usa en el capítulo *Aprendizaje Computacional e Inferencia Causal*.
+
+```{python}
+#| echo: false
+progresa = DATOS_PP['progresa']
+n_progresa_f = pp_f(progresa.shape[0])
+d_progresa_f = pp_f(D_PP['progresa'])
+loc_progresa = progresa.groupby('localidad')['progresa'].first()
+n_loc_f = pp_f(loc_progresa.shape[0])
+n_loc_trat_f = pp_f(int((loc_progresa == 1).sum()))
+n_loc_ctrl_f = pp_f(int((loc_progresa == 0).sum()))
+ins_1997_f = Markdown(f'${progresa.inscrito_1997.mean():0.4f}$')
+ins_1998_f = Markdown(f'${progresa.inscrito_1998.mean():0.4f}$')
+ins_1999_f = Markdown(f'${progresa.inscrito_1999.mean():0.4f}$')
+edad_min_f = pp_f(int(progresa.edad.min()))
+edad_max_f = pp_f(int(progresa.edad.max()))
+```
+
+**Ficha**
+
+- **Fuente:** archivo de réplica de @lee2014multiple, publicado en el [archivo de datos del *Journal of Applied Econometrics*](https://journaldata.zbw.eu/dataset/4dbd19b5-808f-464c-b9e5-795900a77d3d), que los autores extrajeron de las bases de la evaluación de Progresa que publicaba el gobierno de México.
+- **Licencia:** el archivo de réplica no declara una licencia; aquí se redistribuye procesado y con atribución para uso docente.
+- **Unidad de observación:** niña o niño de `{python} edad_min_f` a `{python} edad_max_f` años en 1997, de un hogar elegible para el programa. El archivo original tiene un renglón por persona y ronda de la encuesta, y aquí se conserva un renglón por persona, con sus características de la primera ronda (1997, antes del programa) y su inscripción en el otoño de 1998 y de 1999.
+- **Tamaño:** $N=$ `{python} n_progresa_f` niñas y niños en `{python} n_loc_f` localidades, de las cuales `{python} n_loc_trat_f` recibieron el programa en 1998 y `{python} n_loc_ctrl_f` son de control.
+- **Tratamiento:** `progresa` vale 1 si la localidad recibió el programa desde 1998. Se asignó al azar por localidad y no por persona, de manera que todas las niñas y niños de una localidad comparten el mismo valor; `localidad` identifica el conglomerado y se necesita para calcular errores estándar.
+- **Variables:** $d=$ `{python} d_progresa_f` características medidas antes del programa, que son `mujer`, `edad`, `grado` (último grado aprobado, de 0 a 9, donde 6 es primaria terminada), `inscrito_1997` y `ninos_localidad` (número de niñas y niños de la localidad en el archivo).
+- **Objetivo y tarea:** `inscrito_1998` vale 1 si la persona asistía a la escuela en el otoño de 1998, unos meses después de iniciar los apoyos; `inscrito_1999` es lo mismo un año después y sirve para las actividades. La tarea es estimar el efecto del programa en la inscripción y cómo cambia ese efecto con las características de la persona.
+- **Advertencias:** solo incluye hogares elegibles, por lo que no sirve para estudiar la focalización del programa; y el archivo no trae las características del hogar ni de la localidad que tiene la base original.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+progresa = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/progresa_inscripcion.csv')
+```
+
+La proporción de niñas y niños inscritos en la escuela fue `{python} ins_1997_f` en 1997, `{python} ins_1998_f` en 1998 y `{python} ins_1999_f` en 1999, y baja porque las mismas personas son cada año mayores. La @fig-datos-progresa muestra la inscripción de 1998 según el último grado aprobado en cada grupo, donde se observa que la caída más grande ocurre al terminar la primaria.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Proporción de niñas y niños inscritos en 1998 según el último grado aprobado en 1997, en las localidades con Progresa y en las de control.
+#| label: fig-datos-progresa
+df = progresa.groupby(['grado', 'progresa'])['inscrito_1998'].mean()
+df = df.reset_index()
+df['Grupo'] = df['progresa'].map({0: 'Control', 1: 'Progresa'})
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.lineplot(df, x='grado', y='inscrito_1998', hue='Grupo',
+                 marker='o', ax=ax)
+_ = ax.set(xlabel='Último grado aprobado en 1997',
+           ylabel='Proporción inscrita en 1998')
 ```
 
 ## Instrumentos Jurídicos Federales {#sec-datos-instrumentos}
