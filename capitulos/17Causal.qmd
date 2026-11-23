@@ -287,7 +287,9 @@ T, G = X.iloc[tr], X.iloc[te]
 y_t, y_g, w_t, w_g = y[tr], y[te], w[tr], w[te]
 ```
 
-El modelo de riesgo es un bosque aleatorio (@sec-bagging) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima $\mu_0(x)$. Se usa un bosque de regresión sobre la variable 0/1, cuya predicción es la proporción de inscritos entre observaciones parecidas, y la función `bosque` fija los hiperparámetros que se usan en todo el capítulo, como se muestra en el siguiente código:
+El modelo de riesgo es un bosque aleatorio (@sec-bagging) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima $\mu_0(x)$.
+
+Para estimar $\mu_0(x)$ sirve tanto un bosque de clasificación como uno de regresión, porque los dos predicen en cada hoja la proporción de inscritos entre las observaciones que llegan a ella, que es la probabilidad de @eq-regresion-probabilidad. En el bosque de clasificación esa proporción se obtiene con `predict_proba` y en el de regresión con `predict`, ya que el promedio de una variable que solo vale $0$ o $1$ es la proporción de unos, y con los mismos hiperparámetros, incluido el número de variables que se prueban en cada corte, las dos estimaciones coinciden. Aquí se usa el bosque de regresión por conveniencia, porque los meta-aprendices de @sec-meta-aprendices necesitan además predecir cantidades que ya no valen $0$ o $1$, como el efecto imputado del X-learner (@sec-x-learner), y con un regresor el mismo modelo sirve en todos los pasos. La función `bosque` fija los hiperparámetros que se usan en todo el capítulo, como se muestra en el siguiente código:
 
 ```{python}
 #| echo: true
