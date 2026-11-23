@@ -43,7 +43,7 @@ $$
 \tau_i = y_i(1) - y_i(0).
 $$ {#eq-efecto-individual}
 
-Cada persona tiene una de las cuatro combinaciones posibles de $y_i(1)$ y $y_i(0)$, y el efecto individual es la resta de esos dos valores. El efecto vale $\tau_i = 1 - 0 = 1$ cuando la persona se inscribe con el programa y no se inscribe sin él, que es el caso en el que el programa hace que se inscriba. El efecto vale $\tau_i = 1 - 1 = 0$ cuando la persona se inscribe con el programa y también sin él, y vale $\tau_i = 0 - 0 = 0$ cuando no se inscribe en ninguno de los dos casos, de manera que en ambos el programa no cambia lo que la persona habría hecho. El efecto vale $\tau_i = 0 - 1 = -1$ cuando la persona no se inscribe con el programa aunque sin él sí se habría inscrito, que es el caso en el que el programa la perjudica y que en un programa de becas se espera poco frecuente, pero que la definición no excluye.
+Cada persona tiene una de las cuatro combinaciones posibles de $y_i(1)$ y $y_i(0)$, y el efecto individual es la resta de esos dos valores. El efecto vale $\tau_i = 1 - 0 = 1$ cuando la persona se inscribe con el programa y no se inscribe sin él, que es el caso en el que el programa hace que se inscriba. El efecto vale $\tau_i = 1 - 1 = 0$ cuando la persona se inscribe con el programa y también sin él, y vale $\tau_i = 0 - 0 = 0$ cuando no se inscribe en ninguno de los dos casos, de manera que en ambos el programa no cambia lo que la persona habría hecho. El efecto vale $\tau_i = 0 - 1 = -1$ cuando la persona no se inscribe con el programa aunque sin él sí se habría inscrito, que es el caso en el que el programa la perjudica y que en un programa de becas se espera poco frecuente, pero que la definición no excluye. En @sec-causal-experimento se muestra qué se puede saber de estas cuatro combinaciones con los datos de Progresa.
 
 De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,
 
@@ -187,6 +187,37 @@ control_f = Markdown(f'${y[w == 0].mean():0.4f}$')
 ```
 
 La proporción inscrita en las localidades de control es `{python} control_f` y la diferencia de medias estima que el programa la cambia en `{python} ate_f`, con un error estándar de `{python} ate_se_f` y un intervalo de confianza del 95% de `{python} ate_ic_f`. El error estándar que supone que las personas son observaciones independientes sería `{python} se_ing_f`, por lo que el error estándar por conglomerados es `{python} razon_se_f` veces el ingenuo y la incertidumbre es `{python} comp_se_f` de lo que sugeriría tratar a cada persona como un sorteo propio.
+
+Las cuatro combinaciones de resultados potenciales de @sec-resultados-potenciales no se pueden contar en estos datos, porque de cada niña o niño solo se conoce el tratamiento de su localidad y el resultado que ocurrió. Lo que sí se puede contar son las cuatro combinaciones de tratamiento e inscripción observada, que se muestran en la @tbl-causal-observado.
+
+```{python}
+#| echo: false
+#| label: tbl-causal-observado
+#| tbl-cap: "Número de niñas y niños según el tratamiento de su localidad y su inscripción en 1998."
+n_obs = {(k, v): int(((w == k) & (y == v)).sum()) for k in (0, 1) for v in (0, 1)}
+txt = '| Localidad | No inscrito ($y = 0$) | Inscrito ($y = 1$) | Total |\n|---|---|---|---|\n'
+for k, nombre in [(0, 'Control ($w = 0$)'), (1, 'Progresa ($w = 1$)')]:
+    txt += (f'| {nombre} | ${n_obs[k, 0]:,}$ | ${n_obs[k, 1]:,}$ '
+            f'| ${n_obs[k, 0] + n_obs[k, 1]:,}$ |\n')
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+p1, p0 = y[w == 1].mean(), y[w == 0].mean()
+n_t_noins_f = Markdown(f'${n_obs[1, 0]:,}$')
+p_t_noins_f = Markdown(f'${1 - p1:0.4f}$')
+cota_neg_min_f = Markdown(f'${max(0, p0 - p1):0.4f}$')
+cota_neg_max_f = Markdown(f'${min(1 - p1, p0):0.4f}$')
+cota_pos_min_f = Markdown(f'${max(0, p1 - p0):0.4f}$')
+cota_pos_max_f = Markdown(f'${min(p1, 1 - p0):0.4f}$')
+```
+
+Cada celda de la @tbl-causal-observado es compatible con dos de las cuatro combinaciones de resultados potenciales, y los datos no permiten saber cuál de las dos corresponde a cada persona. Una niña inscrita en una localidad tratada tiene $y(1) = 1$, y puede ser alguien a quien el programa hizo inscribirse, con $y(0) = 0$ y efecto $1$, o alguien que se habría inscrito de todos modos, con $y(0) = 1$ y efecto $0$. Un niño no inscrito en una localidad tratada tiene $y(1) = 0$, y puede ser alguien que tampoco se habría inscrito sin el programa, con efecto $0$, o alguien a quien el programa perjudicó, con $y(0) = 1$ y efecto $-1$. De la misma manera, una persona inscrita en una localidad de control tiene efecto $0$ o $-1$ y una no inscrita tiene efecto $0$ o $1$, según el valor de $y(1)$ que no se observa.
+
+La @tbl-causal-observado también muestra que `{python} n_t_noins_f` niñas y niños de localidades tratadas, que son una proporción de `{python} p_t_noins_f` de ese grupo, no estaban inscritos en 1998, lo que puede sorprender en un programa que da becas por asistir a la escuela. El programa condiciona la beca a la asistencia pero deja la decisión de inscribirse al hogar, y un hogar que no inscribe a su hija o hijo simplemente deja de recibir la beca que le correspondería. Para una persona adolescente que ya trabaja o ayuda en casa, el monto de la beca puede ser menor que lo que el hogar pierde si regresa a la escuela, y ese es el caso $y(1) = 0$. El tratamiento $w = 1$ es vivir en una localidad que recibió el programa, sin importar si el hogar cumplió la condición y cobró la beca, de manera que $\hat \tau$ mide el efecto de ofrecer el programa, que en evaluación de programas se conoce como efecto de la intención de tratar.
+
+La diferencia de medias tampoco dice cuántas personas tienen cada efecto, porque $\tau$ es la proporción de personas con efecto $1$ menos la proporción con efecto $-1$, y las personas con efecto $0$ no cambian ese promedio. Con las proporciones de la @tbl-causal-observado, y sin considerar la incertidumbre del muestreo, la proporción de personas con efecto $-1$ puede ir de `{python} cota_neg_min_f` a `{python} cota_neg_max_f` y la proporción con efecto $1$ de `{python} cota_pos_min_f` a `{python} cota_pos_max_f`, y todos esos valores producen la misma diferencia de medias. Para afirmar que nadie tiene efecto $-1$ hace falta suponer que la beca no hace que alguien deje la escuela, lo que se conoce como monotonicidad y que es razonable en este programa, pero que los datos no pueden comprobar.
 
 Un efecto promedio como éste esconde diferencias grandes entre personas, porque en los primeros grados de primaria casi todos están inscritos con o sin programa y el efecto no puede ser grande ahí. La pregunta del resto del capítulo es para quién es mayor el efecto del programa.
 
