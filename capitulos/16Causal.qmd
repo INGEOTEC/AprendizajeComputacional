@@ -37,13 +37,15 @@ El capítulo empieza con la notación de resultados potenciales y con el efecto 
 
 ## Resultados Potenciales {#sec-resultados-potenciales}
 
-En el marco de resultados potenciales cada persona tiene dos resultados, $y(1)$ si recibe el tratamiento y $y(0)$ si no lo recibe [@rubin1974estimating], y @imbens2015causal es la referencia general de este marco. En Progresa el tratamiento es vivir en una localidad que recibió el programa en 1998 y el resultado es estar inscrito en la escuela en el otoño de ese año. Para una niña, $y(1) = 1$ quiere decir que se inscribiría si su localidad recibiera el programa y $y(0) = 0$ que no se inscribiría sin él, y los dos resultados existen como posibilidades antes de que se asigne el tratamiento, aunque solo uno de ellos llegue a ocurrir. El indicador de tratamiento se denota con $w \in \{0, 1\}$, que en este capítulo no tiene relación con los coeficientes $\mathbf w$ de un modelo lineal usados en los capítulos anteriores. El efecto del tratamiento en la persona $i$ es
+En el marco de resultados potenciales cada persona tiene dos resultados, $y(1)$ si recibe el tratamiento y $y(0)$ si no lo recibe [@rubin1974estimating], y @imbens2015causal es la referencia general de este marco. En Progresa el tratamiento es vivir en una localidad que recibió el programa en 1998 y el resultado es estar inscrito en la escuela en el otoño de ese año. La inscripción vale $1$ cuando la persona está inscrita y $0$ cuando no lo está, de manera que para una niña $y(1) = 1$ quiere decir que se inscribiría si su localidad recibiera el programa y $y(1) = 0$ que no se inscribiría ni siquiera con el programa. De la misma manera, $y(0) = 1$ quiere decir que se inscribiría aunque su localidad no recibiera el programa y $y(0) = 0$ que no se inscribiría sin él. Los dos resultados existen como posibilidades antes de que se asigne el tratamiento, aunque solo uno de ellos llegue a ocurrir. El indicador de tratamiento se denota con $w \in \{0, 1\}$, que en este capítulo no tiene relación con los coeficientes $\mathbf w$ de un modelo lineal usados en los capítulos anteriores. El efecto del tratamiento en la persona $i$ es
 
 $$
 \tau_i = y_i(1) - y_i(0).
 $$ {#eq-efecto-individual}
 
-Como la inscripción vale $0$ o $1$, el efecto individual vale $1$ cuando el programa hace que la persona se inscriba, $0$ cuando no cambia lo que habría hecho y $-1$ cuando hace que deje de inscribirse. De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,
+Cada persona tiene una de las cuatro combinaciones posibles de $y_i(1)$ y $y_i(0)$, y el efecto individual es la resta de esos dos valores. El efecto vale $\tau_i = 1 - 0 = 1$ cuando la persona se inscribe con el programa y no se inscribe sin él, que es el caso en el que el programa hace que se inscriba. El efecto vale $\tau_i = 1 - 1 = 0$ cuando la persona se inscribe con el programa y también sin él, y vale $\tau_i = 0 - 0 = 0$ cuando no se inscribe en ninguno de los dos casos, de manera que en ambos el programa no cambia lo que la persona habría hecho. El efecto vale $\tau_i = 0 - 1 = -1$ cuando la persona no se inscribe con el programa aunque sin él sí se habría inscrito, que es el caso en el que el programa la perjudica y que en un programa de becas se espera poco frecuente, pero que la definición no excluye.
+
+De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,
 
 $$
 y_i = w_i\, y_i(1) + (1 - w_i)\, y_i(0),
