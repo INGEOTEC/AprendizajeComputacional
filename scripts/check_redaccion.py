@@ -3,8 +3,8 @@
 
 Uso:
     python3 scripts/check_redaccion.py                      # todos los capítulos
-    python3 scripts/check_redaccion.py capitulos/15Interpretabilidad.qmd
-    python3 scripts/check_redaccion.py -v capitulos/15Interpretabilidad.qmd
+    python3 scripts/check_redaccion.py capitulos/16Interpretabilidad.qmd
+    python3 scripts/check_redaccion.py -v capitulos/16Interpretabilidad.qmd
 
 Solo lee los archivos; no ejecuta código ni necesita Quarto. Revisa los
 párrafos de prosa (no el código, las ecuaciones, los títulos, las listas ni

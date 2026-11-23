@@ -59,7 +59,7 @@ class PruebasNombres(unittest.TestCase):
         nombres = capitulos_quarto((RAIZ / "_quarto.yml").read_text(
             encoding="utf-8"))
         self.assertIn("01Intro", nombres)
-        self.assertIn("11Redes", nombres)
+        self.assertIn("12Redes", nombres)
         self.assertIn("20ConjuntosDatos", nombres)  # apéndice
 
     def test_sin_colisiones(self):
