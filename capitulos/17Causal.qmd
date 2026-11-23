@@ -73,6 +73,14 @@ La barra vertical se lee "dado $x$" e indica que el promedio se toma dentro del 
 
 Ninguna de las dos esperanzas de @eq-cate se puede calcular directamente con los datos, porque $\mathbb E[y(1) \mid x]$ es un promedio sobre todas las personas con características $x$ y el resultado $y(1)$ solo se observa en las que recibieron el tratamiento. Lo que los datos sí permiten calcular es el promedio del resultado observado en cada grupo, que se denota con $\mu_w(x) = \mathbb E[y \mid x, w]$ y que es una función de regresión, la del grupo tratado cuando $w = 1$ y la del grupo de control cuando $w = 0$. Por @eq-resultado-observado el resultado observado de una persona tratada es $y(1)$, de manera que $\mu_1(x) = \mathbb E[y(1) \mid x, w = 1]$, que es el promedio de $y(1)$ calculado únicamente entre las personas tratadas, y de la misma manera $\mu_0(x) = \mathbb E[y(0) \mid x, w = 0]$ es el promedio de $y(0)$ calculado únicamente entre las personas de control.
 
+Como la inscripción solo vale $0$ o $1$, el promedio de $y$ en un grupo es la proporción de personas inscritas en ese grupo, de manera que la función de regresión es una probabilidad, es decir,
+
+$$
+\mu_w(x) = \mathbb E[y \mid x, w] = \mathbb P(y = 1 \mid x, w).
+$$ {#eq-regresion-probabilidad}
+
+Por esa razón el problema se parece a uno de clasificación con dos clases, que son estar inscrito y no estarlo, y la diferencia con la clasificación está en lo que interesa del modelo. En clasificación interesa la clase que se predice y la probabilidad es un paso intermedio, mientras que aquí interesa la probabilidad misma, porque el efecto condicional es la resta de dos probabilidades y la resta de dos clases solo podría valer $-1$, $0$ o $1$. Se le llama función de regresión porque ese es el nombre que recibe la esperanza condicional $\mathbb E[y \mid x]$ sin importar si $y$ es continua o solo toma los valores $0$ y $1$.
+
 El primero de los dos supuestos que hacen que el promedio entre las personas de un grupo coincida con el promedio entre todas es que, entre personas con las mismas características, el tratamiento no dependa de los resultados potenciales, lo que se conoce como independencia condicional y se escribe $(y(1), y(0)) \perp w \mid x$. Este supuesto dice que, cuando se comparan personas con las mismas características $x$, saber si alguien recibió el tratamiento no da información sobre cuáles serían sus resultados, de manera que las personas tratadas no son, por ejemplo, las que de todos modos se habrían inscrito.
 
 La propiedad que se usa es la definición de independencia entre dos variables aleatorias $a$ y $b$, que son independientes cuando conocer el valor de una no cambia la distribución de la otra, es decir, cuando $\mathbb P(a \mid b) = \mathbb P(a)$. La independencia condicional es esa misma propiedad dentro del grupo de personas con características $x$, de manera que $\mathbb P(y(1) \mid x, w) = \mathbb P(y(1) \mid x)$ tanto para $w = 1$ como para $w = 0$, y lo mismo se cumple para $y(0)$. Como la esperanza se calcula con la distribución, dos distribuciones iguales tienen la misma esperanza, y por lo tanto agregar $w$ a la condición no cambia el promedio de ninguno de los dos resultados potenciales. De las cuatro igualdades que resultan, las dos que se usan más adelante son las que condicionan cada resultado potencial al grupo en el que ese resultado se observa, esto es,
@@ -96,7 +104,7 @@ $$ {#eq-cate-regresion}
 
 El lado izquierdo de @eq-cate-regresion contiene resultados potenciales que nunca se observan completos y el lado derecho contiene solo cantidades que se calculan con los datos, y a este resultado se le llama identificación del efecto. Cuando la independencia condicional no se cumple la segunda igualdad deja de ser cierta, y entonces la diferencia $\mu_1(x) - \mu_0(x)$ mezcla el efecto del tratamiento con las diferencias que ya había entre los dos grupos antes del tratamiento, lo que se conoce como sesgo de selección.
 
-Las funciones $\mu_1$ y $\mu_0$ son funciones de regresión como las de todos los capítulos anteriores y se pueden estimar con cualquier algoritmo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
+Las funciones $\mu_1$ y $\mu_0$ son funciones de regresión como las de todos los capítulos anteriores y se pueden estimar con cualquier algoritmo, y en @sec-causal-experimento se estiman por primera vez con el procedimiento más simple, que es calcular una proporción por grupo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
 
 ## El Experimento de Progresa {#sec-causal-experimento}
 
@@ -223,7 +231,49 @@ La @tbl-causal-observado también muestra que `{python} n_t_noins_f` niñas y ni
 
 La diferencia de medias tampoco dice cuántas personas tienen cada efecto, porque $\tau$ es la proporción de personas con efecto $1$ menos la proporción con efecto $-1$, y las personas con efecto $0$ no cambian ese promedio. Con las proporciones de la @tbl-causal-observado, y sin considerar la incertidumbre del muestreo, la proporción de personas con efecto $-1$ puede ir de `{python} cota_neg_min_f` a `{python} cota_neg_max_f` y la proporción con efecto $1$ de `{python} cota_pos_min_f` a `{python} cota_pos_max_f`, y todos esos valores producen la misma diferencia de medias. Para afirmar que nadie tiene efecto $-1$ hace falta suponer que la beca no hace que alguien deje la escuela, lo que se conoce como monotonicidad y que es razonable en este programa, pero que los datos no pueden comprobar.
 
-Un efecto promedio como éste esconde diferencias grandes entre personas, porque en los primeros grados de primaria casi todos están inscritos con o sin programa y el efecto no puede ser grande ahí. La pregunta del resto del capítulo es para quién es mayor el efecto del programa.
+Las funciones de regresión $\mu_1(x)$ y $\mu_0(x)$ de @eq-cate-regresion se pueden estimar sin ningún algoritmo cuando $x$ es una sola característica con pocos valores, porque basta con calcular la proporción de inscritos en cada grupo. El siguiente código lo hace con el último grado aprobado, donde `mu_grado` tiene la proporción de inscritos en 1998 por grado en las localidades de control y en las de Progresa, y `tau_grado` es la diferencia entre las dos:
+
+```{python}
+#| echo: true
+mu_grado = (progresa.groupby(['grado', 'progresa'])['inscrito_1998']
+            .mean().unstack())
+tau_grado = mu_grado[1] - mu_grado[0]
+```
+
+```{python}
+#| echo: false
+#| label: tbl-causal-mu-grado
+#| tbl-cap: "Proporción de inscritos en 1998 por último grado aprobado en 1997 en las localidades de control y en las de Progresa, y su diferencia."
+n_grado = progresa.groupby(['grado', 'progresa']).size().unstack()
+txt = ('| Grado | Niñas y niños | Control, $\\hat\\mu_0(x)$ | Progresa, $\\hat\\mu_1(x)$ '
+       '| Diferencia, $\\hat\\tau(x)$ |\n|---|---|---|---|---|\n')
+for g in mu_grado.index:
+    txt += (f'| ${int(g)}$ | ${int(n_grado.loc[g].sum()):,}$ | ${mu_grado.loc[g, 0]:0.4f}$ '
+            f'| ${mu_grado.loc[g, 1]:0.4f}$ | ${tau_grado.loc[g]:0.4f}$ |\n')
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+g_max = tau_grado.idxmax()
+g_max_f = Markdown(f'${int(g_max)}$')
+mu0_gmax_f = Markdown(f'${mu_grado.loc[g_max, 0]:0.4f}$')
+mu1_gmax_f = Markdown(f'${mu_grado.loc[g_max, 1]:0.4f}$')
+tau_gmax_f = Markdown(f'${tau_grado.loc[g_max]:0.4f}$')
+razon_gmax_f = Markdown(f'${tau_grado.loc[g_max] / ate:0.1f}$')
+g_ini = mu_grado.index.min()
+g_ini_f = Markdown(f'${int(g_ini)}$')
+mu0_gini_f = Markdown(f'${mu_grado.loc[g_ini, 0]:0.4f}$')
+n_por_grado = n_grado.sum(axis=1)
+g_min_n_f = Markdown(f'${int(n_por_grado.idxmin())}$')
+n_gmin_f = Markdown(f'${int(n_por_grado.min()):,}$')
+```
+
+Cada renglón de la @tbl-causal-mu-grado es una estimación de $\mu_0(x)$, de $\mu_1(x)$ y de $\tau(x)$ cuando $x$ es el último grado aprobado, y cada proporción es también la probabilidad estimada de inscribirse (@eq-regresion-probabilidad). La mayor diferencia está en quienes habían aprobado el grado `{python} g_max_f`, donde la proporción de inscritos pasa de `{python} mu0_gmax_f` en las localidades de control a `{python} mu1_gmax_f` en las de Progresa, y esa diferencia de `{python} tau_gmax_f` es `{python} razon_gmax_f` veces el efecto promedio. En quienes habían aprobado el grado `{python} g_ini_f` la proporción de inscritos sin programa ya es `{python} mu0_gini_f`, por lo que el programa casi no tiene a quién cambiar.
+
+Este procedimiento deja de funcionar cuando $x$ tiene varias características, porque el número de grupos crece y cada grupo se queda con pocas personas, como ya ocurre aquí con el grado `{python} g_min_n_f`, que tiene `{python} n_gmin_f` niñas y niños y una diferencia poco precisa. Un algoritmo de regresión resuelve ese problema porque promedia entre personas parecidas en lugar de exigir que tengan exactamente las mismas características, y eso es lo que hacen los modelos de las secciones siguientes.
+
+La @tbl-causal-mu-grado muestra que un efecto promedio como el de la diferencia de medias esconde diferencias grandes entre personas, y la pregunta del resto del capítulo es para quién es mayor el efecto del programa cuando se consideran todas las características a la vez.
 
 ## Predecir no es Estimar un Efecto {#sec-predecir-no-es-efecto}
 
