@@ -354,7 +354,7 @@ Se llama meta-aprendiz a un procedimiento que toma un algoritmo de regresión cu
 
 ### S-learner {#sec-s-learner}
 
-El S-learner usa un solo modelo (*single*) $\mu(x, w)$ que recibe el tratamiento como una variable más, y el efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,
+El S-learner estima las dos funciones de regresión $\mu_1(x)$ y $\mu_0(x)$ con un solo modelo (*single*) que se entrena con todas las personas y recibe el tratamiento como una variable más. La función que ese modelo aproxima es la misma $\mu_w(x) = \mathbb E[y \mid x, w]$ de @sec-resultados-potenciales, y su estimación se escribe $\hat\mu(x, w)$, con $w$ entre los argumentos, para indicar que es un único modelo evaluado en los dos valores del tratamiento y para distinguirlo de los dos modelos $\hat\mu_1$ y $\hat\mu_0$ del T-learner. El efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,
 
 $$
 \hat\tau_S(x) = \hat\mu(x, 1) - \hat\mu(x, 0).
