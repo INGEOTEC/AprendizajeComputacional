@@ -572,13 +572,71 @@ Elegir por efecto estimado maximiza el resultado medido del programa, pero ese n
 
 ## Bosques Causales {#sec-bosques-causales}
 
-Los meta-aprendices usan algoritmos diseñados para predecir $y$, y un árbol de decisión (@sec-arboles-decision) elige sus cortes para que las hojas sean homogéneas en el resultado. Un **árbol causal** [@athey2016recursive] elige los cortes para que las hojas sean lo más distintas posible en el efecto del tratamiento, y en cada hoja estima el efecto con la diferencia de medias entre los tratados y los controles que caen en ella.
+Los meta-aprendices usan algoritmos diseñados para predecir $y$, y lo único que cambia en un **árbol causal** [@athey2016recursive] es la función de costo con la que se eligen los cortes, porque el resto del procedimiento es el del árbol de decisión de @sec-arboles-decision. En ese capítulo se vio que el árbol aplica en cada nodo una función de corte $x_j \leq a$, y que la variable $x_j$ y el valor $a$ se eligen para minimizar el costo de los dos hijos, que en regresión es la suma de sus varianzas ponderadas por la proporción de observaciones que recibe cada uno (@sec-clasificacion-entrenamiento). Minimizar ese costo equivale a maximizar
+
+$$
+G_y(x_j, a) = p \, (1 - p) \, (\bar y_{\text{izq}} - \bar y_{\text{der}})^2,
+$$ {#eq-corte-prediccion}
+
+donde $p$ es la proporción de las observaciones del nodo que van al hijo izquierdo, y $\bar y_{\text{izq}}$ y $\bar y_{\text{der}}$ son los promedios de $y$ en el hijo izquierdo y en el derecho. Esta cantidad es lo que baja la varianza con el corte, de manera que el árbol de regresión busca los dos hijos cuyos promedios de $y$ sean lo más distintos posible. El árbol causal usa la misma expresión con el efecto en el lugar del promedio, es decir, maximiza
+
+$$
+G_\tau(x_j, a) = p \, (1 - p) \, (\hat\tau_{\text{izq}} - \hat\tau_{\text{der}})^2,
+$$ {#eq-corte-causal}
+
+donde $\hat\tau_{\text{izq}}$ y $\hat\tau_{\text{der}}$ son las diferencias de medias de @eq-dif-medias calculadas con los tratados y los controles de cada hijo. El árbol causal busca entonces los dos hijos cuyos efectos sean lo más distintos posible, sin importar si la inscripción es alta o baja en ellos, y una vez construido estima el efecto de una persona con la diferencia de medias de la hoja en la que cae. La función `cortes` calcula cualquiera de las dos cantidades para todos los cortes posibles de la raíz, donde el parámetro `valor` es la función que se evalúa en cada hijo, que es el promedio de $y$ para el corte de predicción y la diferencia de medias para el corte causal, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+def cortes(X, valor):
+    filas = []
+    for var in X.columns:
+        for a in np.unique(X[var])[:-1]:
+            izq = (X[var] <= a).to_numpy()
+            p = izq.mean()
+            v_izq, v_der = valor(izq), valor(~izq)
+            filas.append(dict(variable=var, a=a, izq=v_izq, der=v_der,
+                              G=p * (1 - p) * (v_izq - v_der) ** 2))
+    return pd.DataFrame(filas)
+
+
+corte_y = cortes(X, lambda m: y[m].mean())
+corte_tau = cortes(X, lambda m: dif_medias(y[m], w[m]))
+mejor_y = corte_y.loc[corte_y['G'].idxmax()]
+mejor_tau = corte_tau.loc[corte_tau['G'].idxmax()]
+```
+
+```{python}
+#| echo: false
+cy_var_f = Markdown(f'`{mejor_y.variable}`')
+cy_a_f = Markdown(f'${mejor_y.a:0.0f}$')
+cy_izq_f = Markdown(f'${mejor_y.izq:0.4f}$')
+cy_der_f = Markdown(f'${mejor_y.der:0.4f}$')
+ct_var_f = Markdown(f'`{mejor_tau.variable}`')
+ct_a_f = Markdown(f'${mejor_tau.a:0.0f}$')
+ct_izq_f = Markdown(f'${mejor_tau.izq:0.4f}$')
+ct_der_f = Markdown(f'${mejor_tau.der:0.4f}$')
+m_y = (X[mejor_y.variable] <= mejor_y.a).to_numpy()
+cy_tau_izq_f = Markdown(f'${dif_medias(y[m_y], w[m_y]):0.4f}$')
+cy_tau_der_f = Markdown(f'${dif_medias(y[~m_y], w[~m_y]):0.4f}$')
+cortes_frase_f = Markdown(
+    'Las dos funciones de costo eligen variables distintas, porque la '
+    'variable que mejor predice la inscripción no es la que mejor separa a '
+    'las personas según lo que el programa cambia en ellas'
+    if mejor_y.variable != mejor_tau.variable else
+    'En estos datos las dos funciones de costo eligen la misma variable, '
+    'aunque con un valor de corte que no tiene por qué coincidir')
+```
+
+El corte que elegiría un árbol de regresión en la raíz es `{python} cy_var_f` $\leq$ `{python} cy_a_f`, que deja en el hijo izquierdo una proporción de inscritos en 1998 de `{python} cy_izq_f` y en el derecho una de `{python} cy_der_f`. El corte que elegiría un árbol causal es `{python} ct_var_f` $\leq$ `{python} ct_a_f`, que deja en el hijo izquierdo un efecto de `{python} ct_izq_f` y en el derecho uno de `{python} ct_der_f`. `{python} cortes_frase_f`, y en los dos hijos del corte de predicción el efecto es `{python} cy_tau_izq_f` y `{python} cy_tau_der_f`. El árbol causal repite esta búsqueda en cada hijo hasta que las hojas tienen pocas observaciones, igual que el árbol de decisión.
 
 Se dice que un árbol causal es **honesto** cuando usa una parte de los datos para decidir los cortes y otra parte distinta para estimar el efecto dentro de las hojas. Si se usaran los mismos datos, el árbol buscaría las hojas donde por azar la diferencia de medias es grande y la estimación quedaría sesgada, de la misma manera que el error medido en el conjunto de entrenamiento es optimista. La honestidad es lo que permite construir intervalos de confianza para el efecto estimado.
 
 Un **bosque causal** [@wager2018estimation] promedia muchos árboles causales honestos construidos con submuestras, como un bosque aleatorio promedia árboles de decisión (@sec-bagging, @breiman2001randomforest). El bosque se puede leer como un método de vecinos cercanos (@sec-metodos-no-parametricos), porque para estimar $\tau(x)$ pondera a las observaciones según cuántas veces caen en la misma hoja que $x$, de manera que son los datos los que deciden en qué características deben parecerse dos personas para considerarse vecinas. El emparejamiento tradicional fija esa distancia de antemano y se deteriora cuando hay muchas características. @athey2019generalized generalizan la idea, y esa versión es la que implementa la librería `econml` [@battocchi2019econml].
 
 La clase `CausalForestDML` de `econml` primero descuenta de $y$ y de $w$ lo que se predice con $x$, usando los modelos `model_y` y `model_t` (la idea se explica en @sec-dml), y después construye el bosque causal. El modelo `model_y` estima $\mathbb E[y \mid x]$ y el modelo `model_t` estima la probabilidad de tratamiento $e(x) = \mathbb P(w = 1 \mid x)$, y como la inscripción y el tratamiento solo valen $0$ o $1$ las dos cantidades son probabilidades que se podrían estimar con el mismo tipo de bosque, como se explicó en @sec-predecir-no-es-efecto. La razón de usar dos funciones distintas es la interfaz de la librería, porque el parámetro `discrete_treatment=True` le indica que el tratamiento es una categoría y entonces `econml` pide que `model_t` sea un clasificador, del que toma la probabilidad con `predict_proba`, mientras que el resultado se trata como un número (el parámetro `discrete_outcome` vale `False` cuando no se indica) y entonces pide que `model_y` sea un regresor, del que toma la predicción con `predict`. Por eso la función `bosque_c` del siguiente código es la misma función `bosque` con `RandomForestClassifier` en lugar de `RandomForestRegressor` y con los mismos hiperparámetros.
+
+Los bosques que se pasan en `model_y` y `model_t` son bosques aleatorios comunes que solo sirven para ese primer paso, de manera que ninguno de sus árboles es un árbol causal. Los árboles causales son los que `CausalForestDML` construye internamente en el segundo paso, cuyo número y tamaño de hoja se fijan con los parámetros `n_estimators=1000` y `min_samples_leaf=20` de la propia clase, y que eligen sus cortes con el resultado y el tratamiento ya descontados. El criterio de corte se indica con el parámetro `criterion`, donde el valor `'het'` corresponde a @eq-corte-causal y el valor por omisión, `'mse'`, da además más peso a los hijos que tienen tanto tratados como controles, porque en ellos el efecto se estima con más precisión.
 
 Los parámetros `cv=GroupKFold(5)` y `groups=loc` hacen que esas predicciones se calculen sin usar a la propia localidad, y el bosque se entrena con todos los datos porque la honestidad ya separa internamente los datos de cada árbol, como se muestra en el siguiente código:
 
