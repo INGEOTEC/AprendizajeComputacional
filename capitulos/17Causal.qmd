@@ -48,13 +48,13 @@ $$ {#eq-efecto-individual}
 
 Cada persona tiene una de las cuatro combinaciones posibles de $y_i(1)$ y $y_i(0)$, y el efecto individual es la resta de esos dos valores. El efecto vale $\tau_i = 1 - 0 = 1$ cuando la persona se inscribe con el programa y no se inscribe sin él, que es el caso en el que el programa hace que se inscriba. El efecto vale $\tau_i = 1 - 1 = 0$ cuando la persona se inscribe con el programa y también sin él, y vale $\tau_i = 0 - 0 = 0$ cuando no se inscribe en ninguno de los dos casos, de manera que en ambos el programa no cambia lo que la persona habría hecho. El efecto vale $\tau_i = 0 - 1 = -1$ cuando la persona no se inscribe con el programa aunque sin él sí se habría inscrito, que es el caso en el que el programa la perjudica y que en un programa de becas se espera poco frecuente, pero que la definición no excluye. En @sec-causal-experimento se muestra qué se puede saber de estas cuatro combinaciones con los datos de Progresa.
 
-De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, es decir,
+De cada persona solo se observa uno de los dos resultados, el que corresponde al tratamiento que recibió, que se escribe $y_i(w_i)$ y que es
 
 $$
-y_i = y_i(w_i) = w_i\, y_i(1) + (1 - w_i)\, y_i(0),
+y_i(w_i) = w_i\, y_i(1) + (1 - w_i)\, y_i(0),
 $$ {#eq-resultado-observado}
 
-donde la primera igualdad dice que el resultado observado es el resultado potencial que corresponde al tratamiento que la persona recibió, y la segunda escribe lo mismo en una sola fórmula, porque $w_i = 1$ anula el segundo término y deja $y_i = y_i(1)$, mientras que $w_i = 0$ anula el primero y deja $y_i = y_i(0)$. El indicador $w_i$ hace falta porque $y_i(1)$ y $y_i(0)$ describen lo que pasaría en cada caso y por sí solos no dicen cuál de los dos casos ocurrió. El resultado que no ocurrió se llama contrafactual y nunca se observa, de manera que tampoco se observa $\tau_i$, y @holland1986statistics lo llama el problema fundamental de la inferencia causal. La consecuencia para el aprendizaje computacional es directa, porque en predicción cada observación trae su respuesta $y$ y el error del modelo se mide en un conjunto de prueba, mientras que aquí ninguna observación trae su $\tau_i$ y por lo tanto no existe un conjunto de prueba con la respuesta correcta.
+donde $w_i = 1$ anula el segundo término y deja $y_i(1)$, mientras que $w_i = 0$ anula el primero y deja $y_i(0)$. En todo el capítulo el resultado observado se escribe $y_i(w_i)$, o $y(w)$ cuando no se habla de una persona en particular, para que siempre quede a la vista el tratamiento con el que se observó. El indicador $w_i$ hace falta porque $y_i(1)$ y $y_i(0)$ describen lo que pasaría en cada caso y por sí solos no dicen cuál de los dos casos ocurrió. El resultado que no ocurrió se llama contrafactual y nunca se observa, de manera que tampoco se observa $\tau_i$, y @holland1986statistics lo llama el problema fundamental de la inferencia causal. La consecuencia para el aprendizaje computacional es directa, porque en predicción cada observación trae su respuesta $y$ y el error del modelo se mide en un conjunto de prueba, mientras que aquí ninguna observación trae su $\tau_i$ y por lo tanto no existe un conjunto de prueba con la respuesta correcta.
 
 Lo que sí se puede estimar con los datos son promedios de los efectos individuales, donde la esperanza $\mathbb E$ es el promedio sobre toda la población de interés, que en Progresa son las niñas y los niños de las localidades de la evaluación. El efecto promedio del tratamiento es
 
@@ -72,15 +72,15 @@ $$ {#eq-cate}
 
 La barra vertical se lee "dado $x$" e indica que el promedio se toma dentro del subgrupo que tiene esas características, por ejemplo las niñas de 12 años que aprobaron sexto grado y estaban inscritas en 1997. El efecto condicional $\tau(x)$ dice cuánto cambia en promedio el resultado de las personas con características $x$, y cuando $\tau(x)$ no es constante se dice que el efecto es heterogéneo. El efecto promedio $\tau$ de @eq-ate es a su vez el promedio de $\tau(x)$ sobre todas las características que hay en la población, es decir, $\tau = \mathbb E[\tau(x)]$, por lo que un mismo valor de $\tau$ puede resultar de efectos condicionales muy distintos entre sí.
 
-Ninguna de las dos esperanzas de @eq-cate se puede calcular directamente con los datos, porque $\mathbb E[y(1) \mid x]$ es un promedio sobre todas las personas con características $x$ y el resultado $y(1)$ solo se observa en las que recibieron el tratamiento. Lo que los datos sí permiten calcular es el promedio del resultado observado en cada grupo, que se denota con $\mu_w(x) = \mathbb E[y \mid x, w]$ y que es una función de regresión, la del grupo tratado cuando $w = 1$ y la del grupo de control cuando $w = 0$. Por @eq-resultado-observado el resultado observado de una persona tratada es $y(1)$, de manera que $\mu_1(x) = \mathbb E[y(1) \mid x, w = 1]$, que es el promedio de $y(1)$ calculado únicamente entre las personas tratadas, y de la misma manera $\mu_0(x) = \mathbb E[y(0) \mid x, w = 0]$ es el promedio de $y(0)$ calculado únicamente entre las personas de control.
+Ninguna de las dos esperanzas de @eq-cate se puede calcular directamente con los datos, porque $\mathbb E[y(1) \mid x]$ es un promedio sobre todas las personas con características $x$ y el resultado $y(1)$ solo se observa en las que recibieron el tratamiento. Lo que los datos sí permiten calcular es el promedio del resultado observado en cada grupo, que se denota con $\mu_w(x) = \mathbb E[y(w) \mid x, w]$ y que es una función de regresión, la del grupo tratado cuando $w = 1$ y la del grupo de control cuando $w = 0$. El resultado observado de una persona tratada es $y(1)$, de manera que $\mu_1(x) = \mathbb E[y(1) \mid x, w = 1]$, que es el promedio de $y(1)$ calculado únicamente entre las personas tratadas, y de la misma manera $\mu_0(x) = \mathbb E[y(0) \mid x, w = 0]$ es el promedio de $y(0)$ calculado únicamente entre las personas de control.
 
-Como la inscripción solo vale $0$ o $1$, el promedio de $y$ en un grupo es la proporción de personas inscritas en ese grupo, de manera que la función de regresión es una probabilidad, es decir,
+Como la inscripción solo vale $0$ o $1$, el promedio del resultado observado en un grupo es la proporción de personas inscritas en ese grupo, de manera que la función de regresión es una probabilidad, es decir,
 
 $$
-\mu_w(x) = \mathbb E[y \mid x, w] = \mathbb P(y = 1 \mid x, w).
+\mu_w(x) = \mathbb E[y(w) \mid x, w] = \mathbb P(y(w) = 1 \mid x, w).
 $$ {#eq-regresion-probabilidad}
 
-Estimar $\mu_w(x)$ es por lo tanto un problema de clasificación con dos clases, que son estar inscrito y no estarlo, como el de la probabilidad de pobreza de @sec-decision-focalizacion-datos, y se resuelve con un clasificador. Lo que se usa del clasificador es la probabilidad de la clase inscrito, porque el efecto condicional es la resta de dos probabilidades y la resta de dos clases predichas solo podría valer $-1$, $0$ o $1$. En la literatura de inferencia causal a $\mu_w(x)$ se le llama función de regresión, porque ese es el nombre que recibe la esperanza condicional $\mathbb E[y \mid x]$ sin importar si $y$ es continua o solo toma los valores $0$ y $1$, y el capítulo conserva ese nombre aunque los modelos que la estiman sean clasificadores.
+Estimar $\mu_w(x)$ es por lo tanto un problema de clasificación con dos clases, que son estar inscrito y no estarlo, como el de la probabilidad de pobreza de @sec-decision-focalizacion-datos, y se resuelve con un clasificador. Lo que se usa del clasificador es la probabilidad de la clase inscrito, porque el efecto condicional es la resta de dos probabilidades y la resta de dos clases predichas solo podría valer $-1$, $0$ o $1$. En la literatura de inferencia causal a $\mu_w(x)$ se le llama función de regresión, porque ese es el nombre que recibe la esperanza condicional de una respuesta dadas las variables de entrada, sin importar si la respuesta es continua o solo toma los valores $0$ y $1$, y el capítulo conserva ese nombre aunque los modelos que la estiman sean clasificadores.
 
 El primero de los dos supuestos que hacen que el promedio entre las personas de un grupo coincida con el promedio entre todas es que, entre personas con las mismas características, el tratamiento no dependa de los resultados potenciales, lo que se conoce como independencia condicional y se escribe $(y(1), y(0)) \perp w \mid x$. Este supuesto dice que, cuando se comparan personas con las mismas características $x$, saber si alguien recibió el tratamiento no da información sobre cuáles serían sus resultados, de manera que las personas tratadas no son, por ejemplo, las que de todos modos se habrían inscrito.
 
@@ -92,13 +92,12 @@ $$ {#eq-independencia-condicional}
 
 El segundo supuesto es que toda persona tenga probabilidad positiva de recibir y de no recibir el tratamiento, lo que se conoce como traslape y se escribe $0 < e(x) < 1$, donde $e(x) = \mathbb P(w = 1 \mid x)$ es la probabilidad de tratamiento (*propensity score*). El traslape hace falta porque $\mu_1(x)$ solo se puede calcular si hay personas tratadas con características $x$ y $\mu_0(x)$ solo si hay personas de control con esas características, y cuando falta alguno de los dos grupos no hay con quién comparar. En un experimento ambos supuestos se cumplen por diseño, porque el sorteo decide $w$ sin mirar a las personas, mientras que en datos observacionales son supuestos que no se pueden verificar con los datos.
 
-Con los dos supuestos el efecto condicional se obtiene en tres pasos, que son la definición de @eq-cate, la independencia condicional de @eq-independencia-condicional y la relación entre el resultado observado y el potencial de @eq-resultado-observado, como se muestra a continuación:
+Con los dos supuestos el efecto condicional se obtiene en tres pasos, que son la definición de @eq-cate, la independencia condicional de @eq-independencia-condicional y la definición de $\mu_w(x)$, como se muestra a continuación:
 
 $$
 \begin{split}
 \tau(x) &= \mathbb E[y(1) \mid x] - \mathbb E[y(0) \mid x] \\
 &= \mathbb E[y(1) \mid x, w = 1] - \mathbb E[y(0) \mid x, w = 0] \\
-&= \mathbb E[y \mid x, w = 1] - \mathbb E[y \mid x, w = 0] \\
 &= \mu_1(x) - \mu_0(x).
 \end{split}
 $$ {#eq-cate-regresion}
@@ -107,7 +106,7 @@ El lado izquierdo de @eq-cate-regresion contiene resultados potenciales que nunc
 
 ### El Problema como Aprendizaje Supervisado {#sec-causal-supervisado}
 
-La derivación que va de @eq-efecto-individual a @eq-cate-regresion se resume en que el efecto condicional $\tau(x)$, definido con resultados que no se observan, es igual a la resta $\mu_1(x) - \mu_0(x)$ de dos probabilidades que sí se pueden estimar, siempre que el tratamiento sea independiente de los resultados potenciales, lo que el sorteo garantiza. A partir de ese resultado el problema es de aprendizaje supervisado como los del resto del libro. El conjunto de datos es $\mathcal D = \{(x_i, w_i, y_i)\}$, donde la respuesta $y_i$ es una clase, estar inscrito o no estarlo, y las variables de entrada son las características $x_i$ junto con el tratamiento $w_i$, que es una columna más de la tabla. Estimar $\mu_w(x) = \mathbb P(y = 1 \mid x, w)$ es entonces un problema de clasificación que se resuelve con cualquiera de los clasificadores vistos, y en este capítulo se usa el bosque aleatorio (@sec-bagging).
+La derivación que va de @eq-efecto-individual a @eq-cate-regresion se resume en que el efecto condicional $\tau(x)$, definido con resultados que no se observan, es igual a la resta $\mu_1(x) - \mu_0(x)$ de dos probabilidades que sí se pueden estimar, siempre que el tratamiento sea independiente de los resultados potenciales, lo que el sorteo garantiza. A partir de ese resultado el problema es de aprendizaje supervisado como los del resto del libro. El conjunto de datos es $\mathcal D = \{(x_i, w_i, y_i(w_i))\}$, donde la respuesta $y_i(w_i)$ es una clase, estar inscrito o no estarlo, y las variables de entrada son las características $x_i$ junto con el tratamiento $w_i$, que es una columna más de la tabla. Estimar $\mu_w(x) = \mathbb P(y(w) = 1 \mid x, w)$ es entonces un problema de clasificación que se resuelve con cualquiera de los clasificadores vistos, y en este capítulo se usa el bosque aleatorio (@sec-bagging).
 
 La primera diferencia con los problemas anteriores está en lo que se pide del modelo, que es la resta de dos predicciones para la misma persona, una con $w = 1$ y otra con $w = 0$, en lugar de una sola predicción. Mover una variable y ver cómo cambia la predicción es lo que hace la dependencia parcial de @sec-dependencia-parcial, y en ese capítulo se advirtió que esa operación describe al modelo y no un efecto causal. Aquí la misma operación sí se puede leer como un efecto porque el tratamiento se sorteó, de manera que $w$ es la única variable de la tabla que no depende de ninguna característica de la persona.
 
@@ -159,7 +158,7 @@ Markdown(txt)
 En un experimento el efecto promedio (@eq-ate) se estima con la diferencia entre la media del resultado de los tratados y la de los controles, donde $N_1$ y $N_0$ son el número de tratados y de controles, es decir,
 
 $$
-\hat \tau = \frac{1}{N_1} \sum_{i: w_i = 1} y_i - \frac{1}{N_0} \sum_{i: w_i = 0} y_i,
+\hat \tau = \frac{1}{N_1} \sum_{i: w_i = 1} y_i(1) - \frac{1}{N_0} \sum_{i: w_i = 0} y_i(0),
 $$ {#eq-dif-medias}
 
 que se calcula con el siguiente código:
@@ -225,7 +224,7 @@ Las cuatro combinaciones de resultados potenciales de @sec-resultados-potenciale
 #| label: tbl-causal-observado
 #| tbl-cap: "Número de niñas y niños según el tratamiento de su localidad y su inscripción en 1998."
 n_obs = {(k, v): int(((w == k) & (y == v)).sum()) for k in (0, 1) for v in (0, 1)}
-txt = '| Localidad | No inscrito ($y = 0$) | Inscrito ($y = 1$) | Total |\n|---|---|---|---|\n'
+txt = '| Localidad | No inscrito, $y(w) = 0$ | Inscrito, $y(w) = 1$ | Total |\n|---|---|---|---|\n'
 for k, nombre in [(0, 'Control ($w = 0$)'), (1, 'Progresa ($w = 1$)')]:
     txt += (f'| {nombre} | ${n_obs[k, 0]:,}$ | ${n_obs[k, 1]:,}$ '
             f'| ${n_obs[k, 0] + n_obs[k, 1]:,}$ |\n')
@@ -294,7 +293,7 @@ Este procedimiento deja de funcionar cuando $x$ tiene varias características, p
 
 La @tbl-causal-mu-grado muestra que un efecto promedio como el de la diferencia de medias esconde diferencias grandes entre personas, y la pregunta del resto del capítulo es para quién es mayor el efecto del programa cuando se consideran todas las características a la vez.
 
-## Predecir no es Estimar un Efecto {#sec-predecir-no-es-efecto}
+## Riesgo de no Inscribirse y Efecto del Programa {#sec-predecir-no-es-efecto}
 
 Una reacción natural ante un presupuesto limitado es dirigir el programa a quienes tienen mayor riesgo de no inscribirse, lo que convierte la focalización en un problema de predicción como los de @sec-regresion-focalizacion y @sec-decision-focalizacion. Para revisar si esa idea funciona, los datos se dividen en un conjunto de entrenamiento y uno de prueba (@sec-conjunto-entre-prueba), pero la partición se hace por localidad, de manera que todas las niñas y niños de una localidad quedan en el mismo conjunto, por la misma razón que el bootstrap se hizo por localidad. El siguiente código hace la partición:
 
@@ -375,7 +374,7 @@ Se llama meta-aprendiz a un procedimiento que toma un algoritmo de aprendizaje s
 
 ### S-learner {#sec-s-learner}
 
-El S-learner estima las dos funciones de regresión $\mu_1(x)$ y $\mu_0(x)$ con un solo modelo (*single*) que se entrena con todas las personas y recibe el tratamiento como una variable más. La función que ese modelo aproxima es la misma $\mu_w(x) = \mathbb E[y \mid x, w]$ de @sec-resultados-potenciales, y su estimación se escribe $\hat\mu(x, w)$, con $w$ entre los argumentos, para indicar que es un único modelo evaluado en los dos valores del tratamiento y para distinguirlo de los dos modelos $\hat\mu_1$ y $\hat\mu_0$ del T-learner. El efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,
+El S-learner estima las dos funciones de regresión $\mu_1(x)$ y $\mu_0(x)$ con un solo modelo (*single*) que se entrena con todas las personas y recibe el tratamiento como una variable más. La función que ese modelo aproxima es la misma $\mu_w(x) = \mathbb E[y(w) \mid x, w]$ de @sec-resultados-potenciales, y su estimación se escribe $\hat\mu(x, w)$, con $w$ entre los argumentos, para indicar que es un único modelo evaluado en los dos valores del tratamiento y para distinguirlo de los dos modelos $\hat\mu_1$ y $\hat\mu_0$ del T-learner. El efecto estimado es la diferencia entre la predicción con el tratamiento y sin él, es decir,
 
 $$
 \hat\tau_S(x) = \hat\mu(x, 1) - \hat\mu(x, 0).
@@ -460,7 +459,7 @@ tau_t = prob(m1, G) - prob(m0, G)
 El X-learner empieza igual que el T-learner, entrenando $\hat\mu_0$ y $\hat\mu_1$, y después imputa a cada persona el resultado potencial que no se observó para calcular con él un efecto individual, que para los tratados y para los controles es
 
 $$
-d_i^1 = y_i - \hat\mu_0(x_i), \qquad d_i^0 = \hat\mu_1(x_i) - y_i.
+d_i^1 = y_i(1) - \hat\mu_0(x_i), \qquad d_i^0 = \hat\mu_1(x_i) - y_i(0).
 $$ {#eq-x-learner-imputado}
 
 Con esos efectos imputados se entrena un modelo $\hat\tau_1$ sobre $d^1$ con los tratados y otro $\hat\tau_0$ sobre $d^0$ con los controles, y por último los dos se combinan con
@@ -502,9 +501,9 @@ ate_g_f = Markdown(f'${dif_medias(y_g, w_g):0.4f}$')
 
 El promedio de los efectos estimados en el conjunto de prueba es `{python} media_f['S']` con el S-learner, `{python} media_f['T']` con el T-learner y `{python} media_f['X']` con el X-learner, y la diferencia de medias del experimento en ese mismo conjunto es `{python} ate_g_f`. El promedio de los efectos individuales estimados debe parecerse al efecto promedio, porque el efecto promedio es el promedio de $\tau(x)$ sobre la población. La desviación estándar de los efectos estimados es `{python} sd_f['S']`, `{python} sd_f['T']` y `{python} sd_f['X']`, respectivamente, e indica cuánta heterogeneidad encuentra cada método.
 
-### Evaluación sin Observar el Efecto {#sec-causal-evaluacion}
+### Ordenamiento por Efecto Estimado {#sec-causal-evaluacion}
 
-Con un meta-aprendiz no se puede calcular un error como en el capítulo de rendimiento (@sec-rendimiento-cap), porque el efecto individual $\tau_i$ no se observa. Lo que sí permite el experimento es comprobar si el ordenamiento es correcto, formando grupos según el efecto estimado y midiendo en cada grupo el efecto con la diferencia de medias, de manera que si el meta-aprendiz ordena bien el efecto medido crece de un grupo al siguiente. El siguiente código lo hace con los cuartiles del efecto estimado por cada meta-aprendiz:
+Con un meta-aprendiz no se puede calcular un error como en el capítulo de rendimiento (@sec-rendimiento-cap), porque el efecto individual $\tau_i$ no se observa. Lo que sí permite el experimento es ordenar a las personas según el efecto estimado, formar grupos con ese orden y medir en cada grupo el efecto con la diferencia de medias, de manera que si el orden que da el meta-aprendiz es informativo el efecto medido crece de un grupo al siguiente. El siguiente código lo hace con los cuartiles del efecto estimado por cada meta-aprendiz:
 
 ```{python}
 #| echo: true
@@ -646,73 +645,37 @@ Elegir por efecto estimado maximiza el resultado medido del programa, pero ese n
 
 ## Bosques Causales {#sec-bosques-causales}
 
-Hasta aquí todo se hizo con herramientas de los capítulos anteriores, que son un bosque de clasificación, una partición de los datos por grupos y la resta de dos probabilidades, y lo propio del problema causal fue decidir qué se resta y cómo se evalúa. Los bosques causales son el primer método del capítulo que modifica el algoritmo de aprendizaje.
+Hasta aquí todo se hizo con herramientas de los capítulos anteriores, que son un bosque de clasificación, una partición de los datos por grupos y la resta de dos probabilidades, y lo propio del problema causal fue decidir qué se resta y cómo se revisa el resultado. Los bosques causales son el primer método del capítulo que modifica el algoritmo de aprendizaje.
 
-Los meta-aprendices usan algoritmos diseñados para predecir $y$, y lo único que cambia en un **árbol causal** [@athey2016recursive] es la función de costo con la que se eligen los cortes, porque el resto del procedimiento es el del árbol de decisión de @sec-arboles-decision. En ese capítulo se vio que el árbol aplica en cada nodo una función de corte $x_j \leq a$, y que la variable $x_j$ y el valor $a$ se eligen para minimizar el costo de los dos hijos, que en regresión es la suma de sus varianzas ponderadas por la proporción de observaciones que recibe cada uno (@sec-clasificacion-entrenamiento). Minimizar ese costo equivale a maximizar
+La segunda etapa del X-learner (@sec-x-learner) ya contiene la idea de un **árbol causal** [@athey2016recursive], porque ahí se entrena un bosque de regresión cuya respuesta es el efecto imputado $d_i$ de @eq-x-learner-imputado en lugar del resultado. Cada árbol de ese bosque es un árbol de regresión como los de @sec-arboles-decision, que en cada nodo aplica una función de corte $x_j \leq a$ y elige la variable $x_j$ y el valor $a$ que dejan a los dos hijos con la menor varianza de la respuesta (@sec-clasificacion-entrenamiento). Como la respuesta es un efecto, los cortes separan a las personas según su efecto y la predicción de una hoja es el promedio de los efectos de las personas que caen en ella. Un árbol causal usa esa misma lógica, y lo que cambia de una versión a otra es la manera de calcular el efecto por persona que se le entrega al árbol.
 
-$$
-G_y(x_j, a) = p \, (1 - p) \, (\bar y_{\text{izq}} - \bar y_{\text{der}})^2,
-$$ {#eq-corte-prediccion}
-
-donde $p$ es la proporción de las observaciones del nodo que van al hijo izquierdo, y $\bar y_{\text{izq}}$ y $\bar y_{\text{der}}$ son los promedios de $y$ en el hijo izquierdo y en el derecho. Esta cantidad es lo que baja la varianza con el corte, de manera que el árbol de regresión busca los dos hijos cuyos promedios de $y$ sean lo más distintos posible. El árbol causal usa la misma expresión con el efecto en el lugar del promedio, es decir, maximiza
+En el bosque causal de @athey2019generalized, que es la versión que implementa la librería `econml` [@battocchi2019econml], ese efecto por persona se calcula con residuos. Primero se estiman con dos modelos auxiliares la probabilidad de inscribirse sin considerar el tratamiento, $\ell(x) = \mathbb P(y(w) = 1 \mid x)$, y la probabilidad de tratamiento $e(x)$ de @sec-resultados-potenciales, y a cada persona se le resta lo que esos modelos predicen, es decir,
 
 $$
-G_\tau(x_j, a) = p \, (1 - p) \, (\hat\tau_{\text{izq}} - \hat\tau_{\text{der}})^2,
-$$ {#eq-corte-causal}
+\tilde y_i = y_i(w_i) - \hat\ell(x_i), \qquad \tilde w_i = w_i - \hat e(x_i),
+$$ {#eq-causal-residuos}
 
-donde $\hat\tau_{\text{izq}}$ y $\hat\tau_{\text{der}}$ son las diferencias de medias de @eq-dif-medias calculadas con los tratados y los controles de cada hijo. El árbol causal busca entonces los dos hijos cuyos efectos sean lo más distintos posible, sin importar si la inscripción es alta o baja en ellos, y una vez construido estima el efecto de una persona con la diferencia de medias de la hoja en la que cae. La función `cortes` calcula cualquiera de las dos cantidades para todos los cortes posibles de la raíz, donde el parámetro `valor` es la función que se evalúa en cada hijo, que es el promedio de $y$ para el corte de predicción y la diferencia de medias para el corte causal, como se muestra en el siguiente código:
+de manera que $\tilde y_i$ es la parte de la inscripción que las características no explican y $\tilde w_i$ es positivo para los tratados y negativo para los controles. El efecto en un nodo $m$ del árbol es el coeficiente de una regresión de $\tilde y$ contra $\tilde w$ con las personas del nodo, que en un experimento es prácticamente la diferencia de medias de @eq-dif-medias y que se escribe
 
-```{python}
-#| echo: true
-def cortes(X, valor):
-    filas = []
-    for var in X.columns:
-        for a in np.unique(X[var])[:-1]:
-            izq = (X[var] <= a).to_numpy()
-            p = izq.mean()
-            v_izq, v_der = valor(izq), valor(~izq)
-            filas.append(dict(variable=var, a=a, izq=v_izq, der=v_der,
-                              G=p * (1 - p) * (v_izq - v_der) ** 2))
-    return pd.DataFrame(filas)
+$$
+\hat\tau_m = \frac{\sum_{i \in m} \tilde w_i \, \tilde y_i}{\sum_{i \in m} \tilde w_i^2}.
+$$ {#eq-causal-nodo}
 
+Para decidir el corte del nodo $m$ se calcula para cada persona del nodo la cantidad
 
-corte_y = cortes(X, lambda m: y[m].mean())
-corte_tau = cortes(X, lambda m: dif_medias(y[m], w[m]))
-mejor_y = corte_y.loc[corte_y['G'].idxmax()]
-mejor_tau = corte_tau.loc[corte_tau['G'].idxmax()]
-```
+$$
+\rho_i = \frac{\tilde w_i \, (\tilde y_i - \hat\tau_m \tilde w_i)}{\frac{1}{N_m} \sum_{j \in m} \tilde w_j^2},
+$$ {#eq-causal-pseudo}
 
-```{python}
-#| echo: false
-cy_var_f = Markdown(f'`{mejor_y.variable}`')
-cy_a_f = Markdown(f'${mejor_y.a:0.0f}$')
-cy_izq_f = Markdown(f'${mejor_y.izq:0.4f}$')
-cy_der_f = Markdown(f'${mejor_y.der:0.4f}$')
-ct_var_f = Markdown(f'`{mejor_tau.variable}`')
-ct_a_f = Markdown(f'${mejor_tau.a:0.0f}$')
-ct_izq_f = Markdown(f'${mejor_tau.izq:0.4f}$')
-ct_der_f = Markdown(f'${mejor_tau.der:0.4f}$')
-m_y = (X[mejor_y.variable] <= mejor_y.a).to_numpy()
-cy_tau_izq_f = Markdown(f'${dif_medias(y[m_y], w[m_y]):0.4f}$')
-cy_tau_der_f = Markdown(f'${dif_medias(y[~m_y], w[~m_y]):0.4f}$')
-cortes_frase_f = Markdown(
-    'Las dos funciones de costo eligen variables distintas, porque la '
-    'variable que mejor predice la inscripción no es la que mejor separa a '
-    'las personas según lo que el programa cambia en ellas'
-    if mejor_y.variable != mejor_tau.variable else
-    'En estos datos las dos funciones de costo eligen la misma variable, '
-    'aunque con un valor de corte que no tiene por qué coincidir')
-```
-
-El corte que elegiría un árbol de regresión en la raíz es `{python} cy_var_f` $\leq$ `{python} cy_a_f`, que deja en el hijo izquierdo una proporción de inscritos en 1998 de `{python} cy_izq_f` y en el derecho una de `{python} cy_der_f`. El corte que elegiría un árbol causal es `{python} ct_var_f` $\leq$ `{python} ct_a_f`, que deja en el hijo izquierdo un efecto de `{python} ct_izq_f` y en el derecho uno de `{python} ct_der_f`. `{python} cortes_frase_f`, y en los dos hijos del corte de predicción el efecto es `{python} cy_tau_izq_f` y `{python} cy_tau_der_f`. El árbol causal repite esta búsqueda en cada hijo hasta que las hojas tienen pocas observaciones, igual que el árbol de decisión.
+donde $N_m$ es el número de personas del nodo. El valor $\rho_i$ es positivo cuando la persona $i$ empuja el efecto del nodo hacia arriba y negativo cuando lo empuja hacia abajo, y el promedio de $\rho_i$ entre las personas de un hijo es aproximadamente la diferencia entre el efecto de ese hijo y el efecto $\hat\tau_m$ del nodo, de manera que $\rho_i$ juega el papel del efecto imputado $d_i$ del X-learner. El corte se elige como en un árbol de regresión cuya respuesta es $\rho_i$, es decir, se buscan la variable y el valor que dejan a los dos hijos con promedios de $\rho_i$ lo más distintos posible, y el procedimiento se repite en cada hijo con su propio efecto y sus propias $\rho_i$ hasta que las hojas tienen pocas observaciones. La predicción de una hoja es el efecto de @eq-causal-nodo calculado con las personas de la hoja.
 
 Se dice que un árbol causal es **honesto** cuando usa una parte de los datos para decidir los cortes y otra parte distinta para estimar el efecto dentro de las hojas. Si se usaran los mismos datos, el árbol buscaría las hojas donde por azar la diferencia de medias es grande y la estimación quedaría sesgada, de la misma manera que el error medido en el conjunto de entrenamiento es optimista. La honestidad es lo que permite construir intervalos de confianza para el efecto estimado.
 
-Un **bosque causal** [@wager2018estimation] promedia muchos árboles causales honestos construidos con submuestras, como un bosque aleatorio promedia árboles de decisión (@sec-bagging, @breiman2001randomforest). El bosque se puede leer como un método de vecinos cercanos (@sec-metodos-no-parametricos), porque para estimar $\tau(x)$ pondera a las observaciones según cuántas veces caen en la misma hoja que $x$, de manera que son los datos los que deciden en qué características deben parecerse dos personas para considerarse vecinas. El emparejamiento tradicional fija esa distancia de antemano y se deteriora cuando hay muchas características. @athey2019generalized generalizan la idea, y esa versión es la que implementa la librería `econml` [@battocchi2019econml].
+Un **bosque causal** [@wager2018estimation] promedia muchos árboles causales honestos construidos con submuestras, como un bosque aleatorio promedia árboles de decisión (@sec-bagging, @breiman2001randomforest). El bosque se puede leer como un método de vecinos cercanos (@sec-metodos-no-parametricos), porque para estimar $\tau(x)$ pondera a las observaciones según cuántas veces caen en la misma hoja que $x$, de manera que son los datos los que deciden en qué características deben parecerse dos personas para considerarse vecinas. El emparejamiento tradicional fija esa distancia de antemano y se deteriora cuando hay muchas características. El efecto de una persona se calcula con @eq-causal-nodo, en la que cada observación entra con esa ponderación.
 
-La clase `CausalForestDML` de `econml` primero descuenta de $y$ y de $w$ lo que se predice con $x$, usando los modelos `model_y` y `model_t` (la idea se explica en @sec-dml), y después construye el bosque causal. El modelo `model_y` estima $\mathbb E[y \mid x]$ y el modelo `model_t` estima la probabilidad de tratamiento $e(x) = \mathbb P(w = 1 \mid x)$, y como la inscripción y el tratamiento solo valen $0$ o $1$ las dos cantidades son probabilidades de clase y los dos modelos son el bosque de clasificación de la función `bosque_c`. Los parámetros `discrete_outcome=True` y `discrete_treatment=True` le indican a la librería que el resultado y el tratamiento son categorías, y entonces toma de cada modelo la probabilidad con `predict_proba`.
+La clase `CausalForestDML` de `econml` hace los dos pasos, y en el primero calcula los residuos de @eq-causal-residuos con los modelos que recibe en `model_y` y `model_t`, que estiman $\ell(x)$ y $e(x)$ (la misma idea se desarrolla en @sec-dml). Como la inscripción y el tratamiento solo valen $0$ o $1$, las dos cantidades son probabilidades de clase y los dos modelos son el bosque de clasificación de la función `bosque_c`, del que la librería toma la probabilidad con `predict_proba` cuando se le indica con `discrete_outcome=True` y `discrete_treatment=True` que el resultado y el tratamiento son categorías. Esos dos bosques son bosques aleatorios comunes que solo sirven para el primer paso, de manera que ninguno de sus árboles es un árbol causal.
 
-Los bosques que se pasan en `model_y` y `model_t` son bosques aleatorios comunes que solo sirven para ese primer paso, de manera que ninguno de sus árboles es un árbol causal. Los árboles causales son los que `CausalForestDML` construye internamente en el segundo paso, cuyo número y tamaño de hoja se fijan con los parámetros `n_estimators=1000` y `min_samples_leaf=20` de la propia clase, y que eligen sus cortes con el resultado y el tratamiento ya descontados. El criterio de corte se indica con el parámetro `criterion`, donde el valor `'het'` corresponde a @eq-corte-causal y el valor por omisión, `'mse'`, da además más peso a los hijos que tienen tanto tratados como controles, porque en ellos el efecto se estima con más precisión.
+Los árboles causales son los que `CausalForestDML` construye internamente en el segundo paso con los residuos, y su número y tamaño de hoja se fijan con los parámetros `n_estimators=1000` y `min_samples_leaf=20` de la propia clase. El criterio de corte se indica con el parámetro `criterion`, donde el valor `'het'` es el que se describió con @eq-causal-pseudo y el valor por omisión, `'mse'`, da además más peso a los hijos que tienen tanto tratados como controles, porque en ellos el efecto se estima con más precisión.
 
 Los parámetros `cv=GroupKFold(5)` y `groups=loc` hacen que esas predicciones se calculen sin usar a la propia localidad, y el bosque se entrena con todos los datos porque la honestidad ya separa internamente los datos de cada árbol, como se muestra en el siguiente código:
 
@@ -793,7 +756,7 @@ imp_var_f = Markdown(f'`{imp.idxmax()}`')
 imp_val_f = Markdown(f'${imp.max():0.4f}$')
 ```
 
-La @fig-bosque-causal muestra que el perfil con mayor efecto estimado es `{python} perfil_sexo_f` con grado `{python} perfil_grado_f`, con un efecto de `{python} perfil_ef_f` y un intervalo de confianza de `{python} perfil_ic_f` que `{python} perfil_sig_f`, y que `{python} n_sig_frase_f`. El bosque `{python} coincide_f`, y a la vez muestra que para un perfil individual la incertidumbre es grande, con intervalos de un ancho promedio de `{python} ancho_f`, algo que los meta-aprendices no dicen. El atributo `feature_importances_` indica qué variables usó el bosque para separar a las personas con efectos distintos, y la de mayor importancia es `{python} imp_var_f`, con `{python} imp_val_f`. Esta importancia se refiere a la heterogeneidad del efecto y no a la predicción de $y$, a diferencia de la importancia de variables de @sec-importancia-variables.
+La @fig-bosque-causal muestra que el perfil con mayor efecto estimado es `{python} perfil_sexo_f` con grado `{python} perfil_grado_f`, con un efecto de `{python} perfil_ef_f` y un intervalo de confianza de `{python} perfil_ic_f` que `{python} perfil_sig_f`, y que `{python} n_sig_frase_f`. El bosque `{python} coincide_f`, y a la vez muestra que para un perfil individual la incertidumbre es grande, con intervalos de un ancho promedio de `{python} ancho_f`, algo que los meta-aprendices no dicen. El atributo `feature_importances_` indica qué variables usó el bosque para separar a las personas con efectos distintos, y la de mayor importancia es `{python} imp_var_f`, con `{python} imp_val_f`. Esta importancia se refiere a la heterogeneidad del efecto y no a la predicción de la inscripción, a diferencia de la importancia de variables de @sec-importancia-variables.
 
 Los intervalos de `econml` suponen que las observaciones son independientes, y como aquí el sorteo fue por localidad, los intervalos correctos serían todavía más anchos. Además, examinar muchos perfiles y quedarse con los que resultan significativos es un problema de pruebas múltiples, que es justamente lo que estudian @lee2014multiple con estos mismos datos.
 
