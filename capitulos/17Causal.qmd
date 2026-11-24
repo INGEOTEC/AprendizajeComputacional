@@ -33,7 +33,7 @@ Quien lee este capítulo ya conoce las herramientas de la inferencia causal, com
 
 La advertencia principal del capítulo es que el aprendizaje computacional no sustituye al diseño de investigación. Que la comparación entre tratados y no tratados sea válida depende de cómo se asignó el tratamiento, y ningún algoritmo corrige una asignación que favoreció a un grupo. Por eso el ejemplo del capítulo es un experimento, el de Progresa (@sec-datos-progresa), en el que la asignación fue al azar y la validez de la comparación no está en duda.
 
-El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y continúa con los meta-aprendices, que convierten cualquier algoritmo de regresión en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona. Después de los meta-aprendices se presentan los bosques causales (@sec-bosques-causales), que adaptan el bosque aleatorio para estimar efectos y dan intervalos de confianza, y el aprendizaje computacional doble (@sec-dml), que usa modelos flexibles para ajustar por variables de control cuando el tratamiento no se asignó al azar. El capítulo termina con los alcances y límites de estas herramientas (@sec-causal-limites).
+El capítulo empieza con la notación de resultados potenciales y con el efecto promedio del experimento de Progresa. Después muestra la diferencia entre predecir un resultado y estimar un efecto, y continúa con los meta-aprendices, que convierten cualquier algoritmo de aprendizaje supervisado en un estimador de efectos heterogéneos y permiten decidir a quién dirigir un programa según el efecto que se espera en cada persona. Después de los meta-aprendices se presentan los bosques causales (@sec-bosques-causales), que adaptan el bosque aleatorio para estimar efectos y dan intervalos de confianza, y el aprendizaje computacional doble (@sec-dml), que usa modelos flexibles para ajustar por variables de control cuando el tratamiento no se asignó al azar. El capítulo termina con los alcances y límites de estas herramientas (@sec-causal-limites).
 
 ## Resultados Potenciales {#sec-resultados-potenciales}
 
@@ -79,7 +79,7 @@ $$
 \mu_w(x) = \mathbb E[y \mid x, w] = \mathbb P(y = 1 \mid x, w).
 $$ {#eq-regresion-probabilidad}
 
-Por esa razón el problema se parece a uno de clasificación con dos clases, que son estar inscrito y no estarlo, y la diferencia con la clasificación está en lo que interesa del modelo. En clasificación interesa la clase que se predice y la probabilidad es un paso intermedio, mientras que aquí interesa la probabilidad misma, porque el efecto condicional es la resta de dos probabilidades y la resta de dos clases solo podría valer $-1$, $0$ o $1$. Se le llama función de regresión porque ese es el nombre que recibe la esperanza condicional $\mathbb E[y \mid x]$ sin importar si $y$ es continua o solo toma los valores $0$ y $1$.
+Estimar $\mu_w(x)$ es por lo tanto un problema de clasificación con dos clases, que son estar inscrito y no estarlo, como el de la probabilidad de pobreza de @sec-decision-focalizacion-datos, y se resuelve con un clasificador. Lo que se usa del clasificador es la probabilidad de la clase inscrito, porque el efecto condicional es la resta de dos probabilidades y la resta de dos clases predichas solo podría valer $-1$, $0$ o $1$. En la literatura de inferencia causal a $\mu_w(x)$ se le llama función de regresión, porque ese es el nombre que recibe la esperanza condicional $\mathbb E[y \mid x]$ sin importar si $y$ es continua o solo toma los valores $0$ y $1$, y el capítulo conserva ese nombre aunque los modelos que la estiman sean clasificadores.
 
 El primero de los dos supuestos que hacen que el promedio entre las personas de un grupo coincida con el promedio entre todas es que, entre personas con las mismas características, el tratamiento no dependa de los resultados potenciales, lo que se conoce como independencia condicional y se escribe $(y(1), y(0)) \perp w \mid x$. Este supuesto dice que, cuando se comparan personas con las mismas características $x$, saber si alguien recibió el tratamiento no da información sobre cuáles serían sus resultados, de manera que las personas tratadas no son, por ejemplo, las que de todos modos se habrían inscrito.
 
@@ -104,7 +104,7 @@ $$ {#eq-cate-regresion}
 
 El lado izquierdo de @eq-cate-regresion contiene resultados potenciales que nunca se observan completos y el lado derecho contiene solo cantidades que se calculan con los datos, y a este resultado se le llama identificación del efecto. Cuando la independencia condicional no se cumple la segunda igualdad deja de ser cierta, y entonces la diferencia $\mu_1(x) - \mu_0(x)$ mezcla el efecto del tratamiento con las diferencias que ya había entre los dos grupos antes del tratamiento, lo que se conoce como sesgo de selección.
 
-Las funciones $\mu_1$ y $\mu_0$ son funciones de regresión como las de todos los capítulos anteriores y se pueden estimar con cualquier algoritmo, y en @sec-causal-experimento se estiman por primera vez con el procedimiento más simple, que es calcular una proporción por grupo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
+Las funciones $\mu_1$ y $\mu_0$ son probabilidades de clase como las que estiman los clasificadores de los capítulos anteriores y se pueden estimar con cualquiera de ellos, y en @sec-causal-experimento se estiman por primera vez con el procedimiento más simple, que es calcular una proporción por grupo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
 
 ## El Experimento de Progresa {#sec-causal-experimento}
 
@@ -271,7 +271,7 @@ n_gmin_f = Markdown(f'${int(n_por_grado.min()):,}$')
 
 Cada renglón de la @tbl-causal-mu-grado es una estimación de $\mu_0(x)$, de $\mu_1(x)$ y de $\tau(x)$ cuando $x$ es el último grado aprobado, y cada proporción es también la probabilidad estimada de inscribirse (@eq-regresion-probabilidad). La mayor diferencia está en quienes habían aprobado el grado `{python} g_max_f`, donde la proporción de inscritos pasa de `{python} mu0_gmax_f` en las localidades de control a `{python} mu1_gmax_f` en las de Progresa, y esa diferencia de `{python} tau_gmax_f` es `{python} razon_gmax_f` veces el efecto promedio. En quienes habían aprobado el grado `{python} g_ini_f` la proporción de inscritos sin programa ya es `{python} mu0_gini_f`, por lo que el programa casi no tiene a quién cambiar.
 
-Este procedimiento deja de funcionar cuando $x$ tiene varias características, porque el número de grupos crece y cada grupo se queda con pocas personas, como ya ocurre aquí con el grado `{python} g_min_n_f`, que tiene `{python} n_gmin_f` niñas y niños y una diferencia poco precisa. Un algoritmo de regresión resuelve ese problema porque promedia entre personas parecidas en lugar de exigir que tengan exactamente las mismas características, y eso es lo que hacen los modelos de las secciones siguientes.
+Este procedimiento deja de funcionar cuando $x$ tiene varias características, porque el número de grupos crece y cada grupo se queda con pocas personas, como ya ocurre aquí con el grado `{python} g_min_n_f`, que tiene `{python} n_gmin_f` niñas y niños y una diferencia poco precisa. Un algoritmo de aprendizaje supervisado resuelve ese problema porque promedia entre personas parecidas en lugar de exigir que tengan exactamente las mismas características, y eso es lo que hacen los modelos de las secciones siguientes.
 
 La @tbl-causal-mu-grado muestra que un efecto promedio como el de la diferencia de medias esconde diferencias grandes entre personas, y la pregunta del resto del capítulo es para quién es mayor el efecto del programa cuando se consideran todas las características a la vez.
 
@@ -287,19 +287,21 @@ T, G = X.iloc[tr], X.iloc[te]
 y_t, y_g, w_t, w_g = y[tr], y[te], w[tr], w[te]
 ```
 
-El modelo de riesgo es un bosque aleatorio (@sec-bagging) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima $\mu_0(x)$.
-
-Para estimar $\mu_0(x)$ sirve tanto un bosque de clasificación como uno de regresión, porque los dos predicen en cada hoja la proporción de inscritos entre las observaciones que llegan a ella, que es la probabilidad de @eq-regresion-probabilidad. En el bosque de clasificación esa proporción se obtiene con `predict_proba` y en el de regresión con `predict`, ya que el promedio de una variable que solo vale $0$ o $1$ es la proporción de unos, y con los mismos hiperparámetros, incluido el número de variables que se prueban en cada corte, las dos estimaciones coinciden. Aquí se usa el bosque de regresión por conveniencia, porque los meta-aprendices de @sec-meta-aprendices necesitan además predecir cantidades que ya no valen $0$ o $1$, como el efecto imputado del X-learner (@sec-x-learner), y con un regresor el mismo modelo sirve en todos los pasos. La función `bosque` fija los hiperparámetros que se usan en todo el capítulo, como se muestra en el siguiente código:
+El modelo de riesgo es un bosque aleatorio (@sec-bagging) entrenado solo con las localidades de control, porque el riesgo que interesa es el de no inscribirse cuando no hay programa, es decir, el modelo estima $\mu_0(x)$. Como $\mu_0(x)$ es la probabilidad de inscribirse (@eq-regresion-probabilidad), el bosque es de clasificación y lo que se usa de él es la probabilidad de la clase inscrito, que se obtiene con el método `predict_proba`, igual que en @sec-interpretabilidad-modelo. La función `bosque_c` fija los hiperparámetros del bosque de clasificación que se usa en todo el capítulo y la función `prob` regresa esa probabilidad, como se muestra en el siguiente código:
 
 ```{python}
 #| echo: true
-def bosque():
-    return RandomForestRegressor(n_estimators=200, min_samples_leaf=20,
-                                 n_jobs=-1, random_state=0)
+def bosque_c():
+    return RandomForestClassifier(n_estimators=200, min_samples_leaf=20,
+                                  n_jobs=-1, random_state=0)
 
 
-m0 = bosque().fit(T[w_t == 0], y_t[w_t == 0])
-riesgo = 1 - m0.predict(G)
+def prob(modelo, X):
+    return modelo.predict_proba(X)[:, 1]
+
+
+m0 = bosque_c().fit(T[w_t == 0], y_t[w_t == 0])
+riesgo = 1 - prob(m0, G)
 ```
 
 Como el conjunto de prueba viene de un experimento, se puede medir el efecto del programa dentro de cualquier grupo de personas con la diferencia de medias de ese grupo. La función `efecto_por_grupo` lo hace, y se aplica a los quintiles del riesgo predicho en el conjunto de prueba:
@@ -350,7 +352,7 @@ La @tbl-causal-riesgo muestra que el modelo de riesgo ordena bien a las personas
 
 ## Meta-aprendices {#sec-meta-aprendices}
 
-Se llama meta-aprendiz a un procedimiento que toma un algoritmo de regresión cualquiera, llamado aprendiz base, y lo usa para estimar el efecto condicional $\tau(x)$ [@kunzel2019metalearners]. En este capítulo el aprendiz base es siempre el bosque de la función `bosque`, y los tres meta-aprendices que se presentan se entrenan en el conjunto de entrenamiento $\mathcal T$ y se evalúan en el conjunto de prueba $\mathcal G$.
+Se llama meta-aprendiz a un procedimiento que toma un algoritmo de aprendizaje supervisado cualquiera, llamado aprendiz base, y lo usa para estimar el efecto condicional $\tau(x)$ [@kunzel2019metalearners]. En este capítulo el aprendiz base es el bosque de clasificación de la función `bosque_c`, y los tres meta-aprendices que se presentan se entrenan en el conjunto de entrenamiento $\mathcal T$ y se evalúan en el conjunto de prueba $\mathcal G$.
 
 ### S-learner {#sec-s-learner}
 
@@ -365,9 +367,9 @@ La debilidad de este método es que el tratamiento es una variable entre varias 
 ```{python}
 #| echo: true
 T_w = T.assign(progresa=w_t)
-s_modelo = bosque().fit(T_w, y_t)
-tau_s = (s_modelo.predict(G.assign(progresa=1))
-         - s_modelo.predict(G.assign(progresa=0)))
+s_modelo = bosque_c().fit(T_w, y_t)
+tau_s = (prob(s_modelo, G.assign(progresa=1))
+         - prob(s_modelo, G.assign(progresa=0)))
 ```
 
 ### T-learner {#sec-t-learner}
@@ -382,8 +384,8 @@ que es la @eq-cate-regresion con las funciones estimadas. El modelo $\hat\mu_0$ 
 
 ```{python}
 #| echo: true
-m1 = bosque().fit(T[w_t == 1], y_t[w_t == 1])
-tau_t = m1.predict(G) - m0.predict(G)
+m1 = bosque_c().fit(T[w_t == 1], y_t[w_t == 1])
+tau_t = prob(m1, G) - prob(m0, G)
 ```
 
 ### X-learner {#sec-x-learner}
@@ -400,12 +402,17 @@ $$
 \hat\tau_X(x) = e\,\hat\tau_0(x) + (1 - e)\,\hat\tau_1(x),
 $$ {#eq-x-learner}
 
-donde $e$ es la proporción de tratados. La ventaja de este método es que los modelos de la segunda etapa aprenden directamente el efecto y no un resultado, y que aprovecha mejor los datos cuando un grupo es mucho mayor que el otro. El siguiente código implementa el X-learner:
+donde $e$ es la proporción de tratados. La ventaja de este método es que los modelos de la segunda etapa aprenden directamente el efecto y no un resultado, y que aprovecha mejor los datos cuando un grupo es mucho mayor que el otro. Los efectos imputados ya no valen $0$ o $1$, porque son la resta de un resultado y una probabilidad y toman valores entre $-1$ y $1$, de manera que predecirlos es un problema de regresión y los modelos $\hat\tau_1$ y $\hat\tau_0$ son bosques de regresión, que se definen en la función `bosque` con los mismos hiperparámetros que `bosque_c`. El siguiente código implementa el X-learner:
 
 ```{python}
 #| echo: true
-d1 = y_t[w_t == 1] - m0.predict(T[w_t == 1])
-d0 = m1.predict(T[w_t == 0]) - y_t[w_t == 0]
+def bosque():
+    return RandomForestRegressor(n_estimators=200, min_samples_leaf=20,
+                                 n_jobs=-1, random_state=0)
+
+
+d1 = y_t[w_t == 1] - prob(m0, T[w_t == 1])
+d0 = prob(m1, T[w_t == 0]) - y_t[w_t == 0]
 tau1 = bosque().fit(T[w_t == 1], d1)
 tau0 = bosque().fit(T[w_t == 0], d0)
 e = w_t.mean()
@@ -634,7 +641,7 @@ Se dice que un árbol causal es **honesto** cuando usa una parte de los datos pa
 
 Un **bosque causal** [@wager2018estimation] promedia muchos árboles causales honestos construidos con submuestras, como un bosque aleatorio promedia árboles de decisión (@sec-bagging, @breiman2001randomforest). El bosque se puede leer como un método de vecinos cercanos (@sec-metodos-no-parametricos), porque para estimar $\tau(x)$ pondera a las observaciones según cuántas veces caen en la misma hoja que $x$, de manera que son los datos los que deciden en qué características deben parecerse dos personas para considerarse vecinas. El emparejamiento tradicional fija esa distancia de antemano y se deteriora cuando hay muchas características. @athey2019generalized generalizan la idea, y esa versión es la que implementa la librería `econml` [@battocchi2019econml].
 
-La clase `CausalForestDML` de `econml` primero descuenta de $y$ y de $w$ lo que se predice con $x$, usando los modelos `model_y` y `model_t` (la idea se explica en @sec-dml), y después construye el bosque causal. El modelo `model_y` estima $\mathbb E[y \mid x]$ y el modelo `model_t` estima la probabilidad de tratamiento $e(x) = \mathbb P(w = 1 \mid x)$, y como la inscripción y el tratamiento solo valen $0$ o $1$ las dos cantidades son probabilidades que se podrían estimar con el mismo tipo de bosque, como se explicó en @sec-predecir-no-es-efecto. La razón de usar dos funciones distintas es la interfaz de la librería, porque el parámetro `discrete_treatment=True` le indica que el tratamiento es una categoría y entonces `econml` pide que `model_t` sea un clasificador, del que toma la probabilidad con `predict_proba`, mientras que el resultado se trata como un número (el parámetro `discrete_outcome` vale `False` cuando no se indica) y entonces pide que `model_y` sea un regresor, del que toma la predicción con `predict`. Por eso la función `bosque_c` del siguiente código es la misma función `bosque` con `RandomForestClassifier` en lugar de `RandomForestRegressor` y con los mismos hiperparámetros.
+La clase `CausalForestDML` de `econml` primero descuenta de $y$ y de $w$ lo que se predice con $x$, usando los modelos `model_y` y `model_t` (la idea se explica en @sec-dml), y después construye el bosque causal. El modelo `model_y` estima $\mathbb E[y \mid x]$ y el modelo `model_t` estima la probabilidad de tratamiento $e(x) = \mathbb P(w = 1 \mid x)$, y como la inscripción y el tratamiento solo valen $0$ o $1$ las dos cantidades son probabilidades de clase y los dos modelos son el bosque de clasificación de la función `bosque_c`. Los parámetros `discrete_outcome=True` y `discrete_treatment=True` le indican a la librería que el resultado y el tratamiento son categorías, y entonces toma de cada modelo la probabilidad con `predict_proba`.
 
 Los bosques que se pasan en `model_y` y `model_t` son bosques aleatorios comunes que solo sirven para ese primer paso, de manera que ninguno de sus árboles es un árbol causal. Los árboles causales son los que `CausalForestDML` construye internamente en el segundo paso, cuyo número y tamaño de hoja se fijan con los parámetros `n_estimators=1000` y `min_samples_leaf=20` de la propia clase, y que eligen sus cortes con el resultado y el tratamiento ya descontados. El criterio de corte se indica con el parámetro `criterion`, donde el valor `'het'` corresponde a @eq-corte-causal y el valor por omisión, `'mse'`, da además más peso a los hijos que tienen tanto tratados como controles, porque en ellos el efecto se estima con más precisión.
 
@@ -642,17 +649,12 @@ Los parámetros `cv=GroupKFold(5)` y `groups=loc` hacen que esas predicciones se
 
 ```{python}
 #| echo: true
-def bosque_c():
-    return RandomForestClassifier(n_estimators=200, min_samples_leaf=20,
-                                  n_jobs=-1, random_state=0)
-
-
-causal = CausalForestDML(model_y=bosque(), model_t=bosque_c(),
-                         discrete_treatment=True, cv=GroupKFold(5),
-                         n_estimators=1000, min_samples_leaf=20,
-                         random_state=0)
+causal = CausalForestDML(model_y=bosque_c(), model_t=bosque_c(),
+                         discrete_outcome=True, discrete_treatment=True,
+                         cv=GroupKFold(5), n_estimators=1000,
+                         min_samples_leaf=20, random_state=0)
 _ = causal.fit(y, w, X=X, groups=loc)
-tau_bc = causal.effect(X)
+tau_bc = causal.effect(X).ravel()
 ```
 
 ```{python}
@@ -764,7 +766,7 @@ $$
 \text{se}(\hat\theta) = \frac{\sqrt{\sum_i \psi_i^2}}{\sum_i (\hat r^w_i)^2},
 $$ {#eq-dml-se}
 
-y cuando hay conglomerados las $\psi_i$ se suman primero dentro de cada conglomerado y la partición se hace por conglomerado. La función `dml` implementa el procedimiento con el bosque de la función `bosque`, como se muestra en el siguiente código:
+y cuando hay conglomerados las $\psi_i$ se suman primero dentro de cada conglomerado y la partición se hace por conglomerado. La función `dml` implementa el procedimiento para el caso de este capítulo, en el que el resultado y el tratamiento valen $0$ o $1$, de manera que $\hat\ell$ y $\hat m$ son las probabilidades que da el bosque de clasificación de la función `bosque_c`, como se muestra en el siguiente código:
 
 ```{python}
 #| echo: true
@@ -773,8 +775,10 @@ def dml(X, w, y, grupos=None, K=5):
         cv = list(KFold(K, shuffle=True, random_state=0).split(X))
     else:
         cv = list(GroupKFold(K).split(X, groups=grupos))
-    r_y = y - cross_val_predict(bosque(), X, y, cv=cv)
-    r_w = w - cross_val_predict(bosque(), X, w, cv=cv)
+    r_y = y - cross_val_predict(bosque_c(), X, y, cv=cv,
+                                method='predict_proba')[:, 1]
+    r_w = w - cross_val_predict(bosque_c(), X, w, cv=cv,
+                                method='predict_proba')[:, 1]
     theta = (r_w * r_y).sum() / (r_w ** 2).sum()
     psi = r_w * (r_y - theta * r_w)
     if grupos is not None:
@@ -857,12 +861,12 @@ La librería `econml` implementa el mismo estimador en la clase `LinearDML`, en 
 
 ```{python}
 #| echo: true
-lineal_dml = LinearDML(model_y=bosque(), model_t=bosque_c(),
-                       discrete_treatment=True, cv=GroupKFold(5),
-                       random_state=0)
+lineal_dml = LinearDML(model_y=bosque_c(), model_t=bosque_c(),
+                       discrete_outcome=True, discrete_treatment=True,
+                       cv=GroupKFold(5), random_state=0)
 _ = lineal_dml.fit(y, w, X=None, W=X, groups=loc)
-theta_e = lineal_dml.ate()
-ic_e = lineal_dml.ate_interval(alpha=0.05)
+theta_e = lineal_dml.ate().item()
+ic_e = [v.item() for v in lineal_dml.ate_interval(alpha=0.05)]
 ```
 
 ```{python}
@@ -917,7 +921,7 @@ Los resultados potenciales definen el efecto individual de un tratamiento como l
 
 Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de $\mu_0(x)$ y el efecto de la diferencia $\mu_1(x) - \mu_0(x)$. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.
 
-Los meta-aprendices convierten un algoritmo de regresión en un estimador de $\tau(x)$. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.
+Los meta-aprendices convierten un algoritmo de aprendizaje supervisado en un estimador de $\tau(x)$. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.
 
 El bosque causal construye árboles honestos que separan a las personas según su efecto en lugar de según su resultado, y se puede leer como un método de vecinos cercanos con una distancia aprendida de los datos. A diferencia de los meta-aprendices, da intervalos de confianza para el efecto de un perfil, y esos intervalos suelen ser anchos.
 
