@@ -10,6 +10,7 @@ from sklearn.model_selection import GroupShuffleSplit, GroupKFold, KFold
 from sklearn.model_selection import cross_val_predict
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.linear_model import LinearRegression
+from sklearn.inspection import permutation_importance
 from econml.dml import CausalForestDML, LinearDML
 from matplotlib import pylab as plt
 import numpy as np
@@ -104,7 +105,15 @@ $$ {#eq-cate-regresion}
 
 El lado izquierdo de @eq-cate-regresion contiene resultados potenciales que nunca se observan completos y el lado derecho contiene solo cantidades que se calculan con los datos, y a este resultado se le llama identificación del efecto. Cuando la independencia condicional no se cumple la segunda igualdad deja de ser cierta, y entonces la diferencia $\mu_1(x) - \mu_0(x)$ mezcla el efecto del tratamiento con las diferencias que ya había entre los dos grupos antes del tratamiento, lo que se conoce como sesgo de selección.
 
-Las funciones $\mu_1$ y $\mu_0$ son probabilidades de clase como las que estiman los clasificadores de los capítulos anteriores y se pueden estimar con cualquiera de ellos, y en @sec-causal-experimento se estiman por primera vez con el procedimiento más simple, que es calcular una proporción por grupo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
+### El Problema como Aprendizaje Supervisado {#sec-causal-supervisado}
+
+La derivación que va de @eq-efecto-individual a @eq-cate-regresion se resume en que el efecto condicional $\tau(x)$, definido con resultados que no se observan, es igual a la resta $\mu_1(x) - \mu_0(x)$ de dos probabilidades que sí se pueden estimar, siempre que el tratamiento sea independiente de los resultados potenciales, lo que el sorteo garantiza. A partir de ese resultado el problema es de aprendizaje supervisado como los del resto del libro. El conjunto de datos es $\mathcal D = \{(x_i, w_i, y_i)\}$, donde la respuesta $y_i$ es una clase, estar inscrito o no estarlo, y las variables de entrada son las características $x_i$ junto con el tratamiento $w_i$, que es una columna más de la tabla. Estimar $\mu_w(x) = \mathbb P(y = 1 \mid x, w)$ es entonces un problema de clasificación que se resuelve con cualquiera de los clasificadores vistos, y en este capítulo se usa el bosque aleatorio (@sec-bagging).
+
+La primera diferencia con los problemas anteriores está en lo que se pide del modelo, que es la resta de dos predicciones para la misma persona, una con $w = 1$ y otra con $w = 0$, en lugar de una sola predicción. Mover una variable y ver cómo cambia la predicción es lo que hace la dependencia parcial de @sec-dependencia-parcial, y en ese capítulo se advirtió que esa operación describe al modelo y no un efecto causal. Aquí la misma operación sí se puede leer como un efecto porque el tratamiento se sorteó, de manera que $w$ es la única variable de la tabla que no depende de ninguna característica de la persona.
+
+La segunda diferencia es la evaluación, porque el conjunto de prueba no trae el efecto $\tau_i$ de cada persona y no se puede calcular un error como los de @sec-rendimiento-cap, de manera que el efecto estimado se revisa por grupos de personas con la diferencia de medias del experimento (@sec-causal-evaluacion). La tercera es la manera de partir los datos, ya que el sorteo fue por localidad y las personas de una localidad comparten el tratamiento, y por eso el conjunto de prueba, la validación cruzada y el bootstrap se forman con localidades completas. Todo lo demás es igual que en los capítulos anteriores, es decir, se entrena un clasificador en un conjunto de entrenamiento y se usan sus probabilidades en uno de prueba.
+
+En @sec-causal-experimento las probabilidades $\mu_1$ y $\mu_0$ se estiman por primera vez con el procedimiento más simple, que es calcular una proporción por grupo. La dificultad es que un algoritmo que predice bien $\mu_1$ y $\mu_0$ por separado no necesariamente estima bien su diferencia, y de ese problema tratan los meta-aprendices (@sec-meta-aprendices).
 
 ## El Experimento de Progresa {#sec-causal-experimento}
 
@@ -198,7 +207,16 @@ comp_se_f = Markdown('mayor' if ate_se > se_ing else 'menor')
 control_f = Markdown(f'${y[w == 0].mean():0.4f}$')
 ```
 
-La proporción inscrita en las localidades de control es `{python} control_f` y la diferencia de medias estima que el programa la cambia en `{python} ate_f`, con un error estándar de `{python} ate_se_f` y un intervalo de confianza del 95% de `{python} ate_ic_f`. El error estándar que supone que las personas son observaciones independientes sería `{python} se_ing_f`, por lo que el error estándar por conglomerados es `{python} razon_se_f` veces el ingenuo y la incertidumbre es `{python} comp_se_f` de lo que sugeriría tratar a cada persona como un sorteo propio.
+La proporción inscrita en las localidades de control es `{python} control_f` y la diferencia de medias estima que el programa la cambia en `{python} ate_f`, con un error estándar de `{python} ate_se_f` y un intervalo de confianza del 95% de `{python} ate_ic_f`.
+
+::: {.callout-note collapse="true"}
+### Error estándar sin conglomerados
+
+El error estándar que supone que las personas son observaciones independientes sería `{python} se_ing_f`, por lo que el error estándar por conglomerados es `{python} razon_se_f` veces el ingenuo y la incertidumbre es `{python} comp_se_f` de lo que sugeriría tratar a cada persona como un sorteo propio.
+:::
+
+::: {.callout-note collapse="true"}
+### Qué se observa de los resultados potenciales
 
 Las cuatro combinaciones de resultados potenciales de @sec-resultados-potenciales no se pueden contar en estos datos, porque de cada niña o niño solo se conoce el tratamiento de su localidad y el resultado que ocurrió. Lo que sí se puede contar son las cuatro combinaciones de tratamiento e inscripción observada, que se muestran en la @tbl-causal-observado.
 
@@ -230,6 +248,7 @@ Cada celda de la @tbl-causal-observado es compatible con dos de las cuatro combi
 La @tbl-causal-observado también muestra que `{python} n_t_noins_f` niñas y niños de localidades tratadas, que son una proporción de `{python} p_t_noins_f` de ese grupo, no estaban inscritos en 1998, lo que puede sorprender en un programa que da becas por asistir a la escuela. El programa condiciona la beca a la asistencia pero deja la decisión de inscribirse al hogar, y un hogar que no inscribe a su hija o hijo simplemente deja de recibir la beca que le correspondería. Para una persona adolescente que ya trabaja o ayuda en casa, el monto de la beca puede ser menor que lo que el hogar pierde si regresa a la escuela, y ese es el caso $y(1) = 0$. El tratamiento $w = 1$ es vivir en una localidad que recibió el programa, sin importar si el hogar cumplió la condición y cobró la beca, de manera que $\hat \tau$ mide el efecto de ofrecer el programa, que en evaluación de programas se conoce como efecto de la intención de tratar.
 
 La diferencia de medias tampoco dice cuántas personas tienen cada efecto, porque $\tau$ es la proporción de personas con efecto $1$ menos la proporción con efecto $-1$, y las personas con efecto $0$ no cambian ese promedio. Con las proporciones de la @tbl-causal-observado, y sin considerar la incertidumbre del muestreo, la proporción de personas con efecto $-1$ puede ir de `{python} cota_neg_min_f` a `{python} cota_neg_max_f` y la proporción con efecto $1$ de `{python} cota_pos_min_f` a `{python} cota_pos_max_f`, y todos esos valores producen la misma diferencia de medias. Para afirmar que nadie tiene efecto $-1$ hace falta suponer que la beca no hace que alguien deje la escuela, lo que se conoce como monotonicidad y que es razonable en este programa, pero que los datos no pueden comprobar.
+:::
 
 Las funciones de regresión $\mu_1(x)$ y $\mu_0(x)$ de @eq-cate-regresion se pueden estimar sin ningún algoritmo cuando $x$ es una sola característica con pocos valores, porque basta con calcular la proporción de inscritos en cada grupo. El siguiente código lo hace con el último grado aprobado, donde `mu_grado` tiene la proporción de inscritos en 1998 por grado en las localidades de control y en las de Progresa, y `tau_grado` es la diferencia entre las dos:
 
@@ -371,6 +390,54 @@ s_modelo = bosque_c().fit(T_w, y_t)
 tau_s = (prob(s_modelo, G.assign(progresa=1))
          - prob(s_modelo, G.assign(progresa=0)))
 ```
+
+En el S-learner el tratamiento es una variable más del modelo, y por eso se le pueden aplicar las herramientas de @sec-interpretabilidad-equidad. La importancia por permutación (@sec-importancia-permutacion) mide cuánto empeora la predicción en el conjunto de prueba cuando se permuta cada variable, aquí con la entropía cruzada (@sec-entropia-cruzada) como medida de rendimiento, y la dependencia parcial (@sec-dependencia-parcial) de `progresa` es el promedio de la probabilidad predicha cuando a todas las personas se les pone el mismo valor de tratamiento, como se muestra en el siguiente código:
+
+```{python}
+#| echo: true
+G_w = G.assign(progresa=w_g)
+perm = permutation_importance(s_modelo, G_w, y_g, n_repeats=10,
+                              scoring='neg_log_loss', random_state=0)
+imp_s = pd.Series(perm.importances_mean, index=G_w.columns)
+dp_1 = prob(s_modelo, G.assign(progresa=1)).mean()
+dp_0 = prob(s_modelo, G.assign(progresa=0)).mean()
+```
+
+```{python}
+#| echo: false
+#| label: tbl-causal-importancia
+#| tbl-cap: "Importancia por permutación de las variables del S-learner en el conjunto de prueba, medida con la entropía cruzada."
+NOMBRES_S = dict(NOMBRES, progresa='Tratamiento (`progresa`)')
+imp_s_ord = imp_s.sort_values(ascending=False)
+txt = '| Variable | Importancia |\n|---|---|\n'
+for c, v in imp_s_ord.items():
+    txt += f'| {NOMBRES_S[c]} | ${v:0.4f}$ |\n'
+Markdown(txt)
+```
+
+```{python}
+#| echo: false
+imp_s_var_f = Markdown(f'`{imp_s_ord.index[0]}`')
+imp_s_max_f = Markdown(f'${imp_s_ord.iloc[0]:0.4f}$')
+imp_s_w_f = Markdown(f'${imp_s["progresa"]:0.4f}$')
+lugar = list(imp_s_ord.index).index('progresa') + 1
+lugar_f = Markdown(['la primera', 'la segunda', 'la tercera', 'la cuarta',
+                    'la última'][lugar - 1])
+imp_s_frase_f = Markdown(
+    'de manera que la variable por la que pregunta el capítulo está entre '
+    'las que menos ayudan a predecir, y por esa razón el bosque la usa poco, '
+    'que es la debilidad del S-learner ya mencionada'
+    if lugar >= 3 else
+    'de manera que en estos datos el tratamiento está entre las variables '
+    'que más ayudan a predecir')
+dp_0_f = Markdown(f'${dp_0:0.4f}$')
+dp_1_f = Markdown(f'${dp_1:0.4f}$')
+dp_dif_f = Markdown(f'${dp_1 - dp_0:0.4f}$')
+```
+
+La @tbl-causal-importancia muestra que la variable más importante para predecir la inscripción es `{python} imp_s_var_f`, con `{python} imp_s_max_f`, y que el tratamiento es `{python} lugar_f` de las cinco variables, con `{python} imp_s_w_f`, `{python} imp_s_frase_f`. La mayoría de las niñas y niños se inscribe o deja de hacerlo con independencia del programa, y por eso una variable puede importar poco para predecir el resultado y ser la única por la que se pregunta cuando lo que interesa es qué cambia al intervenir.
+
+La dependencia parcial de `progresa` es `{python} dp_0_f` sin el programa y `{python} dp_1_f` con él, y su diferencia, `{python} dp_dif_f`, es el promedio de $\hat\tau_S(x)$ en el conjunto de prueba, porque las dos cantidades se calculan con las mismas predicciones. El efecto promedio que estima el S-learner es entonces la dependencia parcial del tratamiento, y el efecto estimado de cada persona es la diferencia entre los dos extremos de su curva de expectativa condicional individual. En @sec-dependencia-parcial esa diferencia solo describía al modelo, y aquí se lee como el efecto del programa porque el tratamiento se sorteó.
 
 ### T-learner {#sec-t-learner}
 
@@ -578,6 +645,8 @@ La @tbl-causal-focalizacion muestra que entre los elegidos por el efecto estimad
 Elegir por efecto estimado maximiza el resultado medido del programa, pero ese no es el único objetivo legítimo de una política pública. Un programa puede querer atender a quienes están peor aunque el efecto en ellos sea menor, y esa es una decisión de quien define la política, igual que la de los costos de cada error en @sec-decision-focalizacion. Además, estos efectos se refieren a un solo resultado, la inscripción en 1998, y un programa de transferencias tiene otros resultados, como la salud, la nutrición o el consumo de los hogares, en los que el orden de las personas podría ser diferente.
 
 ## Bosques Causales {#sec-bosques-causales}
+
+Hasta aquí todo se hizo con herramientas de los capítulos anteriores, que son un bosque de clasificación, una partición de los datos por grupos y la resta de dos probabilidades, y lo propio del problema causal fue decidir qué se resta y cómo se evalúa. Los bosques causales son el primer método del capítulo que modifica el algoritmo de aprendizaje.
 
 Los meta-aprendices usan algoritmos diseñados para predecir $y$, y lo único que cambia en un **árbol causal** [@athey2016recursive] es la función de costo con la que se eligen los cortes, porque el resto del procedimiento es el del árbol de decisión de @sec-arboles-decision. En ese capítulo se vio que el árbol aplica en cada nodo una función de corte $x_j \leq a$, y que la variable $x_j$ y el valor $a$ se eligen para minimizar el costo de los dos hijos, que en regresión es la suma de sus varianzas ponderadas por la proporción de observaciones que recibe cada uno (@sec-clasificacion-entrenamiento). Minimizar ese costo equivale a maximizar
 
@@ -919,7 +988,7 @@ Con `inscrito_1999` como resultado, estimar el efecto promedio con la función `
 
 Los resultados potenciales definen el efecto individual de un tratamiento como la diferencia entre el resultado con tratamiento y sin él, y como de cada persona solo se observa uno de los dos, el efecto individual nunca se observa y lo que se estima son promedios, que son el efecto promedio y el efecto condicional $\tau(x)$. En un experimento el efecto promedio se estima con una diferencia de medias, y su error estándar debe respetar la unidad que se sorteó, que en Progresa fue la localidad y no la persona.
 
-Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de $\mu_0(x)$ y el efecto de la diferencia $\mu_1(x) - \mu_0(x)$. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.
+Con un experimento, estimar el efecto condicional es un problema de clasificación en el que el tratamiento es una variable de entrada más, y lo que cambia respecto de los capítulos anteriores es que se usa la resta de dos probabilidades, que no hay un error por persona con el cual evaluar y que los datos se parten por localidad. Predecir un resultado y estimar un efecto son tareas distintas, porque el riesgo depende de $\mu_0(x)$ y el efecto de la diferencia $\mu_1(x) - \mu_0(x)$. Quienes tienen mayor riesgo de no inscribirse no son necesariamente quienes más responden a una beca, y por eso focalizar un programa con uno u otro criterio lleva a resultados distintos.
 
 Los meta-aprendices convierten un algoritmo de aprendizaje supervisado en un estimador de $\tau(x)$. El S-learner usa un solo modelo con el tratamiento como variable, el T-learner usa un modelo por grupo y el X-learner modela directamente los efectos imputados a cada persona. Como el efecto individual no se observa, los meta-aprendices no se evalúan con un error de predicción sino comprobando, con los datos de un experimento, que los grupos con mayor efecto estimado tienen también mayor efecto medido.
 
