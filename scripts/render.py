@@ -74,6 +74,7 @@ CHECK_MODULES = {
     "jax": "jax",
     "optax": "optax",
     "shap": "shap",
+    "econml": "econml",
 }
 
 # quarto's freeze result file per format configured in _quarto.yml.
@@ -227,6 +228,18 @@ def verify() -> list[str]:
     return problems
 
 
+def redaccion(targets: list[Path]) -> list[str]:
+    """Files whose prose breaks the writing rules of CLAUDE.md («Redacción»).
+
+    Runs scripts/check_redaccion.py over the given pages (the whole book when
+    there are none) and returns its FALLA lines.
+    """
+    command = [sys.executable, str(REPO / "scripts" / "check_redaccion.py")]
+    command += [str(t) for t in targets if t.suffix == ".qmd"]
+    result = subprocess.run(command, cwd=REPO, capture_output=True, text=True)
+    return [line for line in result.stdout.splitlines() if line.startswith("FALLA")]
+
+
 def report_artifacts() -> None:
     """Show what the render touched, so the caller knows what to commit."""
     paths = ["_freeze", *(str(page) for page in pages())]
@@ -274,6 +287,14 @@ def main() -> int:
     for target in targets:
         if not (REPO / target).exists():
             sys.exit(f"[render] no such page: {target}")
+
+    estilo = redaccion(targets)
+    if estilo:
+        log(f"{len(estilo)} file(s) break the writing rules (CLAUDE.md, «Redacción»):")
+        for linea in estilo:
+            print(f"    - {linea}")
+        log("fix the prose first: python3 scripts/check_redaccion.py -v <file>")
+        return 1
 
     if not args.verify_only:
         local = quarto_version()

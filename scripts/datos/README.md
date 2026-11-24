@@ -16,6 +16,7 @@ aprendizaje) están en el apéndice.
 | `censo_denue_territorio.csv` | `censo_denue_territorio.py` | Censo de Población y Vivienda 2020 (AGEB urbana de Aguascalientes) y DENUE 05_2026, INEGI | Términos de libre uso de la información del INEGI |
 | `legalia_instrumentos.csv` | `legalia_instrumentos.py` | LegalIA, colecciones de la SCJN (leyes, reglamentos, lineamientos y tratados), modelo Qwen3-Embedding-4B | Apache 2.0 |
 | `legalia_similitud.csv.gz` | `legalia_instrumentos.py` | LegalIA, matriz de similitud entre instrumentos del Atlas (modelo Qwen3-Embedding-4B) | Apache 2.0 |
+| `progresa_inscripcion.csv` | `progresa_inscripcion.py` | Archivo de réplica de Lee y Shaikh (2014), Journal of Applied Econometrics; datos de la evaluación de Progresa, 1997-1999 | Sin licencia declarada; se redistribuye con atribución para docencia |
 
 ## Reglas
 
@@ -41,6 +42,7 @@ python scripts/datos/envipe_seguridad.py
 python scripts/datos/ensanut_salud.py
 python scripts/datos/sep_f911_educacion.py   # requiere además: pip install curl_cffi
 python scripts/datos/censo_denue_territorio.py
+python scripts/datos/progresa_inscripcion.py
 ```
 
 La matriz de instrumentos jurídicos se genera aparte, porque no descarga una fuente
@@ -85,6 +87,9 @@ Las descargas son de decenas a cientos de MB en total y necesitan red. El script
 la SEP necesita `curl_cffi` porque su servidor rechaza a los clientes que no se
 presentan como un navegador; junto con `pyarrow` (ver abajo) es de las pocas
 dependencias que no están en `requirements.txt`, y sólo se usa para descargar.
+En cambio, `progresa_inscripcion.py` descarga con `agente=None` (sin agente de
+navegador), porque el servidor de ZBW responde a los navegadores con una página de
+verificación en lugar del archivo.
 
 ## Publicar
 

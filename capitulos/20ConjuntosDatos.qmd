@@ -1,6 +1,6 @@
 # Conjunto de Datos
 
-El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva; después, la matriz de similitud entre instrumentos jurídicos federales, que no tiene variable respuesta; al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
+El **objetivo** de este apéndice es listar los conjuntos de datos utilizados en el curso. Primero se presentan los conjuntos de política pública mexicanos, cada uno con su ficha (fuente, licencia, unidad de observación, variables) y la tarea de aprendizaje que lo motiva. Después se presenta la matriz de similitud entre instrumentos jurídicos federales, que no tiene variable respuesta, y al final se conservan, como problemas sintéticos y clásicos, los conjuntos que se usan para ilustrar los algoritmos.
 
 ## Paquetes usados {.unnumbered}
 
@@ -30,7 +30,7 @@ sns.set_style('whitegrid')
 
 ## Problemas de Política Pública {#sec-datos-politica-publica}
 
-Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta, como a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela o cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente. Los archivos procesados están en el release `datos-v1` del repositorio del libro y el código de cada subsección los lee directamente de ahí. La @tbl-conjunto-datos-politica-publica resume los cinco conjuntos. En ella, el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores.
+Los conjuntos de esta sección provienen de encuestas y registros administrativos oficiales de México y cada uno responde a una decisión pública concreta, como a quién dirigir un programa social, dónde reforzar la prevención del delito, a quién ofrecer un tamizaje de salud, qué planteles apoyar para que sus estudiantes no abandonen la escuela, cómo aproximar las condiciones de un barrio cuando el censo ya no es reciente o a quiénes beneficia más un programa de transferencias. Los archivos procesados están en el release `datos-v1` del repositorio del libro y el código de cada subsección los lee directamente de ahí. La @tbl-conjunto-datos-politica-publica resume los seis conjuntos. En ella, el tamaño $N$ es el número de observaciones y la dimensión $d$ es el número de variables predictoras, es decir, no cuenta la variable objetivo ni las columnas que son factores de expansión o identificadores. En el conjunto Progresa la columna de tratamiento se cuenta aparte, porque no es una predictora sino la intervención cuyo efecto se quiere estimar.
 
 ```{python}
 #| echo: false
@@ -51,7 +51,10 @@ CONJUNTOS = {
                        objetivo='grado_promedio_escolaridad',
                        aparte=['clave_ageb', 'municipio', 'pct_viv_internet',
                                'pct_sin_servicio_salud',
-                               'pct_jefatura_femenina'])}
+                               'pct_jefatura_femenina']),
+    'progresa': dict(archivo='progresa_inscripcion.csv',
+                     objetivo='inscrito_1998',
+                     aparte=['localidad', 'progresa', 'inscrito_1999'])}
 URL_DATOS = ('https://github.com/INGEOTEC/AprendizajeComputacional/'
              'releases/download/datos-v1')
 DATOS_PP = {k: pd.read_csv(f'{URL_DATOS}/{v["archivo"]}')
@@ -76,7 +79,9 @@ FILAS = [
     ('Educación', 'educacion', 'Secundaria', 'Regresión y clasificación (3 clases)', '2023-2025',
      'Formato 911, SEP'),
     ('Territorio', 'territorio', 'AGEB urbana', 'Regresión', '2020 y 2026',
-     'Censo y DENUE, INEGI')]
+     'Censo y DENUE, INEGI'),
+    ('Progresa', 'progresa', 'Niña o niño', 'Efecto de un tratamiento', '1997-1999',
+     'Evaluación de Progresa')]
 txt = '|Nombre | Unidad | Tamaño ($N$) | Dimensión ($d$) | Tarea | Año | Fuente |\n'
 txt += '|-------|--------|--------------|-----------------|-------|-----|--------|\n'
 for nombre, clave, unidad, tarea, anio, fuente in FILAS:
@@ -123,7 +128,7 @@ El siguiente código lee el archivo.
 pobreza = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/enigh_pobreza.csv.gz')
 ```
 
-En el conjunto, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`; si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
+En el conjunto, la proporción de hogares bajo la línea de pobreza es `{python} tasa_pobreza_f`, y si se ponderan los hogares con el factor de expansión es `{python} tasa_pobreza_pond_f`. Por ámbito, es `{python} tasa_rural_f` en los hogares rurales y `{python} tasa_urbano_f` en los urbanos. La @fig-datos-pobreza muestra cómo cambia esta proporción con la escolaridad de la jefatura del hogar.
 
 ```{python}
 #| code-fold: true
@@ -239,7 +244,7 @@ _ = ax.legend(title='IMC')
 
 ### Educación {#sec-datos-educacion}
 
-El abandono escolar es uno de los principales obstáculos para que la educación cumpla su papel como mecanismo de movilidad social, y la transición de la primaria a la secundaria y de la secundaria a la educación media superior es un momento crítico. Los programas de becas, de tutoría y de reinserción tienen recursos limitados y deben decidir qué planteles apoyar primero. La tarea de este conjunto es predecir, para cada secundaria, la tasa de abandono escolar a partir de las características del plantel; como la variable objetivo es numérica, se trata de un problema de regresión.
+El abandono escolar es uno de los principales obstáculos para que la educación cumpla su papel como mecanismo de movilidad social, y la transición de la primaria a la secundaria y de la secundaria a la educación media superior es un momento crítico. Los programas de becas, de tutoría y de reinserción tienen recursos limitados y deben decidir qué planteles apoyar primero. La tarea de este conjunto es predecir, para cada secundaria, la tasa de abandono escolar a partir de las características del plantel y, como la variable objetivo es numérica, se trata de un problema de regresión.
 
 ```{python}
 #| echo: false
@@ -271,7 +276,7 @@ El siguiente código lee el archivo.
 educacion = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/sep_f911_educacion.csv.gz')
 ```
 
-La tasa de abandono tiene media `{python} media_abandono_f` y mediana `{python} mediana_abandono_f`; el $10\%$ de los planteles con más abandono tiene al menos `{python} p90_abandono_f`, y `{python} sin_abandono_f` de los planteles tienen una tasa de cero (incluye los casos acotados). La @fig-datos-educacion muestra la distribución de la tasa de abandono.
+La tasa de abandono tiene media `{python} media_abandono_f` y mediana `{python} mediana_abandono_f`, el $10\%$ de los planteles con más abandono tiene al menos `{python} p90_abandono_f`, y `{python} sin_abandono_f` de los planteles tienen una tasa de cero (incluye los casos acotados). La @fig-datos-educacion muestra la distribución de la tasa de abandono.
 
 ```{python}
 #| code-fold: true
@@ -301,11 +306,11 @@ prop_prioridad_f = [Markdown(f'${100 * (prioridad == k).mean():0.1f}\\%$')
                     for k in range(3)]
 ```
 
-El corte es una tasa de abandono de `{python} corte_f`. La clase baja (`prioridad == 0`) tiene `{python} prop_prioridad_f[0]` de los planteles, la media (`prioridad == 1`) `{python} prop_prioridad_f[1]` y la alta (`prioridad == 2`) `{python} prop_prioridad_f[2]`. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con `stratify=prioridad`.
+Con un corte en una tasa de abandono de `{python} corte_f`, la clase baja (`prioridad == 0`) tiene `{python} prop_prioridad_f[0]` de los planteles, la media (`prioridad == 1`) `{python} prop_prioridad_f[1]` y la alta (`prioridad == 2`) `{python} prop_prioridad_f[2]`. Es un problema de clasificación de tres clases, con la clase alta como minoritaria, por lo que al partir los datos en entrenamiento y prueba conviene estratificar con `stratify=prioridad`.
 
 ### Territorio {#sec-datos-territorio}
 
-Los censos son la mejor fuente de condiciones sociales a escala de barrio, pero se levantan cada diez años; entre un censo y otro, la planeación urbana y la focalización territorial de programas necesitan aproximaciones con información más reciente. El Directorio Estadístico Nacional de Unidades Económicas (DENUE) se actualiza con frecuencia y dice qué negocios hay en cada zona. La tarea de este conjunto es predecir un indicador censal, el grado promedio de escolaridad, a partir de la composición de establecimientos del DENUE de cada AGEB urbana (área geoestadística básica) del estado de Aguascalientes.
+Los censos son la mejor fuente de condiciones sociales a escala de barrio, pero se levantan cada diez años, por lo que entre un censo y otro la planeación urbana y la focalización territorial de programas necesitan aproximaciones con información más reciente. El Directorio Estadístico Nacional de Unidades Económicas (DENUE) se actualiza con frecuencia y dice qué negocios hay en cada zona. La tarea de este conjunto es predecir un indicador censal, el grado promedio de escolaridad, a partir de la composición de establecimientos del DENUE de cada AGEB urbana (área geoestadística básica) del estado de Aguascalientes.
 
 ```{python}
 #| echo: false
@@ -356,6 +361,60 @@ _ = sns.scatterplot(df, x='establecimientos_por_mil',
                     color=PALETTE(1))
 _ = ax.set(xlabel='Establecimientos por cada mil habitantes',
            ylabel='Grado promedio de escolaridad')
+```
+
+### Progresa {#sec-datos-progresa}
+
+Progresa fue un programa de transferencias condicionadas que empezó en 1997 y daba becas a los hogares pobres de localidades rurales a cambio de que sus hijas e hijos asistieran a la escuela. Como no se podía incorporar a todas las localidades al mismo tiempo, el orden de entrada se sorteó entre las localidades de la evaluación, de manera que unas recibieron el programa en 1998 y otras, las de control, hasta finales de 1999. Ese sorteo lo convierte en un experimento aleatorizado, y la tarea de este conjunto ya no es predecir un resultado sino estimar cuánto cambió la inscripción escolar por el programa y para quiénes cambió más [@schultz2004school]. Se usa en el capítulo *Aprendizaje Computacional e Inferencia Causal*.
+
+```{python}
+#| echo: false
+progresa = DATOS_PP['progresa']
+n_progresa_f = pp_f(progresa.shape[0])
+d_progresa_f = pp_f(D_PP['progresa'])
+loc_progresa = progresa.groupby('localidad')['progresa'].first()
+n_loc_f = pp_f(loc_progresa.shape[0])
+n_loc_trat_f = pp_f(int((loc_progresa == 1).sum()))
+n_loc_ctrl_f = pp_f(int((loc_progresa == 0).sum()))
+ins_1997_f = Markdown(f'${progresa.inscrito_1997.mean():0.4f}$')
+ins_1998_f = Markdown(f'${progresa.inscrito_1998.mean():0.4f}$')
+ins_1999_f = Markdown(f'${progresa.inscrito_1999.mean():0.4f}$')
+edad_min_f = pp_f(int(progresa.edad.min()))
+edad_max_f = pp_f(int(progresa.edad.max()))
+```
+
+**Ficha**
+
+- **Fuente:** archivo de réplica de @lee2014multiple, publicado en el [archivo de datos del *Journal of Applied Econometrics*](https://journaldata.zbw.eu/dataset/4dbd19b5-808f-464c-b9e5-795900a77d3d), que los autores extrajeron de las bases de la evaluación de Progresa que publicaba el gobierno de México.
+- **Licencia:** el archivo de réplica no declara una licencia; aquí se redistribuye procesado y con atribución para uso docente.
+- **Unidad de observación:** niña o niño de `{python} edad_min_f` a `{python} edad_max_f` años en 1997, de un hogar elegible para el programa. El archivo original tiene un renglón por persona y ronda de la encuesta, y aquí se conserva un renglón por persona, con sus características de la primera ronda (1997, antes del programa) y su inscripción en el otoño de 1998 y de 1999.
+- **Tamaño:** $N=$ `{python} n_progresa_f` niñas y niños en `{python} n_loc_f` localidades, de las cuales `{python} n_loc_trat_f` recibieron el programa en 1998 y `{python} n_loc_ctrl_f` son de control.
+- **Tratamiento:** `progresa` vale 1 si la localidad recibió el programa desde 1998. Se asignó al azar por localidad y no por persona, de manera que todas las niñas y niños de una localidad comparten el mismo valor; `localidad` identifica el conglomerado y se necesita para calcular errores estándar.
+- **Variables:** $d=$ `{python} d_progresa_f` características medidas antes del programa, que son `mujer`, `edad`, `grado` (último grado aprobado, de 0 a 9, donde 6 es primaria terminada), `inscrito_1997` y `ninos_localidad` (número de niñas y niños de la localidad en el archivo).
+- **Objetivo y tarea:** `inscrito_1998` vale 1 si la persona asistía a la escuela en el otoño de 1998, unos meses después de iniciar los apoyos; `inscrito_1999` es lo mismo un año después y sirve para las actividades. La tarea es estimar el efecto del programa en la inscripción y cómo cambia ese efecto con las características de la persona.
+- **Advertencias:** solo incluye hogares elegibles, por lo que no sirve para estudiar la focalización del programa; y el archivo no trae las características del hogar ni de la localidad que tiene la base original.
+
+El siguiente código lee el archivo.
+
+```{python}
+#| echo: true
+progresa = pd.read_csv('https://github.com/INGEOTEC/AprendizajeComputacional/releases/download/datos-v1/progresa_inscripcion.csv')
+```
+
+La proporción de niñas y niños inscritos en la escuela fue `{python} ins_1997_f` en 1997, `{python} ins_1998_f` en 1998 y `{python} ins_1999_f` en 1999, y baja porque las mismas personas son cada año mayores. La @fig-datos-progresa muestra la inscripción de 1998 según el último grado aprobado en cada grupo, donde se observa que la caída más grande ocurre al terminar la primaria.
+
+```{python}
+#| code-fold: true
+#| fig-cap: Proporción de niñas y niños inscritos en 1998 según el último grado aprobado en 1997, en las localidades con Progresa y en las de control.
+#| label: fig-datos-progresa
+df = progresa.groupby(['grado', 'progresa'])['inscrito_1998'].mean()
+df = df.reset_index()
+df['Grupo'] = df['progresa'].map({0: 'Control', 1: 'Progresa'})
+fig, ax = plt.subplots(figsize=(6, 4))
+_ = sns.lineplot(df, x='grado', y='inscrito_1998', hue='Grupo',
+                 marker='o', ax=ax)
+_ = ax.set(xlabel='Último grado aprobado en 1997',
+           ylabel='Proporción inscrita en 1998')
 ```
 
 ## Instrumentos Jurídicos Federales {#sec-datos-instrumentos}
@@ -600,7 +659,7 @@ _ = fig.set(xlabel=None, ylabel=None)
 
 #### Iris {#sec-iris} 
 
-Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por @iris; este problema se descarga con la siguiente instrucción. La @fig-conjunto-datos-iris muestra una visualización de estos datos mediante PCA. 
+Un conjunto clásico en problemas de clasificación es el problema del Iris descrito por @iris, el cual se descarga con la siguiente instrucción. La @fig-conjunto-datos-iris muestra una visualización de estos datos mediante PCA. 
 
 ```{python}
 #| echo: true
@@ -630,7 +689,7 @@ _ = fig.set(xlabel=None, ylabel=None)
 
 #### Dígitos {#sec-digitos}
 
-El conjunto de Dígitos (ver @digits) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen; este conjunto de datos se descarga utilizando la siguiente instrucción. La @fig-conjunto-datos-digits muestra una proyección de estos datos utilizando UMAP con ocho vecinos. 
+El conjunto de Dígitos (ver @digits) es un conjunto de clasificación donde se trata de identificar el número escrito en una imagen. Este conjunto de datos se descarga utilizando la siguiente instrucción. La @fig-conjunto-datos-digits muestra una proyección de estos datos utilizando UMAP con ocho vecinos. 
 
 ```{python}
 #| echo: true

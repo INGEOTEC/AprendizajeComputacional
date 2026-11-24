@@ -17,7 +17,7 @@ estilos y cálculos que alimentan texto en línea.
 Uso, desde cualquier lugar del repositorio:
 
     python scripts/check_visible.py                                # todo el libro
-    python scripts/check_visible.py capitulos/13Agrupamiento.qmd   # un capítulo
+    python scripts/check_visible.py capitulos/14Agrupamiento.qmd   # un capítulo
 
 Sin argumentos revisa los .qmd de `book.chapters` y `book.appendices` en
 _quarto.yml. Sale con código distinto de cero si algún capítulo falla; si pasa,
