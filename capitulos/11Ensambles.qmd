@@ -270,7 +270,8 @@ Tomando el caso de focalización como base, el primer algoritmo a entrenar es la
 
 ```{python}
 #| echo: true
-svr = LinearSVR(dual='auto', max_iter=20_000).fit(T, y_t)
+svr = LinearSVR(dual='auto', max_iter=20_000,
+                random_state=0).fit(T, y_t)
 svr_mape = mean_absolute_percentage_error(y_g,
                                           svr.predict(G))
 ```
@@ -297,7 +298,8 @@ En el caso de regresión, la predicción final corresponde al promedio de las pr
 
 ```{python}
 #| echo: true
-svr_ins = [LinearSVR(dual='auto', max_iter=20_000).fit(T[b], y_t[b])
+svr_ins = [LinearSVR(dual='auto', max_iter=20_000,
+                     random_state=0).fit(T[b], y_t[b])
            for b in B]
 hys = np.array([m.predict(G) for m in svr_ins])
 bsvr_mape = mean_absolute_percentage_error(y_g,
