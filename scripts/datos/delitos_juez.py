@@ -60,8 +60,9 @@ PROMPTS = (
     "delito.\n\n"
     "Aplica la regla al siguiente mensaje.\n\n"
     "Mensaje: {mensaje}\n\n"
-    "Responde con una sola oración breve y termina con una línea que diga "
-    "exactamente \"Veredicto: delito\" o \"Veredicto: no_delito\".",
+    "Responde en dos líneas. En la primera, justifica tu decisión con una "
+    "oración breve. En la segunda, escribe exactamente \"Veredicto: delito\" "
+    "o \"Veredicto: no_delito\".",
     # 2. Pregunta
     "Lee el siguiente mensaje de una red social y contesta primero, en una "
     "oración breve, la pregunta \"¿cuál es el delito que el mensaje reporta "
@@ -70,24 +71,30 @@ PROMPTS = (
     "acompaña a otra noticia o cuando lo ocurrido fue un accidente. En "
     "cualquier otro caso el veredicto es delito.\n\n"
     "Mensaje: {mensaje}\n\n"
-    "Después de tu respuesta, termina con una línea que diga exactamente "
-    "\"Veredicto: delito\" o \"Veredicto: no_delito\".",
+    "Responde en dos líneas. En la primera, contesta la pregunta con una "
+    "oración breve. En la segunda, escribe exactamente \"Veredicto: delito\" "
+    "o \"Veredicto: no_delito\".",
     # 3. Rol
     "Eres analista de una secretaría de seguridad pública y tu trabajo es "
     "separar los mensajes de redes sociales que reportan un hecho delictivo "
     "de los demás. Un mensaje es un reporte cuando se puede decir cuál es el "
     "delito, cuenta un hecho, su propósito es informar sobre ese delito (no "
     "es una opinión ni lo usa para hablar de otro evento) y no describe un "
-    "accidente.\n\n"
+    "accidente. Si falta cualquiera de estas condiciones, el mensaje no es un "
+    "reporte.\n\n"
     "Mensaje: {mensaje}\n\n"
-    "Explica tu decisión en una sola oración breve y termina con una línea "
-    "que diga exactamente \"Veredicto: delito\" o \"Veredicto: no_delito\".",
+    "Responde en dos líneas. En la primera, explica tu decisión con una "
+    "oración breve. En la segunda, escribe exactamente \"Veredicto: delito\" "
+    "o \"Veredicto: no_delito\".",
 )
 
 # Tolerante a mayúsculas, asteriscos, corchetes y "no delito" con espacio o
 # guion, como PATRON_JUDGMENT de Chimalli; sin anclar al inicio de línea.
+# También lee "el veredicto es delito", que el modelo de 0.8B escribe a veces
+# en lugar de la línea pedida.
 PATRON_VEREDICTO = re.compile(
-    r"(?i)\bveredicto\s*\**\s*:\s*[\*\[\"'`\s]*(no[\s_-]*delito|delito)\b")
+    r"(?i)\bveredicto\s*\**\s*(?:es\b\s*)?:?\s*[\*\[\"'`\s]*"
+    r"(no[\s_-]*delito|delito)\b")
 
 
 def extraer_veredicto(respuesta: str) -> str:
@@ -208,6 +215,8 @@ def argumentos():
 def juzgar(args):
     import torch
     from transformers import GenerationConfig, pipeline
+    from transformers.utils import logging as tlogging
+    tlogging.disable_progress_bar()  # un renglón por lote, sin barras
 
     regs = delitos.registros()
     prueba = args.limite is not None

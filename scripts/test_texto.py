@@ -51,6 +51,10 @@ class TestVeredicto(unittest.TestCase):
         respuesta = ('El mensaje reporta un robo a mano armada como un hecho.\n'
                      'Veredicto: delito')
         self.assertEqual(dj.extraer_veredicto(respuesta), 'delito')
+        respuesta = 'Reporta un homicidio, por lo que el veredicto es delito.'
+        self.assertEqual(dj.extraer_veredicto(respuesta), 'delito')
+        respuesta = 'No describe un hecho, por lo que el Veredicto es: no_delito.'
+        self.assertEqual(dj.extraer_veredicto(respuesta), 'no_delito')
 
     def test_think(self):
         respuesta = ('<think>Veredicto: delito</think>\n'
