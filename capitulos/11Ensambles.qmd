@@ -270,7 +270,8 @@ Tomando el caso de focalización como base, el primer algoritmo a entrenar es la
 
 ```{python}
 #| echo: true
-svr = LinearSVR(dual='auto', max_iter=20_000).fit(T, y_t)
+svr = LinearSVR(dual='auto', max_iter=20_000,
+                random_state=0).fit(T, y_t)
 svr_mape = mean_absolute_percentage_error(y_g,
                                           svr.predict(G))
 ```
@@ -297,7 +298,8 @@ En el caso de regresión, la predicción final corresponde al promedio de las pr
 
 ```{python}
 #| echo: true
-svr_ins = [LinearSVR(dual='auto', max_iter=20_000).fit(T[b], y_t[b])
+svr_ins = [LinearSVR(dual='auto', max_iter=20_000,
+                     random_state=0).fit(T[b], y_t[b])
            for b in B]
 hys = np.array([m.predict(G) for m in svr_ins])
 bsvr_mape = mean_absolute_percentage_error(y_g,
@@ -415,6 +417,14 @@ hy = ens.predict(G)
 ```
 
 donde el promedio del error absoluto es `{python} Markdown(f"${ mean_absolute_percentage_error(y_g, hy):0.4f}.$")`
+
+::: {.callout-note}
+### Bosques causales
+
+Los bosques aleatorios también se usan para estimar el efecto de un programa y la manera en que ese efecto cambia entre personas. Un **bosque causal** [@wager2018estimation] es el promedio de muchos árboles causales [@athey2016recursive] que difieren entre sí porque cada uno se construye con una submuestra de los datos, y su objetivo es estimar el efecto de tratamiento $\tau(x)$ de las personas con características $x$ en lugar de predecir $y$. Cada árbol es honesto, es decir, usa una parte de su submuestra para elegir los cortes y otra distinta para estimar el efecto dentro de las hojas, y esa separación es la que permite calcular intervalos de confianza para el efecto estimado.
+
+El bosque causal se puede leer como un emparejamiento de vecinos cercanos (@sec-metodos-no-parametricos) en el que los datos deciden en qué características deben parecerse dos personas para considerarse vecinas [@athey2019impact]. El emparejamiento y los métodos de kernel tradicionales fijan esa distancia de antemano y se deterioran cuando hay más de unas pocas características. El método se desarrolla con un ejemplo en @sec-bosques-causales.
+:::
 
 ::: {.callout-tip collapse="true"}
 ### Actividad 
