@@ -114,12 +114,14 @@ def descargar(url: str, nombre: str | None = None, datos: dict | None = None,
     raise RuntimeError(f"No se pudo descargar {url}: {ultimo}")
 
 
-def guardar(df, nombre: str, no_personas: tuple = ()) -> Path:
+def guardar(df, nombre: str, no_personas: tuple = (),
+            float_format: str | None = None) -> Path:
     """Escribe ``df`` en ``salida_dir()/<nombre>`` (CSV, comprimido si el nombre
     termina en ``.gz``) de forma determinista y verifica que ninguna columna
     sea un identificador directo de personas. ``no_personas`` lista columnas
     que coinciden con ``IDENTIFICADORES`` sin referirse a personas (por
-    ejemplo, el ``nombre`` de un instrumento jurídico)."""
+    ejemplo, el ``nombre`` de un instrumento jurídico). ``float_format`` se
+    pasa a ``to_csv`` (por ejemplo ``"%.6g"`` para seis cifras significativas)."""
     directos = [c for c in df.columns
                 if c.lower().startswith(IDENTIFICADORES) and c not in no_personas]
     if directos:
@@ -131,9 +133,11 @@ def guardar(df, nombre: str, no_personas: tuple = ()) -> Path:
         import gzip
         with open(ruta, "wb") as raw, \
                 gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as gz:
-            gz.write(df.to_csv(index=False, lineterminator="\n").encode("utf-8"))
+            gz.write(df.to_csv(index=False, lineterminator="\n",
+                                float_format=float_format).encode("utf-8"))
     else:
-        df.to_csv(ruta, index=False, lineterminator="\n")
+        df.to_csv(ruta, index=False, lineterminator="\n",
+                  float_format=float_format)
     tam = ruta.stat().st_size
     print(f"{ruta}: {len(df)} filas, {df.shape[1]} columnas, "
           f"{tam / 1024:.0f} KiB", flush=True)
