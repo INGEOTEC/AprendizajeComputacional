@@ -17,6 +17,8 @@ aprendizaje) están en el apéndice.
 | `legalia_instrumentos.csv` | `legalia_instrumentos.py` | LegalIA, colecciones de la SCJN (leyes, reglamentos, lineamientos y tratados), modelo Qwen3-Embedding-4B | Apache 2.0 |
 | `legalia_similitud.csv.gz` | `legalia_instrumentos.py` | LegalIA, matriz de similitud entre instrumentos del Atlas (modelo Qwen3-Embedding-4B) | Apache 2.0 |
 | `progresa_inscripcion.csv` | `progresa_inscripcion.py` | Archivo de réplica de Lee y Shaikh (2014), Journal of Applied Econometrics; datos de la evaluación de Progresa, 1997-1999 | Sin licencia declarada; se redistribuye con atribución para docencia |
+| `delitos_qwen3_embedding.csv.gz` | `delitos_qwen.py` | Corpus Delitos de INGEOTEC, vectores del modelo Qwen3-Embedding-0.6B | Apache 2.0 (modelo) |
+| `delitos_juez.csv.gz` | `delitos_juez.py` | Corpus Delitos de INGEOTEC, etiquetas de los jueces Qwen3.5-0.8B, Qwen3.5-2B y Qwen3.5-4B con tres prompts | Apache 2.0 (modelos) |
 
 ## Reglas
 
@@ -90,6 +92,62 @@ dependencias que no están en `requirements.txt`, y sólo se usa para descargar.
 En cambio, `progresa_inscripcion.py` descarga con `agente=None` (sin agente de
 navegador), porque el servidor de ZBW responde a los navegadores con una página de
 verificación en lugar del archivo.
+
+## Delitos: vectores y modelo como juez (GPU)
+
+`delitos_qwen.py` y `delitos_juez.py` trabajan sobre el corpus
+[Delitos](https://ingeotec.github.io/Delitos) de INGEOTEC (1,800 tuits en español con
+tres etiquetas humanas cada uno) y necesitan GPU, así que se corren en el cluster
+(`headmaster`, partición `compute`). `delitos.py` lee el corpus: baja `delitos.zip` al
+caché (la descarga necesita red, en el cluster desde el nodo de acceso) y lo abre en
+memoria con la clave `ingeotec`. Los archivos publicados **no llevan el texto ni el
+identificador de los tuits**, sólo `particion` (`entrenamiento` o `prueba`) e `indice`
+(posición dentro de su archivo, desde 0), por los que el libro los une con el corpus
+que descarga de su fuente.
+
+- `delitos_qwen3_embedding.csv.gz`: `particion`, `indice` y `v0` a `v1023`, el estado
+  oculto del último segmento de Qwen3-Embedding-0.6B (como en LegalIA, con relleno a la
+  izquierda, sin instrucción y sin normalizar). El script comprueba antes de escribir
+  que los primeros 8 textos codificados en lote y uno por uno tengan coseno mayor que
+  0.999.
+- `delitos_juez.csv.gz`: `particion`, `indice`, `modelo` (`qwen3.5-0.8b`,
+  `qwen3.5-2b` o `qwen3.5-4b`), `prompt` (1, 2 o 3, la lista `PROMPTS` del script) y
+  `etiqueta` (`delito`, `no_delito` o `unk`), 16,200 renglones. Cada juez escribe un
+  parcial `juez-<modelo>.csv` en el caché que se reanuda si el trabajo muere; no se
+  guarda el texto generado, porque puede citar el tuit.
+
+El disco del cluster es escaso y compartido, así que se descarga **un modelo a la
+vez** y se borra en cuanto su archivo está completo, con `modelos_hf.py`. `descargar`
+espera a que haya espacio para el modelo más 10 GB y no toca un modelo que ya estaba en
+la caché de Hugging Face (puede usarlo otro proyecto); `borrar` sólo borra los modelos
+que anotó `descargar` en `modelos_descargados.txt` y limpia también el almacén
+`~/.cache/huggingface/hub/blobs/`. Los trabajos se envían con `enviar_gpu.sh`, siempre
+con la bitácora **fuera del repositorio**:
+
+```bash
+python3 scripts/datos/delitos.py                       # baja el corpus (nodo de acceso)
+mkdir -p ~/.cache/aprendizaje-computacional/slurm
+SLURM_LOG="$HOME/.cache/aprendizaje-computacional/slurm/%x-%j.out"
+
+python3 scripts/datos/modelos_hf.py descargar Qwen/Qwen3-Embedding-0.6B
+sbatch --parsable --output "$SLURM_LOG" scripts/datos/enviar_gpu.sh scripts/datos/delitos_qwen.py
+python3 scripts/datos/modelos_hf.py borrar Qwen/Qwen3-Embedding-0.6B   # al terminar
+
+python3 scripts/datos/modelos_hf.py descargar Qwen/Qwen3.5-0.8B
+sbatch --parsable --output "$SLURM_LOG" scripts/datos/enviar_gpu.sh \
+  scripts/datos/delitos_juez.py --modelo Qwen/Qwen3.5-0.8B --lote 256
+python3 scripts/datos/modelos_hf.py borrar Qwen/Qwen3.5-0.8B           # al terminar
+# igual con Qwen/Qwen3.5-2B (--lote 256) y Qwen/Qwen3.5-4B (--lote 128)
+
+python3 scripts/datos/delitos_juez.py --unir        # junta los tres parciales
+python3 scripts/datos/delitos_juez.py --verificar   # tabla de verificación
+python3 scripts/datos/modelos_hf.py                 # estado: marca, caché y disco
+```
+
+`delitos_juez.py --limite 32` es una prueba corta que escribe aparte e imprime las
+respuestas crudas en la bitácora; sirve para revisar la extracción del veredicto. En la
+corrida que publicó los archivos (A100), los vectores tardaron segundos y cada juez
+minutos. Las bitácoras pueden citar tuits, así que se borran después de publicar.
 
 ## Publicar
 
